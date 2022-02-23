@@ -1,0 +1,3 @@
+int main() {
+	printt("hi");
+}
