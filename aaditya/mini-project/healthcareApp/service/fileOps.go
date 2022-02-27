@@ -49,46 +49,40 @@ type FileReader interface {
 
 func (generalUser GeneralUser) WriteDataToFile(){
 	file,err := os.OpenFile("data/generalUser.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(generalUser)
 	_,err = file.WriteString(string(data))
-	if err != nil {
-		log.Fatal(err)
-	}else{
-		fmt.Println("Data written to file successfully.")
-	}
+	handleErr(err)
+	fmt.Println("Data written to file successfully.")
+	
 }
 
 
 func (doctor Doctor) WriteDataToFile(){
 	file,err := os.OpenFile("data/doctor.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(doctor)
 	_,err = file.WriteString(string(data))
-	if err != nil {
-		log.Fatal(err)
-	}else{
-		fmt.Println("Data written to file successfully.")
-	}
+	handleErr(err)
+	fmt.Println("Data written to file successfully.")
+	
 }
 
 func (patient Patient) WriteDataToFile(){
 	file,err := os.OpenFile("data/patient.json", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
+	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(patient)
 	_,err = file.WriteString(string(data))
+	handleErr(err)
+	fmt.Println("Data written to file successfully.")
+}
+
+func handleErr(err error) {
 	if err != nil {
-		log.Fatal(err)
-	}else{
-		fmt.Println("Data written to file successfully.")
+		fmt.Println(err)
+		panic("Something went wrong")
 	}
 }
