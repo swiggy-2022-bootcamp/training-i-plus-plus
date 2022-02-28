@@ -1,0 +1,52 @@
+Non-Blocking Channel Operations:
+
+Basic sends and receives on channels are blocking. 
+However, we can use select with a default clause to implement
+ non-blocking sends, 
+receives, and even non-blocking multi-way selects.
+
+Closing Channels:
+
+Closing a channel indicates that no more values will be sent on it.
+ This can be useful to communicate completion to the channel’s receivers.
+
+
+Range over Channels
+In a previous example we saw how for and range provide iteration
+ over basic data structures.
+ 
+ We can also use this syntax to iterate over values received from a channel.
+
+
+We often want to execute Go code at some point in the future, or
+ repeatedly at some interval. 
+ 
+ Go’s built-in timer and ticker features make both of these tasks easy.
+  We’ll look first at timers and then at tickers.
+
+Worker Pools:
+
+
+Here’s the worker, of which we’ll run several concurrent instances. 
+These workers will receive work on the jobs channel and 
+send the corresponding results on results.
+
+ We’ll sleep a second per job to simulate an expensive task.
+
+Rate Limiting:
+--------------
+
+ Rate limiting is an important mechanism for controlling resource 
+ utilization and maintaining quality of service. 
+ 
+ Go elegantly supports rate limiting with goroutines, channels, 
+ and tickers.
+
+ Atomic Counters:
+ -----------------
+The primary mechanism for managing state in Go is communication over 
+channels. 
+
+ There are a few other options for managing state though.
+  Here we’ll look at using the sync/atomic package for atomic 
+  counters accessed by multiple goroutines.
