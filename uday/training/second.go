@@ -1,7 +1,1 @@
-package main
-
-import "fmt"
-
-func main() {
-	fmt.Println("Hello World Uday!!")
-}
+this is the seond file

@@ -1,0 +1,15 @@
+Design Patterns:
+    In software engineering, a design pattern is a general repeatable solution to a commonly occuring
+    problem in a software design.
+
+    A design pattern isn't a finished design that can be transformed directly into code.
+    It is a description or template for how to solve a problem that can be used in many different 
+    solutions.
+
+
+
+    What is GOF pattern in Ooad?
+    The GoF Design patterns are broken into three categories:
+    Creational Design Ptterns:
+    These designa pattern are all about class instantiation.
+    This pattern can be further divided into 
