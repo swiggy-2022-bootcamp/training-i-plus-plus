@@ -63,3 +63,7 @@ func (server *AuthServer) Signup(ctx context.Context, req *authpb.SignupRequest)
 		Id:       oid.Hex(),
 	}, nil
 }
+
+func (server *AuthServer) CheckAuth(ctx context.Context, req *authpb.AuthRequest) (*authpb.AuthResponse, error) {
+	return &authpb.AuthResponse{}, nil
+}

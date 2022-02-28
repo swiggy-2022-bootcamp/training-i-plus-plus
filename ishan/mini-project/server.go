@@ -42,11 +42,12 @@ func main() {
 		fmt.Println("MongoDB Connection Closed")
 	}()
 
-	s := grpc.NewServer(
-		grpc.UnaryInterceptor(unaryInterceptor),
-	)
-
 	JWTManager := jwtmanager.NewJWTManager("sbjabhbk", 40)
+	authInterceptor := auth.AuthInterceptor{JWTManager: JWTManager, AccessibleRoles: auth.AccessibleRoles()}
+
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(authInterceptor.Unary()),
+	)
 
 	authpb.RegisterAuthServiceServer(s, &auth.AuthServer{
 		authpb.UnimplementedAuthServiceServer{},

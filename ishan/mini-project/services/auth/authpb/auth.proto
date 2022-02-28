@@ -22,7 +22,16 @@ message SignupResponse{
   string id=2;
 }
 
+message AuthRequest{
+}
+
+message AuthResponse{
+  string status=1;
+}
+
+
 service AuthService {
   rpc Login(LoginRequest) returns (LoginResponse) {};
   rpc Signup(SignupRequest) returns(SignupResponse){};
+  rpc CheckAuth(AuthRequest) returns(AuthResponse){};
 }
