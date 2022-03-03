@@ -1,0 +1,11 @@
+## working this week 
+- working with sonarqube 
+- what is the code coverage
+- How is project ? 
+    - implemenenting what is learnt 
+    - maps some part of DS 
+- need to work in project structure / folder structrue 
+- how to start the project 
+- felt easy with node 
+- need to get the review with the trainer 
+- 
