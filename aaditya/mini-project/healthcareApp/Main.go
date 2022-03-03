@@ -63,14 +63,14 @@ func registerDoctor(){
 func registerGeneralUser(){
 	generalUser := GeneralUser{
 		IsPatient: false,
-		PreviousDiseases: "dengue",
+		PreviousDiseases: "typhoid",
 		Id: "1",
 		User: model.User{
 			Id: "1",
-			Name : "Rakesh Adani",
-			EmailId: "rakeshAdani@gmail.com",
+			Name : "Stokes ",
+			EmailId: "johnsteve@gmail.com",
 			Age : 27,
-			Address: "Mumbai",
+			Address: "England",
 		},
 	}
 	obj := service.GeneralUser(generalUser)
