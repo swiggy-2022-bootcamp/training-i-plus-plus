@@ -16,3 +16,6 @@
 
 # For environment files
 *.env
+
+# For sonar scanner generated folder
+*.scannerwork
