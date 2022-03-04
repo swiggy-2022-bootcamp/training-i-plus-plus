@@ -121,28 +121,6 @@ type service struct {
 	db []User
 }
 
-func (s service) GetAllUsers() []User {
-	return s.db
-}
-
-func (s service) GetUserByUsername(username string) (*User, error) {
-	for _, val := range s.GetAllUsers() {
-		if username == val.username {
-			return &val, nil
-		}
-	}
-	return nil, fmt.Errorf("no users found")
-}
-
-func (s service) GetUserByEmail(email string) (*User, error) {
-	for _, val := range s.GetAllUsers() {
-		if email == val.email {
-			return &val, nil
-		}
-	}
-	return nil, fmt.Errorf("no users found")
-}
-
 func (s service) AuthenticateUser(username string, password string) (string, error) {
 	user, err := s.GetUserByUsername(username)
 	if err != nil {
@@ -169,6 +147,28 @@ func (s service) ParseAuthToken(tokenString string) (int, role, error) {
 		return int(claims["id"].(float64)), GetEnumByIndex(int(claims["role"].(float64))), nil
 	}
 	return -1, -1, err
+}
+
+func (s service) GetAllUsers() []User {
+	return s.db
+}
+
+func (s service) GetUserByUsername(username string) (*User, error) {
+	for _, val := range s.GetAllUsers() {
+		if username == val.username {
+			return &val, nil
+		}
+	}
+	return nil, fmt.Errorf("no users found")
+}
+
+func (s service) GetUserByEmail(email string) (*User, error) {
+	for _, val := range s.GetAllUsers() {
+		if email == val.email {
+			return &val, nil
+		}
+	}
+	return nil, fmt.Errorf("no users found")
 }
 
 func (s *service) AddUser(u User) (bool, error) {

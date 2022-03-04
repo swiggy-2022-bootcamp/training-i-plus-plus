@@ -109,5 +109,3 @@ func NewUser(firstName, lastName, username, phone, email, password string, role 
 		role:      role,
 	}
 }
-
-// --------------------------

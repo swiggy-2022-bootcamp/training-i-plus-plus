@@ -1,0 +1,27 @@
+mode: set
+mini-project/domain/user.go:13.31,15.2 1 1
+mini-project/domain/user.go:17.31,19.2 1 1
+mini-project/domain/user.go:21.44,22.13 1 1
+mini-project/domain/user.go:23.9,24.20 1 1
+mini-project/domain/user.go:25.9,26.21 1 1
+mini-project/domain/user.go:27.9,28.23 1 1
+mini-project/domain/user.go:29.10,30.46 1 1
+mini-project/domain/user.go:45.30,47.2 1 1
+mini-project/domain/user.go:49.39,51.2 1 1
+mini-project/domain/user.go:53.34,55.2 1 1
+mini-project/domain/user.go:57.47,59.2 1 1
+mini-project/domain/user.go:61.33,63.2 1 1
+mini-project/domain/user.go:65.45,67.2 1 1
+mini-project/domain/user.go:69.33,71.2 1 1
+mini-project/domain/user.go:73.45,75.2 1 1
+mini-project/domain/user.go:77.33,79.2 1 1
+mini-project/domain/user.go:81.45,83.2 1 1
+mini-project/domain/user.go:85.30,87.2 1 1
+mini-project/domain/user.go:89.39,91.2 1 1
+mini-project/domain/user.go:93.27,95.2 1 1
+mini-project/domain/user.go:97.32,99.2 1 1
+mini-project/domain/user.go:101.93,111.2 1 1
+mini-project/domain/userService.go:12.116,15.2 2 0
+mini-project/domain/userService.go:17.70,19.16 2 0
+mini-project/domain/userService.go:22.2,22.56 1 0
+mini-project/domain/userService.go:19.16,21.3 1 0

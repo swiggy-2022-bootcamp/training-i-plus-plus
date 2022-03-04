@@ -1,7 +1,7 @@
 package domain
 
 type UserService interface {
-	CreateUser() (User, error)
+	CreateUser(string, string, string, string, string, string, Role) (User, error)
 	DeleteUserByUsername(string) (bool, error)
 }
 
@@ -22,10 +22,16 @@ func (s service) DeleteUserByUsername(username string) (bool, error) {
 	return s.userRepository.DeleteUserByUsername(username)
 }
 
+func NewUserService(userRepository UserRepository) UserService {
+	return &service{
+		userRepository: userRepository,
+	}
+}
+
 type UserRepository interface {
 	GetAllUsers() ([]*User, error)
-	FindByUsername(string) (User, error)
-	FindByEmail(string) (User, error)
+	FindByUsername(string) (*User, error)
+	FindByEmail(string) (*User, error)
 	Save(User) (User, error)
 	DeleteUserByUsername(string) (bool, error)
 }

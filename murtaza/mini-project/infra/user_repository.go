@@ -6,43 +6,43 @@ import (
 	"time"
 )
 
-type UserRepository struct {
+type userRepository struct {
 	db []*UserPersistedEntity
 }
 
-func (urdb UserRepository) GetAllUsers() []*domain.User {
+func (urdb userRepository) GetAllUsers() ([]*domain.User, error) {
 	res := []*domain.User{}
 	for _, u := range urdb.db {
 		res = append(res, u.toDomainEntity())
 	}
-	return res
+	return res, nil
 }
 
-func (urdb UserRepository) FindByUsername(username string) (*domain.User, error) {
-	for _, val := range urdb.GetAllUsers() {
+func (urdb userRepository) FindByUsername(username string) (*domain.User, error) {
+	for _, val := range urdb.db {
 		if username == val.Username() {
-			return val, nil
+			return val.toDomainEntity(), nil
 		}
 	}
 	return nil, fmt.Errorf("no users found")
 }
 
-func (urdb UserRepository) FindByEmail(email string) (*domain.User, error) {
-	for _, val := range urdb.GetAllUsers() {
+func (urdb userRepository) FindByEmail(email string) (*domain.User, error) {
+	for _, val := range urdb.db {
 		if email == val.Email() {
-			return val, nil
+			return val.toDomainEntity(), nil
 		}
 	}
 	return nil, fmt.Errorf("no users found")
 }
 
-func (urdb *UserRepository) Save(u domain.User) (domain.User, error) {
+func (urdb *userRepository) Save(u domain.User) (domain.User, error) {
 	userPersistedEntity := toPersistedEntity(u)
 	urdb.db = append(urdb.db, userPersistedEntity)
 	return u, nil
 }
 
-func (urdb *UserRepository) DeleteUserByUsername(username string) (bool, error) {
+func (urdb *userRepository) DeleteUserByUsername(username string) (bool, error) {
 	var pos int = -1
 	users := urdb.db
 	for i, v := range users {
@@ -67,5 +67,11 @@ func toPersistedEntity(u domain.User) *UserPersistedEntity {
 		role:      u.Role(),
 		createdAt: time.Now(),
 		updatedAt: time.Now(),
+	}
+}
+
+func NewUserRepository() domain.UserRepository {
+	return &userRepository{
+		db: []*UserPersistedEntity{},
 	}
 }
