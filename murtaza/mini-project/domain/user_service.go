@@ -11,7 +11,12 @@ type service struct {
 
 func (s service) CreateUser(firstName, lastName, username, phone, email, password string, role Role) (User, error) {
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
-	return s.userRepository.Save(*user)
+	persistedUser, err := s.userRepository.Save(*user)
+	if err != nil {
+		return User{}, err
+	}
+	user.SetId(persistedUser.Id())
+	return *user, nil
 }
 
 func (s service) DeleteUserByUsername(username string) (bool, error) {
@@ -26,12 +31,4 @@ func NewUserService(userRepository UserRepository) UserService {
 	return &service{
 		userRepository: userRepository,
 	}
-}
-
-type UserRepository interface {
-	GetAllUsers() ([]*User, error)
-	FindByUsername(string) (*User, error)
-	FindByEmail(string) (*User, error)
-	Save(User) (User, error)
-	DeleteUserByUsername(string) (bool, error)
 }

@@ -19,6 +19,10 @@ type UserPersistedEntity struct {
 }
 
 // ----- getters and setters --------
+func (u UserPersistedEntity) Id() int {
+	return u.id
+}
+
 func (u UserPersistedEntity) Email() string {
 	return u.email
 }
@@ -56,7 +60,9 @@ func (u *UserPersistedEntity) SetUpdatedAt(time time.Time) {
 }
 
 func (u UserPersistedEntity) toDomainEntity() *domain.User {
-	return domain.NewUser(u.firstName, u.lastName, u.username, u.phone, u.email, u.password, u.role)
+	domainUser := domain.NewUser(u.firstName, u.lastName, u.username, u.phone, u.email, u.password, u.role)
+	domainUser.SetId(u.Id())
+	return domainUser
 }
 
 func NewUserPersistedEntity(u domain.User) *UserPersistedEntity {

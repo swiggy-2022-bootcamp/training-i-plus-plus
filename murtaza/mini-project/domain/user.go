@@ -1,6 +1,8 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+)
 
 type Role int
 
@@ -32,6 +34,7 @@ func GetEnumByIndex(idx int) (Role, error) {
 }
 
 type User struct {
+	id        int
 	firstName string
 	lastName  string
 	username  string
@@ -42,6 +45,15 @@ type User struct {
 }
 
 // ----- getters and setters --------
+
+func (u User) Id() int {
+	return u.id
+}
+
+func (u *User) SetId(id int) {
+	u.id = id
+}
+
 func (u User) Email() string {
 	return u.email
 }
@@ -108,4 +120,12 @@ func NewUser(firstName, lastName, username, phone, email, password string, role 
 		password:  password,
 		role:      role,
 	}
+}
+
+type UserRepository interface {
+	GetAllUsers() ([]*User, error)
+	FindByUsername(string) (*User, error)
+	FindByEmail(string) (*User, error)
+	Save(User) (User, error)
+	DeleteUserByUsername(string) (bool, error)
 }
