@@ -28,6 +28,7 @@ func (doctor Doctor) printUserDetails(){
 }
 
 func main(){
+
 	//user registration
 	role:="generalUser"
 	if role == "doctor"{
@@ -39,10 +40,35 @@ func main(){
 	}else{
 		panic("The given role does not exists.")
 	}
+
+	// Add slots for a particular doctor
+	openSlotsForAppointments("Rakesh","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Rakesh","01-01-2022 16:00:00",500,false)
+	openSlotsForAppointments("Anant","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Chintan","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Shloka","01-01-2022 15:00:00",500,false)
+
+	//getAllSlots
+	service.GetAllSlots()
+
+	//book appointment by doctor name
+	service.BookAppointmentsByDoctorName("Rakesh")
+
+	//getAllOpenSlots
+	service.GetAllOpenSlots()
+
+	//book appointment by availability
+	service.BookAppointmentsByOpenSlots()
+
+	//getAllOpenSlots
+	service.GetAllOpenSlots()
+
+	//Waiting for all go routines to exit.
+	service.Wg.Wait()
+	fmt.Println("Program ended")
 }
 
 func registerDoctor(){
-
 	doctor:= Doctor{
 		Id : "1",
 		Category : "surgeon",
@@ -56,8 +82,7 @@ func registerDoctor(){
 			Address: "Mumbai",
 		},
 	}
-	doctor.printUserDetails()
-		
+	doctor.printUserDetails()		
 }
 
 func registerGeneralUser(){
@@ -92,6 +117,20 @@ func registerPatient(){
 			Address: "Mumbai",
 		},
 	}
-	patient.printUserDetails()
-		
+	patient.printUserDetails()		
 }
+
+func openSlotsForAppointments(doctorName , slot string, fees int, occupied bool){
+	
+	appointments := service.Appointments{
+		DoctorName : doctorName,
+		Slot	   : slot,
+		Fees	   : fees,
+		Occupied   : occupied,
+	}
+	newAppointments := []service.Appointments{}
+	newAppointments = append(newAppointments, appointments)
+	//fmt.Println(newAppointments)
+	service.AddSlots(doctorName,newAppointments)
+}
+
