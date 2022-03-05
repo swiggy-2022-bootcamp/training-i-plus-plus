@@ -21,3 +21,15 @@ func TestDemo(t *testing.T) {
 	assert.Equal(t, one, two, "the two variables should be the same value")
 
 }
+
+func TestDemo1(t *testing.T) {
+
+	one := "one"
+
+	two := "two"
+
+
+	assert.Equal(t, one, two, "the two variables should be the same value")
+
+}
+
