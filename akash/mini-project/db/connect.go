@@ -39,4 +39,4 @@ func Connect() {
 	Mongo = mongo
 }
 
-// docker run -d -p 2717:27017 -v /Users/aky/Dev/swiggy/training-i-plus-plus/akash/training/gin-demo/mongodb-docker:/data/db --name mymongo mongo:latest
+// docker run --rm -d -p 2717:27017 -v /Users/aky/Dev/swiggy/training-i-plus-plus/akash/training/gin-demo/mongodb-docker:/data/db --name mymongo mongo:latest
