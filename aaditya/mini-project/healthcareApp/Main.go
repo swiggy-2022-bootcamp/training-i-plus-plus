@@ -2,39 +2,14 @@ package main
 
 import (
 	"fmt"
+	"healthcareApp/model"
+	"healthcareApp/service"
 )
 
-type User struct{
-	id			string
-	name 		string
-	emailId 	string
-	age 		int
-	address		string 
-}
+type GeneralUser model.GeneralUser
+type Doctor model.Doctor
+type Patient model.Patient
 
-type Doctor struct{
-	id					string
-	User
-	category 			string
-	yoe 	 			float64
-	medicalLicenseLink	string
-}
-
-type GeneralUser struct{
-	id 					string
-	User
-	previousDiseases	string
-	isPatient			bool
-
-}
-
-type Patient struct {
-	id 					string
-	User
-	doctorAssignedId	string
-	isDischarged		bool
-	roomAllocated		string
-}
 
 type UserDetails interface{
 	printUserDetails()
@@ -53,8 +28,9 @@ func (doctor Doctor) printUserDetails(){
 }
 
 func main(){
+
 	//user registration
-	role:="doctor"
+	role:="generalUser"
 	if role == "doctor"{
 		registerDoctor()
 	}else if role == "generalUser"{
@@ -64,60 +40,97 @@ func main(){
 	}else{
 		panic("The given role does not exists.")
 	}
+
+	// Add slots for a particular doctor
+	openSlotsForAppointments("Rakesh","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Rakesh","01-01-2022 16:00:00",500,false)
+	openSlotsForAppointments("Anant","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Chintan","01-01-2022 15:00:00",500,false)
+	openSlotsForAppointments("Shloka","01-01-2022 15:00:00",500,false)
+
+	//getAllSlots
+	service.GetAllSlots()
+
+	//book appointment by doctor name
+	service.BookAppointmentsByDoctorName("Rakesh")
+
+	//getAllOpenSlots
+	service.GetAllOpenSlots()
+
+	//book appointment by availability
+	service.BookAppointmentsByOpenSlots()
+
+	//getAllOpenSlots
+	service.GetAllOpenSlots()
+
+	//Waiting for all go routines to exit.
+	service.Wg.Wait()
+	fmt.Println("Program ended")
 }
 
 func registerDoctor(){
-
 	doctor:= Doctor{
-		id : "1",
-		category : "surgeon",
-		yoe : 12,
-		medicalLicenseLink:  "amazon.s3.com/id",
-		User: User{
-			id: "1",
-			name : "Dr. Rakesh Adani",
-			emailId: "rakeshadani@gmail.com",
-			age : 43,
-			address: "Mumbai",
+		Id : "1",
+		Category : "surgeon",
+		Yoe : 12,
+		MedicalLicenseLink:  "amazon.s3.com/id",
+		User: model.User{
+			Id: "1",
+			Name : "Dr. Rakesh Adani",
+			EmailId: "rakeshadani@gmail.com",
+			Age : 43,
+			Address: "Mumbai",
 		},
 	}
-
-	doctor.printUserDetails()
-		
+	doctor.printUserDetails()		
 }
 
 func registerGeneralUser(){
 	generalUser := GeneralUser{
-		isPatient: false,
-		previousDiseases: "asthma",
-		id: "1",
-		User: User{
-			id: "1",
-			name : "Rakesh Adani",
-			emailId: "rakeshadani@gmail.com",
-			age : 27,
-			address: "Mumbai",
+		IsPatient: false,
+		PreviousDiseases: "typhoid",
+		Id: "1",
+		User: model.User{
+			Id: "1",
+			Name : "Stokes ",
+			EmailId: "johnsteve@gmail.com",
+			Age : 27,
+			Address: "England",
 		},
 	}
-	
+	obj := service.GeneralUser(generalUser)
+	obj.WriteDataToFile()
 	generalUser.printUserDetails()
 }
 
 func registerPatient(){
 	patient:= Patient{
-		id: "1",
-		doctorAssignedId: "1",
-		roomAllocated: "702E",
-		isDischarged: false,
-		User: User{
-			id: "1",
-			name : "Rakesh Adani",
-			emailId: "rakeshadani@gmail.com",
-			age : 27,
-			address: "Mumbai",
+		Id: "1",
+		DoctorAssignedId: "1",
+		RoomAllocated: "702E",
+		IsDischarged: false,
+		User: model.User{
+			Id: "1",
+			Name : "Rakesh Adani",
+			EmailId: "rakeshadani@gmail.com",
+			Age : 27,
+			Address: "Mumbai",
 		},
 	}
-	
-	patient.printUserDetails()
-		
+	patient.printUserDetails()		
 }
+
+func openSlotsForAppointments(doctorName , slot string, fees int, occupied bool){
+	
+	appointments := service.Appointments{
+		DoctorName : doctorName,
+		Slot	   : slot,
+		Fees	   : fees,
+		Occupied   : occupied,
+	}
+	newAppointments := []service.Appointments{}
+	newAppointments = append(newAppointments, appointments)
+	//fmt.Println(newAppointments)
+	service.AddSlots(doctorName,newAppointments)
+}
+
