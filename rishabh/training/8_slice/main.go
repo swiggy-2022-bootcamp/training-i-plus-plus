@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main(){
+func main() {
 	name := make([]string, 2)
 	name[0] = "Mr."
 	name[1] = "Rishabh"
@@ -10,7 +10,6 @@ func main(){
 	name = append(name, "Mishra")
 
 	fmt.Println("Slice is ", name)
-	
 
 	salutation := name[:1]
 	actualName := name[1:]
@@ -19,8 +18,7 @@ func main(){
 	fmt.Println("Actual Name", actualName)
 
 	cpyName := make([]string, len(name))
-	copy(cpyName,name)
-	
-	
+	copy(cpyName, name)
+
 	fmt.Println("Copyied Slice is ", cpyName)
 }
