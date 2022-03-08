@@ -4,6 +4,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/pswaldia/ecommerce-ms/controllers"
+	"github.com/pswaldia/ecommerce-ms/database"
+	"github.com/pswaldia/ecommerce-ms/middleware"
 )
 
 func main() {
