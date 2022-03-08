@@ -1,0 +1,72 @@
+DynamoDB lets you offload the administrative burdens of operating and scaling a distributed 
+database so that you don't have to worry about hardware provisioning, setup and configuration,
+ replication, software patching, or cluster scaling. 
+ 
+ DynamoDB also offers encryption at rest, which eliminates the operational burden and 
+ complexity involved in protecting sensitive data.
+
+
+Configuring DynamoDB Locally:
+=============================
+  
+ Step1: docker pull amazon/dynamodb-local
+
+ Step2: Image should be running at port 8000
+         sudo docker run -p 8000:8000 amazon/dynamodb-local
+
+ step3: create new file: DynomoDB/docker-compose-dynamodb-local.yaml
+        with following details:
+
+        version: '3'
+	services:
+	  dynamodb:
+	    image: amazon/dynamodb-local
+	    hostname: dynamodb-local
+	    container_name: dynamodb-local
+	    ports:
+	      - "8042:8000"
+
+ step4: docker-compose -f docker-compose-dynamodb-local.yaml up -d
+
+ step5: configure aws console in terminal  :
+                            sudo apt-get install awscli
+
+ step6:                    aws configire
+                               
+			   Access key ID :     aws-IAM-user
+                           Secret access key :  aws-IAM-user
+			   Region : 
+			   Output format : text
+
+
+  STEP6: TO CREATE A NEW TABLE:
+                              aws dynamodb --endpoint-url http://localhost:8042 create-table --table-name demo-customer-info --
+                              attribute-definitions AttributeName=customerId,AttributeType=S --key-schema 
+                              AttributeName=customerId,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+
+  STEP7:List Tables:         aws dynamodb list-tables --endpoint-url http://localhost:8042
+
+  STEP8: Adding Record:
+ 			     aws dynamodb put-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --item    
+                                  '{"customerId":{"S":"1111"},"email":{"S":"john@gmail.com"}}'
+
+  STEP9: Updating Record:
+			     aws dynamodb update-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --key '{"customerId":{"S":"1111"}}' --update-expression 'SET #email= :newEmail' --expression-attribute-names '{"#email":"email"}' --expression-attribute-values '{":newEmail":{"S":"jimmy@gmail.com"}}'
+
+  STEP10: DELETE RECORD
+				aws dynamodb delete-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --key   
+                               '{"customerId":{"S":"1111"}}' --return-values ALL_OLD
+
+   STEP11: TO LIST ALL RECORDS:
+
+	                       aws dynamodb scan --endpoint-url http://localhost:8042 --table-name demo-customer-info 
+
+
+
+
+
+
+ 
+    
+
+

@@ -16,3 +16,6 @@
 
 #Mac OS created file
 .DS_Store
+
+# Local MongoDB file for Docker image
+*/gin-demo/mongodb-docker/*
