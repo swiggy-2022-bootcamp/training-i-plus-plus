@@ -26,7 +26,7 @@ func main() {
 
 	routes.TrainRoutes(router)
 	routes.TicketRoutes(router)
-	routes.TicketRoutes(router)
+	routes.SeatRoutes(router)
 
 	router.Run(":" + port)
 }
