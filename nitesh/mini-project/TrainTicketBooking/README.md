@@ -49,11 +49,19 @@ Project maintained at - https://github.com/nitesh585/TrainTicketBooking
 - pay for the tickets
 - cancel pay anytime before
 
-## Supported APIs:
+## Concepts/Topic covered:
+- gin-gonic/gin framework
+- JWT integration
+- Introducing middlewares
+- Added Unit test (table-driven)
+- MondoDb integration
 
+## Supported APIs:
 - /user/signup
 - /user/login
+- /train/searchRoute
 
 ## Working
-
-- /train/searchRoute
+- integration of docker build
+- integrated payment feature 
+- logout 
