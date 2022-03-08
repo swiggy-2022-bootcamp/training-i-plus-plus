@@ -1,4 +1,7 @@
-int main() {
-	printt("hi");
-	print("This is another line");
+package main
+
+import "fmt"
+
+func main() {
+	fmt.Println("Hello World")
 }

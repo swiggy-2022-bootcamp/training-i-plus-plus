@@ -1,0 +1,65 @@
+{"_comments": "user account"}
+
+{
+    "title": "Account",
+    "type": "object",
+    "properties": {
+        "userId": {
+            "type": "integer",
+            "description": "Unique id of a account."
+        },
+        "email":{
+            "type": "string",
+            "description": "The user's email id."
+        },
+        "password":{
+            "type":"string",
+            "description" : "Password for users to login and sign-up."
+        },
+        "members" : {
+            "type":"array(member)",
+            "description" : "list of members under this profile",
+            "properties" : {
+                "name" : {
+                    "type":"string",
+                    "description" : "name of member."
+                },
+                "reports" : {
+                    "type" : "array(report)",
+                    "properties" : {
+                        "report_name" : {
+                            "type" : "string",
+                            "description" : "name of report"
+                        },
+                        "report_file" : {
+                            "type" : "file/binary",
+                            "description" : "report file"
+                        }
+                    }
+                },
+                "appointments" : {
+                    "type" : "array(appointment)",
+                    "properties" : {
+                        "appointment_id" : {
+                            "type" : "integer",
+                            "description" : "id of appointment"
+                        },
+                        "doctor_id" : {
+                            "type" : "integer",
+                            "description" : "id of doctor"
+                        },
+                        "from" : {
+                            "type" : "datetime",
+                            "description" : "start time of appointment"
+                        },
+                        "to" : {
+                            "type" : "datetime",
+                            "description" : "end time of appointment"
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+}
