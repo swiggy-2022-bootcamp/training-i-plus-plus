@@ -18,6 +18,20 @@ type AppointmentsAvailable []Appointments
 
 var AppointmentsMappedByDoctorName map[string]AppointmentsAvailable
 
+func OpenSlotsForAppointments(doctorName , slot string, fees int, occupied bool){
+	
+	appointments := Appointments{
+		DoctorName : doctorName,
+		Slot	   : slot,
+		Fees	   : fees,
+		Occupied   : occupied,
+	}
+	newAppointments := []Appointments{}
+	newAppointments = append(newAppointments, appointments)
+	//fmt.Println(newAppointments)
+	AddSlots(doctorName,newAppointments)
+}
+
 func AddSlots(doctorName string, openedSlots AppointmentsAvailable){
 	if AppointmentsMappedByDoctorName == nil {
 		AppointmentsMappedByDoctorName = make(map[string]AppointmentsAvailable)
