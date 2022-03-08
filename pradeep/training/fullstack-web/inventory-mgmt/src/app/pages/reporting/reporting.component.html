@@ -1,0 +1,37 @@
+<div class='card'>
+    <div class='card-header title'>
+        {{pageTitle}}
+    </div>
+
+
+
+
+
+
+
+
+
+
+    <form novalidate (ngSubmit)="onSubmit(reportParamsFg)" [formGroup]="reportParamsFg" >
+        <fieldset class="reporting-params-form">
+          <mat-form-field class="full-width mat-icon-left">
+            <input [formControl]="productFilter" matInput type="text" name="productFilter" id="productFilter"
+                   (focus)="focusFunction()" placeholder="Product Filter">
+          </mat-form-field>
+          <mat-form-field class="full-width mat-icon-left">
+            <input [formControl]="manufacturerFilter" matInput type="text" name="manufacturerFilter"
+                   id="manufacturerFilter" (focus)="focusFunction()" placeholder="Manufacturer Filter">
+          </mat-form-field>
+          <mat-form-field class="full-width mat-icon-left">
+            <input [formControl]="skuFilter" matInput type="text" name="skuFilter"
+                   id="skuFilter" (focus)="focusFunction()" placeholder="SKU Filter">
+          </mat-form-field>
+          
+          <div class="button-bar">
+            <button class="btn btn-secondary grow" (click)="cancel()"><i class="fa fa-backspace"></i>Cancel</button>
+            <button class="btn btn-primary grow" type="submit"><i class="fa fa-chart-bar"></i>Generate Report</button>
+          </div>
+          
+        </fieldset>
+      </form>
+</div>

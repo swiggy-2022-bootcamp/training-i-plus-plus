@@ -1,0 +1,11 @@
+@import  '../../styles.scss';
+
+.example-container {
+    width: 200px;
+    position: absolute;
+    background-color: $second-color;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
