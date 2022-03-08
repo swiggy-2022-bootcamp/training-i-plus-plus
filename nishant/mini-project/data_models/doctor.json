@@ -1,0 +1,79 @@
+{"_comments": "doctor"}
+{
+    "title": "Doctor",
+    "type": "object",
+    "properties": {
+        "doctorLicenseNo": {
+            "type": "integer",
+            "description": "Unique License of a doctor."
+        },
+        "email":{
+            "type": "string",
+            "description": "The doctor's email id."
+        },
+        "password":{
+            "type":"string",
+            "description" : "Password for doctor to login and sign-up."
+        },
+        "specialities":{
+            "type":"array(Speciality)",
+            "description" : "List of all the areas the doctor specializes in."
+        },
+        "avg_rating" : {
+            "type": "integer",
+            "description": "Average rating of doctor out of 5."
+        },
+        {
+            "avalibilities" : {
+                "type" : "array(avalibility)",
+                "description" : "Avalable timings of doctor for appointment (day by day bases).",
+                "properties" : {
+                    "day" : {
+                        "type" : "one of mon,tue.wed.thrus,fri,sat,all,5Days",
+                        "description" : "day/s of week doctor is avalable"
+                    },
+                    "from" : {
+                        "type" : "time"
+                    },
+                    "to" : {
+                        "type" : "time"
+                    }
+                }
+            }
+        },
+        "ratings" : {
+            "description": "User rating given to doctor.",
+            "properties" : {
+                "user" : {
+                    "type" : "UserId",
+                    "description" : "Id of user who gave the rating."
+                },
+                "score" : {
+                    "type" : "int",
+                    "description" : "rating out of 5 given by the user."
+                },
+                "comment" : {
+                    "type" : "string",
+                    "description" : "comment given by the user"
+                },
+            }
+        }
+	}
+}
+
+
+{"_comments": "Speciality"}
+{
+    "title": "Speciality",
+    "properties": {
+        "id": {
+            "type": "int",
+            "description": "unique auto-generated id of speciality"
+        },
+        "name": {
+            "type": "string",
+            "description": "name of speciality."
+        }
+    }
+}
+
