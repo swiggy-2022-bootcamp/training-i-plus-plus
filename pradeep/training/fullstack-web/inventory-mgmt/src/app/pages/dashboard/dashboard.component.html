@@ -1,0 +1,44 @@
+<div class='card'>
+    <div class='card-header title'>
+        {{pageTitle}}
+    </div>
+    <div class='card-body'>
+        <h1 *ngIf='!topProducts || !topProducts.length'>Loading...</h1>
+        <div  class='table-responsive'>
+            <table class='table'>
+                <thead>
+                    <tr>
+                        <th>
+                            Priority
+                        </th>
+                        <th>
+                            SKU
+                        </th>
+                        <th>
+                            Name
+                        </th>
+                        <th>
+                            Quantity On Hand
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let prod of topProducts; let i = index" class="mat-row"> 
+                        <td>
+                            {{i+1}}
+                        </td>
+                        <td>
+                            {{prod.sku}}
+                        </td>
+                        <td>
+                            {{prod.productName}}
+                        </td>
+                        <td>
+                            {{prod.quantityOnHand}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

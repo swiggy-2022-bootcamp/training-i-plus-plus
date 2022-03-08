@@ -1,0 +1,40 @@
+<div class='card'>
+  <div class='card-header title'>
+    {{pageTitle}}
+</div>
+<form novalidate (ngSubmit)="onSubmit(productFg)" [formGroup]="productFg" >
+    <fieldset class="product-details-form">
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="productName" required matInput type="text" name="productName" id="productName"
+               (focus)="focusFunction()" placeholder="Product Name">
+      </mat-form-field>
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="manufacturer" required matInput type="text" name="manufacturer"
+               id="manufacturer" (focus)="focusFunction()" placeholder="Manufacturer">
+      </mat-form-field>
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="sku" required matInput type="text" name="sku"
+               id="sku" (focus)="focusFunction()" placeholder="SKU">
+      </mat-form-field>
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="upc" required matInput type="text" name="UPC"
+               id="upc" (focus)="focusFunction()" placeholder="upc">
+      </mat-form-field>
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="pricePerUnit" required matInput type="text" name="pricePerUnit"
+               id="pricePerUnit" (blur)="formatCurrency($event)" (focus)="focusFunction()" placeholder="Unit Price">
+      </mat-form-field>
+      <mat-form-field class="full-width mat-icon-left">
+        <input [formControl]="quantityOnHand" required matInput type="number" name="quantityOnHand"
+               id="quantityOnHand" (focus)="focusFunction()" placeholder="Quantity On Hand">
+      </mat-form-field>
+      <div class="button-bar">
+        <button class="btn btn-secondary grow" (click)="cancel()"><i class="fa fa-backspace"></i>Cancel</button>
+        <button class="btn btn-primary grow" type="submit"><i *ngIf="isNew" class="fa fa-plus"></i> {{isNew ? 'Create' : 'Update'}}</button>
+        <button *ngIf="!isNew" class="btn btn-danger grow" (click)="delete()"><i class="fa fa-trash"></i> Delete</button>
+      </div>
+      
+    </fieldset>
+  </form>
+  
+</div>

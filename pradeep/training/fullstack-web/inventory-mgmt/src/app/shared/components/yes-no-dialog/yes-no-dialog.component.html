@@ -1,0 +1,5 @@
+<div mat-dialog-content style="padding-bottom: 20px;">{{dialogPromptMessage}}</div>
+<div mat-dialog-actions>
+  <button mat-button (click)="dialogRef.close('yes')">{{yesMessage}}</button>
+  <button mat-button (click)="dialogRef.close('cancel')">{{cancelMessage}}</button>
+</div>

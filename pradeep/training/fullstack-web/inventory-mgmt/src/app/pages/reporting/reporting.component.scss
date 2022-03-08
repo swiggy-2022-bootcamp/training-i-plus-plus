@@ -1,0 +1,12 @@
+@import  '../../../styles.scss';
+
+form {
+    width: 50%;
+    margin: auto;
+    margin-top: 1rem;
+}
+
+.reporting-params-form{
+    display: flex;
+    flex-direction: column;
+}

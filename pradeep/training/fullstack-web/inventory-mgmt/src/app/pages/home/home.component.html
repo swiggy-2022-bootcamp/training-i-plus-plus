@@ -1,0 +1,38 @@
+<div class="main">
+    <div class="centered flex-container">
+
+        <div class="card grow" style="width: 18rem;">
+            <a [routerLink]="['/dashboard']">
+                <div class="card-body">
+                    <h5 class="card-title">Dashboard</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Realtime inventory monitoring</h6>
+                </div>
+            </a>
+        </div>
+        <div class="card grow" style="width: 18rem;">
+            <a [routerLink]="['/products']">
+                <div class="card-body">
+                    <h5 class="card-title">Manage Inventory</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">View & Update Inventory</h6>
+                </div>
+            </a>
+        </div>
+        <div class="card grow" style="width: 18rem;">
+            <a [routerLink]="['/receipts']">
+                <div class="card-body">
+                    <h5 class="card-title">Receipts</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Upload receipts</h6>
+                </div>
+            </a>
+        </div>
+
+        <div class="card grow" style="width: 18rem;">
+            <a [routerLink]="['/reporting']">
+                <div class="card-body">
+                    <h5 class="card-title">Reporting</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">Generate reports from inventory data</h6>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
