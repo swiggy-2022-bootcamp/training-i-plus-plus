@@ -1,0 +1,36 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~font-awesome/css/font-awesome.min.css";
+
+$main-color: #1b526d;
+$second-color: #6a7d87;
+$light-text-color: #9bafba;
+$dark-text-color: #28343b;
+
+
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.grow:hover
+{
+        -webkit-transform: scale(1.2);
+        -ms-transform: scale(1.2);
+        transform: scale(1.2);
+        transition:all 0.3s ease;
+}
+
+.title {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.button-bar{
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    button{
+        margin: 1rem;
+    }
+}

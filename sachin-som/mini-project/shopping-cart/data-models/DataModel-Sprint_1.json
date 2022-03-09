@@ -1,0 +1,75 @@
+{"_comments": "customer"}
+{
+    "title": "customer",
+    "type": "object",
+    "properties": {
+        "customerId": {
+            "type": "integer",
+            "description": "Unique Identification for customer."
+        },
+        "customerName": {
+            "type": "string",
+            "description": "Customer's Full Name."
+        },
+        "customerEmail": {
+            "type": "string",
+            "description": "Unique Email Address of customer."
+        },
+        "password": {
+            "type": "string",
+            "description": "Password for customer to login and signup."
+        },
+        "createdAt": {
+            "type": "string(datetime)",
+            "description": "Customer creation time in data-time format."
+        },
+    }
+}
+
+{"_comments": "location"}
+{"_wallet": "wallet"}
+{"_comments": "seller"}
+{"_comments": "inventor"}
+{"_comments": "cart"}
+
+
+
+{"_comments": "product"}
+{
+    "title": "product",
+    "type":"object",
+    "properties": {
+        "productId": {
+            "type": "integer",
+            "description": "Unique Identification of a product."
+        },
+        "productTag": {
+            "type": "string",
+            "description": "Tag to represent product type or category."
+        },
+        "basePrice": {
+            "type": "double",
+            "description": "Base price of the product."
+        },
+        "availableQuantity": {
+            "type": "integer",
+            "descriptio": "Available quantity of the product."
+        },
+        "initialQuantity": {
+            "type": "integer",
+            "description": "Quantity of the product."
+        },
+        "remainingQuantity": {
+            "type": "integer",
+            "description": "Remaining Quantity of the product."
+        },
+        "isAvailable": {
+            "type": "boolean",
+            "description": "Is product available in stock."
+        },
+        "sellerId": {
+            "type": "seller.sellerId",
+            "description": "SellerId of the seller who want to sell the product."
+        }
+    }
+}
