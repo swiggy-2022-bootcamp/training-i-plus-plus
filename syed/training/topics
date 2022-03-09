@@ -1,0 +1,131 @@
+Mocking:
+       Introduction:
+       -------------
+       Unit testing in Go or unit testing in general, 
+       is simply the testing of a unit in our code .
+       
+       Mocking is a process used in unit testing when the unit being tested has external dependencies.
+        The purpose of mocking is to isolate and focus on the code being tested 
+        and not on the behaviour or state of external dependencies.
+
+         In mocking, the dependencies are replaced by closely controlled replacements objects 
+         that simulate the behaviour of the real ones.
+         
+         The replacement objects can be of three types : Fakes,Stubs and Mocks.
+
+        A Fake is an object that will replace the actual code by implementing the same 
+        interface but without interacting with other objects.
+        Usually the Fake is hard-coded to return fixed results.
+
+        A Stub is an object that will return a specific result based on a specific set of inputs
+         and usually won’t respond to anything outside of what is programmed for the test.
+
+        A Mock is a much more sophisticated version of a Stub. It will still return values 
+        like a Stub, but it can also be programmed with expectations
+         in terms of how many times each method should be called,
+          in which order and with what data.
+
+       Overview of common GoMocking frameworks: GoMock,Gohttptest,Testify:
+       -------------------------------------------------------------------
+
+       Generating Stub with gomock:
+       ----------------------------
+
+
+       go get github.com/golang/mock/gomock 
+       go get github.com/golang/mock/mockgen
+
+       $GOPATH/bin/mockgen  <- confirm mockgen library install is success
+
+       go get github.com/sgreben/testing-with-gomock/mocks
+       go get github.com/sgreben/testing-with-gomock/user
+
+       within go-mocking folder:
+       
+       mockgen -destination=mocks/mock_doer.go -package=mocks 
+       github.com/sgreben/testing-with-gomock/doer Doer
+
+       go test -v github.com/sgreben/testing-with-gomock/user
+
+
+
+
+		Understanding Go Routines:
+
+                Channels:
+
+                Channel Implementation:
+
+                Blocking channels 	:
+
+                blocking channels,
+
+                receiving messages:
+
+                repeatning routines:
+
+                sleeping a routine:
+
+
+
+
+
+		function routine,
+                Channel Gotcha's,
+                channels and GoRoutines,
+                working with multiple channels and communicating between them
+
+========================================================================================================================================
+		Reviewing Gang of Four Patterns:
+		List key Behavioural:
+		Creational and Structural patterns Overview:
+
+
+
+
+		Micro Services : gRPCs
+
+
+    			Module1 -> 8001   ----> DB1
+            8080        Module2 -> 8002   ----> DB2
+			Module3 -> 8003   ----> DB3
+
+
+
+
+
+  					c1 ---> 200000  ---->                     100000
+                                                   if(CB > TA ){
+							// logic to transfer 
+						   }else{
+							cb = cb + 100000  //service or thread
+							notify(); //credit completed
+						   }
+							
+    					c2 ---> 100000  ---->                      200000
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,0 +1,41 @@
+<div class='card'>
+    <div class='card-header title'>
+        {{pageTitle}}
+    </div>
+        <div class="upload-box">
+        <button mat-button (click)="uploadClick()"><mat-icon>cloud_upload</mat-icon> Upload New Reciept</button>
+        <input type="file" #uploader id="uploader" name="uploader" style="display:none;"/>
+    </div>
+
+    <div class='card-body'>
+        <h1 *ngIf='!sortedData || !sortedData.length'>Loading...</h1>
+        <div  class='table-responsive'>
+            <table matSort (matSortChange)="sortData($event)" class='table'>
+                <thead>
+                    <tr>
+                        <th mat-sort-header="name">
+                            File Name
+                        </th>
+                        <th mat-sort-header="uploadDate">
+                            Upload Date
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr (click)="downloadReciept(rcpt)" *ngFor="let rcpt of sortedData" class="mat-row">
+                        <td>
+                            {{rcpt.name}}
+                        </td>
+                        <td>
+                            {{rcpt.uploadDate}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+
+
+</div>

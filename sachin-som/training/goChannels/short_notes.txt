@@ -1,0 +1,44 @@
+Channels
+========
+
+Channels are first class objects:
+---------------------------------
+They can be stored in variables, passed as arguments to functions,
+returned from functions and sent themselves over channels. Moreover they are typed, allowing the
+type system to catch programming errors like trying to send a pointer over a channel of integers.
+
+
+Blocking Channels:
+-----------------
+1) By default, communication is synchronous and unbuffered.
+
+2) A send operation on a channel (and the goroutine or function that contains it) blocks until
+a receiver is available for the same channel.
+
+3) A receive operation for a channel blocks (and the goroutine or function that contains it)
+until a sender is available for the same channel.
+
+
+Deadlock Condition:
+-------------------
+It is even possible that the two sides block each other, creating what is called a deadlock situation.
+The Go runtime will detect this and panic, stopping the program. A deadlock is almost always
+caused by bad program design.
+
+
+Buffered Channels
+-----------------
+We can provide 'buffer' to a channels, buffers is the number of elements that the buffer can hold.
+Now, the buffer will not block untill the channels reaches it's max buffer capacity,
+and reading from a buffered channel will not block unless the buffer is empty.
+
+ch := make(chan type, value)
+            if value == 0, ch ===> synchronous and non-buffered
+            if value > 0, ch ===> asynchronous and buffered
+
+
+Select
+------
+A common approach used to let the main program block indefinitely while other goroutines run is to
+place select {} as the last statement in a main function.
+but this can also be done using semaphore pattern.

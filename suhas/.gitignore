@@ -15,3 +15,7 @@
 # vendor/
 
 .Dstore
+
+*.sum
+*.json
+*.log
