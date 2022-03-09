@@ -1,0 +1,59 @@
+<div class='card'>
+    <div class='card-header title'>
+        {{pageTitle}}
+    </div>
+    <div class="button-bar">
+        <button class="btn btn-primary grow" (click)="createNew()"><i class="fa fa-plus"></i> Add</button>
+    </div>
+    <div class='card-body'>
+        <h1 *ngIf='!sortedData || !sortedData.length'>Loading...</h1>
+        <div  class='table-responsive'>
+            <table matSort (matSortChange)="sortData($event)" class='table'>
+                <thead>
+                    <tr>
+                        <th mat-sort-header="sku">
+                            SKU
+                        </th>
+                        <th mat-sort-header="upc">
+                            UPC Code
+                        </th>
+                        <th mat-sort-header="name">
+                            Name
+                        </th>
+                        <th mat-sort-header="manufacturer">
+                            Manufacturer
+                        </th>
+                        <th mat-sort-header="price">
+                            Price Per Unit
+                        </th>
+                        <th mat-sort-header="onHand">
+                            Quantity On Hand
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr (click)="navigateToProduct(prod)" *ngFor="let prod of sortedData" class="mat-row"> 
+                        <td>
+                            {{prod.sku}}
+                        </td>
+                        <td>
+                            {{prod.upc}}
+                        </td>
+                        <td>
+                            {{prod.productName}}
+                        </td>
+                        <td>
+                            {{prod.manufacturer}}
+                        </td>
+                        <td>
+                            {{prod.pricePerUnit}}
+                        </td>
+                        <td>
+                            {{prod.quantityOnHand}}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

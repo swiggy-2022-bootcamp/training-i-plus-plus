@@ -1,0 +1,13 @@
+@import  '../../../../styles.scss';
+
+  table{
+      width: 100%;
+      height: 100%;
+      margin-top: .5em;
+  }
+  
+  .mat-row:hover {
+    cursor: pointer;
+    background-color: $main-color;
+    color: $light-text-color;
+  }
