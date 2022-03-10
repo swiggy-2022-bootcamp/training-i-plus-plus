@@ -1,0 +1,3 @@
+docker pull amazon/dynamodb-local
+Image should be running on port 8000
+sudo docker -p 8000:8001 amazon/dynamodb-local.yml
