@@ -1,4 +1,4 @@
-module shopping-app
+module sonar-test
 
 go 1.17
 
