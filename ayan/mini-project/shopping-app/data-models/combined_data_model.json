@@ -1,0 +1,176 @@
+{"_comments" : "user"}
+{
+    "title" : "User",
+    "type" : "object",
+    "properties" : {
+        "userId" : {
+            "type" : "integer",
+            "description" : "Unique Identification for User."
+        },
+        "email" : {
+            "type" : "string",
+            "description" : "The User's email id."
+        },
+        "password" : {
+            "type" : "string",
+            "description" : "Password for User to login and sign-up."
+        },
+        "name" : {
+            "type" : "string",
+            "description": "The User's name."
+        },
+        "address" : {
+            "type" : "string",
+            "description" : "The User's delivery address."
+        },
+        "zipcode" : {
+            "type" : "integer",
+            "description" : "The User's address zipcode."
+        },
+        "mobileNo" : {
+            "type" : "string",
+            "description" : "The User's Mobile No."
+        },
+        "role" : {
+            "type" : "string",
+            "description" : "The User's role (buyer / seller)."
+        },
+        "createdAt" : {
+            "type" : "time",
+            "description" : "The timestamp when the User was created."
+        },
+        "updatedAt" : {
+            "type" : "time",
+            "description" : "The timestamp when the User was updated."
+        }
+	}
+}
+
+
+{"_comments" : "product"}
+{
+    "title" : "Product",
+    "type" : "object",
+    "properties" : {
+        "productId" : {
+            "type" : "integer",
+            "description" : "Unique Identification for Product."
+        },
+        "sellerId" : {
+            "type" : "string",
+            "description" : "The Id of the seller selling the product."
+        },
+        "title" : {
+            "type" : "string",
+            "description" : "Title of the product."
+        },
+        "category" : {
+            "type" : "string",
+            "description": "Category of the product."
+        },
+        "price" : {
+            "type" : "float",
+            "description" : "Cost of the product."
+        },
+        "discountFactor" : {
+            "type" : "float",
+            "description" : "The current discount on the product."
+        },
+        "bestBefore" : {
+            "type" : "string",
+            "description" : "The expiry date/duration of the product."
+        },
+        "availableQuantity" : {
+            "type" : "integer",
+            "description" : "The available quantity of the product."
+        },
+        "minOrderQuantity" : {
+            "type" : "integer",
+            "description" : "The minimum order quantity of the product."
+        },
+        "maxOrderQuantity" : {
+            "type" : "integer",
+            "description" : "The maximum order quantity of the product."
+        },
+        "createdAt" : {
+            "type" : "time",
+            "description" : "The timestamp when the Product was created."
+        },
+        "updatedAt" : {
+            "type" : "time",
+            "description" : "The timestamp when the Product was updated."
+        }
+	}
+}
+
+
+{"_comments" : "orders"}
+// TODO
+
+
+
+EXAMPLE:
+
+user: {
+    {
+        "userId" : 1,
+        "email" : "ayan59dutta@gmail.com",
+        "password" : "jls65hv4+uhsri78ey8[w0ru479y688",
+        "name" : "Ayan Dutta",
+        "address" : "1/2, ABC Lane, Howrah",
+        "zipcode" : 711102,
+        "mobileNo" : "9874563210",
+        "role" : "buyer",
+        "createdAt" : "08-03-2022 20:58",
+        "updatedAt" : "08-03-2022 20:58"
+    },
+    {
+        "userId" : 2,
+        "email" : "ayan95dutta@gmail.com",
+        "password" : "jls65hv4+uhsri78ey8[w0ru479y688",
+        "name" : "Ayan Dutta",
+        "address" : "1/2, ABC Lane, Howrah",
+        "zipcode" : 711102,
+        "mobileNo" : "9874563210",
+        "role" : "seller",
+        "createdAt" : "08-03-2022 20:58",
+        "updatedAt" : "08-03-2022 20:58"
+    },
+    .
+    .
+    .
+}
+
+product: {
+    {
+        "productId" : 1,
+        "sellerId" : 1,
+        "title" : "Kitkat",
+        "category" : "Chocolates",
+        "price" : 20,
+        "discountFactor" : 0.1,
+        "bestBefore" : "6 months",
+        "availableQuantity" : 200,
+        "minOrderQuantity" : 2,
+        "maxOrderQuantity" : 50,
+        "createdAt" : "08-03-2022 20:58",
+        "updatedAt" : "08-03-2022 20:58"
+    },
+    {
+        "productId" : 2,
+        "sellerId" : 1,
+        "title" : "Lays Onion",
+        "category" : "Snacks",
+        "price" : 20,
+        "discountFactor" : 0.1,
+        "bestBefore" : "6 months",
+        "availableQuantity" : 200,
+        "minOrderQuantity" : 2,
+        "maxOrderQuantity" : 50,
+        "createdAt" : "08-03-2022 20:58",
+        "updatedAt" : "08-03-2022 20:58"
+    },
+    .
+    .
+    .
+}

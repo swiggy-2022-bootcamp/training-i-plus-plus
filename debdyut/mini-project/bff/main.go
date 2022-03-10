@@ -1,18 +1,49 @@
 package main
 
 import (
-	"log"
 	"net/http"
+	"os"
 
+	"mini-project/bff/config"
 	"mini-project/bff/service"
 	"mini-project/bff/transport"
 
+	"github.com/go-kit/kit/log"
+
 	httptransport "github.com/go-kit/kit/transport/http"
+
+	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
+	stdprometheus "github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
+	logger := log.NewLogfmtLogger(os.Stderr)
+
+	fieldKeys := []string{"method", "error"}
+	requestCount := kitprometheus.NewCounterFrom(stdprometheus.CounterOpts{
+		Namespace: "my_group",
+		Subsystem: "station_service",
+		Name:      "request_count",
+		Help:      "Number of requests received.",
+	}, fieldKeys)
+	requestLatency := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+		Namespace: "my_group",
+		Subsystem: "station_service",
+		Name:      "request_latency_microseconds",
+		Help:      "Total duration of requests in microseconds.",
+	}, fieldKeys)
+	countResult := kitprometheus.NewSummaryFrom(stdprometheus.SummaryOpts{
+		Namespace: "my_group",
+		Subsystem: "station_service",
+		Name:      "count_result",
+		Help:      "The result of each count method.",
+	}, []string{}) // no fields here
+
 	var svc service.StationService
 	svc = service.StationServiceImpl{}
+	svc = config.LoggingMiddleware{logger, svc}
+	svc = config.InstrumentingMiddleware{requestCount, requestLatency, countResult, svc}
 
 	addStationHandler := httptransport.NewServer(
 		transport.MakeAddStationEndpoint(svc),
@@ -42,5 +73,7 @@ func main() {
 	http.Handle("/updateStation", updateStationHandler)
 	http.Handle("/retrieveStation", retrieveStationHandler)
 	http.Handle("/deleteStation", deleteStationHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	http.Handle("/metrics", promhttp.Handler())
+	logger.Log("msg", "HTTP", "addr", ":8080")
+	logger.Log("err", http.ListenAndServe(":8080", nil))
 }
