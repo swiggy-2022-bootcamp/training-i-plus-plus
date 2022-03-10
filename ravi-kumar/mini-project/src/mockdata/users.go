@@ -1,6 +1,7 @@
 package mockdata
 
 type User struct {
+	UserId   int
 	Fullname string
 	UserName string
 	Password string
@@ -10,12 +11,14 @@ type User struct {
 func GetAllUsers() []User {
 	var allUsers = []User{
 		{
+			UserId:   1,
 			Fullname: "Ravi Kumar",
 			UserName: "ravi",
 			Password: "Password",
 			Address:  "Bangalore",
 		},
 		{
+			UserId:   2,
 			Fullname: "Ajay",
 			UserName: "ajay99",
 			Password: "Password",

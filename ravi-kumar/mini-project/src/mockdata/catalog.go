@@ -3,6 +3,7 @@ package mockdata
 //import ("fmt")
 
 type Product struct {
+	Id          int
 	Name        string
 	Price       int
 	Description string
@@ -15,6 +16,7 @@ type Product struct {
 func GetProductCatalog() []Product {
 	var catalog = []Product{
 		{
+			Id:          1,
 			Name:        "Keyboard",
 			Price:       700,
 			Description: "Mechanical Keyboard",
@@ -23,6 +25,7 @@ func GetProductCatalog() []Product {
 			Review:      []string{"Great product", "Worth the money"},
 		},
 		{
+			Id:          2,
 			Name:        "Fan",
 			Price:       1700,
 			Description: "Cooler Fan",
@@ -31,6 +34,7 @@ func GetProductCatalog() []Product {
 			Review:      []string{"Average rotation cycles", "Not worth the amount"},
 		},
 		{
+			Id:          3,
 			Name:        "Shoes",
 			Price:       3700,
 			Description: "Running shoes",
@@ -39,6 +43,7 @@ func GetProductCatalog() []Product {
 			Review:      []string{"Great product", "Worth the money"},
 		},
 		{
+			Id:          4,
 			Name:        "Jeans Pant",
 			Price:       1300,
 			Description: "Pant for Men",
