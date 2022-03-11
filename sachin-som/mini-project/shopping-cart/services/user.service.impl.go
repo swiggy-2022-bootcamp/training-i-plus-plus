@@ -84,7 +84,7 @@ func (u *UserServiceImplementation) UpdateUser(user *models.User) error {
 		},
 	}
 	result, _ := u.userCollection.UpdateOne(u.ctx, filterQuery, updateQuery)
-	if result.MatchedCount != 1 {
+	if result != nil && result.MatchedCount != 1 {
 		return errors.New("no matched document found for update.")
 	}
 	return nil
