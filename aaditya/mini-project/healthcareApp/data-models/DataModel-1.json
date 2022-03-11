@@ -1,0 +1,321 @@
+{"_comments": "user"}
+{
+    "$id": "id",
+    "title": "User",
+    "type": "array(USER)",
+    "properties": {
+        "user":{
+            "userId":{
+                "type": "string",
+                "description": "User id"
+            },
+            "name":{
+            "type": "string",
+            "description": "Name of the user"
+            },
+            "emailId":{
+                "type": "string",
+                "description": "Email of the user"
+            },
+            "password":{
+                "type": "string",
+                "description": "Password of the user"
+            },
+            "age":{
+                "type": "int",
+                "description": "Age of the user"
+            },
+            "address":{
+                "type": "string",
+                "description": "Address of the user"
+            },
+        }
+    }
+}
+
+"Example":{
+    "userId":"1",
+    "name": "John Dukes",
+    "emailId": "johndukes@gmail.com",
+    "password": "0d9a245d3ac47511e9dc71b2d675208adfe7d0cb94110a924a6630501ab81b70",
+    "age": "27",
+    "address": "Mumbai"
+}
+
+{"_comments":"generalUser"}
+{
+    "$id": "id",
+    "title": "GeneralUser",
+    "type": "array(GeneralUser)",
+    "properties": {
+        "userId": {
+            "type": "integer(user.userId)",
+            "description": "The user id of the user."
+        },
+        "previousDiseases": {
+            "title" : "PreviousDiseases",
+            "type" : "array(previousDiseases)",
+            "properties": {
+                "diseaseName": {
+                    "type" : "string",
+                    "description" : "Name of the disease."
+                },
+                "YearOfAppearence": {
+                    "type": "int",
+                    "description": "The year in which disease was diagnoised."
+                }
+            }
+        },
+        "isPatient" : {
+            "type" : "bool",
+            "description" : "To check if current user is a patient."
+        }
+    }
+}
+
+"Example": {
+    "userId":"1",
+    "previosDiseases":
+    [
+        {
+            "diseaseName": "Dengue",
+            "YearOfAppearence": 2018
+        },
+        {
+            "diseaseName": "Covid",
+            "YearOfAppearence": 2021
+        }
+    ],
+    "isPatient" : false
+}
+
+
+
+{"_comments": "patient"}
+{
+    "$id": "id",
+    "title": "Patient",
+    "type": "array(Patient)",
+    "properties": {
+        "userId": {
+            "type": "integer(user.userId)",
+            "description": "The user id of the user."
+        },
+        "doctorAssignedId": {
+            "type": "integer(doctor.id)",
+            "description": "Details of doctor assigned to the patient"
+        },
+        "isDischarged": {
+            "type": "bool",
+            "description": "To check if patient is discharged or admitted."
+        },
+        "roomAllocated": {
+            "type": "int",
+            "description": "Room number of the patient"
+        },
+        "bills": {
+            "title": "Bills",
+            "type": "array(bills)",
+            "description": "Patient bills",
+            "properties":{
+                "billNo": {
+                    "type": "int",
+                    "description": "bill number of the bill"
+                },
+                "billAmount": {
+                    "type": "int",
+                    "description": "Amount charged"    
+                },
+                "billDate": {
+                    "type": "date",
+                    "description": "Date on which bill was created"
+                },
+                "billItems": {
+                    "type": "array(billItems)",
+                    "description": "Item wise breakdown of bill.",
+                    "properties":{
+                        "serialNumber" : {
+                            "type": "int",
+                            "description": "Serial number of item"
+                        },
+                        "itemName": {
+                            "type": "string",
+                            "description": "Name of item"
+                        },
+                        "unitPrice": {
+                            "type": "double",
+                            "description": "Unit price of the item."
+                        },
+                        "quantities": {
+                            "type": "int",
+                            "description": "Quantity of the item."
+                        }
+                    }
+                },
+                "isBillPaid": {
+                    "type": "bool",
+                    "description" : "To check if the bill is paid."
+                }
+            }
+        }
+    }
+}
+
+"Example":{
+    "userId":"1",
+    "doctorAssignedId": "11",
+    "isDischarged": true,
+    "roomAllocated": 401,
+    "bills":
+    [
+        {
+            "billNo": 121,
+            "billAmount": 50000,
+            "billDate": "March 8 2022",
+            "billItems":
+            [
+                {
+                    "serialNumber" : 1,
+                    "itemName": "Injection",
+                    "unitPrice": 500,
+                    "quantities": 10
+                },
+                {
+                    "serialNumber" : 2,
+                    "itemName": "Glucose",
+                    "unitPrice": 5000,
+                    "quantities": 5
+                },
+                {
+                    "serialNumber" : 3,
+                    "itemName": "Room Rent",
+                    "unitPrice": 7000,
+                    "quantities": 1
+                }
+
+            ],
+            "isBillPaid": false
+        },
+        {
+            "billNo": 139,
+            "billAmount": 20000,
+            "billDate": "March 9 2022",
+            "billItems":
+            [
+                {
+                    "serialNumber" : 1,
+                    "itemName": "Injection",
+                    "unitPrice": 500,
+                    "quantities": 10
+                },
+                {
+                    "serialNumber" : 2,
+                    "itemName": "Glucose",
+                    "unitPrice": 5000,
+                    "quantities": 5
+                },
+                {
+                    "serialNumber" : 3,
+                    "itemName": "Room Rent",
+                    "unitPrice": 7000,
+                    "quantities": 1
+                }
+
+            ],
+            "isBillPaid": false
+        }
+    ]
+}
+
+{"_comment" : "doctor"}
+{
+    "$id": "id",
+    "title": "Doctor",
+    "type": "array(doctor)",
+    "properties":{
+        "userId": {
+            "type": "integer(user.userId)",
+            "description": "The user id of the user."
+        },
+        "category":{
+            "type": "string",
+            "description": "Specialization of doctor "
+        },
+        "yearsOfExperience":{
+            "type": "int",
+            "description": "The years of experience of the doctor"
+        },
+        "medicalLicenseLink": {
+            "type": "url",
+            "description": "The link of storage where license is uploaded"
+        },
+        "appointments": {
+            "type": "array(appointments)",
+            "description": "Slots opened for appointments",
+            "properties": {
+                "slotTime":{
+                    "type" : "time",
+                    "description" : "Time of slot."
+                },
+                "slotDate":{
+                    "type" : "date",
+                    "description" : "Date of slot."
+                },
+                "fees":{
+                    "type" : "int",
+                    "description" : "Consultation Fees"
+                },
+                "isBooked":{
+                    "type": "bool",
+                    "description": "To check if slot is booked or vaccant"
+                }
+            }
+        }
+    }
+}
+
+"Example" :{
+    "userId":"1",
+    "category": "Neurologist",
+    "yearsOfExperience": 25,
+    "medicalLicenseLink": "s3/amazon.aws/23",
+    "appointments":
+    [
+        {
+            "slotTime": "3pm",
+            "slotDate": "8th March",
+            "Fees": 500,
+            "isBooked":true
+        },
+        {
+            "slotTime": "4pm",
+            "slotDate": "8th March",
+            "Fees": 500,
+            "isBooked":true
+        },
+        {
+            "slotTime": "5pm",
+            "slotDate": "8th March",
+            "Fees": 500,
+            "isBooked":false
+        },
+        {
+            "slotTime": "6pm",
+            "slotDate": "8th March",
+            "Fees": 500,
+            "isBooked":false
+        },
+        {
+            "slotTime": "3pm",
+            "slotDate": "9th March",
+            "Fees": 500,
+            "isBooked":false
+        },
+        {
+            "slotTime": "4pm",
+            "slotDate": "9th March",
+            "Fees": 500,
+            "isBooked":false
+        }
+    ]
+}
