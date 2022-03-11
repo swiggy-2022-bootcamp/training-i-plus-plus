@@ -9,7 +9,7 @@ import (
 )
 
 type StationController interface {
-	AddStation(ctx *gin.Context) model.Station
+	AddStation(ctx *gin.Context) (model.Station, error)
 	RetrieveAllStations() []model.Station
 }
 
@@ -23,14 +23,18 @@ func New(svc service.StationService) StationController {
 	}
 }
 
-func (c *stationController) AddStation(ctx *gin.Context) model.Station {
+func (c *stationController) AddStation(ctx *gin.Context) (model.Station, error) {
 	var station model.Station
-	ctx.BindJSON(&station)
-	station, err := c.svc.AddStation(station)
+	err := ctx.ShouldBindJSON(&station)
+	if err != nil {
+		return model.Station{}, err
+	}
+
+	station, err = c.svc.AddStation(station)
 	if err != nil {
 		log.Fatalf("Unable to add station")
 	}
-	return station
+	return station, nil
 }
 
 func (c *stationController) RetrieveAllStations() []model.Station {

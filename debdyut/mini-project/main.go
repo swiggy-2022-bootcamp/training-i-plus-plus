@@ -4,6 +4,7 @@ import (
 	"mini-project/bff/config"
 	"mini-project/bff/controller"
 	"mini-project/bff/service"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	gindump "github.com/tpkeeper/gin-dump"
@@ -36,7 +37,14 @@ func main() {
 
 	// Has authentication
 	authorized.POST("/station", func(ctx *gin.Context) {
-		ctx.JSON(200, stationController.AddStation(ctx))
+
+		station, err := stationController.AddStation(ctx)
+		if err != nil {
+			ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		} else {
+			ctx.JSON(http.StatusCreated, station)
+		}
+
 	})
 
 	router.Run()
