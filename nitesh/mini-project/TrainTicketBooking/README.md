@@ -1,23 +1,20 @@
 # Train-ticket booking systems
 
-Project maintained at - https://github.com/nitesh585/TrainTicketBooking
-
 ## Functional Requirements:
 
 ### user management
-
 - user can register, login and logout
 - maintain history
-  - booked , canceled, failed tickets
-  - ticket refunds
+    - booked , canceled, failed tickets
+    - ticket refunds
 - update profile
-  - password and basic personal details
-  - add aadhaar card with KYC
+    - password and basic personal details
+    - add aadhaar card with KYC
+
 
 ### search engine
-
 - check for the train availability on the basis of source, destination stations and date
-- if direct route not found then show different available connected path from source to  
+- if direct route not found then show different available connected path from source to   
   destination
 - add filters of classes, seat priority, etc.
 - user should get list of available trains with further details:
@@ -28,22 +25,23 @@ Project maintained at - https://github.com/nitesh585/TrainTicketBooking
 - pricing
 - user can update the search query
 
-### booking engine
 
+### booking engine
 - book ticket for selected train
 - user must logged in before booking
 - get the details of passengers (age, name and seat priority) and give a review page to user
 - after reviewing, redirect to the payment method.
 - cancel ticket after booking
-  - if cancellation is after chart preparation or as per law, then refund after deduction otherwise not
-  - user can cancel whole ticket or cancel ticket for one of the passenger
+    - if cancellation is after chart preparation or as per law, then refund after deduction otherwise not
+    - user can cancel whole ticket or cancel ticket for one of the passenger
 - give invoice or ticket in the end of successful booking on email or sms as per the subscribed service
 
-### notification module
 
+### notification module
 - user should get alerts about tickets on subscribed services eg. email or sms
-- should give alert to user about his/her ticket status - alert if the ticket got confirmed from RAC or WL
-  payment method
+- should give alert to user about his/her ticket status
+    - alert if the ticket got confirmed from RAC or WL
+payment method
 - integrate one of payment gateways
 - user must logged in and selected at least one seat
 - pay for the tickets
@@ -62,6 +60,6 @@ Project maintained at - https://github.com/nitesh585/TrainTicketBooking
 - /train/searchRoute
 
 ## Working
-- integration of docker build
 - integrated payment feature 
+- integration of docker build
 - logout 
