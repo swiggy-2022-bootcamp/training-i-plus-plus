@@ -2,8 +2,11 @@ package service
 import (
 	"github.com/Udaysonu/SwiggyGoLangProject/entity"
 	"fmt"	
+	// "github.com/Udaysonu/SwiggyGoLangProject/config"
+
 )
 var expertid int=1;
+var UES=NewUserExpertService();
 type ExpertService interface{
 	GetSkills() []string
 	WorkDone(int,int)
@@ -19,6 +22,7 @@ type expertService struct{
 }
 
 func ExpertNew() ExpertService{
+
 	return &expertService{map[string][]int{},[]entity.Expert{}}
 }
 
@@ -42,14 +46,15 @@ func  (service *expertService)GetSkills()[]string{
 	return skills;
 }
 
-
-
 func (service *expertService)WorkDone(id int,userid int){
 	for index,person := range service.ExpertList{
 		if(person.Id==id){
-			person.IsAvailable=true;
+			fmt.Println("called remove")
+		    filledWaiting:=UES.RemoveRelation(userid,id);
+			if filledWaiting==false{
+				person.IsAvailable=true;
+			}
 			service.ExpertList[index]=person;
-			// RemoveRelation(userid,id);
 		}
 	}
 }
@@ -71,14 +76,15 @@ func (service *expertService)BookEmployee(skill string,userid int) (entity.Exper
 
 	if(g_index==-1){
 		// UserExpertQueue.PushBack(UserExpert{2,-1,false})
-		// AddWaitingList(userid,skill);
+		fmt.Println("added to waiting linst",userid,skill)
+		UES.AddWaitingList(userid,skill);
 		return entity.Expert{},404;
 	}
 
 	availablePerson.IsAvailable=false;
 	availablePerson.Served=availablePerson.Served+1
 	service.ExpertList[g_index]=availablePerson;
-	// CreateRelation(userid,service.ExpertList[g_index].id,service.ExpertList[g_index].skill);
+	UES.CreateRelation(userid,service.ExpertList[g_index].Id,service.ExpertList[g_index].Skill);
 	return availablePerson,200;
 }
 
