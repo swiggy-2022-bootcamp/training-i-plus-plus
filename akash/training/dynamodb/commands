@@ -1,0 +1,19 @@
+Run dynamodb locally in docker:
+  docker run -d -p 8000:8000 amazon/dynamodb-local --name my-dynamodb
+
+Configure aws:
+  aws configure
+    dummy
+    dummy
+    mumbai
+    json
+
+Create alias:
+  alias dynamodb='aws dynamodb --endpoint-url http://localhost:8042'
+
+
+dynamodb create-table \
+--table-name dummy-table \
+--attribute-definitions AttributeName=customerId,AttributeType=S \
+--key-schema AttributeName=customerId,KeyType=HASH \
+--provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
