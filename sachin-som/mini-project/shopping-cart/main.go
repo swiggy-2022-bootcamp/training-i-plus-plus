@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/sachinsom93/shopping-cart/controllers"
+	controllers "github.com/sachinsom93/shopping-cart/controllers/user"
 	"github.com/sachinsom93/shopping-cart/database"
-	"github.com/sachinsom93/shopping-cart/services"
+	services "github.com/sachinsom93/shopping-cart/services/user"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 

@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sachinsom93/shopping-cart/models"
-	"github.com/sachinsom93/shopping-cart/services"
+	services "github.com/sachinsom93/shopping-cart/services/user"
 )
 
 type UserController struct {
