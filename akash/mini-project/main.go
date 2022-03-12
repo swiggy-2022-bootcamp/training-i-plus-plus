@@ -5,7 +5,6 @@ import (
 	"sample.akash.com/db"
 	"sample.akash.com/model"
 	"sample.akash.com/server"
-	"sample.akash.com/user"
 )
 
 func init() {
@@ -15,5 +14,5 @@ func init() {
 
 func main() {
 	fmt.Println("Hello ", &model.User{"Ash", "Lambert", "ash.lambert@swiggy.com", "12345"})
-	user.Login("abc", "def")
+	// user.Login("abc", "def")
 }
