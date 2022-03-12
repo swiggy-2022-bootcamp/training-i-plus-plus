@@ -10,7 +10,7 @@ type ProductServices interface {
 	DeactivateInventory(primitive.ObjectID) error
 	AddProduct(*models.Product) error
 	RemoveProduct(primitive.ObjectID) error
-	UpdateProduct(*models.Product) error
-	getProduct(primitive.ObjectID) (*models.Product, error)
-	getProducts(primitive.ObjectID) ([]*models.Product, error)
+	UpdateProduct(*models.Product) (*models.Product, error)
+	GetProduct(primitive.ObjectID) (*models.Product, error)
+	GetAllProducts(primitive.ObjectID) ([]*models.Product, error)
 }
