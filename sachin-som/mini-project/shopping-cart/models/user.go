@@ -15,7 +15,6 @@ type User struct {
 	RefreshToken *string       `json:"refresh_token" bson:"refresh_token"`
 	CreatedAt    time.Time     `json:"created_at"    bson:"created_at"`
 	UpdatedAt    time.Time     `json:"updated_at"    bson:"updated_at"`
-	UserID       *string       `json:"user_id"       bson:"user_id"`
 	Addresses    []Address     `json:"addresses"     bson:"addresses"`
 	UserCart     []ProductUser `json:"user_cart"     bson:"user_cart"`
 	UserOrders   []Order       `json:"orders"        bson:"orders"`
