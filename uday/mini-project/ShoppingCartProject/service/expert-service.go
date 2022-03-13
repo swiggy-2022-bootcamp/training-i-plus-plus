@@ -10,9 +10,12 @@ var UES=NewUserExpertService();
 type ExpertService interface{
 	GetSkills() []string
 	WorkDone(int,int)
-	// AddRating()
+	AddRating(rating int, review string,id int)
 	SignUpExpert(username string,skill string, email string)
 	BookEmployee(skill string,userid int) (entity.Expert,int)
+	GetExperts(string) []entity.Expert
+	GetExpertByID(int) entity.Expert
+	FilterExpert(string, int) []entity.Expert
 	InitDB()
 }
 
@@ -22,12 +25,11 @@ type expertService struct{
 }
 
 func ExpertNew() ExpertService{
-
 	return &expertService{map[string][]int{},[]entity.Expert{}}
 }
 
 func (service *expertService)SignUpExpert(username string,skill string, email string){
-	NewExpert:=entity.Expert{Id:expertid,Username:username,Skill:skill,Email:email,IsAvailable:true,Served:0}
+	NewExpert:=entity.Expert{Id:expertid,Username:username,Skill:skill,Email:email,IsAvailable:true,Served:0,Rating:0.0,Reviews:[]entity.RatingStruct{}}
 	// NewExpert.rating=[]RatingStruct{}
 	service.ExpertList=append(service.ExpertList,NewExpert);
 	// _,found:=service.ExpertMap[skill]
@@ -88,8 +90,37 @@ func (service *expertService)BookEmployee(skill string,userid int) (entity.Exper
 	return availablePerson,200;
 }
 
- 
+func (service *expertService)AddRating(rating int, review string,id int){
+	for index,value:= range service.ExpertList{
+		if value.Id==id{
+			value.Rating=((value.Rating+float64(rating))/(float64)(len(value.Reviews)+1))
+			value.Reviews=append(value.Reviews,entity.RatingStruct{rating,review})
+			service.ExpertList[index]=value;
+		}
+	}
+}
 
+func (service *expertService) GetExperts(skill string)[]entity.Expert{
+	var experts=[]entity.Expert{}
+	for _,id :=range service.ExpertMap[skill]{
+		for _,value:=range service.ExpertList{
+			if value.Id==id{
+				experts=append(experts,value)
+			}
+		}
+	}
+	return experts
+}
+
+func (service *expertService) GetExpertByID(id int) entity.Expert{
+	var expert entity.Expert
+	for _,value:=range service.ExpertList{
+		if value.Id==id{
+			expert=value
+		}
+	}
+	return expert
+}
 // func (service *expertService)AddRating(rating int, review string,id int){
 // 	for index,value:= range service.ExpertList{
 // 		if value.id==id{
@@ -99,6 +130,17 @@ func (service *expertService)BookEmployee(skill string,userid int) (entity.Exper
 // 	}
 // }
 
+func (service *expertService) FilterExpert(skill string, rating int )[]entity.Expert{
+	var experts = []entity.Expert{}
+	for _,id:=range service.ExpertMap[skill]{
+		for _,value:=range service.ExpertList{
+			if value.Rating>=float64(rating) && id==value.Id{
+				experts=append(experts,value)
+			}
+		}
+	}
+	return experts
+}
 
 
 func (service *expertService) InitDB(){
