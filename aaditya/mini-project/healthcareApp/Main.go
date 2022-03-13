@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"healthcareApp/model"
 	"healthcareApp/service"
+	//"healthcareApp/db"
 )
 
 type GeneralUser model.GeneralUser
@@ -11,6 +12,9 @@ type Doctor model.Doctor
 type Patient model.Patient
 
 func main(){
+
+	// cfg := db.CreateLocalClient()
+	// 	fmt.Println(cfg)
 
 	//user registration
 	role:="patient"

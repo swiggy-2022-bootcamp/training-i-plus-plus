@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
+	"programs/db"
 )
 var inventory [5]string = [5]string{"paracetamol", "dolo", "aspirin","covaxin","covidshield"}
 
 func add(a int, b int) int{
 	return a + b;
 }
-
 
 func inventoryCheck(item string) bool{
 	for i := 0; i < len(inventory); i++ {
@@ -28,14 +28,9 @@ type User struct{
 }
 		
 	func main() {
-		//Assigning values to the fields in the person struct:
-		s := make([]int,4)
-		s[0]=10
-		s[1]=20
-		s[2]=30
-		s[3]=40
-		s =append(s[:2],s[3:]...)
-		fmt.Println(s)
+		
+		cfg := db.CreateLocalClient()
+		fmt.Println(cfg)
 	}
 
 func (u User) userDetails(){
