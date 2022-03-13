@@ -3,7 +3,7 @@ package infra
 import (
 	"time"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"panem/domain"
 )
 
 type UserPersistedEntity struct {

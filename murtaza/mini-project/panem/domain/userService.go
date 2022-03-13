@@ -3,6 +3,7 @@ package domain
 type UserService interface {
 	CreateUser(string, string, string, string, string, string, Role) (User, error)
 	DeleteUserByUsername(string) (bool, error)
+	GetUserByUserId(int) (*User, error)
 }
 
 type service struct {
@@ -25,6 +26,10 @@ func (s service) DeleteUserByUsername(username string) (bool, error) {
 		return false, err
 	}
 	return s.userRepository.DeleteUserByUsername(username)
+}
+
+func (s service) GetUserByUserId(userId int) (*User, error) {
+	return s.userRepository.FindByUserId(userId)
 }
 
 func NewUserService(userRepository UserRepository) UserService {

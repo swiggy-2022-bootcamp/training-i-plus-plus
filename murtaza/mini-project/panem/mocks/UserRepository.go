@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	domain "github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	domain "panem/domain"
 
 	mock "github.com/stretchr/testify/mock"
 )

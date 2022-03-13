@@ -1,7 +1,7 @@
 package infra
 
 import (
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"panem/domain"
 	"testing"
 	"time"
 
