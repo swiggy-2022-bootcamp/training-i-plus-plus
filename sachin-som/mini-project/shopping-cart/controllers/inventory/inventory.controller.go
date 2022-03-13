@@ -63,14 +63,11 @@ func (ic *InventoryController) GetProduct(gctx *gin.Context) {
 
 // Function to get all product of an inventory
 func (ic *InventoryController) GetAllProducts(gctx *gin.Context) {
-	var inventory models.Inventory
+	var inventoryId string
 	var products []*models.Product
 	var err error
-	if err = gctx.ShouldBindJSON(&inventory); err != nil {
-		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
-		return
-	}
-	if products, err = ic.InventoryService.GetAllProducts(inventory.InventoryID); err != nil {
+	inventoryId = gctx.Param("inventoryId")
+	if products, err = ic.InventoryService.GetAllProducts(inventoryId); err != nil {
 		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -82,6 +79,6 @@ func (ic *InventoryController) RegisterInventoryRoutes(rg *gin.RouterGroup) {
 	inventoryRoute.POST("/register", ic.RegisterInventory)
 	inventoryRoute.POST("/addproduct", ic.AddProduct)
 	inventoryRoute.GET("/get/:productId", ic.GetProduct)
-	inventoryRoute.GET("/getall", ic.GetAllProducts)
+	inventoryRoute.GET("/getall/:inventoryId", ic.GetAllProducts)
 	inventoryRoute.PATCH("/update", ic.UpdateProduct)
 }

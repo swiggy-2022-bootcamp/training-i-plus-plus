@@ -3,10 +3,13 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strconv"
 
 	"github.com/sachinsom93/shopping-cart/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type InventoryServiceImpl struct {
@@ -63,6 +66,30 @@ func (is *InventoryServiceImpl) GetProduct(productID int) (*models.Product, erro
 }
 
 // Function to get all product of an inventory
-func (is *InventoryServiceImpl) GetAllProducts(inventoryID int) ([]*models.Product, error) {
-	return nil, nil
+func (is *InventoryServiceImpl) GetAllProducts(inventoryID string) ([]*models.Product, error) {
+	inID, err := strconv.Atoi(inventoryID)
+	filter := bson.D{bson.E{Key: "_id", Value: inID}}
+	fieldsOpts := options.Find().SetProjection(bson.D{bson.E{Key: "inventory_products", Value: 1}}) // TODO: use aggregate
+	cursor, err := is.InventoryCollection.Find(is.Ctx, filter, fieldsOpts)
+	if err != nil {
+		return nil, err
+	}
+	var products []*models.Product
+	fmt.Println(products)
+	for cursor.Next(is.Ctx) {
+		var product models.Product
+		err := cursor.Decode(&product)
+		if err != nil {
+			return nil, err
+		}
+		products = append(products, &product)
+	}
+	if err := cursor.Err(); err != nil {
+		return nil, err
+	}
+	cursor.Close(is.Ctx)
+	if len(products) == 0 {
+		return nil, errors.New("producst not fuond.")
+	}
+	return products, err
 }

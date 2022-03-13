@@ -11,5 +11,5 @@ type InventoryServices interface {
 	RemoveProduct(int) error
 	UpdateProduct(*models.Product) (*models.Product, error)
 	GetProduct(int) (*models.Product, error)
-	GetAllProducts(int) ([]*models.Product, error)
+	GetAllProducts(string) ([]*models.Product, error)
 }
