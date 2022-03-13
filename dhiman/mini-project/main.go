@@ -22,7 +22,7 @@ func main() {
 		)
 	})
 
-	router.GET("/user/", controllers.CreateClient)
+	router.POST("/users/", controllers.CreateClient)
 
 	router.Run()
 }

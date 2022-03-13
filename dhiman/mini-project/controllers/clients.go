@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -17,18 +18,20 @@ func CreateClient(c *gin.Context) {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
-    client, exists := c.Get("client")
-    if !exists {
-        c.JSON(http.StatusBadRequest, gin.H{"message": "Error Validating Request",  "error": "Client data not sent"})
-		return
-    }
-    // Use the validator library to validate required fields
-    if validationErr := validate.Struct(&client); validationErr != nil {
-        c.JSON(http.StatusBadRequest, gin.H{"message": "Error Validating Request",  "error": validationErr.Error()})
+    var requestBody models.Client
+    err := c.BindJSON(&requestBody)
+    fmt.Println(requestBody)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
     }
 
-    newUser := models.NewClient(client.(models.Client).Email, client.(models.Client).Name)
+    // Use the validator library to validate required fields
+    if validationErr := validate.Struct(&requestBody); validationErr != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+		return
+    }
+    newUser := models.NewClient(requestBody.Email, requestBody.Name)
 
     result, err := configs.UsersCollection.InsertOne(ctx, newUser)
     if err != nil {
