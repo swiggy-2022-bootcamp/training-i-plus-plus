@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"sample.akash.com/db"
+	"sample.akash.com/log"
 	"sample.akash.com/model"
 	"sample.akash.com/server"
 )
@@ -13,6 +13,6 @@ func init() {
 }
 
 func main() {
-	fmt.Println("Hello ", &model.User{"Ash", "Lambert", "ash.lambert@swiggy.com", "12345"})
-	// user.Login("abc", "def")
+	user1 := &model.User{"Ash", "Lambert", "ash.lambert@swiggy.com", "12345"}
+	log.Info("Hello ", *user1)
 }

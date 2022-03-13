@@ -23,6 +23,7 @@ func Start() {
 	})
 
 	router.GET("/login", user.Login)
+	router.POST("/register", user.Register)
 
 	// Start listening
 	port := Port

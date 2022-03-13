@@ -1,16 +1,41 @@
 package user
 
 import (
-	"fmt"
-	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
-	// "sample.akash.com/model"
+	"net/http"
+	"sample.akash.com/log"
+	"sample.akash.com/model"
 )
 
 func Login(c *gin.Context) {
-	fmt.Println("Login ", c.Request.Body)
 
-	var data = jsonparser.Get(c.Request.Body, "Email", "Password")
+	loginData := model.LoginData{}
+	if err := c.BindJSON(&loginData); err != nil {
+		panic(err)
+	}
+	log.Info(loginData)
 
-	fmt.Println(data)
+	//TODO: Check if exist in DB
+	user := FindOneWithEmail(loginData.Email)
+	if user != nil && loginData.Password == user.Password {
+		c.Data(http.StatusOK, "application/json", []byte(`{"message":"login successful"}`))
+	} else {
+		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"invalid credentials"}`))
+	}
+}
+
+func Register(c *gin.Context) {
+
+	userData := model.User{}
+	if err := c.BindJSON(&userData); err != nil {
+		panic(err)
+	}
+	log.Info(userData)
+
+	//TODO: Check if exist in DB
+
+	//TODO: Save user in DB
+	SaveUser(userData)
+
+	c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
 }
