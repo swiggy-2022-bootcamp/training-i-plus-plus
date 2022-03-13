@@ -2,8 +2,9 @@ package infra
 
 import (
 	"fmt"
-	"mini-project/domain"
 	"time"
+
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
 )
 
 type userRepository struct {
