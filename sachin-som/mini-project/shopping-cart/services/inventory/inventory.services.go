@@ -5,9 +5,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type ProductServices interface {
+type InventoryServices interface {
 	RegisterInventory(*models.Inventory) error
-	DeactivateInventory(primitive.ObjectID) error
+	// DeactivateInventory(primitive.ObjectID) error
 	AddProduct(*models.Product) error
 	RemoveProduct(primitive.ObjectID) error
 	UpdateProduct(*models.Product) (*models.Product, error)

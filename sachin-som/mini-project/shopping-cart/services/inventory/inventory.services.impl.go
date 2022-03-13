@@ -9,19 +9,22 @@ import (
 )
 
 type InventoryServiceImpl struct {
-	inventoryCollection *mongo.Collection
-	ctx                 context.Context
+	InventoryCollection *mongo.Collection
+	Ctx                 context.Context
 }
 
 func NewInventoryService(inventoryCollection *mongo.Collection, ctx context.Context) *InventoryServiceImpl {
 	return &InventoryServiceImpl{
-		inventoryCollection: inventoryCollection,
-		ctx:                 ctx,
+		InventoryCollection: inventoryCollection,
+		Ctx:                 ctx,
 	}
 }
 
 // Function to register a new inventory
 func (is *InventoryServiceImpl) RegisterInventory(inventory *models.Inventory) error {
+	if _, err := is.InventoryCollection.InsertOne(is.Ctx, inventory); err != nil {
+		return err
+	}
 	return nil
 }
 
