@@ -4,32 +4,35 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"time"
+	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 
-func setUpDB() *mongo.Client {
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://localhost:27017"))
+var (
+	err         error
+	mongoClient *mongo.Client
+)
 
+func SetUpDB(ctx context.Context) *mongo.Client {
+	mongoCredentials := options.Credential{
+		AuthMechanism: "SCRAM-SHA-1",
+		Username:      os.Getenv("MONGO_USERNAME"),
+		Password:      os.Getenv("MONGO_PASSWORD"),
+	}
+	connString := os.Getenv("MONGO_URI")
+	mongoConn := options.Client().ApplyURI(connString).SetAuth(mongoCredentials)
+	mongoClient, err = mongo.Connect(ctx, mongoConn)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	if err = client.Connect(ctx); err != nil {
-		log.Println("Error: Failed to connect with mongoDB server.")
-		return nil
-	}
-
-	err = client.Ping(context.TODO(), nil)
+	// Check MongoConnection by pinging
+	err = mongoClient.Ping(ctx, readpref.Primary())
 	if err != nil {
-		log.Println("Error: Failed to connect with mongoDB server.")
-		return nil
+		log.Fatal(err)
 	}
-	fmt.Println("Sucess: Connected with mongoDB server.")
-	return client
+	fmt.Println("Mongo Connection has beed established.")
+	return mongoClient
 }

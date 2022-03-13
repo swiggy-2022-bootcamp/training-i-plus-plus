@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
+	"sample.akash.com/modules/user"
 )
 
 const (
@@ -20,6 +21,8 @@ func Start() {
 			"message": "hello-world",
 		})
 	})
+
+	router.GET("/login", user.Login)
 
 	// Start listening
 	port := Port

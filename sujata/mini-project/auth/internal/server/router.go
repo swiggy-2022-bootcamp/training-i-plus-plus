@@ -1,7 +1,10 @@
 package server
 
 import (
+	"auth/internal/literals"
+	"auth/internal/server/handlers"
 	"auth/util"
+	"net/http"
 
 	"github.com/gorilla/mux"
 )
@@ -19,5 +22,10 @@ func (r *Router) InitializeRouter(routerConfig *util.RouterConfig) {
 }
 
 func (r *Router) InitializeRoutes(routerConfig *util.RouterConfig) {
-	_ = (*r).PathPrefix(routerConfig.WebServerConfig.RoutePrefix).Subrouter()
+	s := (*r).PathPrefix(routerConfig.WebServerConfig.RoutePrefix).Subrouter()
+
+	s.HandleFunc(literals.SignupEndpoint,
+		handlers.SignupHandler(routerConfig)).
+		Methods(http.MethodGet).
+		Name(literals.SignupAPIName)
 }
