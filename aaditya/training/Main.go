@@ -30,7 +30,16 @@ type User struct{
 	func main() {
 		
 		cfg := db.CreateLocalClient()
-		fmt.Println(cfg)
+		//fmt.Println(cfg)
+		//db.CreateTable(cfg);
+		db.TableExists(cfg,"my-table");
+		db.InsertItem(cfg,"101")
+		//db.InsertItem(cfg,"102")
+		db.InsertItem(cfg,"103")
+		db.GetAllItems(cfg)
+		db.GetItem(cfg,"101")
+		db.DeleteItem(cfg,"101")
+		db.GetAllItems(cfg)
 	}
 
 func (u User) userDetails(){
