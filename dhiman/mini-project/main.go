@@ -1,23 +1,16 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/gorilla/mux"
-	"log"
-	"net/http"
+  "net/http"
+  "github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := mux.NewRouter()
+  router := gin.Default()
 
-	router.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Content-Type", "application/json")
+  router.GET("/", func(context *gin.Context) {
+    context.JSON(http.StatusOK, gin.H{"data": "hello world"})    
+  })
 
-		err := json.NewEncoder(rw).Encode(map[string]string{"data": "Hello from Mux & mongoDB"})
-		if err != nil {
-			return
-		}
-	}).Methods("GET")
-
-	log.Fatal(http.ListenAndServe(":8000", router))
+  router.Run()
 }
