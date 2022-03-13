@@ -2,8 +2,8 @@ package domain_test
 
 import (
 	"errors"
-	"mini-project/domain"
-	"mini-project/mocks"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/mocks"
 	"testing"
 
 	"github.com/stretchr/testify/assert"

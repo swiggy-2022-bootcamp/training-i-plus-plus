@@ -1,10 +1,9 @@
 package domain_test
 
 import (
-	"mini-project/domain"
-	"testing"
-
 	"github.com/stretchr/testify/assert"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"testing"
 )
 
 var authService = domain.NewAuthService(&mockUserRepo)
