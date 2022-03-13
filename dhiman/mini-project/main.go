@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/dhi13man/healthcare-app/controllers"
 	"github.com/dhi13man/healthcare-app/models"
 	"github.com/gin-gonic/gin"
 )
@@ -20,6 +21,8 @@ func main() {
 			),
 		)
 	})
+
+	router.GET("/user/", controllers.CreateClient)
 
 	router.Run()
 }
