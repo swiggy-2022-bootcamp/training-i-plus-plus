@@ -2,9 +2,10 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/sachinsom93/shopping-cart/models"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -30,11 +31,24 @@ func (is *InventoryServiceImpl) RegisterInventory(inventory *models.Inventory) e
 
 // Function to add a specific product into inventory
 func (is *InventoryServiceImpl) AddProduct(product *models.Product) error {
+	// matchStage := bson.D{{"$match", bson.D{{"_id", product.InventoryId}}}}
+	filter := bson.D{bson.E{Key: "_id", Value: product.InventoryId}}
+	pushQuery := bson.D{bson.E{Key: "$push", Value: bson.E{Key: "inventory_products", Value: product}}}
+	result, err := is.InventoryCollection.UpdateOne(is.Ctx, filter, pushQuery)
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount != 1 {
+		return errors.New("No inventory found.")
+	}
+	if result.ModifiedCount != 1 {
+		return errors.New("Something went wrong, product not added.")
+	}
 	return nil
 }
 
 // Function to remove a specific product from inventory
-func (is *InventoryServiceImpl) RemoveProduct(productID primitive.ObjectID) error {
+func (is *InventoryServiceImpl) RemoveProduct(productID int) error {
 	return nil
 }
 
@@ -44,11 +58,11 @@ func (is *InventoryServiceImpl) UpdateProduct(product *models.Product) (*models.
 }
 
 // Function to get a specific product item
-func (is *InventoryServiceImpl) GetProduct(productID primitive.ObjectID) (*models.Product, error) {
+func (is *InventoryServiceImpl) GetProduct(productID int) (*models.Product, error) {
 	return nil, nil
 }
 
 // Function to get all product of an inventory
-func (is *InventoryServiceImpl) GetAllProducts(inventoryID primitive.ObjectID) ([]*models.Product, error) {
+func (is *InventoryServiceImpl) GetAllProducts(inventoryID int) ([]*models.Product, error) {
 	return nil, nil
 }
