@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>infra: Go Coverage Report</title>
+		<style>
+			body {
+				background: black;
+				color: rgb(80, 80, 80);
+			}
+			body, pre, #legend span {
+				font-family: Menlo, monospace;
+				font-weight: bold;
+			}
+			#topbar {
+				background: black;
+				position: fixed;
+				top: 0; left: 0; right: 0;
+				height: 42px;
+				border-bottom: 1px solid rgb(80, 80, 80);
+			}
+			#content {
+				margin-top: 50px;
+			}
+			#nav, #legend {
+				float: left;
+				margin-left: 10px;
+			}
+			#legend {
+				margin-top: 12px;
+			}
+			#nav {
+				margin-top: 10px;
+			}
+			#legend span {
+				margin: 0 5px;
+			}
+			.cov0 { color: rgb(192, 0, 0) }
+.cov1 { color: rgb(128, 128, 128) }
+.cov2 { color: rgb(116, 140, 131) }
+.cov3 { color: rgb(104, 152, 134) }
+.cov4 { color: rgb(92, 164, 137) }
+.cov5 { color: rgb(80, 176, 140) }
+.cov6 { color: rgb(68, 188, 143) }
+.cov7 { color: rgb(56, 200, 146) }
+.cov8 { color: rgb(44, 212, 149) }
+.cov9 { color: rgb(32, 224, 152) }
+.cov10 { color: rgb(20, 236, 155) }
+
+		</style>
+	</head>
+	<body>
+		<div id="topbar">
+			<div id="nav">
+				<select id="files">
+				
+				<option value="file0">mini-project/infra/user.go (100.0%)</option>
+				
+				<option value="file1">mini-project/infra/user_repository.go (0.0%)</option>
+				
+				</select>
+			</div>
+			<div id="legend">
+				<span>not tracked</span>
+			
+				<span class="cov0">not covered</span>
+				<span class="cov8">covered</span>
+			
+			</div>
+		</div>
+		<div id="content">
+		
+		<pre class="file" id="file0" style="display: none">package infra
+
+import (
+        "mini-project/domain"
+        "time"
+)
+
+type UserPersistedEntity struct {
+        id        int
+        firstName string
+        lastName  string
+        username  string
+        password  string
+        phone     string
+        email     string
+        role      domain.Role
+        createdAt time.Time
+        updatedAt time.Time
+}
+
+// ----- getters and setters --------
+func (u UserPersistedEntity) Id() int <span class="cov8" title="1">{
+        return u.id
+}</span>
+
+func (u UserPersistedEntity) Email() string <span class="cov8" title="1">{
+        return u.email
+}</span>
+
+func (u UserPersistedEntity) FirstName() string <span class="cov8" title="1">{
+        return u.firstName
+}</span>
+
+func (u UserPersistedEntity) LastName() string <span class="cov8" title="1">{
+        return u.lastName
+}</span>
+
+func (u UserPersistedEntity) Username() string <span class="cov8" title="1">{
+        return u.username
+}</span>
+
+func (u UserPersistedEntity) Password() string <span class="cov8" title="1">{
+        return u.password
+}</span>
+
+func (u UserPersistedEntity) Phone() string <span class="cov8" title="1">{
+        return u.phone
+}</span>
+
+func (u UserPersistedEntity) CreatedAt() time.Time <span class="cov8" title="1">{
+        return u.createdAt
+}</span>
+
+func (u UserPersistedEntity) UpdatedAt() time.Time <span class="cov8" title="1">{
+        return u.updatedAt
+}</span>
+
+func (u *UserPersistedEntity) SetUpdatedAt(time time.Time) <span class="cov8" title="1">{
+        u.updatedAt = time
+}</span>
+
+func (u UserPersistedEntity) toDomainEntity() *domain.User <span class="cov8" title="1">{
+        domainUser := domain.NewUser(u.firstName, u.lastName, u.username, u.phone, u.email, u.password, u.role)
+        domainUser.SetId(u.Id())
+        return domainUser
+}</span>
+
+func NewUserPersistedEntity(u domain.User) *UserPersistedEntity <span class="cov8" title="1">{
+        currentTime := time.Now()
+        return &amp;UserPersistedEntity{
+                id:        1,
+                firstName: u.FirstName(),
+                lastName:  u.LastName(),
+                username:  u.Username(),
+                password:  u.Password(),
+                email:     u.Email(),
+                phone:     u.Phone(),
+                role:      u.Role(),
+                createdAt: currentTime,
+                updatedAt: currentTime,
+        }
+}</span>
+</pre>
+		
+		<pre class="file" id="file1" style="display: none">package infra
+
+import (
+        "fmt"
+        "mini-project/domain"
+        "time"
+)
+
+type userRepository struct {
+        db []*UserPersistedEntity
+}
+
+func (urdb userRepository) GetAllUsers() ([]*domain.User, error) <span class="cov0" title="0">{
+        res := []*domain.User{}
+        for _, u := range urdb.db </span><span class="cov0" title="0">{
+                res = append(res, u.toDomainEntity())
+        }</span>
+        <span class="cov0" title="0">return res, nil</span>
+}
+
+func (urdb userRepository) FindByUsername(username string) (*domain.User, error) <span class="cov0" title="0">{
+        for _, val := range urdb.db </span><span class="cov0" title="0">{
+                if username == val.Username() </span><span class="cov0" title="0">{
+                        return val.toDomainEntity(), nil
+                }</span>
+        }
+        <span class="cov0" title="0">return nil, fmt.Errorf("no users found")</span>
+}
+
+func (urdb userRepository) FindByEmail(email string) (*domain.User, error) <span class="cov0" title="0">{
+        for _, val := range urdb.db </span><span class="cov0" title="0">{
+                if email == val.Email() </span><span class="cov0" title="0">{
+                        return val.toDomainEntity(), nil
+                }</span>
+        }
+        <span class="cov0" title="0">return nil, fmt.Errorf("no users found")</span>
+}
+
+func (urdb *userRepository) Save(u domain.User) (domain.User, error) <span class="cov0" title="0">{
+        userPersistedEntity := toPersistedEntity(u)
+        urdb.db = append(urdb.db, userPersistedEntity)
+        return u, nil
+}</span>
+
+func (urdb *userRepository) DeleteUserByUsername(username string) (bool, error) <span class="cov0" title="0">{
+        var pos int = -1
+        users := urdb.db
+        for i, v := range users </span><span class="cov0" title="0">{
+                if v.Username() == username </span><span class="cov0" title="0">{
+                        pos = i
+                        break</span>
+                }
+        }
+        <span class="cov0" title="0">urdb.db = append(users[0:pos], users[pos+1:]...)
+        return true, nil</span>
+}
+
+func toPersistedEntity(u domain.User) *UserPersistedEntity <span class="cov0" title="0">{
+        return &amp;UserPersistedEntity{
+                id:        1,
+                firstName: u.FirstName(),
+                lastName:  u.LastName(),
+                phone:     u.Phone(),
+                email:     u.Email(),
+                username:  u.Username(),
+                password:  u.Password(),
+                role:      u.Role(),
+                createdAt: time.Now(),
+                updatedAt: time.Now(),
+        }
+}</span>
+
+func NewUserRepository() domain.UserRepository <span class="cov0" title="0">{
+        return &amp;userRepository{
+                db: []*UserPersistedEntity{},
+        }
+}</span>
+</pre>
+		
+		</div>
+	</body>
+	<script>
+	(function() {
+		var files = document.getElementById('files');
+		var visible;
+		files.addEventListener('change', onChange, false);
+		function select(part) {
+			if (visible)
+				visible.style.display = 'none';
+			visible = document.getElementById(part);
+			if (!visible)
+				return;
+			files.value = part;
+			visible.style.display = 'block';
+			location.hash = part;
+		}
+		function onChange() {
+			select(files.value);
+			window.scrollTo(0, 0);
+		}
+		if (location.hash != "") {
+			select(location.hash.substr(1));
+		}
+		if (!visible) {
+			select("file0");
+		}
+	})();
+	</script>
+</html>
