@@ -7,3 +7,4 @@ type User struct{
 	Email string	`json:"email"`
 	Phone int		`phone:"phone"`
 }
+
