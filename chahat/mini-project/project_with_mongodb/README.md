@@ -27,24 +27,24 @@
 
 ### USER 
 
-POST   "users/signup"
-POST   "users/login"
-GET    "/users"
-GET    "/users/:user_id"
+- POST   "users/signup"
+- POST   "users/login"
+- GET    "/users"
+- GET    "/users/:user_id"
 
 ### PRODUCT
 
-GET    "/products"
-GET    "products/:product_id"
-POST   "/products/add"
-DELETE "/products/:product_id"
-PUT    "/products/:product_id"
+- GET    "/products"
+- GET    "products/:product_id"
+- POST   "/products/add"
+- DELETE "/products/:product_id"
+- PUT    "/products/:product_id"
 
 ### CART
 
-GET    "/cart/all/:user_id"
-DELETE "/cart/:cart_id"
-POST   "/cart/add"
+- GET    "/cart/all/:user_id"
+- DELETE "/cart/:cart_id"
+- POST   "/cart/add"
 
 
 

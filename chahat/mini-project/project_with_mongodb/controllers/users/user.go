@@ -14,8 +14,7 @@ helper "github.com/bhatiachahat/mongoapi/helper"
 usermodel "github.com/bhatiachahat/mongoapi/models/usermodel"
 database "github.com/bhatiachahat/mongoapi/db"
 
-//"github.com/akhil/golang-jwt-project/models"
-//"github.com/akhil/golang-jwt-project/database"
+
 "golang.org/x/crypto/bcrypt"
 
 "go.mongodb.org/mongo-driver/bson"

@@ -14,8 +14,7 @@ import (
 	productmodel "github.com/bhatiachahat/mongoapi/models/productmodel"
 	database "github.com/bhatiachahat/mongoapi/db"
 	
-	//"github.com/akhil/golang-jwt-project/models"
-	//"github.com/akhil/golang-jwt-project/database"
+
 	//"golang.org/x/crypto/bcrypt"
 	
 	"go.mongodb.org/mongo-driver/bson"
