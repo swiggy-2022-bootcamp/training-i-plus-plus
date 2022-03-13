@@ -1,31 +1,52 @@
+
 package db
+
 import (
-    "context"
-   // "time"
-   "log"
-    "fmt"
-    "go.mongodb.org/mongo-driver/mongo"
-    "go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/mongo/driver/mongocrypt/options"
-  //  "go.mongodb.org/mongo-driver/mongo/readpref"
+	"context"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	//"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 const (
 	// MongoDBUrl is the default mongodb url that will be used to connect to the
 	// database.
 	dbName="myFirstDatabase"
-	colName="users"
-	MongoDBUrl ="mongodb+srv://chahat:chahat@cluster0.jb4z4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+	
+	MongoDBUrl =""
 )
 
-var Collection *mongo.Collection
+func DBintance() *mongo.Client {
+	
 
-func Connect(){
-	clientOption := options.Client().ApplyURI(MongoDBUrl)
-	client,err := mongo.Connect(context.TODO(),clientOption)
-	if err!=nil {
+	client, err := mongo.NewClient(options.Client().ApplyURI(os.Getenv(MongoDBUrl)))
+
+	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected")
-	Collection = client.Database(dbName).Collection(colName)
-	fmt.Println("Instance ready")
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+
+	defer cancel()
+
+	err = client.Connect(ctx)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("Connected to Mongo DB")
+
+	return client
+}
+
+var Client *mongo.Client = DBintance()
+
+func OpenCollection(client *mongo.Client, collectionName string) *mongo.Collection {
+	
+	var collection *mongo.Collection = client.Database(dbName).Collection(collectionName)
+	return collection
 }
