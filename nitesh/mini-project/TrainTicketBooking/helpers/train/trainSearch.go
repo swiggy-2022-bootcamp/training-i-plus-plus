@@ -1,7 +1,6 @@
 package helper
 
 import (
-	"fmt"
 	models "rail/models/train"
 )
 
@@ -51,6 +50,19 @@ func findElementIndex(ele string, array []string) int {
 	return -1
 }
 
+func isEqualArray(a, b []int) bool {
+	if len(a) != len(b) {
+		return false
+	}
+
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
 func getPriceByClasses(i, j int, avlClasses []string) []int {
 	basePriceTable := make(map[string]int)
 	basePriceTable["2S"] = 60
@@ -86,6 +98,5 @@ func CalculatePrice(
 
 		trainDetails[idx].Price = getPriceByClasses(i, j, trainDetails[idx].AvlClasses)
 	}
-	fmt.Printf("---------------------------- %v", trainDetails)
 	return trainDetails
 }
