@@ -8,6 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/credentials v1.10.0
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.15.0
 	github.com/golang/mock v1.6.0
+	github.com/gorilla/mux v1.8.0
 	github.com/sgreben/testing-with-gomock v0.0.0-20180127205614-2990fb8af60c
 	github.com/stretchr/testify v1.7.0
 	github.com/svett/golang-design-patterns v0.0.0-20160515053510-a4c060127f2f
