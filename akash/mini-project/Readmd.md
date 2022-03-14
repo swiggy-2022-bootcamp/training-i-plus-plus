@@ -53,7 +53,7 @@ Design and develop an online shopping cart web application that enables a buyer 
  - [x] Requirements narrow down
  - [x] User Data Model 
  - [x] Login Data Model
- - [x] Login REST API - Gin + JSON data
+ - [x] User REST API - Gin + JSON data
  - [x] Mongo DB database
  - [x] Custom Logger
  

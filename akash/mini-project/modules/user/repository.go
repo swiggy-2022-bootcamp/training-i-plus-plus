@@ -23,6 +23,22 @@ func FindOneWithEmail(email string) *model.User {
 	return data
 }
 
+func FindAll() []model.User {
+
+	c := db.Session.DB("shopping_cart_dev").C("user-collection")
+
+	log.Info("Going to find all users")
+	var results []model.User
+	err := c.Find(nil).All(&results)
+	if err != nil {
+		log.Error("Error while querying all users ", err)
+		panic(err)
+	} else {
+		log.Info("Found user for this email : ", results)
+	}
+	return results
+}
+
 func SaveUser(user model.User) {
 
 	c := db.Session.DB("shopping_cart_dev").C("user-collection")

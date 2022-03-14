@@ -39,3 +39,10 @@ func Register(c *gin.Context) {
 
 	c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
 }
+
+func QueryAll(c *gin.Context) {
+	//TODO: Check if exist in DB
+	users := FindAll()
+
+	c.JSON(http.StatusOK, users)
+}

@@ -24,6 +24,7 @@ func Start() {
 
 	router.GET("/login", user.Login)
 	router.POST("/register", user.Register)
+	router.GET("/users/all", user.QueryAll)
 
 	// Start listening
 	port := Port
