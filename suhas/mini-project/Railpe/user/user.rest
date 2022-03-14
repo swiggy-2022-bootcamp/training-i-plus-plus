@@ -1,0 +1,32 @@
+POST http://localhost:8081/user/add
+Content-Type: application/json
+
+{
+    "Name": "ravi",
+    "Email": "ravi@jio.com"
+}
+
+
+POST http://localhost:8081/user/read
+Content-Type: application/json
+
+{
+    "UUID": "123456"
+}
+
+
+POST http://localhost:8081/user/update 
+Content-Type: application/json
+
+{
+    "UUID": "13579",
+    "Email": "suhas@sinix.com"
+}
+
+
+POST http://localhost:8081/user/delete
+Content-Type: application/json
+
+{
+    "UUID":"12346"
+}
