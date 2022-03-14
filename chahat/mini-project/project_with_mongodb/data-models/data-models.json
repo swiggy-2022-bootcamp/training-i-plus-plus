@@ -1,0 +1,256 @@
+{"_comments" : "user"}
+{
+    "title" : "User",
+    "type" : "object",
+    "properties" : {
+        "user_id" : {
+            "type" : "integer",                                                
+            "description" : "Unique Identification for User."
+        },
+         "first_name" : {
+            "type" : "string",
+            "description": "User First Name."
+        },
+        "last_name" : {
+            "type" : "string",
+            "description": "User Last Name."
+        },
+        "password" : {
+            "type" : "string",
+            "description" : "Password for User to login and sign-up."
+        },
+        "email" : {
+            "type" : "string",
+            "description" : "The User's email id."
+        },
+        "phone" : {
+            "type" : "string",
+            "description" : "The User's phone number."
+        },
+        "token" : {
+            "type" : "string",
+            "description" : "The User's token."
+        },
+        "user_type" : {
+            "type" : "string",
+            "description" : "The User's role (Admin/user)"
+        },
+        "refresh_token" : {
+            "type" : "string",
+            "description" : "The User's refresh token."
+        },
+        "phone" : {
+            "type" : "string",
+            "description" : "The User's Phone No."
+        },
+        "created_at" : {
+            "type" : "time",
+            "description" : "The timestamp when the User was created."
+        },
+        "updated_at" : {
+            "type" : "time",
+            "description" : "The timestamp when the User was updated."
+        }
+	}
+}
+
+
+{"_comments" : "product"}
+{
+    "title" : "Product",
+    "type" : "object",
+    "properties" : {
+        "product_id" : {
+            "type" : "string",
+            "description" : "Unique Identification for Product."
+        },
+        "seller" : {
+            "type" : "string",
+            "description" : "The name of the seller selling the product."
+        },
+        "title" : {
+            "type" : "string",
+            "description" : "Title of the product."
+        },
+        "category" : {
+            "type" : "string",
+            "description": "Category of the product."
+        },
+        "price" : {
+            "type" : "float",
+            "description" : "Cost of the product."
+        },
+        "discount" : {
+            "type" : "float",
+            "description" : "The current discount on the product."
+        },
+        "minOrderQuantity" : {
+            "type" : "uint",
+            "description" : "The minimum order quantity of the product."
+        },
+        "maxOrderQuantity" : {
+            "type" : "uint",
+            "description" : "The maximum order quantity of the product."
+        },
+        "created_at" : {
+            "type" : "time",
+            "description" : "The timestamp when the Product was created."
+        },
+        "updated_at" : {
+            "type" : "time",
+            "description" : "The timestamp when the Product was updated."
+        }
+	}
+}
+
+
+{"_comments" : "cart"}
+{
+    "title" : "Cart",
+    "type" : "object",
+    "properties" : {
+        "product_id" : {
+            "type" : "string",
+            "description" : "Unique Identification for Product."
+        },
+        "seller" : {
+            "type" : "string",
+            "description" : "The name of the seller selling the product."
+        },
+        "title" : {
+            "type" : "string",
+            "description" : "Title of the product."
+        },
+        "category" : {
+            "type" : "string",
+            "description": "Category of the product."
+        },
+        "subtotal" : {
+            "type" : "integer",
+            "description": "Total cost of the product."
+        },
+        "price" : {
+            "type" : "float",
+            "description" : "Cost of the product."
+        },
+        "discount" : {
+            "type" : "float",
+            "description" : "The current discount on the product."
+        },
+        "quantity" : {
+            "type" : "int",
+            "description" : "The ordered quantity of the product."
+        },
+        "user_id" : {
+            "type" : "string",
+            "description" : "The user_id of the user who ordered the product."
+        },
+        "added_at" : {
+            "type" : "time",
+            "description" : "The timestamp when the Product was created."
+        },
+        "cart_id" : {
+            "type" : "string",
+            "description" : "Unique identification of cart."
+        }
+	}
+}
+
+
+
+EXAMPLE:
+
+user: {
+    {
+        "user_id" : "622e0235a1c8506208794f68",
+        "first_name":"John",
+        "last_name":"Doe",
+        "email" : "john@gmail.com",
+        "password" : "jls65hv4+uhsri78ey8[w0ru479y688",
+        "phone":"987654311",
+        "token":"622e0235a1c8506208794f68",
+        "user_type":"USER",
+        "refresh_token":"622e0235a1c8506208794f68",
+        "created_at" : "08-03-2022 20:58",
+        "updated_at" : "08-03-2022 20:58"
+    },
+    {
+        "user_id" : "322e0235a1c8506208794f68",
+        "first_name":"Jack",
+        "last_name":"Parr",
+        "email" : "jack@gmail.com",
+        "password" : "jls65hv4+uhsri78ey8[w0ru479y688",
+        "phone":"987654311",
+        "token":"422e0235a1c8506208794f68",
+        "user_type":"ADMMIN",
+        "refresh_token":"722e0235a1c8506208794f68",
+        "created_at" : "08-03-2022 20:58",
+        "updated_at" : "08-03-2022 20:58"
+    },
+    .
+    .
+    .
+}
+
+product: {
+    {
+        "product_id" : 1,
+        "seller" : "MobileCity",
+        "title" : "Oppo Reno",
+        "category" : "Mobile",
+        "price" : "3211",
+        "discountFactor" : 0.0,
+        "minOrderQuantity" : 2,
+        "maxOrderQuantity" : 50,
+        "created_at" : "08-03-2022 20:58",
+        "updated_at" : "08-03-2022 20:58"
+    },
+    {
+        "product_id" : 1,
+        "seller" : "MobileCity",
+        "title" : "Oppo Reno",
+        "category" : "Mobile",
+        "price" : "3211",
+        "discountFactor" : 0.0,
+        "minOrderQuantity" : 2,
+        "maxOrderQuantity" : 50,
+        "created_at" : "08-03-2022 20:58",
+        "updated_at" : "08-03-2022 20:58"
+    },
+    .
+    .
+    .
+}
+
+cart: {
+    {
+        "product_id" : "122e02e81987225944cd66b8",
+        "cart_id" : "222e02e81987225944cd66b8",
+        "title" : "Vivo V2",
+        "category" : "Mobile",
+        "seller":"MobileCity",
+        "subtotal":2110,
+        "price" : 20,
+        "discountFactor" : 0.1,
+        "quantity" : 5,
+        "added_at" : "08-03-2022 20:58",
+        "user_id":"522e02e81987225944cd66b8"
+    },
+    
+        {
+            "product_id" : "422e02e81987225944cd66b8",
+            "cart_id" : "122e02e81987225944cd66b8",
+            "title" : "Vivo V5",
+            "category" : "Mobile",
+            "seller":"MobileCity",
+            "subtotal":2410,
+            "price" : 204,
+            "discountFactor" : 0.1,
+            "quantity" : 1,
+            "added_at" : "08-03-2022 20:58",
+            "user_id":"222e02e81987225944cd66b8"
+        },
+    .
+    .
+    .
+}
