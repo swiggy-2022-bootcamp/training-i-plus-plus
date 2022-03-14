@@ -2,13 +2,16 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	invcontroller "github.com/sachinsom93/shopping-cart/controllers/inventory"
 	controllers "github.com/sachinsom93/shopping-cart/controllers/user"
 	"github.com/sachinsom93/shopping-cart/database"
+	"github.com/sachinsom93/shopping-cart/middleware"
 	invservices "github.com/sachinsom93/shopping-cart/services/inventory"
 	services "github.com/sachinsom93/shopping-cart/services/user"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -52,7 +55,21 @@ func init() {
 	userController = controllers.NewUserController(userService)
 	inventoryService = invservices.NewInventoryService(inventoryCollection, ctx)
 	inventoryController = *invcontroller.NewInventoryController(inventoryService)
+
+	// Don't need color console for logging to a file
+	gin.DisableConsoleColor()
+
+	// Logging to a file.
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+
+	// Initialize server
 	server = gin.Default()
+
+	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
+	// gin.DefaultWriter = file writer and os.Stdout
+	server.Use(gin.LoggerWithFormatter(middleware.FormatLogger))
+
 }
 
 func main() {
