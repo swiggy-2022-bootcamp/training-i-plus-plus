@@ -6,8 +6,9 @@ import (
 	"github.com/Udaysonu/SwiggyGoLangProject/entity"
 	"github.com/Udaysonu/SwiggyGoLangProject/service"
 	"github.com/gin-gonic/gin"
+	
 )
- type ExpertController interface{
+type ExpertController interface{
 	GetSkills() []string
 	WorkDone(ctx *gin.Context)
 	AddRating(ctx *gin.Context)
@@ -89,4 +90,8 @@ func (c *controller) FilterExpert(ctx *gin.Context) []entity.Expert{
 	id_s,_:=ctx.GetQuery("rating")
 	rating,_ := strconv.ParseInt(id_s,10,8)
 	return c.service.FilterExpert(skill,int(rating))
+}
+
+func GetSkills()[]string{
+	return []string{"painter","plumber","carpenter"}
 }
