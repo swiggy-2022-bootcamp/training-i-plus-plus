@@ -9,7 +9,6 @@ import (
 	"github.com/sachinsom93/shopping-cart/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type InventoryServiceImpl struct {
@@ -36,7 +35,7 @@ func (is *InventoryServiceImpl) RegisterInventory(inventory *models.Inventory) e
 func (is *InventoryServiceImpl) AddProduct(product *models.Product) error {
 	// matchStage := bson.D{{"$match", bson.D{{"_id", product.InventoryId}}}}
 	filter := bson.D{bson.E{Key: "_id", Value: product.InventoryId}}
-	pushQuery := bson.D{bson.E{Key: "$push", Value: bson.E{Key: "inventory_products", Value: product}}}
+	pushQuery := bson.D{bson.E{Key: "$push", Value: bson.D{bson.E{Key: "inventory_products", Value: product}}}}
 	result, err := is.InventoryCollection.UpdateOne(is.Ctx, filter, pushQuery)
 	if err != nil {
 		return err
@@ -55,7 +54,7 @@ func (is *InventoryServiceImpl) RemoveProduct(inventoryID, productID string) err
 	inventory_ID, _ := strconv.Atoi(inventoryID)
 	product_ID, _ := strconv.Atoi(productID)
 	inventoryFilter := bson.D{bson.E{Key: "_id", Value: inventory_ID}}
-	productFilterDelete := bson.D{bson.E{Key: "$pull", Value: bson.E{Key: "$pull", bson.E{Key: "inventory_products", bson.E{Key: "_id", Value: product_ID}}}}}}
+	productFilterDelete := bson.D{bson.E{Key: "$pull", Value: bson.E{Key: "inventory_products", Value: bson.E{Key: "_id", Value: product_ID}}}}
 	result, err := is.InventoryCollection.UpdateOne(is.Ctx, inventoryFilter, productFilterDelete)
 	if err != nil {
 		return err
@@ -91,30 +90,33 @@ func (is *InventoryServiceImpl) GetProduct(inventoryID, productID string) (*mode
 }
 
 // Function to get all product of an inventory
-func (is *InventoryServiceImpl) GetAllProducts(inventoryID string) ([]*models.Product, error) {
-	inID, err := strconv.Atoi(inventoryID)
-	filter := bson.D{bson.E{Key: "_id", Value: inID}}
-	fieldsOpts := options.Find().SetProjection(bson.D{bson.E{Key: "inventory_products", Value: 1}}) // TODO: use aggregate
-	cursor, err := is.InventoryCollection.Find(is.Ctx, filter, fieldsOpts)
+func (is *InventoryServiceImpl) GetAllProducts(inventoryID string) ([]models.Product, error) {
+	var inventory *models.Inventory
+	var products []models.Product
+	var err error
+
+	var inventory_ID int
+	inventory_ID, err = strconv.Atoi(inventoryID)
+	filter := bson.D{bson.E{Key: "_id", Value: inventory_ID}}
+
+	err = is.InventoryCollection.FindOne(is.Ctx, filter).Decode(&inventory)
 	if err != nil {
 		return nil, err
 	}
-	var products []*models.Product
-	fmt.Println(products)
-	for cursor.Next(is.Ctx) {
-		var product models.Product
-		err := cursor.Decode(&product)
-		if err != nil {
-			return nil, err
-		}
-		products = append(products, &product)
+	for _, p := range inventory.InventoryProducts {
+		products = append(products, p)
 	}
-	if err := cursor.Err(); err != nil {
-		return nil, err
-	}
-	cursor.Close(is.Ctx)
-	if len(products) == 0 {
-		return nil, errors.New("producst not fuond.")
-	}
-	return products, err
+	return products, nil
 }
+
+// [[
+// 	{
+// 		inventory_products
+// 		[
+// 			[{_id 2} {product_name test} {description } {price 10000} {ratings 5} {image_url } {upload_by 1} {inventory_id 5} {uploaded_at <nil>} {updated_at <nil>}]
+// 			[{_id 3} {product_name test} {description } {price 10000} {ratings 5} {image_url } {upload_by 1} {inventory_id 5} {uploaded_at <nil>} {updated_at <nil>}]
+// 			[{_id 7} {product_name iphone 12} {description A branch new iphone} {price 100000} {ratings 5} {image_url www.google.com/iphone} {upload_by 0} {inventory_id 5} {uploaded_at -62135596800000} {updated_at -62135596800000}]
+// 			[{_id 7} {product_name iphone 12} {description A branch new iphone} {price 100000} {ratings 5} {image_url www.google.com/iphone} {upload_by 0} {inventory_id 5} {uploaded_at -62135596800000} {updated_at -62135596800000}]
+// 		]
+// 	}
+// ]]

@@ -95,7 +95,7 @@ func (ic *InventoryController) GetProduct(gctx *gin.Context) {
 // Function to get all product of an inventory
 func (ic *InventoryController) GetAllProducts(gctx *gin.Context) {
 	var inventoryId string
-	var products []*models.Product
+	var products []models.Product
 	var err error
 	inventoryId = gctx.Param("inventoryId")
 	if products, err = ic.InventoryService.GetAllProducts(inventoryId); err != nil {
