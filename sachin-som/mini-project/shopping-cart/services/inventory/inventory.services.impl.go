@@ -51,8 +51,19 @@ func (is *InventoryServiceImpl) AddProduct(product *models.Product) error {
 }
 
 // Function to remove a specific product from inventory
-func (is *InventoryServiceImpl) RemoveProduct(productID int) error {
-	return nil
+func (is *InventoryServiceImpl) RemoveProduct(inventoryID, productID string) error {
+	inventory_ID, _ := strconv.Atoi(inventoryID)
+	product_ID, _ := strconv.Atoi(productID)
+	inventoryFilter := bson.D{bson.E{Key: "_id", Value: inventory_ID}}
+	productFilterDelete := bson.D{bson.E{Key: "$pull", Value: bson.E{Key: "$pull", bson.E{Key: "inventory_products", bson.E{Key: "_id", Value: product_ID}}}}}}
+	result, err := is.InventoryCollection.UpdateOne(is.Ctx, inventoryFilter, productFilterDelete)
+	if err != nil {
+		return err
+	}
+	if result.ModifiedCount == 1 {
+		return nil
+	}
+	return errors.New("No Product Found.")
 }
 
 // Function to update product by given product instance
@@ -61,8 +72,22 @@ func (is *InventoryServiceImpl) UpdateProduct(product *models.Product) (*models.
 }
 
 // Function to get a specific product item
-func (is *InventoryServiceImpl) GetProduct(productID int) (*models.Product, error) {
-	return nil, nil
+func (is *InventoryServiceImpl) GetProduct(inventoryID, productID string) (*models.Product, error) {
+	inventory_ID, _ := strconv.Atoi(inventoryID)
+	product_ID, _ := strconv.Atoi(productID)
+	filter := bson.D{bson.E{Key: "_id", Value: inventory_ID}}
+	var inventory *models.Inventory
+	err := is.InventoryCollection.FindOne(is.Ctx, filter).Decode(&inventory)
+	if err != nil {
+		return nil, err
+	}
+	for _, p := range inventory.InventoryProducts {
+		if p.ProductID == product_ID {
+			fmt.Println(p)
+			return &p, nil
+		}
+	}
+	return nil, errors.New("No Product Found.")
 }
 
 // Function to get all product of an inventory

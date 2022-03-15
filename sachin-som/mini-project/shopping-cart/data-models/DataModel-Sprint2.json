@@ -1,0 +1,288 @@
+{"_comments": "vendor"}
+{
+    "title": "Vendor",
+    "type": "object",
+    "properties": {
+        "vendorId":{
+            "type": "integer",
+            "description": "Unique Identification for Vendor."
+        },
+        "email":{
+            "type": "string",
+            "description": "The vendor's email id."
+        },
+        "companyName":{
+            "type": "string",
+            "description": "The vendor's company name."
+        },
+        "companyType":{
+            "type": "string",
+            "description": "The vendor's company type."
+        },
+        "password":{
+            "type":"string",
+            "description" : "Password for vendor to login and sign-up."
+        },
+        "productSold":{
+            "type":"array(categoryName)",
+            "description" : "List of all the category available in the application."
+        }
+	}
+}
+
+
+{"_comments": "group"}
+{
+    "title": "group",
+    "properties": {
+        "groupId": {
+            "type": "integer",
+            "description": "Unique identification of a group."
+        },
+		"groupName": {
+            "type": "string",
+            "description": "Name given to a group."
+        },
+        "productList": {
+            "type": "array(product.pId)",
+            "description": "List of all products."
+        }
+    }
+}
+
+
+{"_comments": "product"}
+{
+    "title": "product",
+    "type": "object",
+    "properties": {
+		"prodId": {
+            "type": "integer",
+            "description": "Unique identification of a product."
+        },
+        "prodGroup": {
+            "type": "string",
+            "description": "Group to which the product belongs to."
+        },
+        "prodName": {
+            "type": "string",
+            "description": "This is product name."    
+        },
+        "prodBasePrice":{ 
+            "type": "double",
+            "description": "Base price of the product."
+        },
+        "initialQuantity":{
+            "type": "integer",
+            "description": "Quantity of the product."
+        },
+        "remainingQuantity":{
+            "type": "integer(remainingQuantity-assignedQuantity)",
+            "description": "Quantity of the product remaining after assigning to store, cluster and zone."
+        },
+        "uom":{
+            "type": "string",
+            "description": "Unit of Measurement(uom) of the product."
+        },
+        "vendorId":{
+            "type": "integer",
+            "description": "Assigning product to a vendor."
+        },
+		"promoId": {
+            "type": "integer",
+            "description": "Promotion that is aplicable on only alcohol product."
+        },
+        "category":{
+            "type": "string",
+            "description": "Name of the category to which product belongs to."
+        },
+		"abv":{
+            "type": "double",
+            "description": "By default 0. If category is ALCOHOL, abv is used to calculate price and promotions. Text field will be disabled for non-alcohol products."
+        },
+        "nutritionalFacts":{
+            "type": "array(string)",
+            "description": "By default its NULL. If its baby product, facts are recorded in text format."
+        },
+        "assignProduct": {
+            "title": "assign product to store",
+            "type": "array(ZONE)",
+            "properties": {
+                "zoneId": {
+					"type": "integer(zone.zoneId)",
+					"description": "Zone to which the product belongs to."
+				},
+				"quantityAssigned": {
+					"type": "integer",
+					"description": "Number of quantity that belongs to zone, irrespective of cluster and store."
+				},
+				"price": {
+					"type": "double",
+					"description": "Price applicable at zone level."
+				},
+				"cluster": {
+					"type": "array(CLUSTER)",
+					"properties": {
+						"clusterId": {
+							"type": "integer(zone.cluster.clusterId)",
+							"description": "Cluster to which the product belongs to."
+						},
+						"quantityAssigned": {
+							"type": "integer",
+							"description": "Number of quantity that belongs to cluster, irrespective of store."
+						},
+						"price": {
+							"type": "double",
+							"description": "Price applicable at cluster level."
+						},
+						"store": {
+							"type": "array(storeId + quantityAssigned)",
+							"properties": {
+								"storeId": {
+									"type": "integer(zone.cluster.store.storeId)",
+									"description": "store to which the product belongs to."
+								},
+								"quantityAssigned": {
+									"type": "integer",
+									"description": "Number of quantity that belongs to store."
+								},
+								"price": {
+									"type": "double",
+									"description": "Price applicable at store level."
+								},
+							}
+						}
+					} 
+				}
+            }
+        }
+    }
+}
+
+EXAMPLE:
+
+vendor: {
+    {
+        "vendorId": 1001,
+        "email": "xyz@kingfisher.com",
+        "companyName": "KingFisher",
+        "companyType":"Wine&Alcohol",
+        "password": "d4D4tk8wk4a",
+        "productSold":["Liquor", "Glassware"]
+    },
+    {
+        "vendorId": 7900,
+        "email": "first@cry.com",
+        "companyName": "FirstCry",
+        "companyType":"Baby & Kids",
+        "password": "b@bySh@rkD00",
+        "productSold":["Baby"]
+    },
+    .
+    .
+    .
+}
+
+
+group: {
+    "groupId": 1,
+    "groupName": "BestSellers",
+    "groupProducts": [12, 34, 56, 67, ...]
+}
+
+
+product: {
+    {	
+		"prodId": 12,
+        "prodGroup": "SummerSale",
+        "prodName": "Carlsberg soda",
+        "prodBasePrice": 67.1,
+        "initialQuantity": 70,
+        "remainingQuantity": 70 - 10 - 10 - 10 - 5,
+        "uom": "ml",
+		"promoId": 3,
+        "abv": 12.34,
+        "vendorId": 900,
+        "nutritionalFacts": [
+        ],
+        "assignProduct": [
+            {
+                "zoneId" : 11,
+                "quantityAssigned": 10,
+				"price": 123.56,
+                "cluster": [
+                    {
+                        "clusterId": 111,
+                        "quantityAssigned": 10,
+						"price": 123.56,
+                        "store": [
+                            {
+                                "storeId": 1111,
+                                "quantityAssigned": 10,
+								"price": 123.56,
+                            },
+                            {
+                                "storeId": 2222,
+                                "quantityAssigned": 5,
+								"price": 123.56,
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    },
+    {	
+		"prodId": 10,
+        "prodGroup": "BestSellers",
+        "prodName": "Cerelac",
+        "prodBasePrice": 7.1,
+        "initialQuantity": 100,
+        "remainingQuantity": 100 - 10 - 10 - 10 - 5,
+        "uom": "ml",
+		//"promoId": 0,
+        //"abv": 12.34,
+        "vendorId": 7900,
+        "nutritionalFacts": [
+            "Serving Size	1 cup	 	2 cups",	 
+            "Calories	280	 	560	 ",
+            "Total Fat	9g	12%	18g	24%",
+            "Saturated Fat	4.5g	23%	9g	46%"
+        ],
+        "assignProduct": [
+            {
+                "zoneId" : 11,
+                "quantityAssigned": 10,
+				"price": 123.56,
+                "cluster": [
+                    {
+                        "clusterId": 111,
+                        "quantityAssigned": 10,
+						"price": 123.56,
+                        "store": [
+                            {
+                                "storeId": 1111,
+                                "quantityAssigned": 10,
+								"price": 123.56,
+                            },
+                            {
+                                "storeId": 2222,
+                                "quantityAssigned": 5,
+								"price": 123.56,
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    },
+    ...
+
+}
+
