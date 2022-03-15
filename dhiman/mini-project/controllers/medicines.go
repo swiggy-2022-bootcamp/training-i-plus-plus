@@ -17,7 +17,7 @@ func FindMedicines(c *gin.Context) []models.Medicine {
 
 	cursor, err := configs.MedicinesCollection.Find(ctx, models.Medicine{})
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error inserting user", "error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching medicines", "error": err.Error()})
 		return []models.Medicine{}
 	}
 

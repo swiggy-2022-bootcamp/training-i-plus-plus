@@ -8,7 +8,6 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	// "go.mongodb.org/mongo-driver/x/mongo/driver/topology"
 )
 
 func ConnectDB() *mongo.Client {
