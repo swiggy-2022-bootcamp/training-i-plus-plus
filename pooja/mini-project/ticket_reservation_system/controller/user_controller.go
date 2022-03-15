@@ -2,94 +2,137 @@ package controller
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"net/http"
-	db "ticket_reservation_system/database"
-	user_model "ticket_reservation_system/model"
+	"ticket_reservation_system/config"
+	"ticket_reservation_system/model"
+	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var users []user_model.User
-var userCollection *mongo.Collection = db.DatabaseConn().Database("maindb").Collection("users")
+var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
+var validate *validator.Validate = validator.New()
 
-func AddUser(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user user_model.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		fmt.Println("error in decoding user payload with error ", err)
-	}
-	insertResult, err := userCollection.InsertOne(context.TODO(), user)
-	if err != nil {
-		fmt.Println("error in inserting the data to db ", err)
-	}
-	json.NewEncoder(w).Encode(insertResult.InsertedID)
-}
+func AddUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var user model.User
+		defer cancel()
 
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var results []primitive.M
-	cur, err := userCollection.Find(context.TODO(), bson.D{{}})
-	if err != nil {
-		fmt.Println(err)
-	}
-	for cur.Next(context.TODO()) {
-		var elem primitive.M
-		if err := cur.Decode(&elem); err != nil {
-			fmt.Println(err)
+		//validate the request body
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
+			return
 		}
-		results = append(results, elem)
+		//use the validator library to validate required fields
+		if validationErr := validate.Struct(&user); validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": validationErr.Error()})
+			return
+		}
+
+		newUser := model.User{
+			UserId:   user.UserId,
+			UserName: user.UserName,
+			EmailId:  user.EmailId,
+			Password: user.Password,
+		}
+		result, err := userCollection.InsertOne(ctx, newUser)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusCreated, gin.H{"status": http.StatusCreated, "message": "success", "data": result})
 	}
-	cur.Close(context.TODO())
-	json.NewEncoder(w).Encode(results)
 }
 
-func GetUserByUsername(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	var user user_model.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		fmt.Print(err)
+func GetUserByUsername() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		username := c.Param("username")
+		var user model.User
+		defer cancel()
+		if err := userCollection.FindOne(ctx, bson.M{"username": username}).Decode(&user); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusCreated, "message": "success", "data": user})
 	}
-	var result primitive.M //  an unordered representation of a BSON document which is a Map
-	if err := userCollection.FindOne(context.TODO(), bson.D{{"username", user.UserName}}).Decode(&result); err != nil {
-		fmt.Println(err)
-	}
-	json.NewEncoder(w).Encode(result) // returns a Map containing document
 }
 
-func UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	type updateBody struct {
-		Username string `json:"username"`
-		Password string `json:"password"`
+func GetUsers() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var users []model.User
+		defer cancel()
+		results, err := userCollection.Find(ctx, bson.M{})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+			return
+		}
+		defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleUser model.User
+			if err = results.Decode(&singleUser); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+				return
+			}
+			users = append(users, singleUser)
+		}
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": users})
 	}
-	var body updateBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		fmt.Print(err)
-	}
-	filter := bson.D{{"username", body.Username}}
-	after := options.After
-	returnOpt := options.FindOneAndUpdateOptions{
-		ReturnDocument: &after,
-	}
-	update := bson.D{{"$set", bson.D{{"password", body.Password}}}}
-	updateResult := userCollection.FindOneAndUpdate(context.TODO(), filter, update, &returnOpt)
-	var result primitive.M
-	_ = updateResult.Decode(&result)
-	json.NewEncoder(w).Encode(result)
 }
 
-func DeleteUserByUsername(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	username := mux.Vars(r)["username"]
-	opts := options.Delete().SetCollation(&options.Collation{})
-	if _, err := userCollection.DeleteOne(context.TODO(), bson.D{{"username", username}}, opts); err != nil {
-		fmt.Print(err)
+func UpdateUserPassword() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		username := c.Param("username")
+		var user model.User
+		defer cancel()
+		//validate the request body
+		if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
+			return
+		}
+		//use the validator library to validate required fields
+		if validationErr := validate.Struct(&user); validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": validationErr.Error()})
+			return
+		}
+		update := bson.M{"user_id": user.UserId, "username": user.UserName, "email_id": user.EmailId, "password": user.Password}
+		result, err := userCollection.UpdateOne(ctx, bson.M{"username": username}, bson.M{"$set": update})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+			return
+		}
+		//get updated user details
+		var updatedUser model.User
+		if result.MatchedCount == 1 {
+			if err := userCollection.FindOne(ctx, bson.M{"username": username}).Decode(&updatedUser); err != nil {
+				c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+				return
+			}
+		}
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": updatedUser})
 	}
-	json.NewEncoder(w).Encode(http.StatusNoContent)
+}
+
+func DeleteUserByUsername() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		username := c.Param("username")
+		defer cancel()
+		result, err := userCollection.DeleteOne(ctx, bson.M{"username": username})
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
+			return
+		}
+		if result.DeletedCount < 1 {
+			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": "user successfully deleted"})
+	}
 }

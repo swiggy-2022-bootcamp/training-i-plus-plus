@@ -1,20 +1,17 @@
 package main
 
 import (
-	"log"
-	"net/http"
-	user_controller "ticket_reservation_system/controller"
+	"ticket_reservation_system/config"
+	"ticket_reservation_system/routes"
 
-	"github.com/gorilla/mux"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := mux.NewRouter()
-	router.HandleFunc("/user", user_controller.AddUser).Methods("POST")
-	router.HandleFunc("/user", user_controller.GetUsers).Methods("GET")
-	router.HandleFunc("/user/{username}", user_controller.GetUserByUsername).Methods("GET")
-	router.HandleFunc("/user/{password}", user_controller.UpdateUserPassword).Methods("PUT")
-	router.HandleFunc("/user/{username}", user_controller.DeleteUserByUsername).Methods("DELETE")
+	router := gin.Default()
+	config.DatabaseConn()
 
-	log.Fatal(http.ListenAndServe(":5001", router))
+	routes.UserRoute(router)
+
+	router.Run(":5001")
 }
