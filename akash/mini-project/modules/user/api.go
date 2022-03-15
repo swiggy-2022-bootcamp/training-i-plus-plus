@@ -45,3 +45,18 @@ func QueryAll(c *gin.Context) {
 	users := FindAll()
 	c.JSON(http.StatusOK, users)
 }
+
+func Delete(c *gin.Context) {
+
+	jsonData := struct {
+		Email string `json:"email"`
+	}{}
+	if err := c.BindJSON(&jsonData); err != nil {
+		panic(err)
+	}
+	log.Info("Delete user with email : ", jsonData.Email)
+
+	DeleteUser(jsonData.Email)
+
+	c.Data(http.StatusOK, "application/json", []byte(`{"message":"user delete successful"}`))
+}

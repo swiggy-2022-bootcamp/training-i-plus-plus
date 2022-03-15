@@ -44,7 +44,6 @@ func SaveUser(user model.User) {
 	c := db.Session.DB("shopping_cart_dev").C("user-collection")
 
 	log.Info("Trying to save user : ", user)
-	log.Info("add ", &user)
 
 	if err := c.Insert(user); err != nil {
 		log.Error("Error while saving user ", err)
@@ -52,4 +51,18 @@ func SaveUser(user model.User) {
 	}
 
 	log.Info("User added ")
+}
+
+func DeleteUser(email string) {
+
+	c := db.Session.DB("shopping_cart_dev").C("user-collection")
+
+	log.Info("Trying to delete user : ", email)
+
+	err := c.Remove(bson.M{"email": email})
+	if err != nil {
+		log.Error("Error while deleting user with email ", email)
+	} else {
+		log.Info("User deleted ")
+	}
 }
