@@ -54,7 +54,7 @@ func (is *InventoryServiceImpl) RemoveProduct(inventoryID, productID string) err
 	inventory_ID, _ := strconv.Atoi(inventoryID)
 	product_ID, _ := strconv.Atoi(productID)
 	inventoryFilter := bson.D{bson.E{Key: "_id", Value: inventory_ID}}
-	productFilterDelete := bson.D{bson.E{Key: "$pull", Value: bson.E{Key: "inventory_products", Value: bson.E{Key: "_id", Value: product_ID}}}}
+	productFilterDelete := bson.D{bson.E{Key: "$pull", Value: bson.D{bson.E{Key: "inventory_products", Value: bson.D{bson.E{Key: "_id", Value: product_ID}}}}}}
 	result, err := is.InventoryCollection.UpdateOne(is.Ctx, inventoryFilter, productFilterDelete)
 	if err != nil {
 		return err
@@ -108,15 +108,3 @@ func (is *InventoryServiceImpl) GetAllProducts(inventoryID string) ([]models.Pro
 	}
 	return products, nil
 }
-
-// [[
-// 	{
-// 		inventory_products
-// 		[
-// 			[{_id 2} {product_name test} {description } {price 10000} {ratings 5} {image_url } {upload_by 1} {inventory_id 5} {uploaded_at <nil>} {updated_at <nil>}]
-// 			[{_id 3} {product_name test} {description } {price 10000} {ratings 5} {image_url } {upload_by 1} {inventory_id 5} {uploaded_at <nil>} {updated_at <nil>}]
-// 			[{_id 7} {product_name iphone 12} {description A branch new iphone} {price 100000} {ratings 5} {image_url www.google.com/iphone} {upload_by 0} {inventory_id 5} {uploaded_at -62135596800000} {updated_at -62135596800000}]
-// 			[{_id 7} {product_name iphone 12} {description A branch new iphone} {price 100000} {ratings 5} {image_url www.google.com/iphone} {upload_by 0} {inventory_id 5} {uploaded_at -62135596800000} {updated_at -62135596800000}]
-// 		]
-// 	}
-// ]]

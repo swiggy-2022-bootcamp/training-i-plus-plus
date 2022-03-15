@@ -110,7 +110,7 @@ func (ic *InventoryController) RegisterInventoryRoutes(rg *gin.RouterGroup) {
 	inventoryRoute.POST("/register", ic.RegisterInventory)
 	inventoryRoute.POST("/addproduct", ic.AddProduct)
 	inventoryRoute.GET("/get/:inventoryId/:productId", ic.GetProduct)
-	inventoryRoute.DELETE("/remove/:inventoryId/:productId", ic.GetProduct)
+	inventoryRoute.DELETE("/remove/:inventoryId/:productId", ic.RemoveProduct)
 	inventoryRoute.GET("/getall/:inventoryId", ic.GetAllProducts)
 	inventoryRoute.PATCH("/update", ic.UpdateProduct)
 }
