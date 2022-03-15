@@ -1,10 +1,10 @@
 package model
 
 type GeneralUser struct{
-	Id 					string
-	User
-	PreviousDiseases	string
-	IsPatient			bool
+	Id 					string		`json:"id"`
+	User							`json:"user"`
+	PreviousDiseases	string		`json:"previousDisease"`
+	IsPatient			bool		`json:"isPatient"`	
 
 }
 

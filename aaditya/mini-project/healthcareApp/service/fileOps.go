@@ -42,7 +42,7 @@ type FileReader interface {
 
 
 func (generalUser GeneralUser) WriteDataToFile(){
-	file,err := os.OpenFile("../data/generalUser.json", os.O_APPEND| os.O_CREATE | os.O_WRONLY, 0644)
+	file,err := os.OpenFile("data/generalUser.json", os.O_APPEND| os.O_CREATE | os.O_WRONLY, 0644)
 	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(generalUser)
@@ -54,7 +54,7 @@ func (generalUser GeneralUser) WriteDataToFile(){
 
 
 func (doctor Doctor) WriteDataToFile(){
-	file,err := os.OpenFile("../data/doctor.json", os.O_WRONLY|os.O_APPEND, 0644)
+	file,err := os.OpenFile("data/doctor.json", os.O_WRONLY|os.O_APPEND, 0644)
 	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(doctor)
@@ -65,7 +65,7 @@ func (doctor Doctor) WriteDataToFile(){
 }
 
 func (patient Patient) WriteDataToFile(){
-	file,err := os.OpenFile("../data/patient.json", os.O_WRONLY|os.O_APPEND, 0644)
+	file,err := os.OpenFile("data/patient.json", os.O_WRONLY|os.O_APPEND, 0644)
 	handleErr(err)
 	defer file.Close()
 	data, _ := json.Marshal(patient)
