@@ -15,7 +15,6 @@ func Login(c *gin.Context) {
 	}
 	log.Info(loginData)
 
-	//TODO: Check if exist in DB
 	user := FindOneWithEmail(loginData.Email)
 	if user != nil && loginData.Password == user.Password {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"login successful"}`))
@@ -30,19 +29,19 @@ func Register(c *gin.Context) {
 	if err := c.BindJSON(&userData); err != nil {
 		panic(err)
 	}
-	log.Info(userData)
 
-	//TODO: Check if exist in DB
+	log.Info("Register request for user : ", userData)
 
-	//TODO: Save user in DB
-	SaveUser(userData)
-
-	c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
+	user := FindOneWithEmail(userData.Email)
+	if user == nil {
+		SaveUser(userData)
+		c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
+	} else {
+		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"user already exist with this email"}`))
+	}
 }
 
 func QueryAll(c *gin.Context) {
-	//TODO: Check if exist in DB
 	users := FindAll()
-
 	c.JSON(http.StatusOK, users)
 }
