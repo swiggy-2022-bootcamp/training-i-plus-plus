@@ -5,7 +5,7 @@
     "type": "object",
     "properties": {
         "userId": {
-            "type": "integer",
+            "type": "String",
             "description": "Unique id of a account."
         },
         "email":{
