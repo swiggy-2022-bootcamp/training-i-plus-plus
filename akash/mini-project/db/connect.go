@@ -1,9 +1,9 @@
 package db
 
 import (
-	"fmt"
 	"gopkg.in/mgo.v2"
 	"os"
+	"sample.akash.com/log"
 )
 
 var (
@@ -30,11 +30,11 @@ func Connect() {
 	mongo, err := mgo.ParseURL(uri)
 	s, err := mgo.Dial(uri)
 	if err != nil {
-		fmt.Printf("Can't connect to mongo, go error %v\n", err)
+		log.Error("Can't connect to mongo, go error %v\n", err)
 		panic(err.Error())
 	}
 	s.SetSafe(&mgo.Safe{})
-	fmt.Println("Connected to", uri)
+	log.Info("Connected to", uri)
 	Session = s
 	Mongo = mongo
 }

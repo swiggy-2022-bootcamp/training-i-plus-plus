@@ -2,7 +2,7 @@ package domain_test
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"panem/domain"
 	"testing"
 )
 

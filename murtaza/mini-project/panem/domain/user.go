@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"encoding/json"
 	"errors"
 )
 
@@ -110,6 +111,19 @@ func (u *User) SetRole(r Role) {
 	u.role = r
 }
 
+func (u User) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}{
+		"id":        u.Id(),
+		"firstName": u.FirstName(),
+		"lastName":  u.LastName(),
+		"email":     u.Email(),
+		"password":  u.Password(),
+		"username":  u.Username(),
+		"phone":     u.Phone(),
+		"role":      u.Role(),
+	})
+}
+
 func NewUser(firstName, lastName, username, phone, email, password string, role Role) *User {
 	return &User{
 		firstName: firstName,
@@ -126,6 +140,7 @@ type UserRepository interface {
 	GetAllUsers() ([]*User, error)
 	FindByUsername(string) (*User, error)
 	FindByEmail(string) (*User, error)
+	FindByUserId(int) (*User, error)
 	Save(User) (User, error)
 	DeleteUserByUsername(string) (bool, error)
 }

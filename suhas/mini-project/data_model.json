@@ -1,0 +1,283 @@
+{"_comments":"admin"}
+{
+    "title": "Admin",
+    "type": "object",
+    "properties": {
+        "adminId":{
+            "type": "integer",
+            "description": "Unique Identification for Admin."
+        },
+        "name": {
+            "type": "string",
+            "description": "The Admin's name."
+        },
+        "email": {
+            "type": "string",
+            "description": "The Admin's email id."
+        },
+        "phone": {
+            "type": "integer",
+            "description" : "The Admin's phone numbe.r"
+        },
+        "password":{
+            "type": "string",
+            "description": "hash of password for admin to login and sign-up."
+        }
+    }
+}
+"Example":{
+    "adminId":1000000001,
+    "name"   :"Joe",
+    "email"  :"Joeadmin@gmail.com",
+    "phone"  : 948567123,
+    "password": "Ad9a0sf790@038"
+}
+
+{"_comments":"customer"} 
+{
+    "title": "Customer",
+    "type": "object",
+    "properties": {
+        "customerId":{
+            "type": "integer",
+            "description": "Unique Identification for Customer."
+        },
+        "name": {
+            "type": "string",
+            "description": "The Customer's name."
+        },
+        "email": {
+            "type": "string",
+            "description": "The Customer's email id."
+        },
+        "phone": {
+            "type": "integer",
+            "description" : "The Customer's phone numbe.r"
+        },
+        "password":{
+            "type": "string",
+            "description": "hash of password for customer to login and sign-up."
+        },
+        "tickets_booked":{
+            "type":"array(ticket.id)",
+            "description": "List of all tickets booked"
+        },
+    }
+}
+
+"Example": {
+    "customerId":2000000001,
+    "name": "Joe Mama",
+    "email": "joemama@gmail.com",
+    "phone": 987651234,
+    "password": "jsd0fs09uaop",
+    "tickets_booked": [
+        4000000001,
+        4000000002,,
+    ]
+}
+
+
+{"_comments":"passenger"}
+{
+    "title": "Passenger",
+    "type": "object",
+    "properties": {
+        "passengerId":{
+            "type": "integer",
+            "description": "Unique Identification for Passenger."
+        },
+        "name": {
+            "type": "string",
+            "description": "The Passenger's name"
+        },
+        "age": {
+            "type": "integer",
+            "description": "The Passenger's age"
+        },
+        "ticketId": {
+            "type": "integer",
+            "description": "The Passenger's ticket"
+        },
+        "trainId": {
+            "type": "integer",
+            "description": "The Passenger's train"
+        },
+    }
+}
+
+"Example": {
+    "passengerId":3000000001,
+    "name": "Joe Mama",
+    "age":45,
+    "tickeId":4000000008,
+}
+
+
+
+{"_comments":"location"}
+{
+    "title":"Location",
+    "type" : "object",
+    "properties":{
+        "stationid": {
+            "type":"integer",
+            "description":"Unique Id of the station"
+        },
+        "station":{
+            "type": "string",
+            "description": "Name of the location where train passes through"
+        },
+    }
+}
+
+"Example": {
+    "stationid":5000000001,
+    "station": "Mumbai",
+}
+
+{"_comments":"seat_number"}
+{
+    "title":"seat numbers inside the train",
+    "type": "object",
+    "properties": {
+        "seatId": {
+            "type": "integer",
+            "description":"Unique id of the seat",
+        },
+        "trainId": {
+            "type": "integer",
+            "description":"Id of the train"
+        }
+    }
+}
+
+"Example": {
+    "seatId":7000000001,
+    "trainId":3000000001,
+}
+
+{"_comments":"train"}
+{
+    "title": "Train",
+    "type" : "object",
+    "properties": {
+        "trainId": {
+            "type": "integer",
+            "description": "Unique Identification for Train"
+        },
+        "route": {
+            "type": "array(location.stationid)",
+            "description": "Route of the train"
+        },
+        "capacity": {
+            "type": "integer",
+            "description": "Capacity of the train"
+        },
+    }
+}
+
+"Example": {
+    "trainId":3000000001,
+    "route":[5000000001,5000000004,5000000009],
+    "capacity":900
+}
+
+{"_comments":"ticket"}
+{
+    "title": "Ticket",
+    "type" : "object",
+    "properties": {
+        "ticketId": {
+            "type":"integer",
+            "description":"Unique Identification for Ticket"
+        },
+        "passengers":{
+            "type":"array(passenger.passengerId)",
+            "description": "List of Passengers for the ticket"
+        },
+        "seatIds": {
+            "type":"array(seat_number.seatId)",
+            "description":"List of seat numbers for passengers"
+        },
+        "departure": {
+            "type":"string",
+            "description":"Departure location for the ticket"
+        },
+        "arrival": {
+            "type":"string",
+            "description":"Arrival location for the ticket"
+        },
+        "departure_time": {
+            "type":"string",
+            "description":"Departure time for the ticket"
+        },
+        "arrival_time": {
+            "type":"string",
+            "description":"arrival time for the ticket"
+        },
+        "fare": {
+            "type":"integer",
+            "description":"Fare for the ticket"
+        },
+        "customerId" : {
+            "type": "integer",
+            "description": "Customer for the ticket"
+        }, 
+        "transactionId": {
+            "type": "integer",
+            "description": "transaction id for the ticket"
+        }
+    }
+}
+
+"Example": {
+    "ticketId":4000000001,
+    "passengers":[5000000001,5000000004,5000000009],
+    "seatIds":[7000000001,7000000056,7000000008],
+    "arrival":"Mumbai",
+    "departure":"thane",
+    "departure_time":"2022-01-23 19:09:00",
+    "arrival_time":"2022-01-23 19:49:00",
+    "fare": 4500,
+    "customerId":2000000001,
+    "transactionId":900000001,    
+}
+
+
+
+{"_comments":"transaction"}
+{
+    "title": "Trasnaction",
+    "type": "object",
+    "properties": {
+        "transactionId":  {
+            "type":"integer",
+            "description":"Unique Identification for Transaction"
+        },
+        "ticketId": {
+            "type":"integer",
+            "description":"ticket booked in the transaction"
+        },
+        "customerId": {
+            "type": "integer",
+            "description":"ticket booked in the transaction"
+        },
+        "time_of_tx": {
+            "type":"string",
+            "descritpion": "Time of the transaction"
+        },
+        "fare": {
+            "type":"integer",
+            "description": "Fare paid during the transaction"
+        }
+    }
+}
+
+"Example": {
+   "transactionId":900000001,    
+    "ticketId":4000000001,
+    "customerId":2000000001,
+    "time_of_tx":"2022-02-21 14:12:56",
+    "fare": 4500,
+}

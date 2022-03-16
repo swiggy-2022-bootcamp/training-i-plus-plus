@@ -10,5 +10,6 @@ func TrainRoute(gin *gin.Engine) {
 	t := gin.Group("/train")
 	{
 		t.GET("/searchRoute", controller.SearchRoute())
+		t.GET("/trainDetails", controller.TrainDetails())
 	}
 }

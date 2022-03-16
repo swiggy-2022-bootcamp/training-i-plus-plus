@@ -13,6 +13,6 @@ func UserRoutes(gin *gin.Engine) {
 	u := gin.Group("/user")
 	{
 		u.GET("", controller.GetUsers)
-		u.GET(":user_id", controller.GetUser)
+		u.GET(":user_id", controller.GetUserDetails())
 	}
 }

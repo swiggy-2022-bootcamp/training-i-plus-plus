@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/panem/domain"
+	"panem/domain"
 )
 
 type userRepository struct {
@@ -17,6 +17,15 @@ func (urdb userRepository) GetAllUsers() ([]*domain.User, error) {
 		res = append(res, u.toDomainEntity())
 	}
 	return res, nil
+}
+
+func (urdb userRepository) FindByUserId(userId int) (*domain.User, error) {
+	for _, val := range urdb.db {
+		if userId == val.Id() {
+			return val.toDomainEntity(), nil
+		}
+	}
+	return nil, fmt.Errorf("no users found")
 }
 
 func (urdb userRepository) FindByUsername(username string) (*domain.User, error) {

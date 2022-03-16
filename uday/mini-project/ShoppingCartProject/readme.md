@@ -29,5 +29,24 @@ Technologies Used:
 
 1) GoLang for Backend server
 2) Gin for routing
-3) DynamoDB for Database
+3) MongoDB for Database
 
+
+--------------------------------------------------------
+
+API Requests:
+=============
+
+1) GET   /expert/service   => to get all the services available
+2) GET   /expert/expert?skill=carpenter  =>Automatically CPU assigns an expert to the user
+3) POST  /expert/addrating?expertid=3   => to add rating and review to an user
+4) GET   /expert/get?skill=carpenter  => it shows all the experts who are carpenters
+5) GET   /expert/done?expertid=3   => it releases the expert so system can assign him to other users
+6) POST  /expert/signexpert  => creates a new expert 
+7) GET   /expert/getexpert?expertid=4  =>get an expert based on his ID
+8) GET   /expert/filter?skill=carpenter&rating=4   => filters experts and returns based on the rating
+9) POST  /user/signuser  => creates an user
+10)POST  /user/loginuser  => checks the user and returns JWT-token
+11)GET   /expert/services  => returns all the available services in the system
+12)POST  /user/isuserpresent  => returns boolean whether the user is present or not
+13)POST  /user/getuser   =>  returns a specfic user

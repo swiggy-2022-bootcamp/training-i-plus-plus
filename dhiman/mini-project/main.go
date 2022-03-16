@@ -1,23 +1,28 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/gorilla/mux"
-	"log"
 	"net/http"
+
+	"github.com/dhi13man/healthcare-app/controllers"
+	"github.com/dhi13man/healthcare-app/models"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	router := mux.NewRouter()
+	router := gin.Default()
 
-	router.HandleFunc("/", func(rw http.ResponseWriter, r *http.Request) {
-		rw.Header().Set("Content-Type", "application/json")
+	router.GET("/", func(context *gin.Context) {
+		context.JSON(
+			http.StatusOK,
+			models.NewDisease(
+				"Covid-19",
+				[]string{},
+				[]string{"Fever", "Cough", "Shortness of breath"},
+			),
+		)
+	})
 
-		err := json.NewEncoder(rw).Encode(map[string]string{"data": "Hello from Mux & mongoDB"})
-		if err != nil {
-			return
-		}
-	}).Methods("GET")
+	router.POST("/users/", controllers.CreateClient)
 
-	log.Fatal(http.ListenAndServe(":8000", router))
+	router.Run()
 }

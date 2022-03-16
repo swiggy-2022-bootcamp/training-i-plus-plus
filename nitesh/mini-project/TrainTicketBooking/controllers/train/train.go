@@ -19,7 +19,7 @@ type SearchQuery struct {
 	Date        string
 }
 
-var userCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
+var trainCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
 
 func SearchRoute() gin.HandlerFunc {
 	return func(g *gin.Context) {
@@ -33,7 +33,10 @@ func SearchRoute() gin.HandlerFunc {
 			return
 		}
 
-		cursor, err := userCollection.Find(ctx, bson.D{{"Stations", bson.D{{"$all", bson.A{search.Source, search.Destination}}}}})
+		cursor, err := trainCollection.Find(
+			ctx,
+			bson.D{{"Stations", bson.D{{"$all", bson.A{search.Source, search.Destination}}}}},
+		)
 		// Decode(&trainDetails)
 
 		if err != nil {
@@ -64,6 +67,38 @@ func SearchRoute() gin.HandlerFunc {
 		weekday := parseDate.Weekday().String()
 		responseTrainDetails := helper.FilterDetailsOnWeekdayAwailability(weekday, trainDetails)
 
+		responseTrainDetails = helper.CalculatePrice(
+			search.Source,
+			search.Destination,
+			trainDetails,
+		)
+
 		g.JSON(http.StatusOK, gin.H{"trainDetails": responseTrainDetails})
+	}
+}
+
+func TrainDetails() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
+		defer cancel()
+
+		var body struct {
+			TrainNumber string
+		}
+
+		if err := c.BindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var TrainDetails models.Train
+		err := trainCollection.FindOne(ctx, bson.M{"TrainNumber": body.TrainNumber}).
+			Decode(&TrainDetails)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"trainDetails": TrainDetails})
 	}
 }

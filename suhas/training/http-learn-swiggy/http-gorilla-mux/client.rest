@@ -1,0 +1,17 @@
+# POST http://localhost:5005/orders
+
+# # {
+# #     "orderId":"ID001",
+# #     "customerName":"John",
+# #     "orderAt":"7.40PM",
+# #     "items":[
+# #             {
+# #                 "itemId":"001",
+# #                 "description":"New 1 order",
+# #                 "quantity":10
+# #             }
+# #         ]
+# # }
+
+
+GET http://localhost:5005/orders

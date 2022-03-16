@@ -1,0 +1,156 @@
+{"_comments": "location"}
+{
+    "$id": "id",
+    "title": "Location",
+    "type": "array(ZONE)",
+    "properties": {
+        "zone": {
+            "title": "Zone",
+            "type": "object",
+            "properties": {
+				"zoneId": {
+					"type": "integer",
+					"description": "Zone identification number."
+				},
+                "zoneName": {
+                    "type": "string",
+                    "description": "Zone Object. Can create new ZONE and list all ZONE using it."
+                },
+                "cluster": {
+                    "title": "Cluster",
+                    "type": "array(CLUSTER)",
+                    "properties": {
+                        "clusterId": {
+							"type": "integer",
+                            "description": "Cluster identification number."
+                        },
+                        "clusterName": {
+                            "type": "string",
+                            "description": "Cluster Object. Can create new CLUSTER and list all CLUSTER using it."
+                        },
+                        "store": {
+                            "title": "Store",
+                            "type": "array(STORE)",
+                            "properties": {
+								"storeId": {
+									"type": "integer",
+									"description": "Store identification number."
+								},
+                                "storeName": {
+                                    "type": "string",
+                                    "description": "Name of the store."
+                                },
+                                "address": {
+                                    "title": "Address",
+                                    "type": "object",
+                                    "properties": {
+                                        "streetName": {
+                                            "type": "string", 
+                                            "description": "Street number consisting of alphanumeric value."
+                                        },
+                                        "pin": {
+                                            "type": "integer", 
+                                            "description": "Pin code of the location."
+                                        },
+                                        "city": {
+                                            "type": "string", 
+                                            "description": "Name of the city."
+                                        }
+                                    }
+                                }
+                                
+                            }
+                        }, 
+                        "taxRate": {
+                            "type": "double",
+                            "description": "Tax rate applicable in the zone."
+                        }
+                    }
+                },
+                "liquorPricePerUnit": {
+                    "type": "double",
+                    "description": "Liquor price applicable for at Zone level."
+                }
+            }
+        }
+        
+    }
+}
+
+
+
+"Example": {
+    "zoneId":93,
+    "zoneName":"France",
+    "cluster":
+        [
+            {
+                "clusterId":3861,
+                "clusterName":"New York",
+                "store":
+                [
+                    {
+                        "storeId":10311,
+                        "storeName":"Innotype",
+                        "address":
+                            {
+                                "streetName":"International",
+                                "pin":355227,
+                                "city":"Calaoagan"
+                            }
+                    },
+                    {
+                        "storeId":15671,
+                        "storeName":"Skiba",
+                        "address":
+                            {
+                                "streetName":"Nancy",
+                                "pin":775254,
+                                "city":"Senggreng"
+                            }
+                    },
+                    {
+                        "storeId":17042,
+                        "storeName":"Shufflebeat",
+                        "address":
+                            {
+                                "streetName":"Steensland",
+                                "pin":843951,
+                                "city":"Panan"
+                            }
+                    }
+                ],
+                    "taxRate":4.94
+            },
+                        
+            {
+                "clusterId":2083,
+                "clusterName":"District of Columbia",
+                "store":
+                [
+                    {
+                        "storeId":17367,
+                        "storeName":"Kaymbo",
+                        "address":
+                            {
+                                "streetName":"Macpherson",
+                                "pin":908140,
+                                "city":"Jinzhou"
+                            }
+                    },
+                    {
+                        "storeId":13006,
+                        "storeName":"Jamia",
+                        "address":
+                            {
+                                "streetName":"Schlimgen",
+                                "pin":976553,
+                                "city":"Bagacay"
+                            }
+                    }
+                ],
+                    "taxRate":1.35
+            }
+        ],
+        "liquorPricePerUnit":3.47
+}        
