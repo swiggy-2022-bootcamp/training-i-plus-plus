@@ -160,6 +160,42 @@ func GetUsers(gin *gin.Context) {
 
 }
 
-func GetUser(gin *gin.Context) {
+func GetUserDetails() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
+		defer cancel()
 
+		var body struct {
+			UserID string
+		}
+
+		if err := c.BindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		var UserDetails models.User
+		err := userCollection.FindOne(ctx, bson.M{"user_id": body.UserID}).
+			Decode(&UserDetails)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+
+		response := struct {
+			firstName string
+			lastName  string
+			Email     string
+			Phone     string
+			UserId    string
+		}{
+			UserDetails.FirstName,
+			UserDetails.LastName,
+			UserDetails.Email,
+			UserDetails.Phone,
+			UserDetails.User_id,
+		}
+
+		c.JSON(http.StatusOK, gin.H{"userDetails": response})
+	}
 }
