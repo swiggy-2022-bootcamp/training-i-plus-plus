@@ -5,4 +5,7 @@ const (
 
 	SignupAPIName  = "SignUp"
 	SignupEndpoint = APIVersion1 + "signup"
+
+	SigninAPIName  = "Signin"
+	SigninEndpoint = APIVersion1 + "signin"
 )

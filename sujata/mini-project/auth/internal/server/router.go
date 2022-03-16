@@ -28,4 +28,9 @@ func (r *Router) InitializeRoutes(routerConfig *util.RouterConfig) {
 		handlers.SignupHandler(routerConfig)).
 		Methods(http.MethodGet).
 		Name(literals.SignupAPIName)
+
+	s.HandleFunc(literals.SigninEndpoint,
+		handlers.SigninHandler(routerConfig)).
+		Methods(http.MethodGet).
+		Name(literals.SigninAPIName)
 }
