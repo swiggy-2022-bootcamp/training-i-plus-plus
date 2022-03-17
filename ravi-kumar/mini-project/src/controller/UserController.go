@@ -154,7 +154,7 @@ func UpdateUserById(res http.ResponseWriter, req *http.Request) {
 
 	res.Header().Add("Content-type", "application/json")
 	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(result)
+	json.NewEncoder(res).Encode("user updated")
 }
 
 func DeleteUserbyId(res http.ResponseWriter, req *http.Request) {

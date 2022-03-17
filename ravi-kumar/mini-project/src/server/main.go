@@ -30,8 +30,10 @@ func main() {
 	router.HandleFunc("/users/{userId}", controller.UpdateUserById).Methods(http.MethodPut)
 	router.HandleFunc("/users/{userId}", controller.DeleteUserbyId).Methods(http.MethodDelete)
 
+	router.HandleFunc("/catalog", controller.CreateProduct).Methods(http.MethodPost)
 	router.HandleFunc("/catalog", controller.GetCatalog).Methods(http.MethodGet)
 	router.HandleFunc("/catalog/{productId}", controller.GetProductById).Methods(http.MethodGet)
+	router.HandleFunc("/catalog/{productId}", controller.UpdateProductById).Methods(http.MethodPut)
 	router.HandleFunc("/catalog/{productId}", controller.DeleteProductbyId).Methods(http.MethodDelete)
 
 	log.Print("Starting server at port ", config.SERVER_PORT)

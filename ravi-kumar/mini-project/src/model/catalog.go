@@ -3,18 +3,17 @@ package mockdata
 //import ("fmt")
 
 type Product struct {
-	Id          int
-	Name        string
-	Price       int
-	Description string
-	Seller      string
-	Rating      float32
-	Review      []string
+	Name        string   `json: "name" bson: "name"`
+	Price       int      `json: "price" bson: "price"`
+	Description string   `json: "description" bson: "description"`
+	Seller      string   `json: "seller" bson: "seller"`
+	Rating      float32  `json: "rating" bson: "rating"`
+	Review      []string `json: "review" bson: "review"`
 }
 
 var Catalog = []Product{
 	{
-		Id:          1,
+		//Id:          1,
 		Name:        "Keyboard",
 		Price:       700,
 		Description: "Mechanical Keyboard",
@@ -23,7 +22,7 @@ var Catalog = []Product{
 		Review:      []string{"Great product", "Worth the money"},
 	},
 	{
-		Id:          2,
+		//Id:          2,
 		Name:        "Fan",
 		Price:       1700,
 		Description: "Cooler Fan",
@@ -32,7 +31,7 @@ var Catalog = []Product{
 		Review:      []string{"Average rotation cycles", "Not worth the amount"},
 	},
 	{
-		Id:          3,
+		//Id:          3,
 		Name:        "Shoes",
 		Price:       3700,
 		Description: "Running shoes",
@@ -41,7 +40,7 @@ var Catalog = []Product{
 		Review:      []string{"Great product", "Worth the money"},
 	},
 	{
-		Id:          4,
+		//Id:          4,
 		Name:        "Jeans Pant",
 		Price:       1300,
 		Description: "Pant for Men",
