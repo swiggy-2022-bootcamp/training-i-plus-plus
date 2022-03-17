@@ -20,8 +20,8 @@ func main(){
 
 	//routes
 	routes.DoctorRoutes(router)
-	
-	
+	routes.PatientRoutes(router)
+	routes.GeneralUserRoutes(router)
 
 	router.Run("localhost:8082") 
 }

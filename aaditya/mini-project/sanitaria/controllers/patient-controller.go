@@ -9,31 +9,30 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var doctorCollection *mongo.Collection = configs.GetCollection(configs.DB, "doctors")
-var validate = validator.New()
+var patientCollection *mongo.Collection = configs.GetCollection(configs.DB, "patients")
+//var validate = validator.New()
 
-func RegisterDoctor() gin.HandlerFunc {
+func RegisterPatient() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        var doctor models.Doctor
+        var patient models.Patient
         var user models.User
         defer cancel()
 
         //validate the request body
-        if err := c.BindJSON(&doctor); err != nil {
+        if err := c.BindJSON(&patient); err != nil {
             c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
             return
         }
-        user = doctor.User
+        user = patient.User
 
         //use the validator library to validate required fields
-        if validationErr := validate.Struct(&doctor); validationErr != nil {
+        if validationErr := validate.Struct(&patient); validationErr != nil {
             c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
             return
         }
@@ -42,15 +41,15 @@ func RegisterDoctor() gin.HandlerFunc {
             return
         }
 
-        newDoctor := models.Doctor{
+        newPatient := models.Patient{
             Id:       primitive.NewObjectID(),
-            Category:     doctor.Category,
-            Yoe: doctor.Yoe,
-            MedicalLicenseLink:    doctor.MedicalLicenseLink,
-			User:				   doctor.User,
+            DoctorAssignedId:     patient.DoctorAssignedId,
+            IsDischarged: patient.IsDischarged,
+            RoomAllocated:    patient.RoomAllocated,
+			User:				   patient.User,
         }
       
-        result, err := doctorCollection.InsertOne(ctx, newDoctor)
+        result, err := patientCollection.InsertOne(ctx, newPatient)
         if err != nil {
             c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
             return
@@ -60,44 +59,44 @@ func RegisterDoctor() gin.HandlerFunc {
     }
 }
 
-func GetDoctorByID() gin.HandlerFunc {
+func GetPatientByID() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
         id := c.Param("id")
-        var doctor models.Doctor
+        var patient models.Patient
         defer cancel()
 
         objId, _ := primitive.ObjectIDFromHex(id)
 
-        err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&doctor)
+        err := patientCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&patient)
         if err != nil {
             c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
             return
         }
 
-        c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": doctor}})
+        c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": patient}})
     }
 }
 
-func EditDoctorByID() gin.HandlerFunc {
+func EditPatientByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		id := c.Param("id")
-		var doctor models.Doctor
+		var patient models.Patient
         var user models.User
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(id)
 
 		//validate the request body
-		if err := c.BindJSON(&doctor); err != nil {
+		if err := c.BindJSON(&patient); err != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-        user = doctor.User
+        user = patient.User
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&doctor); validationErr != nil {
+		if validationErr := validate.Struct(&patient); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
@@ -107,9 +106,9 @@ func EditDoctorByID() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"user": doctor.User, "category": doctor.Category, "medicalLicenseLink": doctor.MedicalLicenseLink, "yoe": doctor.Yoe}
+		update := bson.M{"user": patient.User, "doctorassignedid": patient.DoctorAssignedId, "isdischarged": patient.IsDischarged, "roomallocated": patient.RoomAllocated}
 
-		result, err := doctorCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
+		result, err := patientCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -117,9 +116,9 @@ func EditDoctorByID() gin.HandlerFunc {
 		}
 
 		//get updated user details
-		var updatedDoctor models.Doctor
+		var updatedPatient models.Patient
 		if result.MatchedCount == 1 {
-			err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedDoctor)
+			err := patientCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedPatient)
 
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -127,11 +126,11 @@ func EditDoctorByID() gin.HandlerFunc {
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedPatient}})
 	}
 }
 
-func DeleteDoctorByID() gin.HandlerFunc {
+func DeletePatientByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		id := c.Param("id")
@@ -139,7 +138,7 @@ func DeleteDoctorByID() gin.HandlerFunc {
 
 		objId, _ := primitive.ObjectIDFromHex(id)
 
-		result, err := doctorCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		result, err := patientCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -159,13 +158,13 @@ func DeleteDoctorByID() gin.HandlerFunc {
 	}
 }
 
-func GetAllDoctors() gin.HandlerFunc {
+func GetAllPatients() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var doctors []models.Doctor
+		var patients []models.Patient
 		defer cancel()
 
-		results, err := doctorCollection.Find(ctx, bson.M{})
+		results, err := patientCollection.Find(ctx, bson.M{})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -175,16 +174,16 @@ func GetAllDoctors() gin.HandlerFunc {
 		//reading from the db in an optimal way
 		defer results.Close(ctx)
 		for results.Next(ctx) {
-			var singleDoctor models.Doctor
-			if err = results.Decode(&singleDoctor); err != nil {
+			var singlePatient models.Patient
+			if err = results.Decode(&singlePatient); err != nil {
 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			}
 
-			doctors = append(doctors, singleDoctor)
+			patients = append(patients, singlePatient)
 		}
 
 		c.JSON(http.StatusOK,
-			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": doctors}},
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": patients}},
 		)
 	}
 }

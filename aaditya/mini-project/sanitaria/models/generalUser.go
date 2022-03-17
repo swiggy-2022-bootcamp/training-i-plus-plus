@@ -1,10 +1,12 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type GeneralUser struct{
-	Id 					string		`json:"id"`
-	User							`json:"user"`
-	PreviousDiseases	string		`json:"previousDisease"`
-	IsPatient			bool		`json:"isPatient"`	
+	Id 					primitive.ObjectID		`bson:"_id,omitempty"`
+	User										`json:"user" validate:"required"`
+	PreviousDiseases	string					`json:"previousDisease" validate:"required"`
+	IsPatient			bool					`json:"isPatient" validate:"required"`	
 
 }
 

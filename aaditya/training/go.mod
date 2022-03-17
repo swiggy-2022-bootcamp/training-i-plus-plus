@@ -12,6 +12,7 @@ require (
 	github.com/sgreben/testing-with-gomock v0.0.0-20180127205614-2990fb8af60c
 	github.com/stretchr/testify v1.7.0
 	github.com/svett/golang-design-patterns v0.0.0-20160515053510-a4c060127f2f
+	golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550
 )
 
 require (
