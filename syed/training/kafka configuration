@@ -1,0 +1,132 @@
+
+
+
+   configuring kafka in ubuntu:
+  ------------------------------
+
+    step1: 
+    ======
+             Java
+   		        sudo apt-get update
+			sudo apt-get install default-jre
+
+    step2:
+    ======
+	    Zookeeper:
+                       centrailszed service for maintaining configuration information.....etc....
+
+                        sudo apt-get install zookeeperd
+
+ 			telnet localhost 2181
+
+			ruok
+			imok
+
+   step3:
+   ======
+	create a Service user for kafka
+
+      sudo adduser kafka
+      sudo adduser kafka sudo
+      su -l kafka  (switch to user kafka)
+	whoami
+      kafka
+
+	mkdir ~/Downloads
+	curl "https://downloads.apache.org/kafka/2.6.2/kafka_2.13-2.6.2.tgz" -o ~/Downloads/kafka.tgz
+        or
+	https://downloads.apache.org/kafka/2.8.1/kafka_2.12-2.8.1.tgz
+	mkdir ~/kafka && cd ~/kafka
+
+	tar -zxzf ~/Downloads/kafka.tgz --strip 1
+
+step4:
+=====
+   	delete.topic.enable = true
+        log.dirs=/home/kafka/logs
+
+step5:
+======
+	setting Up kafka Systemd Unit Files:
+
+		 sudo gedit /etc/systemd/system/zookeeper.service 
+        [Unit]
+	Requires=network.target remote-fs.target
+	After=network.target remote-fs.target
+	[Service]
+	Type=simple
+	User=kafka
+	ExecStart=/home/kafka/kafka/bin/zookeeper-server-start.sh /home/kafka/kafka/config/zookeeper.properties
+	ExecStop=/home/kafka/kafka/bin/zookeeper-server-stop.sh
+	Restart=on-abnormal
+	[Install]
+	WantedBy=multi-user.target
+
+		sudo gedit /etc/systemd/system/kafka.service
+
+	[Unit]
+	Requires=zookeeper.service
+	After=zookeeper.service
+	[Service]
+	Type=simple
+	User=kafka
+	ExecStart=/bin/sh -c '/home/kafka/kafka/bin/kafka-server-start.sh /home/kafka/kafka/config/server.properties > /home/kafka/kafka/
+	kafka.log 2>&1'
+	ExecStop=/home/kafka/kafka/bin/kafka-server-stop.sh
+	Restart=on-abnormal
+	[Install]
+	WantedBy=multi-user.target
+
+Step6:	Testing:
+        ========
+
+	In order to publish messages in kafka,
+	1) A producer
+	2) A client who reads communications and data.
+
+
+	new Topic:
+	----------
+		~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic UserTopic
+
+		Created topic UserTopic:
+
+    i want to publish msg "Hello World"
+	 ~/kafka/bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic UserTopic
+
+	
+
+	echo "Hello World" | ~/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic UserTopic > /dev/null
+
+	 
+	
+
+	consumer:
+	~/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic UserTopic --from-beginning
+		keeps listening
+
+  	make sure user is kafka:
+	then prodice more msgs to topic:
+	echo "welcome User John by syed at swiggy" | ~/kafka/bin/kafka-console-producer.sh --broker-list localhost:9092 --topic  UserTopic > /
+	dev/null
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		
+   
+			
+
+
