@@ -18,4 +18,14 @@ var (
 		ErrorMessage:     literals.AppPrefix + literals.ParametersMissing,
 		HttpResponseCode: http.StatusBadRequest,
 	}
+
+	InvalidEmailFormatError = ServerError{
+		ErrorMessage:     literals.AppPrefix + literals.InvalidEmailFormat,
+		HttpResponseCode: http.StatusBadRequest,
+	}
+
+	WeakPasswordError = ServerError{
+		ErrorMessage:     literals.AppPrefix,
+		HttpResponseCode: http.StatusBadRequest,
+	}
 )
