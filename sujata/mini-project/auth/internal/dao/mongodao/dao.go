@@ -7,11 +7,13 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MongoDAO interface {
 	AddUser(ctx context.Context, user model.User) *errors.ServerError
+	FindUserByEmail(ctx context.Context, email string) (model.User, *errors.ServerError)
 }
 
 type mongoDAO struct {
@@ -48,10 +50,26 @@ func (dao *mongoDAO) AddUser(ctx context.Context, user model.User) *errors.Serve
 	}
 
 	if ra == nil {
-		log.WithError(err).Error("user inserted: ", ra, " expected 1")
+		log.WithError(err).Error("user inserted: 0, expected 1")
 		return &errors.DatabaseNoInsertionError
 	}
 
 	log.Info("user created successfully")
 	return nil
+}
+
+func (dao *mongoDAO) FindUserByEmail(ctx context.Context, email string) (model.User, *errors.ServerError) {
+	userCollection := dao.client.Database("shopKart").Collection("users")
+
+	userFilter := bson.M{"email": email}
+	singleResult := userCollection.FindOne(ctx, userFilter)
+
+	user := model.User{}
+	err := singleResult.Decode(&user)
+	if err != nil {
+		log.WithError(err).Error("error while decoding user into struct from mongodb")
+		return user, &errors.UserNotFoundError
+	}
+
+	return user, nil
 }

@@ -8,11 +8,15 @@ import (
 // database error
 var (
 	DatabaseInsertionError = ServerError{
-		ErrorMessage:     literals.AppPrefix + literals.DBInsertionError,
+		ErrorMessage:     literals.AppPrefix + ": " + literals.DBInsertionError,
 		HttpResponseCode: http.StatusInternalServerError,
 	}
 	DatabaseNoInsertionError = ServerError{
-		ErrorMessage:     literals.AppPrefix + literals.DBInsertionFail,
+		ErrorMessage:     literals.AppPrefix + ": " + literals.DBInsertionFail,
 		HttpResponseCode: http.StatusInternalServerError,
+	}
+	UserNotFoundError = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.DBUserNotFound,
+		HttpResponseCode: http.StatusNotFound,
 	}
 )
