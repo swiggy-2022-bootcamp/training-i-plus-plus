@@ -1,7 +1,5 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 // type Admin struct {
 //     Id       primitive.ObjectID `json:"id,omitempty"`
 //     Name     string             `json:"name,omitempty" validate:"required"`
@@ -10,7 +8,6 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 // }
 
 type Admin struct {
-	Id    primitive.ObjectID `json:"adminId,omitempty"`
-	Name  string             `json:"name,omitempty" validate:"required"`
-	Email string             `json:"email,omitempty" validate:"required"`
+	Name  string `json:"name,omitempty" validate:"required"`
+	Email string `json:"email,omitempty" validate:"required"`
 }

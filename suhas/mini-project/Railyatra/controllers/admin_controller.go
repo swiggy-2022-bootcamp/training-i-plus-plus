@@ -20,6 +20,8 @@ var trainCollection *mongo.Collection = config.GetCollection(config.DB, "trains"
 var availticketCollection *mongo.Collection = config.GetCollection(config.DB, "availtickets")
 var avalidate = validator.New()
 
+const layout = "Jan 2, 2006 at 3:04pm (MST)"
+
 func CreateAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -39,7 +41,6 @@ func CreateAdmin() gin.HandlerFunc {
 		}
 
 		newAdmin := models.Admin{
-			Id:    primitive.NewObjectID(),
 			Name:  admin.Name,
 			Email: admin.Email,
 		}
@@ -57,13 +58,13 @@ func CreateAdmin() gin.HandlerFunc {
 func GetAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		adminId := c.Param("adminId")
+		adminId := c.Param("adminid")
 		var admin models.Admin
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(adminId)
 
-		err := adminCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&admin)
+		err := adminCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&admin)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -76,7 +77,7 @@ func GetAdmin() gin.HandlerFunc {
 func EditAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		adminId := c.Param("adminId")
+		adminId := c.Param("adminid")
 		var admin models.Admin
 		defer cancel()
 
@@ -95,7 +96,7 @@ func EditAdmin() gin.HandlerFunc {
 		}
 
 		update := bson.M{"name": admin.Name, "email": admin.Email}
-		result, err := adminCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+		result, err := adminCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -105,7 +106,7 @@ func EditAdmin() gin.HandlerFunc {
 		//get updated admin details
 		var updatedAdmin models.Admin
 		if result.MatchedCount == 1 {
-			err := adminCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedAdmin)
+			err := adminCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedAdmin)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -119,12 +120,12 @@ func EditAdmin() gin.HandlerFunc {
 func DeleteAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		adminId := c.Param("adminId")
+		adminId := c.Param("adminid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(adminId)
 
-		result, err := adminCollection.DeleteOne(ctx, bson.M{"id": objId})
+		result, err := adminCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -193,7 +194,6 @@ func CreateTrain() gin.HandlerFunc {
 		}
 
 		newTrain := models.Train{
-			Id:       primitive.NewObjectID(),
 			Station1: train.Station1,
 			Station2: train.Station2,
 		}
@@ -211,13 +211,13 @@ func CreateTrain() gin.HandlerFunc {
 func GetTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		trainId := c.Param("trainId")
+		trainId := c.Param("trainid")
 		var train models.Train
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(trainId)
 
-		err := trainCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&train)
+		err := trainCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&train)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -230,7 +230,7 @@ func GetTrain() gin.HandlerFunc {
 func EditTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		trainId := c.Param("trainId")
+		trainId := c.Param("trainid")
 		var train models.Train
 		defer cancel()
 
@@ -249,7 +249,7 @@ func EditTrain() gin.HandlerFunc {
 		}
 
 		update := bson.M{"station1": train.Station1, "station2": train.Station2}
-		result, err := trainCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+		result, err := trainCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -259,7 +259,7 @@ func EditTrain() gin.HandlerFunc {
 		//get updated train details
 		var updatedTrain models.Train
 		if result.MatchedCount == 1 {
-			err := trainCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedTrain)
+			err := trainCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTrain)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -273,12 +273,12 @@ func EditTrain() gin.HandlerFunc {
 func DeleteTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		trainId := c.Param("trainId")
+		trainId := c.Param("trainid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(trainId)
 
-		result, err := trainCollection.DeleteOne(ctx, bson.M{"id": objId})
+		result, err := trainCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -346,12 +346,21 @@ func CreateAvailTicket() gin.HandlerFunc {
 			return
 		}
 
+		_, err1 := time.Parse(layout, availticket.Departure_time)
+		_, err := time.Parse(layout, availticket.Arrival_time)
+
+		if err != nil || err1 != nil {
+			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "time not in correct format", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
 		newAvailTicket := models.AvailTicket{
-			Id:             primitive.NewObjectID(),
+			Train_id:       availticket.Train_id,
+			Capacity:       availticket.Capacity,
+			Price:          availticket.Price,
 			Departure:      availticket.Departure,
 			Arrival:        availticket.Arrival,
-			Departure_time: time.Now(),
-			Arrival_time:   time.Now().Add(time.Hour * 3),
+			Departure_time: availticket.Departure_time,
+			Arrival_time:   availticket.Arrival_time,
 		}
 
 		result, err := availticketCollection.InsertOne(ctx, newAvailTicket)
@@ -367,13 +376,13 @@ func CreateAvailTicket() gin.HandlerFunc {
 func GetAvailTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		availticketId := c.Param("availticketId")
+		availticketId := c.Param("availticketid")
 		var availticket models.AvailTicket
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(availticketId)
 
-		err := availticketCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&availticket)
+		err := availticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&availticket)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -386,7 +395,7 @@ func GetAvailTicket() gin.HandlerFunc {
 func EditAvailTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		availticketId := c.Param("availticketId")
+		availticketId := c.Param("availticketid")
 		var availticket models.AvailTicket
 		defer cancel()
 
@@ -405,7 +414,7 @@ func EditAvailTicket() gin.HandlerFunc {
 		}
 
 		update := bson.M{"departure": availticket.Departure, "arrival": availticket.Arrival}
-		result, err := availticketCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+		result, err := availticketCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -415,7 +424,7 @@ func EditAvailTicket() gin.HandlerFunc {
 		//get updated availticket details
 		var updatedAvailTicket models.AvailTicket
 		if result.MatchedCount == 1 {
-			err := availticketCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedAvailTicket)
+			err := availticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedAvailTicket)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -429,12 +438,12 @@ func EditAvailTicket() gin.HandlerFunc {
 func DeleteAvailTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		availticketId := c.Param("availticketId")
+		availticketId := c.Param("availticketid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(availticketId)
 
-		result, err := availticketCollection.DeleteOne(ctx, bson.M{"id": objId})
+		result, err := availticketCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})

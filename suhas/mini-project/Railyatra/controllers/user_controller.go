@@ -38,9 +38,9 @@ func CreateUser() gin.HandlerFunc {
 		}
 
 		newUser := models.User{
-			Id:    primitive.NewObjectID(),
-			Name:  user.Name,
-			Email: user.Email,
+			Name:           user.Name,
+			Email:          user.Email,
+			BookedTicketID: []primitive.ObjectID{},
 		}
 
 		result, err := userCollection.InsertOne(ctx, newUser)
@@ -56,13 +56,13 @@ func CreateUser() gin.HandlerFunc {
 func GetAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		userId := c.Param("userId")
+		userId := c.Param("userid")
 		var user models.User
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		err := userCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&user)
+		err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -75,7 +75,7 @@ func GetAUser() gin.HandlerFunc {
 func EditAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		userId := c.Param("userId")
+		userId := c.Param("userid")
 		var user models.User
 		defer cancel()
 
@@ -94,7 +94,7 @@ func EditAUser() gin.HandlerFunc {
 		}
 
 		update := bson.M{"name": user.Name, "email": user.Email}
-		result, err := userCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -104,7 +104,7 @@ func EditAUser() gin.HandlerFunc {
 		//get updated user details
 		var updatedUser models.User
 		if result.MatchedCount == 1 {
-			err := userCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedUser)
+			err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedUser)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -118,12 +118,12 @@ func EditAUser() gin.HandlerFunc {
 func DeleteAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		userId := c.Param("userId")
+		userId := c.Param("userid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		result, err := userCollection.DeleteOne(ctx, bson.M{"id": objId})
+		result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -181,18 +181,19 @@ func CreateBookedTicket() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&bookedticket); err != nil {
-			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in binding", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&bookedticket); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in validating", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
 		//check and update avaiable tickets
 		var availticket models.AvailTicket
+
 		err := availticketCollection.FindOne(ctx, bson.M{"train_id": bookedticket.Train_id}).Decode(&availticket)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
@@ -205,21 +206,40 @@ func CreateBookedTicket() gin.HandlerFunc {
 		}
 
 		update := bson.M{"capacity": availticket.Capacity - 1}
-		_, err = availticketCollection.UpdateOne(ctx, bson.M{"train_id": bookedticket.Train_id}, bson.M{"$set": update})
+		_, err = availticketCollection.UpdateOne(ctx, bson.M{"trainid": bookedticket.Train_id}, bson.M{"$set": update})
 
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		var trainbooked models.Train
+
+		err = trainCollection.FindOne(ctx, bson.M{"_id": bookedticket.Train_id}).Decode(&trainbooked)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		newBookedTicket := models.BookedTicket{
-			Id:              primitive.NewObjectID(),
 			Train_id:        bookedticket.Train_id,
 			User_id:         bookedticket.User_id,
+			Departure:       trainbooked.Station1,
+			Arrival:         trainbooked.Station2,
+			Departure_time:  availticket.Departure_time,
+			Arrival_time:    availticket.Arrival_time,
 			Passengers_info: bookedticket.Passengers_info,
 		}
 
 		result, err := bookedticketCollection.InsertOne(ctx, newBookedTicket)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		update_tickets_booked := bson.M{"tickets_booked": result.InsertedID}
+		_, err = userCollection.UpdateOne(ctx, bson.M{"_id": bookedticket.User_id}, bson.M{"$push": update_tickets_booked})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -232,13 +252,13 @@ func CreateBookedTicket() gin.HandlerFunc {
 func GetBookedTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		bookedticketId := c.Param("bookedticketId")
+		bookedticketId := c.Param("bookedticketid")
 		var bookedticket models.BookedTicket
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(bookedticketId)
 
-		err := bookedticketCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&bookedticket)
+		err := bookedticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&bookedticket)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -251,12 +271,12 @@ func GetBookedTicket() gin.HandlerFunc {
 func DeleteBookedTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		bookedticketId := c.Param("bookedticketId")
+		bookedticketId := c.Param("bookedticketid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(bookedticketId)
 
-		result, err := bookedticketCollection.DeleteOne(ctx, bson.M{"id": objId})
+		result, err := bookedticketCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
