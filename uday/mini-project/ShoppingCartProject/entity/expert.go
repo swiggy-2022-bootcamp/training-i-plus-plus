@@ -1,14 +1,17 @@
 package entity
-
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 type Expert struct{
-	Id              int    `json:"id"`
+	Id 	primitive.ObjectID	`bson:"_id"`
 	Username     	string	`json:"username"`
 	Skill   	    string	`json:"skill"`
 	Email 			string	`json:"email"`
-	IsAvailable     bool	`json:"isAavailable"`
+	IsAvailable     bool	`json:"isavailable"`
 	Served			int		`json:"served"`
 	Rating 			float64 `json:"rating"`
-	Reviews          []RatingStruct 
+	Location        int      `json:"location"`
+	Reviews          []RatingStruct  `json:"reviews"`
 }
 
 type RatingStruct struct{
