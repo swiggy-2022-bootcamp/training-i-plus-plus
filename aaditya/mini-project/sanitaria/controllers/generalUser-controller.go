@@ -6,6 +6,7 @@ import (
 	"sanitaria/configs"
 	"sanitaria/models"
 	"sanitaria/responses"
+	"sanitaria/services"
 	"time"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -40,11 +41,14 @@ func RegisterGeneralUser() gin.HandlerFunc {
             return
         }
 
+		hashPassword := services.HashPassword(user.Password)
+		user.Password = hashPassword
+
         newGeneralUser := models.GeneralUser{
             Id:       primitive.NewObjectID(),
             PreviousDiseases:     generalUser.PreviousDiseases,
             IsPatient: generalUser.IsPatient,
-			User:				   generalUser.User,
+			User:				   user,
         }
       
         result, err := generalUserCollection.InsertOne(ctx, newGeneralUser)
@@ -55,6 +59,42 @@ func RegisterGeneralUser() gin.HandlerFunc {
 
         c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
     }
+}
+
+func LoginGeneralUser() gin.HandlerFunc {
+	return func (c *gin.Context)  {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var generalUser models.GeneralUser
+		var foundGenerealUser models.GeneralUser
+
+		if err := c.BindJSON(&generalUser); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+			return 
+		}
+		err := generalUserCollection.FindOne(ctx, bson.M{"user.emailid":generalUser.User.EmailId}).Decode(&foundGenerealUser)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"email or password is incorrect"})
+			return
+		}
+
+		passwordIsValid, msg := services.VerifyPassword(generalUser.User.Password, foundGenerealUser.User.Password)
+		defer cancel()
+		if !passwordIsValid{
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+
+		if foundGenerealUser.User.EmailId == ""{
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
+		}
+		token, err := services.CreateToken(foundGenerealUser.User.EmailId, foundGenerealUser.User.Name)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: token, Data: map[string]interface{}{"data": foundGenerealUser}})
+	}
 }
 
 func GetGeneralUserByID() gin.HandlerFunc {

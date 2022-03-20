@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"sanitaria/configs"
 	"sanitaria/models"
 	"sanitaria/responses"
+	"sanitaria/services"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -41,13 +43,14 @@ func RegisterDoctor() gin.HandlerFunc {
             c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
             return
         }
-
+		hashPassword := services.HashPassword(user.Password)
+		user.Password = hashPassword
         newDoctor := models.Doctor{
             Id:       primitive.NewObjectID(),
             Category:     doctor.Category,
             Yoe: doctor.Yoe,
             MedicalLicenseLink:    doctor.MedicalLicenseLink,
-			User:				   doctor.User,
+			User:				   user,
         }
       
         result, err := doctorCollection.InsertOne(ctx, newDoctor)
@@ -58,6 +61,43 @@ func RegisterDoctor() gin.HandlerFunc {
 
         c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
     }
+}
+
+func LoginDoctor() gin.HandlerFunc {
+	return func (c *gin.Context)  {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var doctor models.Doctor
+		var foundDoctor models.Doctor
+
+		if err := c.BindJSON(&doctor); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+			return 
+		}
+		fmt.Println(doctor.User.EmailId)
+		err := doctorCollection.FindOne(ctx, bson.M{"user.emailid":doctor.User.EmailId}).Decode(&foundDoctor)
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"email or password is incorrect"})
+			return
+		}
+
+		passwordIsValid, msg := services.VerifyPassword(doctor.User.Password, foundDoctor.User.Password)
+		defer cancel()
+		if !passwordIsValid{
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+
+		if foundDoctor.User.EmailId == ""{
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
+		}
+		token, err := services.CreateToken(foundDoctor.User.EmailId, foundDoctor.User.Name)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: token, Data: map[string]interface{}{"data": foundDoctor}})
+	}
 }
 
 func GetDoctorByID() gin.HandlerFunc {
