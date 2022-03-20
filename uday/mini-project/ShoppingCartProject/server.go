@@ -2,19 +2,17 @@ package main
 
 import ( 
 	"github.com/gin-gonic/gin"
- 	"github.com/Udaysonu/SwiggyGoLangProject/config"
-	"github.com/Udaysonu/SwiggyGoLangProject/service"
+ 	// "github.com/Udaysonu/SwiggyGoLangProject/config"
+	// "github.com/Udaysonu/SwiggyGoLangProject/service"
  	"github.com/Udaysonu/SwiggyGoLangProject/route"
+	"fmt"
 )
 
-var (
-	expertService service.ExpertService=config.GetexpertService()
-)
-
+ 
 
 func main(){
 
-	expertService.InitDB()
+	// expertService.InitDB()
 
 	server:=gin.Default()
 
@@ -29,4 +27,5 @@ func main(){
 	}
 
 	server.Run(":8080")
+	fmt.Println("Server started Listening at port:8080")
 }
