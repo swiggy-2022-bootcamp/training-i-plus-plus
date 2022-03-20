@@ -1,10 +1,10 @@
 package model
 
-type Role int
+type Role string
 
 const (
-	SELLER Role = iota
-	BUYER
+	SELLER Role = "SELLER"
+	BUYER  Role = "BUYER"
 )
 
 type User struct {

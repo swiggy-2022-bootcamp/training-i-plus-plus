@@ -81,7 +81,7 @@ func (s *signinService) ProcessRequest(ctx context.Context, user model.User) (mo
 	claims["CustomUserInfo"] = struct {
 		Email string
 		Role  model.Role
-	}{user.Email, user.Role}
+	}{userRecord.Email, userRecord.Role}
 
 	// set the expire time
 	claims["exp"] = time.Now().Add(time.Minute * 60).Unix()
