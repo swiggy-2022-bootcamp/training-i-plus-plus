@@ -15,7 +15,22 @@ type ServerError struct {
 // Validation errors
 var (
 	ParametersMissingError = ServerError{
-		ErrorMessage:     literals.AppPrefix + literals.ParametersMissing,
+		ErrorMessage:     literals.AppPrefix + ": " + literals.ParametersMissing,
 		HttpResponseCode: http.StatusBadRequest,
+	}
+
+	InvalidEmailFormatError = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.InvalidEmailFormat,
+		HttpResponseCode: http.StatusBadRequest,
+	}
+
+	WeakPasswordError = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.WeakPasswordError,
+		HttpResponseCode: http.StatusBadRequest,
+	}
+
+	IncorrectUserPasswordError = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.IncorrectUserPassword,
+		HttpResponseCode: http.StatusUnauthorized,
 	}
 )

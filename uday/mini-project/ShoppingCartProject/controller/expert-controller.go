@@ -6,92 +6,80 @@ import (
 	"github.com/Udaysonu/SwiggyGoLangProject/entity"
 	"github.com/Udaysonu/SwiggyGoLangProject/service"
 	"github.com/gin-gonic/gin"
-	
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
-type ExpertController interface{
-	GetSkills() []string
-	WorkDone(ctx *gin.Context)
-	AddRating(ctx *gin.Context)
-	SignUpExpert(username string,skill string, email string)
-	BookEmployee(ctx *gin.Context) (entity.Expert,int)
-	GetExperts(ctx *gin.Context) []entity.Expert
-	DirectSignUp(ctx *gin.Context)
-	GetExpertByID(ctx *gin.Context) entity.Expert
-	FilterExpert(ctx *gin.Context) []entity.Expert
+
+func   Delete(ctx *gin.Context)int{
+	id_s,_:=ctx.GetQuery("expertid")
+	id,_ := primitive.ObjectIDFromHex(id_s)
+	return service.Delete(id)
 }
 
-type controller struct{
-	service service.ExpertService
+func  SignUpExpert(username string,skill string, email string, location int)entity.Expert{
+	return service.SignUpExpert(username ,skill , email, location )
 }
 
-func NewExpertController(service service.ExpertService) ExpertController{	
-	return &controller{
-		service,
-	}
+func GetAllExperts(ctx *gin.Context)[]entity.Expert{
+	return service.GetAllExperts()
 }
 
-
-func (c *controller) GetSkills()[]string{
-	return c.service.GetSkills()
+func   WorkDone(ctx *gin.Context){
+	a,_:=ctx.GetQuery("userid")
+	b,_:=ctx.GetQuery("expertid")
+    a_s,_:=primitive.ObjectIDFromHex(a)
+	b_s,_:=primitive.ObjectIDFromHex(b)
+	fmt.Println(a_s,b_s)
+	service.WorkDone(a_s,b_s);
 }
 
-func (c *controller) SignUpExpert(username string,skill string, email string){
-	c.service.SignUpExpert(username ,skill , email )
-}
-
-func (c *controller) WorkDone(ctx *gin.Context){
-	b,_:=ctx.GetQuery("userid")
-	a,_:=ctx.GetQuery("expertid")
-	a_i,_ := strconv.ParseInt(a,10,4)
-    b_i,_:=strconv.ParseInt(b,10,4)
-
-	c.service.WorkDone(int(a_i),int(b_i));
-}
-
-func (c *controller) BookEmployee(ctx *gin.Context) (entity.Expert,int){
+func  BookEmployee(ctx *gin.Context) (entity.Expert,int){
 	skill,_:=ctx.GetQuery("skill")
 	id_s,_:=ctx.GetQuery("userid")
-	id,_ := strconv.ParseInt(id_s,10,4)
-	return c.service.BookEmployee(skill,int(id))
+	id,_:=primitive.ObjectIDFromHex(id_s)
+	return service.BookEmployee(skill,id)
 }
 
-func (c *controller)AddRating(ctx *gin.Context){
+func  AddRating(ctx *gin.Context){
 	var review entity.RatingStruct
 	ctx.BindJSON(&review)
 	id_s,_:=ctx.GetQuery("expertid")
-	id,_ := strconv.ParseInt(id_s,10,8)
- 	c.service.AddRating(review.Rating,review.Review,int(id))
+	// id,_ := strconv.ParseInt(id_s,10,8)
+	id,_:=primitive.ObjectIDFromHex(id_s)
+ 	service.AddRating(review.Rating,review.Review,id)
 }
 
-func (c *controller) GetExperts(ctx *gin.Context)[]entity.Expert{
+func   GetExperts(ctx *gin.Context)[]entity.Expert{
 	skill,_ := ctx.GetQuery("skill")
-	return c.service.GetExperts(skill)
+	return service.GetExperts(skill)
 }
+
 type Temp struct{
 	Username string `json:"name"`
 	Skill string `json:"skill"`
 	Email string `json:"email"`
+	Location int `json:"location"`
 }
-func (c *controller) DirectSignUp(ctx *gin.Context){
+
+func  DirectSignUp(ctx *gin.Context)entity.Expert{
 	var expert Temp
 	ctx.BindJSON(&expert)
 	fmt.Println(expert)
-	c.service.SignUpExpert(expert.Username,expert.Skill,expert.Email)
+	return service.SignUpExpert(expert.Username,expert.Skill,expert.Email,expert.Location)
 }
 
-func (c *controller) GetExpertByID(ctx *gin.Context)entity.Expert{
+func   GetExpertByID(ctx *gin.Context)entity.Expert{
 	id_s,_:=ctx.GetQuery("expertid")
-	id,_ := strconv.ParseInt(id_s,10,8)
-	return c.service.GetExpertByID(int(id))
+	id,_:=primitive.ObjectIDFromHex(id_s)
+	return service.GetExpertByID(id)
 }
 
-func (c *controller) FilterExpert(ctx *gin.Context) []entity.Expert{
+func  FilterExpert(ctx *gin.Context) []entity.Expert{
 	skill,_:=ctx.GetQuery("skill")
 	id_s,_:=ctx.GetQuery("rating")
 	rating,_ := strconv.ParseInt(id_s,10,8)
-	return c.service.FilterExpert(skill,int(rating))
+	return service.FilterExpert(skill,int(rating))
 }
 
 func GetSkills()[]string{
-	return []string{"painter","plumber","carpenter"}
+	return service.GetSkills()
 }

@@ -8,44 +8,45 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type UserController interface{
-	SignUpUser(ctx *gin.Context)
-	IsUserPresent(ctx *gin.Context)bool
-	GetUser(ctx *gin.Context)entity.User
-}
+// type UserController interface{
+// 	SignUpUser(ctx *gin.Context)
+// 	IsUserPresent(ctx *gin.Context)bool
+// 	GetUser(ctx *gin.Context)entity.User
+// }
 
-type userController struct{
-	service service.UserService
-}
+// type userController struct{
+// 	service service.UserService
+// }
 
-func UserNewController(service service.UserService) UserController{
-	return	&userController{
-		service,
-	}
-}
+// func UserNewController(service service.UserService) UserController{
+// 	return	&userController{
+// 		service,
+// 	}
+// }
 type TempUser struct{
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Email    string `json:"email"`
 	Phone    int `json:"phone"`
+	Location int `json:"location"`
 }
-func (c *userController)SignUpUser(ctx *gin.Context){
+func SignUpUser(ctx *gin.Context)entity.User{
 	var user TempUser
 	error:=ctx.ShouldBindJSON(&user)
 	fmt.Println(user,error)
-	c.service.SignUpUser(user.Username,user.Password,user.Email,user.Phone);
+	return service.SignUpUser(user.Username,user.Password,user.Email,user.Phone,user.Location);
 }
 
-func (c *userController)IsUserPresent(ctx *gin.Context)bool{
+func  IsUserPresent(ctx *gin.Context)bool{
 	var user TempUser
 	ctx.BindJSON(&user)
 	fmt.Println(user)
-	return c.service.IsUserPresent(user.Username,user.Password);
+	return service.IsUserPresent(user.Username,user.Password);
 }
 
-func (c *userController)GetUser(ctx *gin.Context)entity.User{
+func  GetUser(ctx *gin.Context)entity.User{
 	var user TempUser
 	ctx.BindJSON(&user)
 	fmt.Println(user)
-	return c.service.GetUser(user.Username,user.Password);
+	return service.GetUser(user.Username,user.Password);
 }

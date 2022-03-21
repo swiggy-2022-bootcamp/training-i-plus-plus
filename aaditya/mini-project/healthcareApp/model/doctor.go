@@ -1,7 +1,9 @@
 package model
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Doctor struct{
-	Id					string		`json:"id"`
+	Id		primitive.ObjectID		`json:"id,omitempty"`
 	User							`json:"user"`
 	Category 			string		`json:"category"`
 	Yoe 	 			float64		`json:"yoe"`

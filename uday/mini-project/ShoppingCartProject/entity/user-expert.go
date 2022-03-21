@@ -1,8 +1,11 @@
 package entity;
-
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 type UserExpert struct{
-	Userid int	`json:"userid"`
-	Expertid int	`json:"expertid"`
+	 
+	Userid primitive.ObjectID	`json:"userid"`
+	Expertid primitive.ObjectID	`json:"expertid"`
 	Accepted bool 	`json:"accepted"`
 	Cost int		`json:"cost"`
 	Skill string	`json:"skill"`

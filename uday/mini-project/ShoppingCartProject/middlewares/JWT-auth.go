@@ -8,20 +8,23 @@ import (
 	 "fmt"
 )
 var jwtKey=[]byte("sercret_key")
-
+var User entity.User
 type Credentials struct{
 	Username string `json:"username"`
 	Password string	`json:"password"`
 }
-
-func Login(ctx *gin.Context,service service.UserService)string{
+func GetUser()entity.User{
+	return User
+}
+func Login(ctx *gin.Context)string{
 	var credentials Credentials
 	ctx.BindJSON(&credentials)
 	fmt.Println(credentials)
 	var user entity.User=service.GetUser(credentials.Username,credentials.Password)
+	User=user
 	fmt.Println(user)
 	if user.Username==credentials.Username{
-		expirationTime:=time.Now().Add(time.Minute*5)
+		expirationTime:=time.Now().Add(time.Minute*30)
 		claims:=&Claims{
 			Username: credentials.Username,
 			Password: credentials.Password,
@@ -33,12 +36,12 @@ func Login(ctx *gin.Context,service service.UserService)string{
 		fmt.Println(tokem)
 		tokenString,_:=tokem.SignedString(jwtKey)
 		return tokenString
-	} else{
+	} else {
 		return "error in creating token! check credentials"
 	}
 }
 
-func CheckAuth(ctx *gin.Context,service service.UserService)bool{
+func CheckAuth(ctx *gin.Context)bool{
  	 
 	tokenStr:=ctx.GetHeader("token")
 	fmt.Println(tokenStr)
@@ -47,16 +50,18 @@ func CheckAuth(ctx *gin.Context,service service.UserService)bool{
 		func(t *jwt.Token)(interface{},error){
 			return jwtKey,nil
 		})
+    
 	if err!=nil{
 		if err==jwt.ErrSignatureInvalid{
 			return false
 		}
 	}
+
 	if !tkn.Valid{
 			return false
 	}
-	fmt.Println("welcome user")
-	return true
+	fmt.Println(claims)
+ 	return true
 }
 type Claims struct{
 	Username string `json:"username"`

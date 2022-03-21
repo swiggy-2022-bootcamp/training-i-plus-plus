@@ -2,10 +2,15 @@ package server
 
 import (
 	"auth/config"
+	"auth/internal/dao/mongodao"
+	"auth/internal/services"
 	"auth/util"
+	"context"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Server struct {
@@ -35,7 +40,16 @@ func RunServer() error {
 		WebServerConfig: webServerConfig,
 	}
 
+	// Initialize dao
+	err = intializeDao()
+	if err != nil {
+		return err
+	}
+
 	// Initialize services
+	services.InitSignupService(&routerConfigs)
+	services.InitSigninService(&routerConfigs)
+
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)
 
@@ -45,5 +59,16 @@ func RunServer() error {
 		return err
 	}
 
+	return nil
+}
+
+func intializeDao() error {
+	// Initialize mongo database connection
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		return err
+	}
+
+	mongodao.InitMongoDAO(client)
 	return nil
 }
