@@ -48,7 +48,7 @@ func RegisterDoctor() gin.HandlerFunc {
         newDoctor := models.Doctor{
             Id:       primitive.NewObjectID(),
             Category:     doctor.Category,
-            Yoe: doctor.Yoe,
+            Yoe: 		  doctor.Yoe,
             MedicalLicenseLink:    doctor.MedicalLicenseLink,
 			User:				   user,
         }
@@ -227,4 +227,52 @@ func GetAllDoctors() gin.HandlerFunc {
 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": doctors}},
 		)
 	}
+}
+
+func OpenSlotsForAppointments() gin.HandlerFunc{
+	return func (c *gin.Context)  {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        id := c.Param("id")
+        var doctor models.Doctor
+        defer cancel()
+
+        objId, _ := primitive.ObjectIDFromHex(id)
+
+        err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&doctor)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+        }
+
+		var newAppointment models.Appointment
+		if err = c.BindJSON(&newAppointment); err!=nil{
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+		}
+		currentAppointments := doctor.Appointments
+		currentAppointments = append(currentAppointments,newAppointment)
+
+		update := bson.M{"appointments": currentAppointments}
+
+		result, err := doctorCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		//get updated user details
+		var updatedDoctor models.Doctor
+		if result.MatchedCount == 1 {
+			err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedDoctor)
+
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				return
+			}
+		}
+
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
+	}
+
 }
