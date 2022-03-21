@@ -21,9 +21,10 @@ func main() {
 	cont := controller.Controller{svc}
 
 	router.POST("/user", cont.CreateUser)
-	// router.GET("/doctor", handler.Read)
-	// router.PATCH("/doctor/:_id", handler.Update)
-	// router.DELETE("/doctor/:_id", handler.Delete)
+	router.GET("/user/:_id", cont.ReadUser)
+	router.PATCH("/user/:_id", cont.UpdateUser)
+	router.DELETE("/user/:_id", cont.DeleteUser)
+	router.GET("/user", cont.ListUser)
 
 	// Start listening
 	router.Run(":7456")
