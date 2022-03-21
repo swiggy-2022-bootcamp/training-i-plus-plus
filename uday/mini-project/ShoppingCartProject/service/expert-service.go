@@ -1,159 +1,165 @@
 package service
+
 import (
+	"context"
+	"fmt"
+	"time"
+	"github.com/Udaysonu/SwiggyGoLangProject/database"
 	"github.com/Udaysonu/SwiggyGoLangProject/entity"
-	"fmt"	
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"log"
 	// "github.com/Udaysonu/SwiggyGoLangProject/config"
-
 )
-var expertid int=1;
-var UES=NewUserExpertService();
-type ExpertService interface{
-	GetSkills() []string
-	WorkDone(int,int)
-	AddRating(rating int, review string,id int)
-	SignUpExpert(username string,skill string, email string)
-	BookEmployee(skill string,userid int) (entity.Expert,int)
-	GetExperts(string) []entity.Expert
-	GetExpertByID(int) entity.Expert
-	FilterExpert(string, int) []entity.Expert
-	InitDB()
-}
 
-type expertService struct{
-	ExpertMap map[string][]int
-	ExpertList []entity.Expert
-}
-
-func ExpertNew() ExpertService{
-	return &expertService{map[string][]int{},[]entity.Expert{}}
-}
-
-func (service *expertService)SignUpExpert(username string,skill string, email string){
-	NewExpert:=entity.Expert{Id:expertid,Username:username,Skill:skill,Email:email,IsAvailable:true,Served:0,Rating:0.0,Reviews:[]entity.RatingStruct{}}
-	// NewExpert.rating=[]RatingStruct{}
-	service.ExpertList=append(service.ExpertList,NewExpert);
-	// _,found:=service.ExpertMap[skill]
-	// if found==false{
-	// 	service.ExpertMap[skill]=[]int{}
-	// }
-	service.ExpertMap[skill]=append(service.ExpertMap[skill],expertid);
-	expertid=expertid+1
-}
-
-func  (service *expertService)GetSkills()[]string{
-	var	skills =[] string{};
-	for key,_:= range service.ExpertMap{
-		skills=append(skills,key);
+var expertCollection *mongo.Collection = database.GetCollection(database.DB, "experts")
+func GetAllExperts()[]entity.Expert{
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var experts []entity.Expert
+	defer cancel()
+	results, _ := expertCollection.Find(ctx, bson.M{})
+	for results.Next(ctx) {
+		var singleUser entity.Expert
+		results.Decode(&singleUser) 
+		experts = append(experts, singleUser)
 	}
+	return experts
+}
+func Delete(id primitive.ObjectID)int{
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+ 	_,err:= expertCollection.DeleteOne(ctx, bson.M{"_id":id})
+	if err!=nil{
+		return 500
+	} 
+	return 200
+}
+
+func  SignUpExpert(username string,skill string, email string,location int)entity.Expert{
+	newExpert:=entity.Expert{Id:primitive.NewObjectID(),Username:username,Skill:skill,Email:email,IsAvailable:true,Served:0,Rating:0.0,Location:location,Reviews:[]entity.RatingStruct{}}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+ 	_,err:= expertCollection.InsertOne(ctx, newExpert)
+	 if err!=nil{
+		 fmt.Println(err)
+	 }
+	return newExpert
+}
+
+func  GetSkills()[]string{
+	var	skills =[] string{"carpenter","plumber","painter","beautician","labour"};
 	return skills;
 }
 
-func (service *expertService)WorkDone(id int,userid int){
-	for index,person := range service.ExpertList{
-		if(person.Id==id){
-			fmt.Println("called remove")
-		    filledWaiting:=UES.RemoveRelation(userid,id);
-			if filledWaiting==false{
-				person.IsAvailable=true;
-			}
-			service.ExpertList[index]=person;
-		}
-	}
+func  WorkDone(userid primitive.ObjectID,id primitive.ObjectID){
+	RemoveRelation(userid,id);
 }
 
-func (service *expertService)BookEmployee(skill string,userid int) (entity.Expert,int){
-	var availablePerson entity.Expert;
-	var g_index int=-1;
-	for index,person:= range service.ExpertList{
-		if person.IsAvailable==true  && person.Skill==skill{
-			if g_index==-1 {
-				availablePerson=person;
-				g_index=index
-			} else if availablePerson.Served>person.Served {
-				availablePerson=person;
-				g_index=index;
-			}
-		}
+func  BookEmployee(skill string,userid primitive.ObjectID) (entity.Expert,int){
+	var availablePerson entity.Expert; 
+	filter := bson.M{"isavailable": true,"skill":skill}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	var experts []entity.Expert
+	opts := options.Find().SetSort(bson.D{{"rating", 1}})
+	results, err := expertCollection.Find(ctx, filter, opts)
+	for results.Next(ctx) {
+		var singleUser entity.Expert
+		results.Decode(&singleUser) 
+		experts = append(experts, singleUser)
 	}
+ 	fmt.Println(experts)
 
-	if(g_index==-1){
-		// UserExpertQueue.PushBack(UserExpert{2,-1,false})
-		fmt.Println("added to waiting linst",userid,skill)
-		UES.AddWaitingList(userid,skill);
+	if err == mongo.ErrNoDocuments {
+		// Do something when no record was found
+		AddWaitingList(userid,skill);
 		return entity.Expert{},404;
+		fmt.Println("record does not exist")
+	} else if err != nil {
+		log.Fatal(err)
+	} else if len(experts)>0{
+		availablePerson=experts[0]
+ 		availablePerson.Served=availablePerson.Served+1
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+	 
+		expertCollection.UpdateOne(ctx, bson.M{"_id":availablePerson.Id}, bson.D{{"$set", bson.D{{"isavailable",false},{"served",availablePerson.Served}}}}	)
+		CreateRelation(userid,availablePerson.Id,skill)
+	} else if len(experts)==0{
+		AddWaitingList(userid,skill);
 	}
 
-	availablePerson.IsAvailable=false;
-	availablePerson.Served=availablePerson.Served+1
-	service.ExpertList[g_index]=availablePerson;
-	UES.CreateRelation(userid,service.ExpertList[g_index].Id,service.ExpertList[g_index].Skill);
 	return availablePerson,200;
 }
 
-func (service *expertService)AddRating(rating int, review string,id int){
-	for index,value:= range service.ExpertList{
-		if value.Id==id{
-			value.Rating=((value.Rating+float64(rating))/(float64)(len(value.Reviews)+1))
-			value.Reviews=append(value.Reviews,entity.RatingStruct{rating,review})
-			service.ExpertList[index]=value;
-		}
-	}
+func  AddRating(rating int, review string,id primitive.ObjectID){
+	var result entity.Expert
+	 
+	filter := bson.D{{"_id", id}}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+
+	expertCollection.FindOne(ctx, filter).Decode(&result)
+	
+	result.Rating=((result.Rating+float64(rating))/(float64)(len(result.Reviews)+1))
+	result.Reviews=append(result.Reviews,entity.RatingStruct{rating,review})
+	update := bson.D{{"$set", bson.D{{"rating", result.Rating},{"reviews",result.Reviews}}}}
+
+	expertCollection.UpdateOne(  ctx,filter,   update)
+
+ 	
 }
 
-func (service *expertService) GetExperts(skill string)[]entity.Expert{
-	var experts=[]entity.Expert{}
-	for _,id :=range service.ExpertMap[skill]{
-		for _,value:=range service.ExpertList{
-			if value.Id==id{
-				experts=append(experts,value)
-			}
+func   GetExperts(skill string)[]entity.Expert{
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var experts []entity.Expert
+	defer cancel()
+	results, _ := expertCollection.Find(ctx, bson.M{"skill":skill})
+	for results.Next(ctx) {
+		var singleUser entity.Expert
+		results.Decode(&singleUser) 
+		experts = append(experts, singleUser)
+	}
+	fmt.Println(experts,"-----",results)
+	return experts
+}
+
+func  GetExpertByID(id primitive.ObjectID) entity.Expert{
+	var result entity.Expert
+	 
+	filter := bson.M{"_id": id}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+ 
+	err := expertCollection.FindOne(ctx, filter).Decode(&result)
+	
+	if err == mongo.ErrNoDocuments {
+		// Do something when no record was found
+		fmt.Println("record does not exist")
+	} else if err != nil {
+		log.Fatal(err)
+	} 
+	return result 
+} 
+
+
+func   FilterExpert(skill string, rating int )[]entity.Expert{
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var experts []entity.Expert
+	defer cancel()
+	results, _ := expertCollection.Find(ctx, bson.M{})
+	for results.Next(ctx) {
+		var singleUser entity.Expert
+		results.Decode(&singleUser) 
+		if singleUser.Rating>=float64(rating){
+			experts = append(experts, singleUser)
 		}
 	}
 	return experts
 }
 
-func (service *expertService) GetExpertByID(id int) entity.Expert{
-	var expert entity.Expert
-	for _,value:=range service.ExpertList{
-		if value.Id==id{
-			expert=value
-		}
-	}
-	return expert
-}
-// func (service *expertService)AddRating(rating int, review string,id int){
-// 	for index,value:= range service.ExpertList{
-// 		if value.id==id{
-// 			value.rating=append(value.rating,RatingStruct{rating,review})
-// 			service.ExpertList[index]=value;
-// 		}
-// 	}
-// }
-
-func (service *expertService) FilterExpert(skill string, rating int )[]entity.Expert{
-	var experts = []entity.Expert{}
-	for _,id:=range service.ExpertMap[skill]{
-		for _,value:=range service.ExpertList{
-			if value.Rating>=float64(rating) && id==value.Id{
-				experts=append(experts,value)
-			}
-		}
-	}
-	return experts
-}
-
-
-func (service *expertService) InitDB(){
-	fmt.Println(service.ExpertList)
-	fmt.Println(service.ExpertMap)
-	service.SignUpExpert("Mahesh","carpenter","mahesh@gmail.com");
-	service.SignUpExpert("NTR","painter","ntr@gmail.com");
-	service.SignUpExpert("Surya","carpenter","surya@gmail.com"); 
-	service.SignUpExpert("Arjun","carpenter","arjun@gmail.com");
-	service.SignUpExpert("Vijay","painter","vijay@gmail.com");
-	service.SignUpExpert("Ajeeth","carpenter","ajeeth@gmail.com");
-	service.SignUpExpert("Prabhas","plumber","prabhas@gmail.com");
-	service.SignUpExpert("Pawan","plumber","pawan@gmail.com");
-
-	fmt.Println("----------------Database Loaded-------------------")
-}
+ 

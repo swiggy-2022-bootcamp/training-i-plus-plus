@@ -53,7 +53,7 @@ func SaveUser(user model.User) {
 	log.Info("User added ")
 }
 
-func DeleteUser(email string) {
+func DeleteUser(email string) bool {
 
 	c := db.Session.DB("shopping_cart_dev").C("user-collection")
 
@@ -61,8 +61,26 @@ func DeleteUser(email string) {
 
 	err := c.Remove(bson.M{"email": email})
 	if err != nil {
-		log.Error("Error while deleting user with email ", email)
+		log.Error("Error while deleting user with email ", err)
+		return false
 	} else {
-		log.Info("User deleted ")
+		log.Info("User deleted")
+		return true
+	}
+}
+
+func FindAndUpdate(user model.User) bool {
+
+	c := db.Session.DB("shopping_cart_dev").C("user-collection")
+
+	log.Info("Trying to update user with email : ", user.Email)
+
+	err := c.Update(bson.M{"email": user.Email}, user)
+	if err != nil {
+		log.Error("Error while updating user ", user, err)
+		return false
+	} else {
+		log.Info("User updated ")
+		return true
 	}
 }

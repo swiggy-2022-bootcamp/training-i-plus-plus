@@ -26,11 +26,11 @@ func (r *Router) InitializeRoutes(routerConfig *util.RouterConfig) {
 
 	s.HandleFunc(literals.SignupEndpoint,
 		handlers.SignupHandler(routerConfig)).
-		Methods(http.MethodGet).
+		Methods(http.MethodPost).
 		Name(literals.SignupAPIName)
 
 	s.HandleFunc(literals.SigninEndpoint,
 		handlers.SigninHandler(routerConfig)).
-		Methods(http.MethodGet).
+		Methods(http.MethodPost).
 		Name(literals.SigninAPIName)
 }

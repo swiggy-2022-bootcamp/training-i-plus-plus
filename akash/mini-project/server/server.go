@@ -22,10 +22,12 @@ func Start() {
 		})
 	})
 
-	router.GET("/login", user.Login)
 	router.POST("/register", user.Register)
-	router.GET("/users/all", user.QueryAll)
-	router.DELETE("/users/delete", user.Delete)
+	router.GET("/login", user.Login)
+	router.GET("/user", user.QueryOne)
+	router.GET("/user/all", user.QueryAll)
+	router.PUT("/user/update", user.Update)
+	router.DELETE("/user/delete", user.Delete)
 
 	// Start listening
 	port := Port

@@ -19,3 +19,9 @@
 
 # For sonar scanner generated folder
 *.scannerwork
+
+# For keys folder
+keys
+
+# DS Store files
+.DS_Store
