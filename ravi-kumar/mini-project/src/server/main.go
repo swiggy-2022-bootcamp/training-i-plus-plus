@@ -36,6 +36,9 @@ func main() {
 	router.HandleFunc("/catalog/{productId}", controller.UpdateProductById).Methods(http.MethodPut)
 	router.HandleFunc("/catalog/{productId}", controller.DeleteProductbyId).Methods(http.MethodDelete)
 
+	router.HandleFunc("/order", controller.PlaceOrder).Methods(http.MethodPost)
+	router.HandleFunc("/{userId}/order", controller.GetOrders).Methods(http.MethodGet)
+
 	log.Print("Starting server at port ", config.SERVER_PORT)
 	http.ListenAndServe(":5001", router)
 }
