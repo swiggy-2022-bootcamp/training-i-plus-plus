@@ -1,1 +1,45 @@
 
+Online Shopping:
+-----------------
+
+
+Users     -> localhost:8001 -> UsersDB
+
+Orders    -> localhost:8002 -> OrdersDB   (Producer : orderStatus )
+  order-status:(dispatched transit delivered cancelled)
+
+Payments  -> localhost:8003 -> PaymentsDB  (Consumer)
+  order-status
+
+Reporting -> localhost:8004 -> ReportingDB  (Consumer)
+  order-status 
+
+
+Train Reservation System:
+-------------------------
+
+Users     -> localhost:8001 -> UsersDB
+
+Ticketing -> localhost:8002 -> TicketsDB (Producer)
+   train-no
+
+Trains    -> localhost:8003  -> TrainsDB (Consumer)
+   train-number
+   
+Reporting -> localhost:8004 -> ReportingDB  (Consumer)
+   train-number
+
+HealthCare Application:
+-------------------------
+
+Users     -> localhost:8001 -> UsersDB
+
+Patients  -> localhost:8002 -> PatientsDB (Producer)
+   appointment-date
+
+Doctors    -> localhost:8003  -> DoctorsDB (Consumer)
+      appointment-date
+
+Reporting -> localhost:8004 -> ReportingDB  (Consumer)
+      appointment-date
+
