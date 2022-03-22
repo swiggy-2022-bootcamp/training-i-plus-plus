@@ -42,7 +42,10 @@ func GetAddProductService() AddProductService {
 }
 
 func (s *addProductService) ValidateRequest(product model.Product) *errors.ServerError {
-
+	if product.Name == "" || product.Description == "" || product.Price == 0 || product.Quantity == 0 {
+		log.Error("Either product name, description, price or quantity missing from product")
+		return &errors.ParametersMissingError
+	}
 	return nil
 }
 
