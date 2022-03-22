@@ -7,11 +7,8 @@ import (
 	mockdata "src/model"
 	"time"
 
-	"src/kafka"
-
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -34,13 +31,6 @@ func PlaceOrder(res http.ResponseWriter, req *http.Request) {
 	connection := client.Database("swiggy_mini").Collection("orders")
 	ctx, _ = context.WithTimeout(context.Background(), time.Second*10)
 	result, _ := connection.InsertOne(ctx, orderPlaced)
-
-	orderPlaced.Id = result.InsertedID.(primitive.ObjectID)
-
-	ctx, _ = context.WithTimeout(context.Background(), time.Second*10)
-	kafka.Produce(ctx, []byte("partition1"), []byte("order placed by user with id "+orderPlaced.UserId))
-	ctx, _ = context.WithTimeout(context.Background(), time.Minute*10)
-	go kafka.Consume(ctx)
 
 	res.Header().Add("Content-type", "application/json")
 	res.WriteHeader(http.StatusOK)

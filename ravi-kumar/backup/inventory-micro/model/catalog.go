@@ -1,17 +1,14 @@
 package mockdata
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 //import ("fmt")
 
 type Product struct {
-	Id          primitive.ObjectID `json:"id" bson:"_id,omitempty"`
-	Name        string             `json: "name" bson: "name"`
-	Price       int                `json: "price" bson: "price"`
-	Description string             `json: "description" bson: "description"`
-	Seller      string             `json: "seller" bson: "seller"`
-	Rating      float32            `json: "rating" bson: "rating"`
-	Review      []string           `json: "review" bson: "review"`
+	Name        string   `json: "name" bson: "name"`
+	Price       int      `json: "price" bson: "price"`
+	Description string   `json: "description" bson: "description"`
+	Seller      string   `json: "seller" bson: "seller"`
+	Rating      float32  `json: "rating" bson: "rating"`
+	Review      []string `json: "review" bson: "review"`
 }
 
 // var Catalog = []Product{
