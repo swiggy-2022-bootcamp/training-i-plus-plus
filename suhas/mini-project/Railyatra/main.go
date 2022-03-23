@@ -7,21 +7,39 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRouter() *gin.Engine {
+func SetupUserRouter() *gin.Engine {
 	router := gin.Default()
 
 	//routes
 	routes.AuthRoute(router)
-	routes.UserRoute(router)  //add this
-	routes.AdminRoute(router) //add this
+	routes.UserRoute(router) //add this
+	//add this
+	return router
+}
+
+func SetupAdminRouter() *gin.Engine {
+	router := gin.Default()
+	routes.AdminRoute(router)
+	return router
+}
+
+func SetupAuthRouter() *gin.Engine {
+	router := gin.Default()
+	routes.AuthRoute(router)
 	return router
 }
 
 func main() {
 
-	rout := SetupRouter()
-	//run database
 	config.ConnectDB()
 
-	rout.Run("localhost:6000")
+	userroute := SetupUserRouter()
+	userroute.Run("localhost:6000")
+
+	adminroute := SetupAdminRouter()
+	adminroute.Run("localhost:6001")
+
+	authroute := SetupAuthRouter()
+	authroute.Run("localhost:6002")
+
 }

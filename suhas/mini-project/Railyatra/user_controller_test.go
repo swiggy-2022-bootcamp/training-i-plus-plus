@@ -14,7 +14,7 @@ import (
 )
 
 //init router
-var rout = SetupRouter()
+var rout = SetupUserRouter()
 
 var (
 	arr_insertedId   []string
