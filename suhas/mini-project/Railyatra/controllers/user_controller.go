@@ -2,14 +2,19 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"gin-mongo-api/config"
 	"gin-mongo-api/models"
 	"gin-mongo-api/responses"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
+	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,6 +23,20 @@ import (
 var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
 var bookedticketCollection *mongo.Collection = config.GetCollection(config.DB, "bookedtickets")
 var validate = validator.New()
+
+func init() {
+	go consume_booked_ticket()
+}
+
+type kafka_booking_ticket struct {
+	insertedid   string
+	bookedticket models.BookedTicket
+}
+
+const (
+	topic         = "bookedticket"
+	brokerAddress = "localhost:9092"
+)
 
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -238,12 +257,18 @@ func CreateBookedTicket() gin.HandlerFunc {
 			return
 		}
 
-		update_tickets_booked := bson.M{"tickets_booked": result.InsertedID}
-		_, err = userCollection.UpdateOne(ctx, bson.M{"_id": bookedticket.User_id}, bson.M{"$push": update_tickets_booked})
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
+		// update_tickets_booked := bson.M{"tickets_booked": result.InsertedID}
+		// _, err = userCollection.UpdateOne(ctx, bson.M{"_id": bookedticket.User_id}, bson.M{"$push": update_tickets_booked})
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+		iid := fmt.Sprintf("%v", result.InsertedID)
+		new_produce_ticket := kafka_booking_ticket{
+			insertedid:   iid,
+			bookedticket: newBookedTicket,
 		}
+		go produce_booked_ticket(new_produce_ticket)
 
 		c.JSON(http.StatusCreated, responses.BookedTicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
@@ -293,5 +318,50 @@ func DeleteBookedTicket() gin.HandlerFunc {
 		c.JSON(http.StatusOK,
 			responses.BookedTicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "BookedTicket successfully deleted!"}},
 		)
+	}
+}
+
+func produce_booked_ticket(nbt kafka_booking_ticket) {
+	l := log.New(os.Stdout, "kafka producer", 0)
+	w := kafka.NewWriter(kafka.WriterConfig{
+		Brokers: []string{brokerAddress},
+		Topic:   topic,
+		Logger:  l,
+	})
+
+	bytes, _ := json.Marshal(nbt.bookedticket)
+	err := w.WriteMessages(context.Background(), kafka.Message{
+		Key:   []byte(nbt.insertedid),
+		Value: []byte(bytes),
+	})
+	if err != nil {
+		panic("could not write message " + err.Error())
+	}
+}
+
+func consume_booked_ticket() {
+	l := log.New(os.Stdout, "kafka producer", 0)
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: []string{brokerAddress},
+		Topic:   topic,
+		Logger:  l,
+	})
+
+	for {
+		// the `ReadMessage` method blocks until we receive the next event
+		msg, err := r.ReadMessage(context.Background())
+		if err != nil {
+			panic("could not read message " + err.Error())
+		}
+		// after receiving the message, log its value
+		fmt.Println("received: ", string(msg.Value))
+		nbtr := models.BookedTicket{}
+		json.Unmarshal([]byte(msg.Value), &nbtr)
+		fmt.Println(nbtr)
+		update_tickets_booked := bson.M{"tickets_booked": string(msg.Key)}
+		_, err = userCollection.UpdateOne(context.Background(), bson.M{"_id": nbtr.User_id}, bson.M{"$push": update_tickets_booked})
+		if err != nil {
+			panic("could not update booked ticket " + err.Error())
+		}
 	}
 }

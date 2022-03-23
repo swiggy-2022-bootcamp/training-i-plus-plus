@@ -1,0 +1,22 @@
+Online shopping
+---------------
+microservice
+
+Users     -> localhost:8001 -> UserDB
+Orders    -> localhost:8002 -> OrderDB (Producer : orderStatus)
+    order-status:(dispatched,transit,delivered,cancelleds):(completes)
+Payments  -> localhost:8003 -> PaymentDB (Consumer : orderStatus)
+    order-status 
+Reporting -> localhost:8004 -> ReportingDB  
+    order-status
+
+Train reservation
+-----------------
+
+Users     -> localhost:8001 -> UserDB
+Ticketing -> localhost:8002 -> TicketingDB
+    train-no
+Trains    -> localhost:8003 -> TrainDB
+    train-no
+Reporting -> localhost:8004 -> ReportingDB  
+    train-no
