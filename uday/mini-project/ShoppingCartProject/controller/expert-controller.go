@@ -35,6 +35,7 @@ func   WorkDone(ctx *gin.Context){
 func  BookEmployee(ctx *gin.Context) (entity.Expert,int){
 	skill,_:=ctx.GetQuery("skill")
 	id_s,_:=ctx.GetQuery("userid")
+	fmt.Println(skill,id_s)
 	id,_:=primitive.ObjectIDFromHex(id_s)
 	return service.BookEmployee(skill,id)
 }
@@ -78,6 +79,33 @@ func  FilterExpert(ctx *gin.Context) []entity.Expert{
 	id_s,_:=ctx.GetQuery("rating")
 	rating,_ := strconv.ParseInt(id_s,10,8)
 	return service.FilterExpert(skill,int(rating))
+}
+
+func GetWaitingRequest(ctx *gin.Context)entity.UserExpert{
+	id_s,_:=ctx.GetQuery("expertid")
+	id,_:=primitive.ObjectIDFromHex(id_s)
+	return service.GetWaitingRequest(id)
+}
+
+func RejectWaitingResult(ctx *gin.Context)bool{
+	id_s,_:=ctx.GetQuery("expertid")
+	id,_:=primitive.ObjectIDFromHex(id_s)
+	return service.RejectWaitingResult(id)
+}
+
+func AcceptWaitingRequest(ctx *gin.Context)entity.UserExpert{
+	id_s,_:=ctx.GetQuery("expertid")
+	id,_:=primitive.ObjectIDFromHex(id_s)
+	return service.AcceptWaitingRequest(id)
+}
+
+func CompletedRequest(ctx *gin.Context)entity.UserExpert{
+	id_s,_:=ctx.GetQuery("expertid")
+	id,_:=primitive.ObjectIDFromHex(id_s)
+
+	cost,_:=ctx.GetQuery("cost")
+	cost_int,_ := strconv.ParseInt(cost,10,8)
+	return service.CompletedRequest(id,int(cost_int))
 }
 
 func GetSkills()[]string{

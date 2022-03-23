@@ -98,4 +98,16 @@ func ExpertRouter(g *gin.RouterGroup){
 		ctx.JSON(200,controller.FilterExpert(ctx))
 	})
 
+	g.GET("/waitingreq",func(ctx *gin.Context){
+		ctx.JSON(200,controller.GetWaitingRequest(ctx))
+	})
+	g.GET("/rejectreq",func(ctx *gin.Context){
+		ctx.JSON(200,controller.RejectWaitingResult(ctx))
+	})
+	g.GET("/acceptreq",func(ctx *gin.Context){
+		ctx.JSON(200,controller.AcceptWaitingRequest(ctx))
+	})
+	g.GET("/complete",func(ctx *gin.Context){
+		ctx.JSON(200,controller.CompletedRequest(ctx))
+	})
 }

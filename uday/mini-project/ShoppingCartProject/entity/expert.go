@@ -10,8 +10,8 @@ type Expert struct{
 	IsAvailable     bool	`json:"isavailable"`
 	Served			int		`json:"served"`
 	Rating 			float64 `json:"rating"`
-	Location        int      `json:"location"`
-	Reviews          []RatingStruct  `json:"reviews"`
+	Location        int     `json:"location"`
+	Reviews         []RatingStruct  `json:"reviews"`
 }
 
 type RatingStruct struct{

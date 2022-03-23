@@ -17,7 +17,7 @@ var waitlistCollection *mongo.Collection = database.GetCollection(database.DB, "
 
 
 func  AddWaitingList(userid primitive.ObjectID,skill string){
-	newRelation:=entity.UserExpert{userid,userid,true,-1,skill};
+	newRelation:=entity.UserExpert{userid,userid,true,-1,skill,time.Now().Format("01-02-2006 15:04:05"),"","Pending"};
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	 waitlistCollection.InsertOne(ctx, newRelation)
@@ -25,7 +25,7 @@ func  AddWaitingList(userid primitive.ObjectID,skill string){
 }
 
 func CreateRelation(userid primitive.ObjectID, expertid primitive.ObjectID,skill string){
-	newRelation:=entity.UserExpert{userid,expertid,true,-1,skill};
+	newRelation:=entity.UserExpert{userid,expertid,false,-1,skill,time.Now().Format("01-02-2006 15:04:05"),"","Pending"};
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	_,err:= ueCollection.InsertOne(ctx, newRelation)
@@ -58,8 +58,8 @@ func RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) bool{
 	defer cancel2()
  
 	err2 := waitlistCollection.FindOne(ctx2, filter2).Decode(&waiting_result)
-	
-	if err2 == mongo.ErrNoDocuments {
+	fmt.Println("--------------",err2,userid,expertid)
+	if err2==mongo.ErrNoDocuments{
 		// Do something when no record was found
 		fmt.Println("record does not exist")
 		expertCollection.UpdateOne(ctx,bson.M{"_id":expertid},bson.D{{"$set", bson.D{{"isavailable", true}}}})

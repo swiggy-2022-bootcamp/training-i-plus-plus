@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
+	// "os/exec"
 	"time"
+
 	"github.com/Udaysonu/SwiggyGoLangProject/database"
 	"github.com/Udaysonu/SwiggyGoLangProject/entity"
 	"go.mongodb.org/mongo-driver/bson"
@@ -16,6 +18,8 @@ import (
 )
 
 var expertCollection *mongo.Collection = database.GetCollection(database.DB, "experts")
+var completedCollection *mongo.Collection = database.GetCollection(database.DB, "completed")
+
 func GetAllExperts()[]entity.Expert{
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	var experts []entity.Expert
@@ -57,6 +61,48 @@ func  GetSkills()[]string{
 func  WorkDone(userid primitive.ObjectID,id primitive.ObjectID){
 	RemoveRelation(userid,id);
 }
+
+func GetWaitingRequest(expertid primitive.ObjectID)entity.UserExpert{
+	var result entity.UserExpert
+	
+	filter := bson.M{"expertid": expertid}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	ueCollection.FindOne(ctx, filter).Decode(&result)
+	return result
+}
+
+func AcceptWaitingRequest(expertid primitive.ObjectID)entity.UserExpert{
+	var result entity.UserExpert
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	 
+	ueCollection.UpdateOne(ctx, bson.M{"expertid":expertid}, bson.D{{"$set", bson.D{{"accepted",true},{"status","Accepted"},{"acceptedat", time.Now().Format("01-02-2006 15:04:05")}}}}	)
+	ueCollection.FindOne(ctx,bson.M{"expertid":expertid}).Decode(&result)
+	return result
+}
+
+func RejectWaitingResult(expertid primitive.ObjectID)bool{
+	var result entity.UserExpert
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	ueCollection.FindOne(ctx,bson.M{"expertid":expertid}).Decode(&result)
+	RemoveRelation(result.Userid,result.Expertid)
+	return true
+}
+
+func CompletedRequest(expertid primitive.ObjectID,cost int)entity.UserExpert{
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	var result entity.UserExpert
+	ueCollection.FindOne(ctx,bson.M{"expertid":expertid}).Decode(&result)
+ 	result.Cost=cost
+	result.Status="Completed"
+	completedCollection.InsertOne(ctx,result)
+	RemoveRelation(result.Userid,result.Expertid)
+	return result
+}
+
 
 func  BookEmployee(skill string,userid primitive.ObjectID) (entity.Expert,int){
 	var availablePerson entity.Expert; 
