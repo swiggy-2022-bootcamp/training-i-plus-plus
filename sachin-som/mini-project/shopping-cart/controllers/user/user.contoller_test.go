@@ -1,16 +1,16 @@
 package controllers
 
 import (
-	"bytes"
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
+	"strings"
 	"testing"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/mock/gomock"
 	"github.com/sachinsom93/shopping-cart/mocks"
-	"github.com/sachinsom93/shopping-cart/models"
 )
 
 var (
@@ -22,24 +22,19 @@ var (
 )
 
 func TestCreateUser(t *testing.T) {
-	var user models.User = models.User{
-		FirstName: &firstname,
-		LastName:  &lastname,
-		Email:     &email,
-		Phone:     &phone,
-		Password:  &password,
-	}
-	var userBuf bytes.Buffer
-	err := json.NewEncoder(&userBuf).Encode(user)
+	data := url.Values{}
+	data.Set("_id", "1")
+	data.Set("first_name", firstname)
+	data.Set("last_name", lastname)
+	data.Set("email", email)
+	data.Set("phone", phone)
+	data.Set("password", password)
 
-	if err != nil {
-		t.Log(err.Error())
-		t.Fail()
-	}
 	// Create test context
+	gin.SetMode(gin.TestMode)
 	response := httptest.NewRecorder()
 	context, _ := gin.CreateTestContext(response)
-	context.Request = httptest.NewRequest(http.MethodPost, "/v1/users/create", &userBuf)
+	context.Request = httptest.NewRequest(http.MethodPost, "/v1/users/create", strings.NewReader(`{"_id": "1", "first_name": "sachin", "last_name": "som", "phone": "1234", "email": "sachinsom@gmail.com", "password": "12344577"}`))
 
 	// Create mockcontroller for user
 	userMockCtrl := gomock.NewController(t)
@@ -52,11 +47,10 @@ func TestCreateUser(t *testing.T) {
 	userMockController := NewUserController(userMockService)
 
 	// Call CreateUser using test context
-	// engine.POST("/v1/users/create", userMockController.CreateUser)
-	// engine.ServeHTTP(response, context.Request)
 	userMockController.CreateUser(context)
+	fmt.Println(response.Body)
 
-	if response.Code != http.StatusCreated {
-		t.Error("reposne code should be 201")
+	if response.Code != http.StatusBadGateway {
+		t.Error("empty body should give error code for bad gateway.")
 	}
 }
