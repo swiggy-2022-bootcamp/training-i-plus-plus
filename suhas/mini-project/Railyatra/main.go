@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gin-mongo-api/config" //add this
+	"gin-mongo-api/config"
 	"gin-mongo-api/routes"
 
 	"github.com/gin-gonic/gin"
@@ -9,11 +9,7 @@ import (
 
 func SetupUserRouter() *gin.Engine {
 	router := gin.Default()
-
-	//routes
-	routes.AuthRoute(router)
-	routes.UserRoute(router) //add this
-	//add this
+	routes.UserRoute(router)
 	return router
 }
 
