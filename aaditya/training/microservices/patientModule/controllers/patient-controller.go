@@ -3,12 +3,12 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"sanitaria/configs"
-	"sanitaria/models"
-	"sanitaria/responses"
-	"sanitaria/services"
+	"patientModule/configs"
+	"patientModule/models"
+	"patientModule/responses"
+	"patientModule/services"
 	"time"
-
+	"github.com/go-playground/validator/v10"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -16,7 +16,7 @@ import (
 )
 
 var patientCollection *mongo.Collection = configs.GetCollection(configs.DB, "patients")
-//var validate = validator.New()
+var validate = validator.New()
 
 func RegisterPatient() gin.HandlerFunc {
     return func(c *gin.Context) {
@@ -90,12 +90,12 @@ func LoginPatient() gin.HandlerFunc {
 		if foundPatient.User.EmailId == ""{
 			c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
 		}
-		token, err := services.CreateToken(foundPatient.User.EmailId, foundPatient.User.Name)
+		//token, err := services.CreateToken(foundPatient.User.EmailId, foundPatient.User.Name)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: token, Data: map[string]interface{}{"data": foundPatient}})
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": foundPatient}})
 	}
 }
 
