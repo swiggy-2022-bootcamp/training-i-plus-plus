@@ -1,24 +1,28 @@
 package db
 
 import (
+	"context"
 	"errors"
-	"shopping-app/user/domain"
 	"time"
+	"user/domain"
+
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type userRepositoryDB struct {
-	userList []User
+	dbClient *mongo.Client
 }
 
-func NewUserRepositoryDB(uList []User) domain.UserRepositoryDB {
+func NewUserRepositoryDB(dbClient *mongo.Client) domain.UserRepositoryDB {
 	return &userRepositoryDB{
-		userList: uList,
+		dbClient: dbClient,
 	}
 }
 
-func (udb *userRepositoryDB) Save(u domain.User) (domain.User, error) {
+func (udb userRepositoryDB) Save(u domain.User) (*domain.User, error) {
 
-	user := NewUser(
+	newUser := NewUser(
 		u.Email(),
 		u.Password(),
 		u.Name(),
@@ -27,20 +31,69 @@ func (udb *userRepositoryDB) Save(u domain.User) (domain.User, error) {
 		u.MobileNo(),
 		u.Role(),
 	)
-	user.SetCreatedAt(time.Now())
-	user.SetUpdatedAt(time.Now())
+	newUser.SetCreatedAt(time.Now())
+	newUser.SetUpdatedAt(time.Now())
 
-	udb.userList = append(udb.userList, *user)
-	return u, nil
+	ctx, cxl := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cxl()
+
+	userCollection := Collection(udb.dbClient, "users")
+	_, err := userCollection.InsertOne(ctx, newUser)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &u, nil
 }
 
-func (udb *userRepositoryDB) FindUserByEmail(email string) (*domain.User, error) {
+func (udb userRepositoryDB) FindUserByEmail(email string) (*domain.User, error) {
 
-	for _, user := range udb.userList {
-		if user.email == email {
-			domainUser := domain.NewUser(user.email, user.password, user.name, user.address, user.zipcode, user.mobileNo, user.role)
-			return domainUser, nil
-		}
+	dbUser := User{}
+
+	ctx, cxl := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cxl()
+
+	userCollection := Collection(udb.dbClient, "users")
+
+	err := userCollection.FindOne(ctx, bson.M{"email": email}).Decode(dbUser)
+
+	if err != nil {
+		return nil, err
 	}
-	return nil, errors.New("user does not exist")
+
+	domainUser := domain.NewUser(dbUser.email, dbUser.password, dbUser.name, dbUser.address, dbUser.zipcode, dbUser.mobileNo, dbUser.role)
+
+	return domainUser, errors.New("user does not exist")
+}
+
+func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, error) {
+
+	newUser := NewUser(
+		u.Email(),
+		u.Password(),
+		u.Name(),
+		u.Address(),
+		u.Zipcode(),
+		u.MobileNo(),
+		u.Role(),
+	)
+	newUser.SetCreatedAt(time.Now())
+	newUser.SetUpdatedAt(time.Now())
+	dbUser := User{}
+
+	ctx, cxl := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cxl()
+
+	userCollection := Collection(udb.dbClient, "users")
+
+	err := userCollection.FindOneAndReplace(ctx, bson.M{"email": newUser.email}, newUser).Decode(dbUser)
+
+	if err != nil {
+		return nil, err
+	}
+
+	domainUser := domain.NewUser(dbUser.email, dbUser.password, dbUser.name, dbUser.address, dbUser.zipcode, dbUser.mobileNo, dbUser.role)
+
+	return domainUser, nil
 }

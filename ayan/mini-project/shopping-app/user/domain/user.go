@@ -79,6 +79,7 @@ func (u *User) SetRole(role string) {
 }
 
 type UserRepositoryDB interface {
-	Save(User) (User, error)
+	Save(User) (*User, error)
 	FindUserByEmail(string) (*User, error)
+	UpdateUser(User) (*User, error)
 }

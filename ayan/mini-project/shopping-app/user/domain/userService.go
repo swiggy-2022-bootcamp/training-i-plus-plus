@@ -8,6 +8,7 @@ type UserService interface {
 	FindUserByEmail(string) (*User, error)
 	VerifyCredentials(string, string) (bool, error)
 	VerifyToken(string, string) (bool, error)
+	UpdateUser(User) (*User, error)
 }
 
 type DefaultUserService struct {
@@ -27,7 +28,7 @@ func (usvc *DefaultUserService) Register(user User) (*User, error) {
 		return nil, errors.New("user already exists")
 	}
 	u, err := usvc.userDB.Save(user)
-	return &u, err
+	return u, err
 }
 
 func (usvc *DefaultUserService) Login(email string, password string) (string, error) {
@@ -71,4 +72,14 @@ func (usvc *DefaultUserService) VerifyToken(email string, token string) (bool, e
 		return false, err
 	}
 	return actualToken == token, nil
+}
+
+func (usvc *DefaultUserService) UpdateUser(user User) (*User, error) {
+
+	_, err := usvc.FindUserByEmail(user.Email())
+	if err != nil {
+		return nil, err
+	}
+	u, err := usvc.userDB.UpdateUser(user)
+	return u, err
 }
