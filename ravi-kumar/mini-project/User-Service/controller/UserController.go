@@ -1,17 +1,17 @@
 package controller
 
 import (
+	mockdata "User-Service/model"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	mockdata "src/model"
 	"sync"
 	"time"
 
-	"src/config"
+	"User-Service/config"
 
 	//"go.mongodb.org/mongo-driver/bson"
 	"github.com/gorilla/mux"

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"User-Service/config"
+	"User-Service/controller"
 	"context"
 	"log"
 	"net/http"
 	"net/url"
-	"src/config"
-	"src/controller"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -23,6 +23,8 @@ func main() {
 	client, _ := mongo.NewClient(options.Client().ApplyURI(mongoURL))
 	_ = client.Connect(ctx)
 
+	//go kafka.Consume(ctx)
+
 	router := mux.NewRouter()
 	router.HandleFunc("/users", controller.CreateUser).Methods(http.MethodPost)
 	router.HandleFunc("/users", controller.GetAllUsers).Methods(http.MethodGet)
@@ -30,17 +32,8 @@ func main() {
 	router.HandleFunc("/users/{userId}", controller.UpdateUserById).Methods(http.MethodPut)
 	router.HandleFunc("/users/{userId}", controller.DeleteUserbyId).Methods(http.MethodDelete)
 
-	router.HandleFunc("/catalog", controller.CreateProduct).Methods(http.MethodPost)
-	router.HandleFunc("/catalog", controller.GetCatalog).Methods(http.MethodGet)
-	router.HandleFunc("/catalog/{productId}", controller.GetProductById).Methods(http.MethodGet)
-	router.HandleFunc("/catalog/{productId}", controller.UpdateProductById).Methods(http.MethodPut)
-	router.HandleFunc("/catalog/{productId}", controller.DeleteProductbyId).Methods(http.MethodDelete)
-
-	router.HandleFunc("/order", controller.PlaceOrder).Methods(http.MethodPost)
-	router.HandleFunc("/{userId}/order", controller.GetOrders).Methods(http.MethodGet)
-
-	log.Print("Starting server at port ", config.SERVER_PORT)
-	http.ListenAndServe(":5001", router)
+	log.Print("User Service: Starting server at port ", config.USER_SERVICE_SERVER_PORT)
+	http.ListenAndServe(":5004", router)
 }
 
 func GetClient() *mongo.Client {

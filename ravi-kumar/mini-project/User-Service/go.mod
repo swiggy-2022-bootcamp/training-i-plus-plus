@@ -1,4 +1,4 @@
-module src
+module User-Service
 
 go 1.17
 

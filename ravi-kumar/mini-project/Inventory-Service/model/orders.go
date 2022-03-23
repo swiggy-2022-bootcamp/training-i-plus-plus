@@ -13,4 +13,5 @@ type Order struct {
 	Amount       float64            `json: "amount" bson: "amount"`
 	OrderDate    time.Time          `json: "orderDate" bson: "orderDate"`
 	DeliveryDate time.Time          `json: "deliveryDate" bson: "deliveryDate"`
+	Status       string             `json:"status" bson: "status"`
 }

@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	topic         = "mini-project"
+	topic         = "swiggy-project-1"
 	brokerAddress = "localhost:9092"
 )
 
@@ -34,7 +34,7 @@ func Produce(ctx context.Context, key []byte, value []byte) {
 		panic("could not write message " + err.Error())
 	}
 	// log a confirmation once the message is written
-	//fmt.Println("writes:", value)
+	fmt.Println("writes:", string(value))
 }
 func Consume(ctx context.Context) (ch chan []byte) {
 	// create a new logger that outputs to stdout
@@ -46,7 +46,7 @@ func Consume(ctx context.Context) (ch chan []byte) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic,
-		GroupID: "my-group",
+		GroupID: "consumer-group-1",
 		// assign the logger to the reader
 		Logger: logger,
 	})

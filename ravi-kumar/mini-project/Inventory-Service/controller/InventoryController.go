@@ -1,13 +1,15 @@
 package controller
 
 import (
+	"Inventory-Service/config"
+	mockdata "Inventory-Service/model"
+
 	"context"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
-	mockdata "src/model"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -16,6 +18,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
+
+var client *mongo.Client
+var mongoURL string = config.MONGO_URL
 
 func init() {
 	// Initialize a new mongo client with options
