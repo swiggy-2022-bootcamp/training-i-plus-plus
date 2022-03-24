@@ -2,6 +2,7 @@ package services
 
 import (
 	"github.com/go-kafka-microservice/UserService/models"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 /*
@@ -9,5 +10,5 @@ import (
  */
 type UserService interface {
 	CreateUser(*models.User) error
-	GetUser(int) (*models.User, error)
+	GetUser(primitive.ObjectID) (*models.User, error)
 }
