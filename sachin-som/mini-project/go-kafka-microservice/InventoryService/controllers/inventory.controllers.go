@@ -1,8 +1,12 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+	"github.com/go-kafka-microservice/InventoryService/models"
 	"github.com/go-kafka-microservice/InventoryService/services"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type InventoryControllers struct {
@@ -16,19 +20,46 @@ func NewInventoryControllers(inventoryService services.InventoryServices) *Inven
 }
 
 func (ic *InventoryControllers) RegisterInventory(gctx *gin.Context) {
-	gctx.JSON(200, nil)
+	var inventory models.Inventory
+	if err := gctx.ShouldBindJSON(&inventory); err != nil {
+		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+	if err := ic.InventoryService.RegisterInventory(&inventory); err != nil {
+		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		return
+	}
+	gctx.JSON(http.StatusCreated, gin.H{"message": "Inventory registered succesfully."})
 }
 
 func (ic *InventoryControllers) AddProduct(gctx *gin.Context) {
-	gctx.JSON(200, nil)
+	inventoryId, _ := primitive.ObjectIDFromHex(gctx.Param("id"))
+	var prouduct models.Product
+	if err := gctx.ShouldBindJSON(&prouduct); err != nil {
+		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err := ic.InventoryService.AddProduct(inventoryId, &prouduct); err != nil {
+		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+	gctx.JSON(http.StatusCreated, gin.H{"message": "Product Added to Inventory."})
 }
 
 func (ic *InventoryControllers) GetProduct(gctx *gin.Context) {
-	gctx.JSON(200, nil)
+	inventoryId, _ := primitive.ObjectIDFromHex(gctx.Param("inventoryId"))
+	productId, _ := primitive.ObjectIDFromHex(gctx.Param("prouductId"))
+
+	product, err := ic.InventoryService.GetProduct(inventoryId, productId)
+	if err != nil {
+		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
+	gctx.JSON(http.StatusOK, gin.H{"message": product})
 }
 
 func (ic *InventoryControllers) RegisterInventoryRoutes(rg *gin.RouterGroup) {
-	inventoryRouter := rg.Group("/inventory")
+	inventoryRouter := rg.Group("/")
 	inventoryRouter.POST("/regiter", ic.RegisterInventory)
-	inventoryRouter.POST("/product/add", ic.AddProduct)
+	inventoryRouter.POST("/:id/product/add", ic.AddProduct)
+	inventoryRouter.GET("/:inventoryId/product/:productId", ic.GetProduct)
 }

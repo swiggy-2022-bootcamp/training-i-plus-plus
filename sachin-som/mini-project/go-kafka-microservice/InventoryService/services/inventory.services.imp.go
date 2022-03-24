@@ -2,31 +2,85 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	"github.com/go-kafka-microservice/InventoryService/models"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type InventoryServicesImpl struct {
 	InventoryCollection *mongo.Collection
+	ProductCollection   *mongo.Collection
 	Ctx                 context.Context
 }
 
-func NewInventoryService(inventoryCollection *mongo.Collection, ctx context.Context) *InventoryServicesImpl {
+func NewInventoryService(inventoryCollection *mongo.Collection, productCollection *mongo.Collection, ctx context.Context) *InventoryServicesImpl {
 	return &InventoryServicesImpl{
 		InventoryCollection: inventoryCollection,
+		ProductCollection:   productCollection,
 		Ctx:                 ctx,
 	}
 }
 
-func (is *InventoryServicesImpl) RegisterInventory(proudct *models.Inventory) error {
+func (is *InventoryServicesImpl) RegisterInventory(inventory *models.Inventory) error {
+	inventory.ID = primitive.NewObjectID()
+	if _, err := is.InventoryCollection.InsertOne(is.Ctx, inventory); err != nil {
+		return err
+	}
 	return nil
 }
 
-func (is *InventoryServicesImpl) AddProduct(inventoryId int, product *models.Product) error {
+func (is *InventoryServicesImpl) AddProduct(inventoryId primitive.ObjectID, product *models.Product) error {
+
+	// Mongo Queries
+	filterInventory := bson.D{bson.E{Key: "_id", Value: inventoryId}}
+	pushProuductID := bson.D{bson.E{Key: "$push", Value: bson.D{bson.E{Key: "products", Value: product}}}}
+
+	// Craete Product and get prouduct ID
+	product.ID = primitive.NewObjectID()
+	if _, err := is.ProductCollection.InsertOne(is.Ctx, product); err != nil {
+		return err
+	}
+
+	// Push ProuductID to inventory
+	result, err := is.InventoryCollection.UpdateOne(is.Ctx, filterInventory, pushProuductID)
+
+	// Errors
+	if err != nil {
+		return err
+	}
+	if result.MatchedCount != 1 {
+		return errors.New("No inventory found.")
+	}
+	if result.ModifiedCount != 1 {
+		return errors.New("Something went wrong, product not added.")
+	}
 	return nil
 }
 
-func (is *InventoryServicesImpl) GetProduct(inventoryId int, productId int) (*models.Product, error) {
-	return nil, nil
+func (is *InventoryServicesImpl) GetProduct(inventoryId, productId primitive.ObjectID) (*models.Product, error) {
+	// Mongo Queries
+	filterInventory := bson.D{bson.E{Key: "_id", Value: inventoryId}}
+
+	// Find inventory
+	var inventory models.Inventory
+	if err := is.InventoryCollection.FindOne(is.Ctx, filterInventory).Decode(&inventory); err != nil {
+		return nil, err
+	}
+
+	// Search for Product
+	for _, p := range inventory.Products {
+		if p.Hex() == productId.Hex() {
+			filterProduct := bson.D{bson.E{Key: "_id", Value: p}}
+			var product models.Product
+			if err := is.ProductCollection.FindOne(is.Ctx, filterProduct).Decode(&product); err != nil {
+				return nil, err
+			}
+			return &product, nil
+		}
+	}
+
+	return nil, errors.New("No Product Found.")
 }
