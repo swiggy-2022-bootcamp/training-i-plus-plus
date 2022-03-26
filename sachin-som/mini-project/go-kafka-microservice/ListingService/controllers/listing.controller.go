@@ -18,5 +18,9 @@ func NewListingController(listingService services.ListingService) *ListingContro
 }
 
 func (lc *ListingController) ShowProducts(gctx *gin.Context) {
-	gctx.JSON(http.StatusOK, nil)
+	products, err := lc.ListingService.ShowProducts("products")
+	if err != nil {
+		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
+	gctx.JSON(http.StatusOK, products)
 }

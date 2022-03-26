@@ -5,5 +5,5 @@ import (
 )
 
 type ListingService interface {
-	ShowProducts() ([]*models.Product, error)
+	ShowProducts(string) ([]models.Product, error)
 }
