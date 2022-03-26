@@ -60,7 +60,7 @@ func (ic *InventoryControllers) GetProduct(gctx *gin.Context) {
 
 func (ic *InventoryControllers) RegisterInventoryRoutes(rg *gin.RouterGroup) {
 	inventoryRouter := rg.Group("/")
-	inventoryRouter.POST("/regiter", ic.RegisterInventory)
+	inventoryRouter.POST("/register", ic.RegisterInventory)
 	inventoryRouter.POST("/:id/product/add", ic.AddProduct)
 	inventoryRouter.GET("/:inventoryId/product/:productId", ic.GetProduct)
 }
