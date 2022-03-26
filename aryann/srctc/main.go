@@ -1,19 +1,41 @@
 package main
 
 import (
-	"os"
+	"srctc/config"
+	"srctc/routes"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
-func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
-	}
-	PORT := os.Getenv("PORT")
+func SetupUserRouter() *gin.Engine {
 	router := gin.Default()
+	routes.UserRoute(router)
+	return router
+}
 
-	router.Run(":" + PORT)
+func SetupAdminRouter() *gin.Engine {
+	router := gin.Default()
+	routes.AdminRoute(router)
+	return router
+}
+
+func SetupAuthRouter() *gin.Engine {
+	router := gin.Default()
+	routes.AuthRoute(router)
+	return router
+}
+
+func main() {
+
+	config.ConnectDB()
+
+	userroute := SetupUserRouter()
+	userroute.Run("localhost:6000")
+
+	adminroute := SetupAdminRouter()
+	adminroute.Run("localhost:6001")
+
+	authroute := SetupAuthRouter()
+	authroute.Run("localhost:6002")
+
 }
