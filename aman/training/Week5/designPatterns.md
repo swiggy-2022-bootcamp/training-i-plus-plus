@@ -1,0 +1,3 @@
+# Design Patterns
+
+Design patterns are typical solutions to common problems in software design. Each pattern is like a blueprint that can be customized to solve a particular design problem in code. Software design pattern is a reusable solution to a commonly occurring problem within a given context in software design. It is not a finished design that can be transformed directly into code but it is a description or template for how to solve a problem that can be used in many different situations. 
