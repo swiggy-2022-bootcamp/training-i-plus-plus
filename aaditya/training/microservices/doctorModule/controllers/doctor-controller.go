@@ -9,17 +9,33 @@ import (
 	"doctorModule/responses"
 	"doctorModule/services"
 	"time"
-
+	"log"
+	"os"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+    "github.com/segmentio/kafka-go"
+)
+
+const (
+    topic         = "UserTopic"
+    brokerAddress = "localhost:9092"
 )
 
 var doctorCollection *mongo.Collection = configs.GetCollection(configs.DB, "doctors")
 var validate = validator.New()
 
+var ctx = context.Background()
+var l = log.New(os.Stdout, "kafka reader: ", 0)
+var r = kafka.NewReader(kafka.ReaderConfig{
+	Brokers: []string{brokerAddress},
+	Topic:   topic,
+	GroupID: "my-group",
+	// assign the logger to the reader
+	Logger: l,
+})
 func RegisterDoctor() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -274,5 +290,35 @@ func OpenSlotsForAppointments() gin.HandlerFunc{
 
 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
 	}
+}
 
+func GetAppointmentDetails() gin.HandlerFunc{
+	
+	return func (c *gin.Context)  {
+		//ctx := context.Background()
+		//appointment := consume(ctx)
+		//appointments := make([]string,1)
+		
+		appointments := consume(ctx,r,l)
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": appointments}},
+		)
+	}
+}
+
+func consume(ctx context.Context, r *kafka.Reader, l *log.Logger) string{
+    // create a new logger that outputs to stdout
+    // and has the `kafka reader` prefix
+    
+    
+        // the `ReadMessage` method blocks until we receive the next event
+        msg, err := r.ReadMessage(ctx)
+        if err != nil {
+            panic("could not read message " + err.Error())
+        }
+        // after receiving the message, log its value
+        fmt.Println("received: ", string(msg.Value))
+		appointments := string(msg.Value)
+		
+		return appointments
 }

@@ -51,6 +51,7 @@ func produce(ctx context.Context) {
         time.Sleep(time.Second)
     }
 }
+
 func consume(ctx context.Context) {
     // create a new logger that outputs to stdout
     // and has the `kafka reader` prefix

@@ -12,4 +12,5 @@ func PatientRoutes(router *gin.Engine){
 	router.PUT("/patient/:id", controllers.EditPatientByID())
 	router.DELETE("/patient/:id", controllers.DeletePatientByID())
 	router.GET("/patients", controllers.GetAllPatients())
+	router.POST("/book-appointment", controllers.BookAppointment())
 }

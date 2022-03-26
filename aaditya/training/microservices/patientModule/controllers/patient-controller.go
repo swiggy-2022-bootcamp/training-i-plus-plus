@@ -2,17 +2,27 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"patientModule/configs"
 	"patientModule/models"
 	"patientModule/responses"
 	"patientModule/services"
 	"time"
-	"github.com/go-playground/validator/v10"
+
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
+	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+)
+
+const (
+    topic         = "UserTopic"
+    brokerAddress = "localhost:9092"
 )
 
 var patientCollection *mongo.Collection = configs.GetCollection(configs.DB, "patients")
@@ -226,4 +236,47 @@ func GetAllPatients() gin.HandlerFunc {
 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": patients}},
 		)
 	}
+}
+
+func BookAppointment() gin.HandlerFunc{
+	return func (c *gin.Context)  {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        var appointment models.Appointment
+        defer cancel()
+
+        //validate the request body
+        if err := c.BindJSON(&appointment); err != nil {
+            c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+        }
+		fmt.Println(appointment)
+		details := appointment.Details
+		fmt.Println(details)
+		ctx_ := context.Background()
+		go produce(ctx_,details)
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": details}},
+		)	
+	}
+}
+
+func produce(ctx context.Context, message string) {
+
+    l := log.New(os.Stdout, "kafka writer: ", 0)
+    // intialize the writer with the broker addresses, and the topic
+    w := kafka.NewWriter(kafka.WriterConfig{
+        Brokers: []string{brokerAddress},
+        Topic:   topic,
+        // assign the logger to the writer
+        Logger: l,
+    })
+    err := w.WriteMessages(ctx, kafka.Message{
+        Key: []byte(message),
+        Value: []byte("Appointment details - " + message),
+        })
+        if err != nil {
+            panic("could not write message " + err.Error())
+        }
+        // log a confirmation once the message is written
+        fmt.Println("writes:", message)
 }

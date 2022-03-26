@@ -14,4 +14,5 @@ func DoctorRoutes(router *gin.Engine){
 	router.DELETE("/doctor/:id", controllers.DeleteDoctorByID())
 	router.GET("/doctors", controllers.GetAllDoctors())
 	router.POST("/doctors-openSlots/:id",controllers.OpenSlotsForAppointments())
+	router.GET("/view-appointments",controllers.GetAppointmentDetails())
 }
