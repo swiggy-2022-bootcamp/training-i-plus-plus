@@ -25,11 +25,12 @@ func (ic *InventoryControllers) RegisterInventory(gctx *gin.Context) {
 		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	if err := ic.InventoryService.RegisterInventory(&inventory); err != nil {
+	inventoryId, err := ic.InventoryService.RegisterInventory(&inventory)
+	if err != nil {
 		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
-	gctx.JSON(http.StatusCreated, gin.H{"message": "Inventory registered succesfully."})
+	gctx.JSON(http.StatusCreated, gin.H{"id": inventoryId})
 }
 
 func (ic *InventoryControllers) AddProduct(gctx *gin.Context) {

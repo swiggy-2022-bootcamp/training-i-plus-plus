@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	goKafka "github.com/go-kafka-microservice/InventoryService/goKafka/producer"
 	"github.com/go-kafka-microservice/InventoryService/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -24,12 +25,13 @@ func NewInventoryService(inventoryCollection *mongo.Collection, productCollectio
 	}
 }
 
-func (is *InventoryServicesImpl) RegisterInventory(inventory *models.Inventory) error {
-	inventory.ID = primitive.NewObjectID()
+func (is *InventoryServicesImpl) RegisterInventory(inventory *models.Inventory) (string, error) {
+	inventoryId := primitive.NewObjectID()
+	inventory.ID = inventoryId
 	if _, err := is.InventoryCollection.InsertOne(is.Ctx, inventory); err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return inventoryId.Hex(), nil
 }
 
 func (is *InventoryServicesImpl) AddProduct(inventoryId primitive.ObjectID, product *models.Product) error {
@@ -56,6 +58,17 @@ func (is *InventoryServicesImpl) AddProduct(inventoryId primitive.ObjectID, prod
 	}
 	if result.ModifiedCount != 1 {
 		return errors.New("Something went wrong, product not added.")
+	}
+
+	// Save Product to Kafka - products (topic)
+	p, err := goKafka.CreateProducer(goKafka.Cfg())
+	if err != nil {
+		return err
+	}
+	kp := goKafka.NewKafkaProducer(p)
+	_, err = kp.WriteMessage("products", product)
+	if err != nil {
+		return nil
 	}
 	return nil
 }

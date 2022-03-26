@@ -6,7 +6,7 @@ import (
 )
 
 type InventoryServices interface {
-	RegisterInventory(*models.Inventory) error
+	RegisterInventory(*models.Inventory) (string, error)
 	AddProduct(primitive.ObjectID, *models.Product) error
 	GetProduct(primitive.ObjectID, primitive.ObjectID) (*models.Product, error)
 }
