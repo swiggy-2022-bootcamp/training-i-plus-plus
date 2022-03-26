@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type AvailTicket struct {
+type Ticket struct {
 	Train_id       primitive.ObjectID `json:"trainid,omitempty"`
 	Capacity       int                `json:"capacity"`
 	Cost           int                `json:"cost"`
