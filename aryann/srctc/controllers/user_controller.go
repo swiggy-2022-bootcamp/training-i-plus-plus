@@ -35,7 +35,7 @@ type kafka_booking_ticket struct {
 }
 
 func init() {
-	go consume_booked_ticket()
+	// go consume_booked_ticket()
 }
 
 func CreateUser() gin.HandlerFunc {
@@ -72,11 +72,11 @@ func CreateUser() gin.HandlerFunc {
 	}
 }
 
-func GetAUser() gin.HandlerFunc {
+func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		userId := c.Param("userid")
+		userId := c.Param("userId")
 		var user models.User
 		defer cancel()
 
@@ -92,7 +92,7 @@ func GetAUser() gin.HandlerFunc {
 	}
 }
 
-func EditAUser() gin.HandlerFunc {
+func EditUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userid")
@@ -266,6 +266,53 @@ func GetAllUsers() gin.HandlerFunc {
 
 		c.JSON(http.StatusOK,
 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
+		)
+	}
+}
+
+func GetPurchased() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		purchasedId := c.Param("purchasedid")
+		var purchased models.Purchased
+		defer cancel()
+
+		objId, _ := primitive.ObjectIDFromHex(purchasedId)
+
+		err := purchasedCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&purchased)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusOK, responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": purchased}})
+	}
+}
+
+func DeletePurchased() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		purchasedId := c.Param("purchasedid")
+		defer cancel()
+
+		objId, _ := primitive.ObjectIDFromHex(purchasedId)
+
+		result, err := purchasedCollection.DeleteOne(ctx, bson.M{"_id": objId})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		if result.DeletedCount < 1 {
+			c.JSON(http.StatusNotFound,
+				responses.PurchasedResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Purchased with specified ID not found!"}},
+			)
+			return
+		}
+
+		c.JSON(http.StatusOK,
+			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!"}},
 		)
 	}
 }

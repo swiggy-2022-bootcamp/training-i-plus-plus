@@ -32,13 +32,21 @@ func main() {
 
 	config.ConnectDB()
 
-	userroute := UserRouter()
-	userroute.Run("localhost:6000")
+	fmt.Println("Type  1. User  2. Admin  3. Auth: ")
+	var choice int
+	fmt.Scanln(&choice)
 
-	adminroute := AdminRouter()
-	adminroute.Run("localhost:6001")
-
-	authroute := AuthRouter()
-	authroute.Run("localhost:6002")
+	if choice == 1 {
+		userroute := UserRouter()
+		userroute.Run("localhost:6000")
+	}
+	if choice == 2 {
+		adminroute := AdminRouter()
+		adminroute.Run("localhost:7000")
+	}
+	if choice == 3 {
+		authroute := AuthRouter()
+		authroute.Run("localhost:8000")
+	}
 
 }
