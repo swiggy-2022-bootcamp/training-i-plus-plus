@@ -74,49 +74,6 @@ func GetAdmin() gin.HandlerFunc {
 	}
 }
 
-// func EditAdmin() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		adminId := c.Param("adminid")
-// 		var admin models.Admin
-// 		defer cancel()
-
-// 		objId, _ := primitive.ObjectIDFromHex(adminId)
-
-// 		//validate the request body
-// 		if err := c.BindJSON(&admin); err != nil {
-// 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//use the validator library to validate required fields
-// 		if validationErr := avalidate.Struct(&admin); validationErr != nil {
-// 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-// 			return
-// 		}
-
-// 		update := bson.M{"name": admin.Name, "email": admin.Email}
-// 		result, err := adminCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//get updated admin details
-// 		var updatedAdmin models.Admin
-// 		if result.MatchedCount == 1 {
-// 			err := adminCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedAdmin)
-// 			if err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 				return
-// 			}
-// 		}
-
-// 		c.JSON(http.StatusOK, responses.AdminResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedAdmin}})
-// 	}
-// }
-
 func DeleteAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -144,36 +101,6 @@ func DeleteAdmin() gin.HandlerFunc {
 		)
 	}
 }
-
-// func GetAllAdmins() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		var admins []models.Admin
-// 		defer cancel()
-
-// 		results, err := adminCollection.Find(ctx, bson.M{})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//reading from the db in an optimal way
-// 		defer results.Close(ctx)
-// 		for results.Next(ctx) {
-// 			var singleAdmin models.Admin
-// 			if err = results.Decode(&singleAdmin); err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			}
-
-// 			admins = append(admins, singleAdmin)
-// 		}
-
-// 		c.JSON(http.StatusOK,
-// 			responses.AdminResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": admins}},
-// 		)
-// 	}
-// }
 
 func CreateTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -298,36 +225,6 @@ func DeleteTrain() gin.HandlerFunc {
 	}
 }
 
-// func GetAllTrains() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		var trains []models.Train
-// 		defer cancel()
-
-// 		results, err := trainCollection.Find(ctx, bson.M{})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//reading from the db in an optimal way
-// 		defer results.Close(ctx)
-// 		for results.Next(ctx) {
-// 			var singleTrain models.Train
-// 			if err = results.Decode(&singleTrain); err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			}
-
-// 			trains = append(trains, singleTrain)
-// 		}
-
-// 		c.JSON(http.StatusOK,
-// 			responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": trains}},
-// 		)
-// 	}
-// }
-
 func CreateTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -391,49 +288,6 @@ func GetTicket() gin.HandlerFunc {
 		c.JSON(http.StatusOK, responses.TicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": availticket}})
 	}
 }
-
-// func EditTicket() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		availticketId := c.Param("availticketid")
-// 		var availticket models.Ticket
-// 		defer cancel()
-
-// 		objId, _ := primitive.ObjectIDFromHex(availticketId)
-
-// 		//validate the request body
-// 		if err := c.BindJSON(&availticket); err != nil {
-// 			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//use the validator library to validate required fields
-// 		if validationErr := avalidate.Struct(&availticket); validationErr != nil {
-// 			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-// 			return
-// 		}
-
-// 		update := bson.M{"departure": availticket.Departure, "arrival": availticket.Arrival}
-// 		result, err := availticketCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//get updated availticket details
-// 		var updatedTicket models.Ticket
-// 		if result.MatchedCount == 1 {
-// 			err := availticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTicket)
-// 			if err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 				return
-// 			}
-// 		}
-
-// 		c.JSON(http.StatusOK, responses.TicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTicket}})
-// 	}
-// }
 
 func DeleteTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {

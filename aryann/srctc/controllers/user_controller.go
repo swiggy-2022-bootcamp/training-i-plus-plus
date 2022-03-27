@@ -36,7 +36,7 @@ type kafka_booking_ticket struct {
 }
 
 func init() {
-	// go consume_booked_ticket()
+	go consume_booked_ticket()
 }
 
 func CreateUser() gin.HandlerFunc {
@@ -92,49 +92,6 @@ func GetUser() gin.HandlerFunc {
 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": user}})
 	}
 }
-
-// func EditUser() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		userId := c.Param("userid")
-// 		var user models.User
-// 		defer cancel()
-
-// 		objId, _ := primitive.ObjectIDFromHex(userId)
-
-// 		//validate the request body
-// 		if err := c.BindJSON(&user); err != nil {
-// 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//use the validator library to validate required fields
-// 		if validationErr := validate.Struct(&user); validationErr != nil {
-// 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-// 			return
-// 		}
-
-// 		update := bson.M{"name": user.Name, "email": user.Email}
-// 		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//get updated user details
-// 		var updatedUser models.User
-// 		if result.MatchedCount == 1 {
-// 			err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedUser)
-// 			if err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 				return
-// 			}
-// 		}
-
-// 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedUser}})
-// 	}
-// }
 
 func DeleteUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -228,47 +185,17 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		// iid := fmt.Sprintf("%v", result.InsertedID)
-		// new_produce_ticket := kafka_booking_ticket{
-		// 	insertedid: iid,
-		// 	purchased:  newpurchased,
-		// }
+		iid := fmt.Sprintf("%v", result.InsertedID)
+		new_produce_ticket := kafka_booking_ticket{
+			insertedid: iid,
+			purchased:  newpurchased,
+		}
 
-		// go produce_booked_ticket(new_produce_ticket)
+		go produce_booked_ticket(new_produce_ticket)
 
 		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
 }
-
-// func GetAllUsers() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		var users []models.User
-// 		defer cancel()
-// 		results, err := userCollection.Find(ctx, bson.M{})
-
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		//reading from the db in an optimal way
-// 		defer results.Close(ctx)
-// 		for results.Next(ctx) {
-// 			var singleUser models.User
-// 			if err = results.Decode(&singleUser); err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			}
-
-// 			users = append(users, singleUser)
-// 		}
-
-// 		c.JSON(http.StatusOK,
-// 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
-// 		)
-// 	}
-// }
 
 func GetPurchased() gin.HandlerFunc {
 	return func(c *gin.Context) {

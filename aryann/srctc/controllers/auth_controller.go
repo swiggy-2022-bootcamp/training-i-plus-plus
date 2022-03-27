@@ -14,7 +14,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
-	"golang.org/x/crypto/bcrypt"
 )
 
 var registerCollection *mongo.Collection = config.GetCollection(config.DB, "signup")
@@ -38,76 +37,6 @@ func GetJWT(group string) (string, error) {
 	}
 
 	return tokenString, nil
-}
-
-// GeneratePasswordHash handles generating password hash
-// bcrypt hashes password of type byte
-func GeneratePasswordHash(password []byte) string {
-	// default cost is 10
-	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
-
-	// If there was an error panic
-	if err != nil {
-		panic(err)
-	}
-
-	// return stringified password
-	return string(hashedPassword)
-}
-
-// PasswordCompare handles password hash compare
-func PasswordCompare(password []byte, hashedPassword []byte) error {
-	err := bcrypt.CompareHashAndPassword(hashedPassword, password)
-
-	return err
-}
-
-func CheckUserEmail(email string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	results, err := userCollection.Find(ctx, bson.M{})
-
-	if err != nil {
-		return false
-	}
-
-	//reading from the db in an optimal way
-	defer results.Close(ctx)
-	for results.Next(ctx) {
-		var singleUser models.User
-		if err = results.Decode(&singleUser); err != nil {
-			return false
-		}
-		if singleUser.Email == email {
-			return true
-		}
-	}
-	return false
-}
-
-func CheckAdminEmail(email string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	results, err := adminCollection.Find(ctx, bson.M{})
-
-	if err != nil {
-		return false
-	}
-
-	//reading from the db in an optimal way
-	defer results.Close(ctx)
-	for results.Next(ctx) {
-		var singleAdmin models.Admin
-		if err = results.Decode(&singleAdmin); err != nil {
-			return false
-		}
-		if singleAdmin.Email == email {
-			return true
-		}
-	}
-	return false
 }
 
 func SignUp() gin.HandlerFunc {
