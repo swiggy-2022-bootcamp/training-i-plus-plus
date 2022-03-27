@@ -1,55 +1,44 @@
 package goKafka
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/go-kafka-microservice/ListingService/models"
+	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type GoKafkaServicesImpl struct {
-	Consumer *kafka.Consumer
+	Consumer          *kafka.Reader
+	ProductCollection *mongo.Collection
+	Ctx               context.Context
 }
 
-func NewGokafkaServiceImpl(consumer *kafka.Consumer) *GoKafkaServicesImpl {
+func NewGokafkaServiceImpl(consumer *kafka.Reader, productCollection *mongo.Collection, ctx context.Context) *GoKafkaServicesImpl {
 	return &GoKafkaServicesImpl{
-		Consumer: consumer,
+		Consumer:          consumer,
+		ProductCollection: productCollection,
+		Ctx:               ctx,
 	}
 }
-func (ks *GoKafkaServicesImpl) ReadMessage(topic string) (interface{}, error) {
-
-	sigchan := make(chan os.Signal, 1)
-	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
-
-	// Subscribe to given topic
-	ks.Consumer.SubscribeTopics([]string{topic}, nil)
-
-	// Read Message
-	var products []models.Product
+func (ks *GoKafkaServicesImpl) StoreProducts(topic string) error {
 	for {
-		msg, err := ks.Consumer.ReadMessage(100 * time.Millisecond)
-		// ks.Consumer.Re
-
-		if err == nil {
-			var _product models.Product
-			p := []byte(msg.Value)
-			fmt.Println(p)
-			err := json.Unmarshal(p, &_product)
-			if err != nil {
-				break
-			}
-			products = append(products, _product)
-		} else {
-			break
+		// the `ReadMessage` method blocks until we receive the next event
+		msg, err := ks.Consumer.ReadMessage(ks.Ctx)
+		if err != nil {
+			return err
+		}
+		var _product models.Product
+		p := []byte(msg.Value)
+		err = json.Unmarshal(p, &_product)
+		fmt.Println(_product)
+		if err != nil {
+			return err
+		}
+		if _, err := ks.ProductCollection.InsertOne(ks.Ctx, _product); err != nil {
+			return err
 		}
 	}
-
-	ks.Consumer.Close()
-
-	return products, nil
 }
