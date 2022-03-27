@@ -18,4 +18,5 @@ func NewListingRoutes(listingController *controllers.ListingController) *Listing
 func (lr *ListingRoutes) RegisterListingRoutes(rg *gin.RouterGroup) {
 	listingRouter := rg.Group("/")
 	listingRouter.GET("/show/", lr.ListingController.ShowProducts)
+	listingRouter.POST("/place_order/:userId/:productId", lr.ListingController.MakeOrder)
 }

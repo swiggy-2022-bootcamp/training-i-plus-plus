@@ -4,10 +4,12 @@ import (
 	"context"
 	"log"
 
+	confluentKafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
 	"github.com/go-kafka-microservice/ListingService/controllers"
 	"github.com/go-kafka-microservice/ListingService/database"
-	goKafka "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
+	gokafkaConsumer "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
+	gokafkaProducer "github.com/go-kafka-microservice/ListingService/goKafka/producer"
 	"github.com/go-kafka-microservice/ListingService/routes"
 	"github.com/go-kafka-microservice/ListingService/services"
 	"github.com/joho/godotenv"
@@ -16,16 +18,18 @@ import (
 )
 
 var (
-	err               error
-	server            *gin.Engine
-	kafkaConsumer     *kafka.Reader
-	ctx               context.Context
-	mongoClient       *mongo.Client
-	listingRouter     *routes.ListingRoutes
-	productCollection *mongo.Collection
-	kafkaService      goKafka.GoKafkaServices
-	listingService    services.ListingService
-	listingController *controllers.ListingController
+	err                  error
+	server               *gin.Engine
+	kafkaConsumer        *kafka.Reader
+	kafkaProducer        *confluentKafka.Producer
+	ctx                  context.Context
+	mongoClient          *mongo.Client
+	listingRouter        *routes.ListingRoutes
+	productCollection    *mongo.Collection
+	kafkaConsumerService gokafkaConsumer.GoKafkaServices
+	kafkaProducerService gokafkaProducer.GoKafkaServices
+	listingService       services.ListingService
+	listingController    *controllers.ListingController
 )
 
 func init() {
@@ -43,13 +47,15 @@ func init() {
 	productCollection = mongoClient.Database("ProductDB").Collection("products")
 
 	// Create KafkaConsumer
-	kafkaConsumer = goKafka.CreateKafkaConsumer(goKafka.ConsumerConfig())
+	kafkaConsumer = gokafkaConsumer.CreateKafkaConsumer(gokafkaConsumer.ConsumerConfig())
+	kafkaProducer, _ = gokafkaProducer.CreateProducer(gokafkaProducer.Cfg())
 
 	// Initialize Kafka Service
-	kafkaService = goKafka.NewGokafkaServiceImpl(kafkaConsumer, productCollection, ctx)
+	kafkaConsumerService = gokafkaConsumer.NewGokafkaServiceImpl(kafkaConsumer, productCollection, ctx)
+	kafkaProducerService = gokafkaProducer.NewKafkaProducer(kafkaProducer)
 
 	// Initialize Listing Service
-	listingService = services.NewListingServiceImpl(kafkaService, productCollection, ctx)
+	listingService = services.NewListingServiceImpl(kafkaConsumerService, kafkaProducerService, productCollection, ctx)
 
 	// Initialize listing Controller
 	listingController = controllers.NewListingController(listingService)
@@ -69,7 +75,7 @@ func main() {
 
 	// Consume Products from Inventory Service and
 	// Store them to ProductDB's product collection
-	go kafkaService.StoreProducts("products")
+	go kafkaConsumerService.StoreProducts("products")
 
 	// Start Server
 	log.Fatal(server.Run(":8003"))

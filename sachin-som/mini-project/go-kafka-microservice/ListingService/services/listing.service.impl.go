@@ -4,23 +4,27 @@ import (
 	"context"
 	"errors"
 
-	goKafka "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
+	gokafkaConsumer "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
+	gokafkaProducer "github.com/go-kafka-microservice/ListingService/goKafka/producer"
 	"github.com/go-kafka-microservice/ListingService/models"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type ListingServiceImpl struct {
-	KafkaService      goKafka.GoKafkaServices
-	ProductCollection *mongo.Collection
-	Ctx               context.Context
+	KafkaConsumerService gokafkaConsumer.GoKafkaServices
+	kafkaProducerService gokafkaProducer.GoKafkaServices
+	ProductCollection    *mongo.Collection
+	Ctx                  context.Context
 }
 
-func NewListingServiceImpl(kafkaServices goKafka.GoKafkaServices, productCollection *mongo.Collection, ctx context.Context) *ListingServiceImpl {
+func NewListingServiceImpl(kafkaConsumerService gokafkaConsumer.GoKafkaServices, kafkaProducerService gokafkaProducer.GoKafkaServices, productCollection *mongo.Collection, ctx context.Context) *ListingServiceImpl {
 	return &ListingServiceImpl{
-		KafkaService:      kafkaServices,
-		ProductCollection: productCollection,
-		Ctx:               ctx,
+		kafkaProducerService: kafkaProducerService,
+		KafkaConsumerService: kafkaConsumerService,
+		ProductCollection:    productCollection,
+		Ctx:                  ctx,
 	}
 }
 
@@ -46,4 +50,28 @@ func (ls *ListingServiceImpl) ShowProducts() ([]*models.Product, error) {
 		return nil, errors.New("Products not fuond.")
 	}
 	return products, nil
+}
+
+// Method to Send Product to ordered_product topic
+func (ls *ListingServiceImpl) MakeOrder(productId, ownerId primitive.ObjectID) error {
+	var product models.Product
+	filter := bson.D{bson.E{Key: "_id", Value: productId}}
+	if err := ls.ProductCollection.FindOne(ls.Ctx, filter).Decode(&product); err != nil {
+		return err
+	}
+
+	// Send product to ordered_product kafka topic
+	userProduct := models.UserProduct{
+		ID:          primitive.NewObjectID(),
+		ProductName: product.ProductName,
+		Description: product.Description,
+		Ratings:     product.Ratings,
+		Price:       product.Price,
+		ImageUrl:    product.ImageUrl,
+		UserID:      ownerId,
+	}
+	if _, err := ls.kafkaProducerService.WriteMessage("ordered_products", userProduct); err != nil {
+		return err
+	}
+	return nil
 }
