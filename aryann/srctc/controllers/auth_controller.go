@@ -25,14 +25,13 @@ var (
 
 func GetJWT(group string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
-	fmt.Print("p1")
 	claims := token.Claims.(jwt.MapClaims)
-	fmt.Print("p2")
 	claims["authorized"] = true
 	claims["group"] = group //group should be USER or ADMIN
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
-	fmt.Print("p3")
+	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
+	// claims["exp"] = time.Now().Add(time.Minute * 30000000).Unix()
 	tokenString, err := token.SignedString(mySigningKey)
+
 	if err != nil {
 		fmt.Errorf("something Went Wrong: %s", err.Error())
 		return "", err
