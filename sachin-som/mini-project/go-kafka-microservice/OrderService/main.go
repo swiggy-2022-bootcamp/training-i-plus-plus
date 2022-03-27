@@ -5,8 +5,10 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-kafka-microservice/OrderService/controllers"
 	"github.com/go-kafka-microservice/OrderService/database"
 	gokafkaConsumer "github.com/go-kafka-microservice/OrderService/goKafka/consumer"
+	"github.com/go-kafka-microservice/OrderService/routes"
 	"github.com/go-kafka-microservice/OrderService/services"
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
@@ -20,7 +22,9 @@ var (
 	mongoClient          *mongo.Client
 	kafkaConsumer        *kafka.Reader
 	orderCollection      *mongo.Collection
+	orderRoutes          *routes.OrderRoutes
 	orderService         services.OrderServices
+	orderControllers     *controllers.OrderControllers
 	kafkaConsumerService gokafkaConsumer.GoKafkaServices
 )
 
@@ -40,7 +44,17 @@ func init() {
 	orderCollection = mongoClient.Database("OrderDB").Collection("orders")
 
 	// Initialize kafkaConsumerServices
+	kafkaConsumer = gokafkaConsumer.CreateKafkaConsumer(gokafkaConsumer.ConsumerConfig())
 	kafkaConsumerService = gokafkaConsumer.NewGokafkaServiceImpl(kafkaConsumer, orderCollection, ctx)
+
+	// Initialize Order Service
+	orderService = services.NewOrderServiceImpl(orderCollection, ctx)
+
+	// Initialize Order Controllers
+	orderControllers = controllers.NewOrderCollection(orderService)
+
+	// Initialize Order Routes
+	orderRoutes = routes.NewListingRoutes(orderControllers)
 
 	// Initialize gin server
 	server = gin.Default()
@@ -51,6 +65,10 @@ func main() {
 
 	go kafkaConsumerService.StoreOrders("ordered_products")
 
+	// Register Order Routes
+	basePath := server.Group("/v1/orders")
+	orderRoutes.RegisterOrderRoutes(basePath)
+
 	// start server
-	log.Fatal(server.Run(":8001"))
+	log.Fatal(server.Run(":8004"))
 }

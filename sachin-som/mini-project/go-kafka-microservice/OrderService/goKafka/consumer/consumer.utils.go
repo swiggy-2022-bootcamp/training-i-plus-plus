@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	topic         = "products"
+	topic         = "ordered_products"
 	brokerAddress = "localhost:9092"
 )
 

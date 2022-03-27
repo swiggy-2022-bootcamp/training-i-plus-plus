@@ -6,6 +6,5 @@ import (
 )
 
 type OrderServices interface {
-	SaveOrder(models.Order) error
 	GetOrders(primitive.ObjectID) ([]*models.Order, error)
 }
