@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swastiksahoo153/train-reservation-system/controllers"
-	"github.com/swastiksahoo153/train-reservation-system/services"
+	"github.com/swastiksahoo153/ticket-module/controllers"
+	"github.com/swastiksahoo153/ticket-module/services"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -17,13 +17,13 @@ import (
 
 var (
 	
-	server      	*gin.Engine
-	ctx         	context.Context
-	userservice    	services.UserService
-	usercontroller 	controllers.UserController
-	usercollection	*mongo.Collection
-	mongoclient 	*mongo.Client
-	err         	error
+	server      		*gin.Engine
+	ctx         		context.Context
+	ticketservice   	services.TicketService
+	ticketcontroller 	controllers.TicketController
+	ticketcollection	*mongo.Collection
+	mongoclient 		*mongo.Client
+	err         		error
 )
 
 func init(){
@@ -50,9 +50,9 @@ func init(){
 
 	fmt.Println("mongo connection established")
 
-	usercollection = mongoclient.Database("userdb").Collection("users")
-	userservice = services.NewUserService(usercollection, ctx)
-	usercontroller = controllers.New(userservice)
+	ticketcollection = mongoclient.Database("ticketdb").Collection("tickets")
+	ticketservice = services.NewUserService(ticketcollection, ctx)
+	ticketcontroller = controllers.New(ticketservice)
 	server = gin.Default()
 }
 
@@ -60,7 +60,7 @@ func main(){
 	defer mongoclient.Disconnect(ctx)
 
 	basepath := server.Group("/v1")
-	usercontroller.RegisterUserRoutes(basepath)
+	ticketcontroller.RegisterTicketRoutes(basepath)
 
-	log.Fatal(server.Run(":8080"))
+	log.Fatal(server.Run(":8082"))
 }
