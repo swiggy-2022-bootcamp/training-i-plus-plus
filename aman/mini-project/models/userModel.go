@@ -14,4 +14,5 @@ type User struct {
 	Token         *string            `json:"token"`
 	Refresh_Token *string            `json:"refresh_token"`
 	User_id       string             `json:"user_id"`
+	User_Type     string             `json:"user_type"`
 }
