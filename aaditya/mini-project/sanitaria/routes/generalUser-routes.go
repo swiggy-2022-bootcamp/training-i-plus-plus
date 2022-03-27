@@ -7,12 +7,15 @@ import (
 )
 
 func GeneralUserRoutes(router *gin.Engine){	
-	router.POST("/generalUserRegistration",controllers.RegisterGeneralUser())
-	router.POST("/generalUserLogin",controllers.LoginGeneralUser())
-	router.Use(middlewares.AuthenticateJWT())
-	router.GET("/generalUser/:id",controllers.GetGeneralUserByID())
-	router.PUT("/generalUser/:id", controllers.EditGeneralUserByID())
-	router.DELETE("/generalUser/:id", controllers.DeleteGeneralUserByID())
-	router.GET("/generalUsers", controllers.GetAllGeneralUsers())
-	router.POST("/generalUsers/book-appointment/:id",controllers.BookAppointment())
+	public := router.Group("")
+	public.POST("/generalUserRegistration",controllers.RegisterGeneralUser())
+	public.POST("/generalUserLogin",controllers.LoginGeneralUser())
+	private := router.Group("")
+	private.Use(middlewares.AuthenticateJWT())
+	private.GET("/generalUser/:id",controllers.GetGeneralUserByID())
+	private.PUT("/generalUser/:id", controllers.EditGeneralUserByID())
+	private.DELETE("/generalUser/:id", controllers.DeleteGeneralUserByID())
+	private.GET("/generalUsers", controllers.GetAllGeneralUsers())
+	private.GET("/generalUsers/available-appointments", controllers.GetAvailableAppointments())
+	private.POST("/generalUsers/book-appointment/:id",controllers.BookAppointment())
 }

@@ -7,11 +7,13 @@ import (
 )
 
 func PatientRoutes(router *gin.Engine){	
-	router.POST("/patientRegistration",controllers.RegisterPatient())
-	router.POST("/patientLogin",controllers.LoginPatient())
-	router.Use(middlewares.AuthenticateJWT())
-	router.GET("/patient/:id",controllers.GetPatientByID())
-	router.PUT("/patient/:id", controllers.EditPatientByID())
-	router.DELETE("/patient/:id", controllers.DeletePatientByID())
-	router.GET("/patients", controllers.GetAllPatients())
+	public := router.Group("")
+	public.POST("/patientRegistration",controllers.RegisterPatient())
+	public.POST("/patientLogin",controllers.LoginPatient())
+	private := router.Group("")
+	private.Use(middlewares.AuthenticateJWT())
+	private.GET("/patient/:id",controllers.GetPatientByID())
+	private.PUT("/patient/:id", controllers.EditPatientByID())
+	private.DELETE("/patient/:id", controllers.DeletePatientByID())
+	private.GET("/patients", controllers.GetAllPatients())
 }

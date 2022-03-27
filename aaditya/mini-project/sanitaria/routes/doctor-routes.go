@@ -6,13 +6,15 @@ import (
 	"sanitaria/middlewares"
 )
 
-func DoctorRoutes(router *gin.Engine){	
-	router.POST("/doctorRegistration",controllers.RegisterDoctor())
-	router.POST("/doctorLogin",controllers.LoginDoctor())
-	router.Use(middlewares.AuthenticateJWT())
-	router.GET("/doctor/:id",controllers.GetDoctorByID())
-	router.PUT("/doctor/:id", controllers.EditDoctorByID())
-	router.DELETE("/doctor/:id", controllers.DeleteDoctorByID())
-	router.GET("/doctors", controllers.GetAllDoctors())
-	router.POST("/doctors-openSlots/:id",controllers.OpenSlotsForAppointments())
+func DoctorRoutes(router *gin.Engine){
+	public := router.Group("")	
+	public.POST("/doctorRegistration",controllers.RegisterDoctor())
+	public.POST("/doctorLogin",controllers.LoginDoctor())
+	private := router.Group("")
+	private.Use(middlewares.AuthenticateJWT())
+	private.GET("/doctor/:id",controllers.GetDoctorByID())
+	private.PUT("/doctor/:id", controllers.EditDoctorByID())
+	private.DELETE("/doctor/:id", controllers.DeleteDoctorByID())
+	private.GET("/doctors", controllers.GetAllDoctors())
+	private.POST("/doctors-openSlots/:id",controllers.OpenSlotsForAppointments())
 }

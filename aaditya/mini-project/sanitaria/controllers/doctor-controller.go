@@ -316,3 +316,35 @@ func BookAppointmentForGeneralUser(userId string) (models.Appointment, error){
 
 		return models.Appointment{}, errors.New("no appointment available currently. please check back later")
 }
+
+func ListAvailableAppointments() ([]models.Appointment, error){
+	ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
+	defer cancel()
+	availableAppointments := make([]models.Appointment,0, 10)
+	results,err := doctorCollection.Find(ctx,bson.M{})
+	if err != nil {
+		fmt.Println("no doctors available")
+		return availableAppointments, errors.New("no doctors available")
+	}
+	
+	defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleDoctor models.Doctor
+			if err = results.Decode(&singleDoctor); err != nil {
+				fmt.Println("could not fetch doctor details")
+				return availableAppointments, errors.New("could not fetch doctor details")
+			}
+
+			allAppointments := singleDoctor.Appointments
+			
+			for _,appointment := range allAppointments{
+				if !appointment.Occupied{
+					availableAppointments = append(availableAppointments, appointment)
+				}
+			}
+
+		
+		}
+
+		return availableAppointments, nil
+}

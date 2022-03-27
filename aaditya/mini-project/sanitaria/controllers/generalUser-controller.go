@@ -250,3 +250,18 @@ func BookAppointment() gin.HandlerFunc{
 		c.JSON(http.StatusOK,responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": scheduledAppointment}})
 	}
 }
+
+func GetAvailableAppointments() gin.HandlerFunc{
+	return func (c *gin.Context)  {
+		_, cancel := context.WithTimeout(context.Background(), time.Second * 10)
+		defer cancel()
+		appointments, err := ListAvailableAppointments()
+
+		if err != nil{
+			c.JSON(http.StatusInternalServerError,responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err}})
+			return
+		}
+
+		c.JSON(http.StatusOK,responses.UserResponse{Status:http.StatusOK, Message:"success",Data: map[string]interface{}{"data": appointments}})
+	}
+}
