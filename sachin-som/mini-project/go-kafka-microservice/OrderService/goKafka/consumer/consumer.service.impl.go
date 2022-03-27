@@ -62,6 +62,7 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 			Discount:      "",
 			PaymentMethod: "COD",
 			Status:        "initiated",
+			UserID:        _userProduct.UserID,
 		}
 		if _, err := ks.OrderCollection.InsertOne(ks.Ctx, _order); err != nil {
 			return err
