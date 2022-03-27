@@ -2,12 +2,24 @@ package main
 
 import (
 	"aman-swiggy-mini-project/models"
+	"aman-swiggy-mini-project/routes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
 )
+
+func main() {
+	fmt.Println("Starting Project")
+	r := gin.New()
+	r.Use(gin.Logger())
+	routes.UserRoutes(r)
+	// routes.SellerRoutes(r)
+	// routes.ProductRoutes(r)
+	r.POST("/", test)
+	r.Run()
+}
 
 func test(c *gin.Context) {
 	body := c.Request.Body
@@ -26,11 +38,4 @@ func test(c *gin.Context) {
 		"HI":   value,
 		"body": user1,
 	})
-}
-
-func main() {
-	fmt.Println("Starting Project")
-	r := gin.Default()
-	r.POST("/", test)
-	r.Run()
 }
