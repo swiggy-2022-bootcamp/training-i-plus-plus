@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"sanitaria/configs"
@@ -274,5 +275,44 @@ func OpenSlotsForAppointments() gin.HandlerFunc{
 
 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
 	}
+}
 
+func BookAppointmentForGeneralUser(userId string) (models.Appointment, error){
+	ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
+	defer cancel()
+
+	results,err := doctorCollection.Find(ctx,bson.M{})
+	if err != nil {
+		return models.Appointment{}, errors.New(" No doctors available")
+	}
+
+	defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleDoctor models.Doctor
+			if err = results.Decode(&singleDoctor); err != nil {
+				return models.Appointment{}, errors.New("could not fetch doctor details")
+			}
+
+			allAppointments := singleDoctor.Appointments
+			
+			for i,appointment := range allAppointments{
+				if !appointment.Occupied{
+					appointment.Occupied = true;
+					allAppointments[i] = appointment
+
+					update := bson.M{"appointments":allAppointments}
+					_, err := doctorCollection.UpdateOne(ctx, bson.M{"_id": singleDoctor.Id}, bson.M{"$set": update})
+					if err != nil {
+						return models.Appointment{}, errors.New("failed to update doctor details")
+					}
+
+
+					return appointment,nil
+				}
+			}
+
+		
+		}
+
+		return models.Appointment{}, errors.New("no appointment available currently. please check back later")
 }

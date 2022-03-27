@@ -14,4 +14,5 @@ func GeneralUserRoutes(router *gin.Engine){
 	router.PUT("/generalUser/:id", controllers.EditGeneralUserByID())
 	router.DELETE("/generalUser/:id", controllers.DeleteGeneralUserByID())
 	router.GET("/generalUsers", controllers.GetAllGeneralUsers())
+	router.POST("/generalUsers/book-appointment/:id",controllers.BookAppointment())
 }

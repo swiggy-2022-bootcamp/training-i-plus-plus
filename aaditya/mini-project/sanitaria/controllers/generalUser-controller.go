@@ -8,6 +8,7 @@ import (
 	"sanitaria/responses"
 	"sanitaria/services"
 	"time"
+
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -223,5 +224,29 @@ func GetAllGeneralUsers() gin.HandlerFunc {
 		c.JSON(http.StatusOK,
 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": generalUsers}},
 		)
+	}
+}
+
+func BookAppointment() gin.HandlerFunc{
+	return func (c *gin.Context)  {
+		ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
+		id := c.Param("id")
+		defer cancel()
+
+		var generalUser models.GeneralUser
+
+		objId,_ := primitive.ObjectIDFromHex(id)
+
+		err := generalUserCollection.FindOne(ctx,bson.M{"_id":objId}).Decode(&generalUser)
+		if err != nil {
+            c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+        }
+
+		scheduledAppointment,err_ := BookAppointmentForGeneralUser(id)
+		if err_ != nil{
+			c.JSON(http.StatusOK,responses.UserResponse{Status: http.StatusOK, Message: "Success", Data: map[string]interface{}{"data": err_}})
+		}
+		c.JSON(http.StatusOK,responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": scheduledAppointment}})
 	}
 }
