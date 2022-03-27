@@ -3,21 +3,22 @@ package controllers
 import (
 	"context"
 	"fmt"
-	"gin-mongo-api/config"
 	"gin-mongo-api/models"
+	"gin-mongo-api/repository"
 	"gin-mongo-api/responses"
+	"log"
 	"net/http"
 	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var registerCollection *mongo.Collection = config.GetCollection(config.DB, "register")
+//var registerCollection *mongo.Collection = config.GetCollection(config.DB, "register")
+
+var registerrepo repository.AuthRepository
 
 var (
 	mySigningKey = []byte("secret")
@@ -64,23 +65,28 @@ func PasswordCompare(password []byte, hashedPassword []byte) error {
 }
 
 func CheckUserEmail(email string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	results, err := userCollection.Find(ctx, bson.M{})
+	results, err := userrepo.ReadAll()
 
 	if err != nil {
 		return false
 	}
 
 	//reading from the db in an optimal way
-	defer results.Close(ctx)
-	for results.Next(ctx) {
-		var singleUser models.User
-		if err = results.Decode(&singleUser); err != nil {
-			return false
-		}
-		if singleUser.Email == email {
+	// defer results.Close(ctx)
+	// for results.Next(ctx) {
+	// 	var singleUser models.User
+	// 	if err = results.Decode(&singleUser); err != nil {
+	// 		return false
+	// 	}
+	// 	if singleUser.Email == email {
+	// 		return true
+	// 	}
+	// }
+	for _, res := range results {
+		if res.Email == email {
 			return true
 		}
 	}
@@ -88,23 +94,17 @@ func CheckUserEmail(email string) bool {
 }
 
 func CheckAdminEmail(email string) bool {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	results, err := adminCollection.Find(ctx, bson.M{})
+	results, err := adminrepo.ReadAll()
 
 	if err != nil {
 		return false
 	}
 
-	//reading from the db in an optimal way
-	defer results.Close(ctx)
-	for results.Next(ctx) {
-		var singleAdmin models.Admin
-		if err = results.Decode(&singleAdmin); err != nil {
-			return false
-		}
-		if singleAdmin.Email == email {
+	for _, res := range results {
+		if res.Email == email {
 			return true
 		}
 	}
@@ -113,7 +113,7 @@ func CheckAdminEmail(email string) bool {
 
 func Register() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var register models.Register
 		defer cancel()
 
@@ -137,13 +137,14 @@ func Register() gin.HandlerFunc {
 		}
 
 		if register.Group == "ADMIN" || register.Group == "USER" {
-			result, err := registerCollection.InsertOne(ctx, newRegister)
+			//result, err := registerCollection.InsertOne(ctx, newRegister)
+			result, err := registerrepo.Insert(newRegister)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 
-			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"Inserted data": result}})
 			return
 		} else {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error not valid group"})
@@ -155,7 +156,7 @@ func Register() gin.HandlerFunc {
 
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var register models.Register
 		defer cancel()
 
@@ -172,10 +173,16 @@ func Login() gin.HandlerFunc {
 		}
 
 		if register.Group == "ADMIN" {
-			var admin_reg models.Register
-			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
+			//var admin_reg models.Register
+			//err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
+			admin_reg, err := registerrepo.Read(register.Username)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
+				return
+			}
+			err = PasswordCompare([]byte(admin_reg.Password), []byte(register.Password))
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusBadRequest, Message: "passowrd not correct", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 			token, err := GetJWT("ADMIN")
@@ -186,10 +193,16 @@ func Login() gin.HandlerFunc {
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Token: token})
 			return
 		} else if register.Group == "USER" {
-			var user_reg models.Register
-			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
+			//var user_reg models.Register
+			//err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
+			user_reg, err := registerrepo.Read(register.Username)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
+				return
+			}
+			err = PasswordCompare([]byte(user_reg.Password), []byte(register.Password))
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusBadRequest, Message: "passowrd not correct", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 
@@ -212,7 +225,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 	c.AbortWithStatusJSON(code, gin.H{"error": message})
 }
 
-func IsAuthorized() gin.HandlerFunc {
+func IsAuthorized(group string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearToken := c.Request.Header.Get("Authorization")
 		//normally Authorization the_token_xxx
@@ -221,7 +234,10 @@ func IsAuthorized() gin.HandlerFunc {
 			respondWithError(c, 401, "No bearer token")
 			return
 		}
-
+		if !VerifyClaims(strArr[1], group) {
+			respondWithError(c, 401, "Functionality not available for this user")
+			return
+		}
 		token, err := jwt.Parse(strArr[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf(("invalid Signing Method"))
@@ -238,5 +254,30 @@ func IsAuthorized() gin.HandlerFunc {
 			return
 		}
 		c.Next()
+	}
+}
+
+func VerifyClaims(tokenStr string, group string) bool {
+
+	token, err := jwt.Parse(tokenStr, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf(("invalid Signing Method"))
+		}
+		return mySigningKey, nil
+	})
+
+	if err != nil {
+		return false
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		if claims["group"] == group {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		log.Printf("Invalid JWT Token")
+		return false
 	}
 }

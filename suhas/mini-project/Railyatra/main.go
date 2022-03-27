@@ -1,7 +1,7 @@
 package main
 
 import (
-	"gin-mongo-api/config"
+	"gin-mongo-api/config" //add this
 	"gin-mongo-api/routes"
 
 	"github.com/gin-gonic/gin"
@@ -30,10 +30,10 @@ func main() {
 	config.ConnectDB()
 
 	userroute := SetupUserRouter()
-	userroute.Run("localhost:6000")
+	go userroute.Run("localhost:6000")
 
 	adminroute := SetupAdminRouter()
-	adminroute.Run("localhost:6001")
+	go adminroute.Run("localhost:6001")
 
 	authroute := SetupAuthRouter()
 	authroute.Run("localhost:6002")

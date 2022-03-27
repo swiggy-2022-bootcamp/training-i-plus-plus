@@ -10,6 +10,7 @@ type Passengers struct {
 }
 
 type BookedTicket struct {
+	Id              primitive.ObjectID `json:"id,omitempty"`
 	Train_id        primitive.ObjectID `json:"trainid,omitempty"`
 	Departure       string             `json:"departure"`
 	Arrival         string             `json:"arrival"`

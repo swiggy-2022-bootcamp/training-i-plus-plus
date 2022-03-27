@@ -7,3 +7,5 @@
 - [x] Allows Admin to add available ticket
 - [x] Allows User to check available train
 - [x] Allows User to Book a ticket
+- [x] Logging support
+- [x] Use Kafka to produce and consume events

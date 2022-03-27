@@ -5,6 +5,7 @@ import (
 )
 
 type AvailTicket struct {
+	Id             primitive.ObjectID `json:"id,omitempty"`
 	Train_id       primitive.ObjectID `json:"trainid,omitempty"`
 	Capacity       int                `json:"capacity"`
 	Price          int                `json:"price"`

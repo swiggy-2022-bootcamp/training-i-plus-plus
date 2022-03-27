@@ -2,45 +2,33 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"gin-mongo-api/config"
+	"gin-mongo-api/kafka"
 	"gin-mongo-api/models"
+	"gin-mongo-api/repository"
 	"gin-mongo-api/responses"
-	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
-var bookedticketCollection *mongo.Collection = config.GetCollection(config.DB, "bookedtickets")
+//var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
+//var bookedticketCollection *mongo.Collection = config.GetCollection(config.DB, "bookedtickets")
 var validate = validator.New()
 
 func init() {
-	go consume_booked_ticket()
+	go kafka.Consume_avail_ticket()
+	go kafka.Consume_train()
 }
 
-type kafka_booking_ticket struct {
-	insertedid   string
-	bookedticket models.BookedTicket
-}
-
-const (
-	topic         = "bookedticket"
-	brokerAddress = "localhost:9092"
-)
+var userrepo repository.UserRepository
+var bookedticketrepo repository.BookedTicketRepository
 
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var user models.User
 		defer cancel()
 
@@ -62,26 +50,30 @@ func CreateUser() gin.HandlerFunc {
 			BookedTicketID: []primitive.ObjectID{},
 		}
 
-		result, err := userCollection.InsertOne(ctx, newUser)
+		//result, err := userCollection.InsertOne(ctx, newUser)
+		result, err := userrepo.Insert(newUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		//new way
+		//result,err := userrepo.Insert(newUser)
 	}
 }
 
 func GetAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userid")
 		var user models.User
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
+		//err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
+		user, err := userrepo.Read(objId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -93,7 +85,7 @@ func GetAUser() gin.HandlerFunc {
 
 func EditAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userid")
 		var user models.User
 		defer cancel()
@@ -112,44 +104,32 @@ func EditAUser() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"name": user.Name, "email": user.Email}
-		result, err := userCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
-
+		updatedid, err := userrepo.Update(user, objId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//get updated user details
-		var updatedUser models.User
-		if result.MatchedCount == 1 {
-			err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedUser)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-				return
-			}
-		}
-
-		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedUser}})
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"Updated id": updatedid}})
 	}
 }
 
 func DeleteAUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		resultcount, err := userrepo.Delete(objId)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		if result.DeletedCount < 1 {
+		if resultcount.(int) < 1 {
 			c.JSON(http.StatusNotFound,
 				responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
 			)
@@ -164,26 +144,15 @@ func DeleteAUser() gin.HandlerFunc {
 
 func GetAllUsers() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var users []models.User
 		defer cancel()
 
-		results, err := userCollection.Find(ctx, bson.M{})
+		users, err := userrepo.ReadAll()
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
-		}
-
-		//reading from the db in an optimal way
-		defer results.Close(ctx)
-		for results.Next(ctx) {
-			var singleUser models.User
-			if err = results.Decode(&singleUser); err != nil {
-				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			}
-
-			users = append(users, singleUser)
 		}
 
 		c.JSON(http.StatusOK,
@@ -194,7 +163,7 @@ func GetAllUsers() gin.HandlerFunc {
 
 func CreateBookedTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var bookedticket models.BookedTicket
 		defer cancel()
 
@@ -213,7 +182,8 @@ func CreateBookedTicket() gin.HandlerFunc {
 		//check and update avaiable tickets
 		var availticket models.AvailTicket
 
-		err := availticketCollection.FindOne(ctx, bson.M{"train_id": bookedticket.Train_id}).Decode(&availticket)
+		//err := availticketCollection.FindOne(ctx, bson.M{"train_id": bookedticket.Train_id}).Decode(&availticket)
+		availticket, err := availticketrepo.ReadTrainId(bookedticket.Train_id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -224,9 +194,12 @@ func CreateBookedTicket() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"capacity": availticket.Capacity - 1}
-		_, err = availticketCollection.UpdateOne(ctx, bson.M{"trainid": bookedticket.Train_id}, bson.M{"$set": update})
+		// use this using kafka in future
 
+		//update := bson.M{"capacity": availticket.Capacity - 1}
+		//, err = availticketCollection.UpdateOne(ctx, bson.M{"trainid": bookedticket.Train_id}, bson.M{"$set": update})
+		availticket.Capacity -= 1
+		_, err = availticketrepo.Update(availticket, availticket.Id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -234,8 +207,8 @@ func CreateBookedTicket() gin.HandlerFunc {
 
 		var trainbooked models.Train
 
-		err = trainCollection.FindOne(ctx, bson.M{"_id": bookedticket.Train_id}).Decode(&trainbooked)
-
+		//err = trainCollection.FindOne(ctx, bson.M{"_id": bookedticket.Train_id}).Decode(&trainbooked)
+		trainbooked, err = trainrepo.Read(bookedticket.Train_id)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -251,24 +224,24 @@ func CreateBookedTicket() gin.HandlerFunc {
 			Passengers_info: bookedticket.Passengers_info,
 		}
 
-		result, err := bookedticketCollection.InsertOne(ctx, newBookedTicket)
+		//result, err := bookedticketCollection.InsertOne(ctx, newBookedTicket)
+		result, err := bookedticketrepo.Insert(newBookedTicket)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		// update_tickets_booked := bson.M{"tickets_booked": result.InsertedID}
-		// _, err = userCollection.UpdateOne(ctx, bson.M{"_id": bookedticket.User_id}, bson.M{"$push": update_tickets_booked})
-		// if err != nil {
-		// 	c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-		// 	return
+		// iid := fmt.Sprintf("%v", result.InsertedID)
+		// new_produce_ticket := kafka_booking_ticket{
+		// 	insertedid:   iid,
+		// 	bookedticket: newBookedTicket,
 		// }
-		iid := fmt.Sprintf("%v", result.InsertedID)
-		new_produce_ticket := kafka_booking_ticket{
-			insertedid:   iid,
-			bookedticket: newBookedTicket,
+		err = userrepo.UpdateBookedTicket(bookedticket.User_id, bookedticket.Id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
 		}
-		go produce_booked_ticket(new_produce_ticket)
+		// go produce_booked_ticket(new_produce_ticket)
 
 		c.JSON(http.StatusCreated, responses.BookedTicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
@@ -276,16 +249,43 @@ func CreateBookedTicket() gin.HandlerFunc {
 
 func GetBookedTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		bookedticketId := c.Param("bookedticketid")
 		var bookedticket models.BookedTicket
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(bookedticketId)
 
-		err := bookedticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&bookedticket)
+		//err := bookedticketCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&bookedticket)
+		bookedticket, err := bookedticketrepo.Read(objId)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		//check and update avaiable tickets
+		var availticket models.AvailTicket
+
+		//err := availticketCollection.FindOne(ctx, bson.M{"train_id": bookedticket.Train_id}).Decode(&availticket)
+		availticket, err = availticketrepo.ReadTrainId(bookedticket.Train_id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		if availticket.Capacity == 0 {
+			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "No tickets available", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		// use this using kafka in future
+		go kafka.Produce_booked_ticket_for_avail(bookedticket.Train_id, true)
+		//update := bson.M{"capacity": availticket.Capacity - 1}
+		//, err = availticketCollection.UpdateOne(ctx, bson.M{"trainid": bookedticket.Train_id}, bson.M{"$set": update})
+		availticket.Capacity += 1
+		_, err = availticketrepo.Update(availticket, availticket.Id)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.AvailTicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -295,20 +295,42 @@ func GetBookedTicket() gin.HandlerFunc {
 
 func DeleteBookedTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		bookedticketId := c.Param("bookedticketid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(bookedticketId)
 
-		result, err := bookedticketCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		// result, err := bookedticketCollection.DeleteOne(ctx, bson.M{"_id": objId})
+
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// if result.DeletedCount < 1 {
+		// 	c.JSON(http.StatusNotFound,
+		// 		responses.BookedTicketResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "BookedTicket with specified ID not found!"}},
+		// 	)
+		// 	return
+		// }
+
+		bookedticket, err := bookedticketrepo.Read(objId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		resultcnt, err := bookedticketrepo.Delete(objId)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		if result.DeletedCount < 1 {
+		go kafka.Produce_booked_ticket_for_avail(bookedticket.Train_id, false)
+
+		if resultcnt.(int) < 1 {
 			c.JSON(http.StatusNotFound,
 				responses.BookedTicketResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "BookedTicket with specified ID not found!"}},
 			)
@@ -321,47 +343,47 @@ func DeleteBookedTicket() gin.HandlerFunc {
 	}
 }
 
-func produce_booked_ticket(nbt kafka_booking_ticket) {
-	l := log.New(os.Stdout, "kafka producer", 0)
-	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic,
-		Logger:  l,
-	})
+// func produce_booked_ticket(nbt kafka_booking_ticket) {
+// 	l := log.New(os.Stdout, "kafka producer", 0)
+// 	w := kafka.NewWriter(kafka.WriterConfig{
+// 		Brokers: []string{brokerAddress},
+// 		Topic:   topic,
+// 		Logger:  l,
+// 	})
 
-	bytes, _ := json.Marshal(nbt.bookedticket)
-	err := w.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(nbt.insertedid),
-		Value: []byte(bytes),
-	})
-	if err != nil {
-		panic("could not write message " + err.Error())
-	}
-}
+// 	bytes, _ := json.Marshal(nbt.bookedticket)
+// 	err := w.WriteMessages(context.Background(), kafka.Message{
+// 		Key:   []byte(nbt.insertedid),
+// 		Value: []byte(bytes),
+// 	})
+// 	if err != nil {
+// 		panic("could not write message " + err.Error())
+// 	}
+// }
 
-func consume_booked_ticket() {
-	l := log.New(os.Stdout, "kafka producer", 0)
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic,
-		Logger:  l,
-	})
+// func consume_booked_ticket() {
+// 	l := log.New(os.Stdout, "kafka producer", 0)
+// 	r := kafka.NewReader(kafka.ReaderConfig{
+// 		Brokers: []string{brokerAddress},
+// 		Topic:   topic,
+// 		Logger:  l,
+// 	})
 
-	for {
-		// the `ReadMessage` method blocks until we receive the next event
-		msg, err := r.ReadMessage(context.Background())
-		if err != nil {
-			panic("could not read message " + err.Error())
-		}
-		// after receiving the message, log its value
-		fmt.Println("received: ", string(msg.Value))
-		nbtr := models.BookedTicket{}
-		json.Unmarshal([]byte(msg.Value), &nbtr)
-		fmt.Println(nbtr)
-		update_tickets_booked := bson.M{"tickets_booked": string(msg.Key)}
-		_, err = userCollection.UpdateOne(context.Background(), bson.M{"_id": nbtr.User_id}, bson.M{"$push": update_tickets_booked})
-		if err != nil {
-			panic("could not update booked ticket " + err.Error())
-		}
-	}
-}
+// 	for {
+// 		// the `ReadMessage` method blocks until we receive the next event
+// 		msg, err := r.ReadMessage(context.Background())
+// 		if err != nil {
+// 			panic("could not read message " + err.Error())
+// 		}
+// 		// after receiving the message, log its value
+// 		fmt.Println("received: ", string(msg.Value))
+// 		nbtr := models.BookedTicket{}
+// 		json.Unmarshal([]byte(msg.Value), &nbtr)
+// 		fmt.Println(nbtr)
+// 		update_tickets_booked := bson.M{"tickets_booked": string(msg.Key)}
+// 		_, err = userCollection.UpdateOne(context.Background(), bson.M{"_id": nbtr.User_id}, bson.M{"$push": update_tickets_booked})
+// 		if err != nil {
+// 			panic("could not update booked ticket " + err.Error())
+// 		}
+// 	}
+// }
