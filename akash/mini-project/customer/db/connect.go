@@ -39,7 +39,7 @@ func Connect() {
 	Mongo = mongo
 }
 
-// docker run --rm -d -p 2717:27017 -v /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/db/mongo-files:/data/db --name mymongo mongo:latest
+// docker run --rm -d -p 2717:27017 -v /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/customer/db/mongo-files:/data/db --name mymongo mongo:latest
 
 // docker run --rm -d -p 2717:27017 -v /Users/aky/Dev/swiggy/training-i-plus-plus/akash/training/gin-demo/mongodb-docker:/data/db --name mymongo mongo:latest
 // https://medium.com/@arkamukherjee/a-guide-on-migrating-mgo-apis-to-mongo-go-driver-in-a-golang-server-32a4e6f0fc5e

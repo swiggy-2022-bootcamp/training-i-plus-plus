@@ -13,6 +13,6 @@ func init() {
 }
 
 func main() {
-	user1 := &model.User{"Ash", "Lambert", "ash.lambert@swiggy.com", "12345"}
+	user1 := &model.User{"ash", "Ash", "Lambert", "ash.lambert@swiggy.com", "12345", "Dublin", "987654321"}
 	log.Info("Hello ", *user1)
 }

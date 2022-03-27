@@ -16,7 +16,7 @@ func Login(c *gin.Context) {
 	}
 	log.Info(loginData)
 
-	user := db.FindOneWithEmail(loginData.Email)
+	user := db.FindOneWithUsername(loginData.Username)
 	if user != nil && loginData.Password == user.Password {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"login successful"}`))
 	} else {
@@ -33,26 +33,26 @@ func Register(c *gin.Context) {
 
 	log.Info("Register request for user : ", userData)
 
-	user := db.FindOneWithEmail(userData.Email)
+	user := db.FindOneWithUsername(userData.Username)
 	if user == nil {
 		db.SaveUser(userData)
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
 	} else {
-		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"user already exist with this email"}`))
+		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"user already exist with this username"}`))
 	}
 }
 
 func QueryOne(c *gin.Context) {
 
 	jsonData := struct {
-		Email string `json:"email"`
+		Username string `json:"username"`
 	}{}
 	if err := c.BindJSON(&jsonData); err != nil {
 		panic(err)
 	}
-	log.Info("Find user with email : ", jsonData.Email)
+	log.Info("Find user with username : ", jsonData.Username)
 
-	user := db.FindOneWithEmail(jsonData.Email)
+	user := db.FindOneWithUsername(jsonData.Username)
 	if user != nil {
 		c.JSON(http.StatusOK, user)
 	} else {
@@ -68,14 +68,14 @@ func QueryAll(c *gin.Context) {
 func Delete(c *gin.Context) {
 
 	jsonData := struct {
-		Email string `json:"email"`
+		Username string `json:"username"`
 	}{}
 	if err := c.BindJSON(&jsonData); err != nil {
 		panic(err)
 	}
-	log.Info("Delete user with email : ", jsonData.Email)
+	log.Info("Delete user with username : ", jsonData.Username)
 
-	if db.DeleteUser(jsonData.Email) == true {
+	if db.DeleteUser(jsonData.Username) == true {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"user delete successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"delete failed"}`))

@@ -6,18 +6,18 @@ import (
 	"sample.akash.com/model"
 )
 
-func FindOneWithEmail(email string) *model.User {
+func FindOneWithUsername(username string) *model.User {
 
 	c := Session.DB("shopping_cart_dev").C("user-collection")
 
 	data := &model.User{}
-	err := c.Find(bson.M{"email": email}).One(data)
+	err := c.Find(bson.M{"username": username}).One(data)
 	if err != nil {
-		log.Error("Error while finding user with email ", email)
+		log.Error("Error while finding user with username ", username)
 		return nil
 	}
 
-	log.Info("Found user for this email : ", *data)
+	log.Info("Found user for this username : ", *data)
 
 	return data
 }
@@ -33,7 +33,7 @@ func FindAll() []model.User {
 		log.Error("Error while querying all users ", err)
 		panic(err)
 	} else {
-		log.Info("Found user for this email : ", results)
+		log.Info("Found users : ", results)
 	}
 	return results
 }
@@ -52,15 +52,15 @@ func SaveUser(user model.User) {
 	log.Info("User added ")
 }
 
-func DeleteUser(email string) bool {
+func DeleteUser(username string) bool {
 
 	c := Session.DB("shopping_cart_dev").C("user-collection")
 
-	log.Info("Trying to delete user : ", email)
+	log.Info("Trying to delete user : ", username)
 
-	err := c.Remove(bson.M{"email": email})
+	err := c.Remove(bson.M{"username": username})
 	if err != nil {
-		log.Error("Error while deleting user with email ", err)
+		log.Error("Error while deleting user with username ", err)
 		return false
 	} else {
 		log.Info("User deleted")
@@ -72,9 +72,9 @@ func FindAndUpdate(user model.User) bool {
 
 	c := Session.DB("shopping_cart_dev").C("user-collection")
 
-	log.Info("Trying to update user with email : ", user.Email)
+	log.Info("Trying to update user with username : ", user.Username)
 
-	err := c.Update(bson.M{"email": user.Email}, user)
+	err := c.Update(bson.M{"username": user.Username}, user)
 	if err != nil {
 		log.Error("Error while updating user ", user, err)
 		return false
