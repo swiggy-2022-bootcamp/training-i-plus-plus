@@ -18,8 +18,8 @@ func AdminRoute(router *gin.Engine) {
 	router.PUT("/train/:trainid", controllers.EditTrain())
 	router.DELETE("/train/:trainid", controllers.DeleteTrain())
 	router.GET("/admin/viewtrains", controllers.GetAllTrains())
-	router.POST("/availticket/", controllers.CreateAvailTicket())
-	router.GET("/availticket/:availticketid", controllers.GetAvailTicket())
-	router.PUT("/availticket/:availticketid", controllers.EditAvailTicket())
-	router.DELETE("/availticket/:availticketid", controllers.DeleteAvailTicket())
+	router.POST("/availticket/", controllers.CreateTicket())
+	router.GET("/availticket/:availticketid", controllers.GetTicket())
+	router.PUT("/availticket/:availticketid", controllers.EditTicket())
+	router.DELETE("/availticket/:availticketid", controllers.DeleteTicket())
 }

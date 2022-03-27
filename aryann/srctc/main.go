@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"srctc/config"
 	"srctc/routes"
 
@@ -8,12 +9,14 @@ import (
 )
 
 func UserRouter() *gin.Engine {
+	fmt.Println("user check")
 	router := gin.Default()
 	routes.UserRoute(router)
 	return router
 }
 
 func AdminRouter() *gin.Engine {
+	fmt.Println("admin check")
 	router := gin.Default()
 	routes.AdminRoute(router)
 	return router
@@ -30,12 +33,12 @@ func main() {
 	config.ConnectDB()
 
 	userroute := UserRouter()
-	userroute.Run("localhost:8000")
+	userroute.Run("localhost:6000")
 
 	adminroute := AdminRouter()
-	adminroute.Run("localhost:8001")
+	adminroute.Run("localhost:6001")
 
 	authroute := AuthRouter()
-	authroute.Run("localhost:8002")
+	authroute.Run("localhost:6002")
 
 }

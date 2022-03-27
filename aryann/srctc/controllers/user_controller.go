@@ -24,19 +24,19 @@ var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
 var purchasedCollection *mongo.Collection = config.GetCollection(config.DB, "purchased")
 var validate = validator.New()
 
-func init() {
-	go consume_booked_ticket()
-}
+const (
+	topic         = "purchased"
+	brokerAddress = "localhost:9092"
+)
 
 type kafka_booking_ticket struct {
 	insertedid string
 	purchased  models.Purchased
 }
 
-const (
-	topic         = "purchased"
-	brokerAddress = "localhost:9092"
-)
+func init() {
+	go consume_booked_ticket()
+}
 
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -165,83 +165,113 @@ func DeleteUser() gin.HandlerFunc {
 
 func PurchaseTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var purchased models.Purchased
-		defer cancel()
+		// ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		// var purchased models.Purchased
+		// defer cancel()
 
-		//validate the request body
-		if err := c.BindJSON(&purchased); err != nil {
-			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in binding", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
+		// //validate the request body
+		// if err := c.BindJSON(&purchased); err != nil {
+		// 	c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in binding", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
 
-		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&purchased); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in validating", Data: map[string]interface{}{"data": validationErr.Error()}})
-			return
-		}
+		// //use the validator library to validate required fields
+		// if validationErr := validate.Struct(&purchased); validationErr != nil {
+		// 	c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in validating", Data: map[string]interface{}{"data": validationErr.Error()}})
+		// 	return
+		// }
 
 		//check and update avaiable tickets
-		var ticket models.Ticket
+		// var ticket models.Ticket
 
-		err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
+		// err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// if ticket.Capacity == 0 {
+		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "No tickets available", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// update := bson.M{"capacity": ticket.Capacity - 1}
+		// _, err = ticketCollection.UpdateOne(ctx, bson.M{"trainid": purchased.Train_id}, bson.M{"$set": update})
+
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// var trainbooked models.Train
+
+		// err = trainCollection.FindOne(ctx, bson.M{"_id": purchased.Train_id}).Decode(&trainbooked)
+
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// newpurchased := models.Purchased{
+		// 	Train_id:        purchased.Train_id,
+		// 	User_id:         purchased.User_id,
+		// 	Departure:       trainbooked.Source,
+		// 	Arrival:         trainbooked.Destination,
+		// 	Departure_time:  ticket.Departure_time,
+		// 	Arrival_time:    ticket.Arrival_time,
+		// 	Passengers_info: purchased.Passengers_info,
+		// }
+
+		// result, err := purchasedCollection.InsertOne(ctx, newpurchased)
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+		// 	return
+		// }
+
+		// iid := fmt.Sprintf("%v", result.InsertedID)
+		// new_produce_ticket := kafka_booking_ticket{
+		// 	insertedid: iid,
+		// 	purchased:  newpurchased,
+		// }
+
+		// go produce_booked_ticket(new_produce_ticket)
+
+		// c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+	}
+}
+
+func GetAllUsers() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var users []models.User
+		defer cancel()
+		results, err := userCollection.Find(ctx, bson.M{})
+
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		if ticket.Capacity == 0 {
-			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "No tickets available", Data: map[string]interface{}{"data": err.Error()}})
-			return
+		//reading from the db in an optimal way
+		defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleUser models.User
+			if err = results.Decode(&singleUser); err != nil {
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			}
+
+			users = append(users, singleUser)
 		}
 
-		update := bson.M{"capacity": ticket.Capacity - 1}
-		_, err = ticketCollection.UpdateOne(ctx, bson.M{"trainid": purchased.Train_id}, bson.M{"$set": update})
-
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		var trainbooked models.Train
-
-		err = trainCollection.FindOne(ctx, bson.M{"_id": purchased.Train_id}).Decode(&trainbooked)
-
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		newpurchased := models.Purchased{
-			Train_id:        purchased.Train_id,
-			User_id:         purchased.User_id,
-			Departure:       trainbooked.Source,
-			Arrival:         trainbooked.Destination,
-			Departure_time:  ticket.Departure_time,
-			Arrival_time:    ticket.Arrival_time,
-			Passengers_info: purchased.Passengers_info,
-		}
-
-		result, err := purchasedCollection.InsertOne(ctx, newpurchased)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
-
-		iid := fmt.Sprintf("%v", result.InsertedID)
-		new_produce_ticket := kafka_booking_ticket{
-			insertedid: iid,
-			purchased:  newpurchased,
-		}
-
-		go produce_booked_ticket(new_produce_ticket)
-
-		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
+		)
 	}
 }
 
 func produce_booked_ticket(nbt kafka_booking_ticket) {
-	l := log.New(os.Stdout, "kafka producer", 0)
+	l := log.New(os.Stdout, "kafka producer lol ", 0)
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic,
@@ -259,7 +289,7 @@ func produce_booked_ticket(nbt kafka_booking_ticket) {
 }
 
 func consume_booked_ticket() {
-	l := log.New(os.Stdout, "kafka producer", 0)
+	l := log.New(os.Stdout, "kafka producer lol 2 ", 0)
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic,

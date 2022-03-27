@@ -11,7 +11,9 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
-	client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()))
+
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb+srv://aryann:aryanndhir@cluster0.8katt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"))
+	// client, err := mongo.NewClient(options.Client().ApplyURI(EnvMongoURI()))
 	if err != nil {
 		log.Fatal(err)
 	}
