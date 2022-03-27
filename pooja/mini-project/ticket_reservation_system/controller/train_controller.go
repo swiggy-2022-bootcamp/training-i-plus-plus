@@ -8,38 +8,41 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
-var validate *validator.Validate = validator.New()
+var trainCollection *mongo.Collection = config.GetCollection(config.DB, "trains")
 
-func AddUser() gin.HandlerFunc {
+func AddTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var user model.User
+		var train model.Train
 		defer cancel()
 		//validate the request body
-		if err := c.BindJSON(&user); err != nil {
+		if err := c.BindJSON(&train); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 			return
 		}
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&user); validationErr != nil {
+		if validationErr := validate.Struct(&train); validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": validationErr.Error()})
 			return
 		}
 
-		newUser := model.User{
-			ID:       primitive.NewObjectID(),
-			UserName: user.UserName,
-			EmailId:  user.EmailId,
-			Password: user.Password,
+		newTrain := model.Train{
+			ID:                 primitive.NewObjectID(),
+			TrainNumber:        train.TrainNumber,
+			TrainName:          train.TrainName,
+			DepartureStation:   train.DepartureStation,
+			ArrivalStation:     train.ArrivalStation,
+			DepartureDate:      train.DepartureDate,
+			TotalSeatCount:     train.TotalSeatCount,
+			AvailableSeatCount: train.AvailableSeatCount,
+			Fare:               train.Fare,
 		}
-		result, err := userCollection.InsertOne(ctx, newUser)
+		result, err := trainCollection.InsertOne(ctx, newTrain)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 			return
@@ -48,83 +51,85 @@ func AddUser() gin.HandlerFunc {
 	}
 }
 
-func GetUserByUsername() gin.HandlerFunc {
+func GetTrainByTrainNumber() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		username := c.Param("username")
-		var user model.User
+		trainnumber := c.Param("trainnumber")
+		var train model.Train
 		defer cancel()
-		if err := userCollection.FindOne(ctx, bson.M{"username": username}).Decode(&user); err != nil {
+		if err := trainCollection.FindOne(ctx, bson.M{"trainNumber": trainnumber}).Decode(&train); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusCreated, "message": "success", "data": user})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusCreated, "message": "success", "data": train})
 	}
 }
 
-func GetUsers() gin.HandlerFunc {
+func GetAllTrains() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var users []model.User
+		var trains []model.Train
 		defer cancel()
-		results, err := userCollection.Find(ctx, bson.M{})
+		results, err := trainCollection.Find(ctx, bson.M{})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 			return
 		}
 		defer results.Close(ctx)
 		for results.Next(ctx) {
-			var singleUser model.User
-			if err = results.Decode(&singleUser); err != nil {
+			var train model.Train
+			if err = results.Decode(&train); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 				return
 			}
-			users = append(users, singleUser)
+			trains = append(trains, train)
 		}
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": users})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": trains})
 	}
 }
 
-func UpdateUserPassword() gin.HandlerFunc {
+func UpdateTrainDetails() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		username := c.Param("username")
-		var user model.User
+		trainnumber := c.Param("trainnumber")
+		var train model.Train
 		defer cancel()
 		//validate the request body
-		if err := c.BindJSON(&user); err != nil {
+		if err := c.BindJSON(&train); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 			return
 		}
 		//use the validator library to validate required fields
-		if validationErr := validate.Struct(&user); validationErr != nil {
+		if validationErr := validate.Struct(&train); validationErr != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": validationErr.Error()})
 			return
 		}
-		update := bson.M{"user_id": user.ID, "username": user.UserName, "email_id": user.EmailId, "password": user.Password}
-		result, err := userCollection.UpdateOne(ctx, bson.M{"username": username}, bson.M{"$set": update})
+		update := bson.M{"_id": train.ID, "train_number": train.TrainName, "train_name": train.TrainName,
+			"departure_station": train.DepartureStation, "arrival_station": train.ArrivalStation, "departure_date": train.DepartureDate,
+			"total_seat_count": train.TotalSeatCount, "available_seat_count": train.AvailableSeatCount, "fare": train.Fare}
+		result, err := trainCollection.UpdateOne(ctx, bson.M{"trainnumber": trainnumber}, bson.M{"$set": update})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 			return
 		}
-		//get updated user details
-		var updatedUser model.User
+		//get updated train details
+		var updatedTrain model.Train
 		if result.MatchedCount == 1 {
-			if err := userCollection.FindOne(ctx, bson.M{"username": username}).Decode(&updatedUser); err != nil {
+			if err := trainCollection.FindOne(ctx, bson.M{"trainnumber": trainnumber}).Decode(&updatedTrain); err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 				return
 			}
 		}
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": updatedUser})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": updatedTrain})
 	}
 }
 
-func DeleteUserByUsername() gin.HandlerFunc {
+func DeleteTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		username := c.Param("username")
+		trainNumber := c.Param("train_number")
 		defer cancel()
-		result, err := userCollection.DeleteOne(ctx, bson.M{"username": username})
+		result, err := trainCollection.DeleteOne(ctx, bson.M{"trainNumber": trainNumber})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 			return
@@ -133,6 +138,6 @@ func DeleteUserByUsername() gin.HandlerFunc {
 			c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": "user successfully deleted"})
+		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": "train successfully deleted"})
 	}
 }
