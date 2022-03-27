@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"srctc/config"
+	"srctc/database"
 	"srctc/models"
 	"srctc/responses"
 	"strings"
@@ -16,7 +16,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var registerCollection *mongo.Collection = config.GetCollection(config.DB, "signup")
+var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
 
 var (
 	mySigningKey = []byte("secret")

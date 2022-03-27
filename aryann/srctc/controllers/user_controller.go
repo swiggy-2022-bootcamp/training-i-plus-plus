@@ -7,7 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"srctc/config"
+	"srctc/database"
 	"srctc/models"
 	"srctc/responses"
 	"time"
@@ -20,9 +20,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = config.GetCollection(config.DB, "users")
-var purchasedCollection *mongo.Collection = config.GetCollection(config.DB, "purchased")
-var ticketCollection *mongo.Collection = config.GetCollection(config.DB, "tickets")
+var userCollection *mongo.Collection = database.GetCollection(database.DB, "users")
+var purchasedCollection *mongo.Collection = database.GetCollection(database.DB, "purchased")
+var ticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
 var validate = validator.New()
 
 const (

@@ -3,7 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"srctc/config"
+	"srctc/database"
 	"srctc/models"
 	"srctc/responses"
 	"time"
@@ -15,9 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var adminCollection *mongo.Collection = config.GetCollection(config.DB, "admins")
-var trainCollection *mongo.Collection = config.GetCollection(config.DB, "trains")
-var availticketCollection *mongo.Collection = config.GetCollection(config.DB, "tickets")
+var adminCollection *mongo.Collection = database.GetCollection(database.DB, "admins")
+var trainCollection *mongo.Collection = database.GetCollection(database.DB, "trains")
+var availticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
 var avalidate = validator.New()
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"

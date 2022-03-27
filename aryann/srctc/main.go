@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"srctc/config"
+	"srctc/database"
 	"srctc/routes"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +30,7 @@ func AuthRouter() *gin.Engine {
 
 func main() {
 
-	config.ConnectDB()
+	database.ConnectDB()
 
 	fmt.Println("Type  1. User  2. Admin  3. Auth: ")
 	var choice int
