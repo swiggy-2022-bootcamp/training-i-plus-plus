@@ -81,33 +81,41 @@ func GetProduct() gin.HandlerFunc {
 
 func CreateProduct() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		var product models.Product
+		clientType := c.Request.Header.Get("type")
 
-		if err := c.BindJSON(&product); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		if clientType == "Buyer" {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Users are not allowed to add products to the portal. You need to register as a Seller"})
 			return
-		}
+		} else if clientType == "Seller" {
 
-		validationErr := validate.Struct(product)
-		if validationErr != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
-			return
-		}
-		defer cancel()
-		product.ID = primitive.NewObjectID()
-		product.Product_id = product.ID.Hex()
-		var num = toFixed(*product.Price, 2)
-		product.Price = &num
+			var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+			var product models.Product
 
-		result, insertErr := productCollection.InsertOne(ctx, product)
-		if insertErr != nil {
-			msg := fmt.Sprintf("Product item was not created")
-			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
-			return
+			if err := c.BindJSON(&product); err != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+				return
+			}
+
+			validationErr := validate.Struct(product)
+			if validationErr != nil {
+				c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+				return
+			}
+			defer cancel()
+			product.ID = primitive.NewObjectID()
+			product.Product_id = product.ID.Hex()
+			var num = toFixed(*product.Price, 2)
+			product.Price = &num
+
+			result, insertErr := productCollection.InsertOne(ctx, product)
+			if insertErr != nil {
+				msg := fmt.Sprintf("Product item was not created")
+				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+				return
+			}
+			defer cancel()
+			c.JSON(http.StatusOK, result)
 		}
-		defer cancel()
-		c.JSON(http.StatusOK, result)
 	}
 }
 
