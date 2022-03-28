@@ -6,9 +6,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func FoodRoutes(r *gin.Engine) {
-	r.GET("/foods", controllers.GetProducts())
-	r.GET("/foods/:food_id", controllers.GetProduct())
-	r.POST("/foods", controllers.CreateProduct())
-	r.PATCH("/foods/:food_id", controllers.UpdateProduct())
+func ProductRoutes(r *gin.Engine) {
+	r.GET("/products", controllers.GetProducts())
+	r.GET("/products/:product_id", controllers.GetProduct())
+	r.POST("/products", controllers.CreateProduct())
+	r.PATCH("/products/:product_id", controllers.UpdateProduct())
 }

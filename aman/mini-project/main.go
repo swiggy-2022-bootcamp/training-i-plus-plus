@@ -16,7 +16,7 @@ func main() {
 	r.Use(gin.Logger())
 	routes.UserRoutes(r)
 	// routes.SellerRoutes(r)
-	// routes.ProductRoutes(r)
+	routes.ProductRoutes(r)
 	r.POST("/", test)
 	r.Run()
 }

@@ -21,7 +21,7 @@ var userCollection *mongo.Collection = database.OpenCollection(database.Client, 
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		userId := c.Param("user_id")
+		userId := c.Param("id")
 
 		var user models.User
 
