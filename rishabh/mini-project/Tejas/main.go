@@ -1,22 +1,26 @@
 package main
 
 import (
-	"os"
-
-	"tejas/routes"
+	"authApp/configs"
+	"authApp/routes"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load(".env")
-	if err != nil {
-		panic(err)
-	}
-	PORT := os.Getenv("PORT")
 	router := gin.Default()
-	routes.AuthRoutes(router)
 
-	router.Run(":" + PORT)
+	router.GET("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "Server is up and running",
+		})
+	})
+
+	// init db
+	configs.ConnectDB()
+
+	// init routes
+	routes.UserRoutes(router)
+
+	router.Run("localhost:" + configs.EnvPORT())
 }
