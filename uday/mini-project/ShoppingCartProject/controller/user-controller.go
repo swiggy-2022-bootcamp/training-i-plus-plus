@@ -30,6 +30,18 @@ type TempUser struct{
 	Phone    int `json:"phone"`
 	Location int `json:"location"`
 }
+
+// SignUpUser godoc
+// @Summary Sign Up User
+// @Description get string by ID
+// @Consume application/x-www-form-urlencoded
+// @Accept json
+// @Produce json
+// @Param newuser body TempUser true "New User Details"
+// @Success 200 {object} entity.User
+// @Failure 400 {object} entity.User
+// @Failure 500 {object} entity.User
+// @Router /user/signuser [post]
 func SignUpUser(ctx *gin.Context)entity.User{
 	var user TempUser
 	error:=ctx.ShouldBindJSON(&user)

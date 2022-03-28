@@ -16,26 +16,32 @@ func ExpertRouter(g *gin.RouterGroup){
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error, Maybe token expired!"})
 		} else{
-		ctx.JSON(200,controller.GetSkills())
+		status,value:=controller.GetSkills()
+		if status!=200{
+			ctx.JSON(status,value)
+		}else{
+			ctx.JSON(200,value)
+		}
+
 		}
 	})
 
-	g.DELETE("/delete",func(ctx *gin.Context){
-		result:=controller.Delete(ctx)
-		if result==200{
+	g.DELETE("/delete/:expertid",func(ctx *gin.Context){
+		status:=controller.Delete(ctx)
+		if status==200{
 			ctx.JSON(200,gin.H{"Deleted":"Successfully Deleted"})
 		} else{
 			ctx.JSON(500,gin.H{"Deleted":"Error in deleting"})
 		}
 	})
 
-	g.GET("/get",func(ctx *gin.Context){
+	g.GET("/get/:skill/:userid",func(ctx *gin.Context){
 		boolean:=middleware.CheckAuth(ctx)
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error! Please check token"})
 		} else {
-			result,err:=controller.BookEmployee(ctx)
-			if err==200{
+			status,result:=controller.BookEmployee(ctx)
+			if status==200{
 				ctx.JSON(200,result)
 			} else{
 				ctx.JSON(400,gin.H{"message":"All Expers are busy, please try again"})
@@ -43,38 +49,51 @@ func ExpertRouter(g *gin.RouterGroup){
 		}
 	})
 
+
 	g.GET("/getallexperts",func(ctx *gin.Context){
 		boolean:=middleware.CheckAuth(ctx)
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error! Please check token"})
 		} else {
-			result:=controller.GetAllExperts(ctx)
-			ctx.JSON(200,result)	
-		}
+			status,result:=controller.GetAllExperts(ctx)
+			if status!=200{
+				ctx.JSON(status,result)
+			}else{
+				ctx.JSON(200,result)
+			}		}
 	})
 
-	g.GET("/done",func(ctx *gin.Context){
+	g.GET("/done/:userid/:expertid",func(ctx *gin.Context){
 		boolean:=middleware.CheckAuth(ctx)
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error! Please check token"})
 		} else {
-			controller.WorkDone(ctx)
-			ctx.JSON(200,gin.H{"message":"Work completed"})		
-		}
+			status,_:=controller.WorkDone(ctx)
+			if status!=200{
+				ctx.JSON(status,gin.H{"message":"Error encountered"})
+			}else{
+				ctx.JSON(200,gin.H{"message":"Work Completed"})
+			}	
+ 		}
 	})
 
 
-	g.GET("/experts",func(ctx *gin.Context){
+	g.GET("/experts/:skill",func(ctx *gin.Context){
 		boolean:=middleware.CheckAuth(ctx)
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error! Please check token"})
 		} else {
-			ctx.JSON(200,gin.H{"data":controller.GetExperts(ctx)})	
+			status,result:=controller.GetExperts(ctx)
+			if status!=200{
+				ctx.JSON(status,result)
+			}else{
+				ctx.JSON(200,result)
+			}		
 		}
 	})
 
 
-	g.POST("/addrating",func(ctx *gin.Context){
+	g.POST("/addrating/:expertid",func(ctx *gin.Context){
 		boolean:=middleware.CheckAuth(ctx)
 		if boolean==false{
 			ctx.JSON(404,gin.H{"message":"Token error! Please check token"})
@@ -85,29 +104,64 @@ func ExpertRouter(g *gin.RouterGroup){
 	})
 
 
-	g.GET("/getexpert",func(ctx *gin.Context){
-		ctx.JSON(200,controller.GetExpertByID(ctx))
+	g.GET("/getexpert/:expertid",func(ctx *gin.Context){
+		status,result:=controller.GetExpertByID(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
 
 
-	g.POST("/signexpert",func(ctx *gin.Context){
-		ctx.JSON(200,gin.H{"message":controller.DirectSignUp(ctx)})
+	g.POST("/signupexpert",func(ctx *gin.Context){
+		status,result:=controller.DirectSignUp(ctx)
+		if status!=200{
+			ctx.JSON(status,gin.H{"message":result})
+		}else{
+			ctx.JSON(200,gin.H{"message":result})
+		}	
 	})
 
-	g.GET("/filter",func(ctx *gin.Context){
-		ctx.JSON(200,controller.FilterExpert(ctx))
+	g.GET("/filter/:skill/:rating",func(ctx *gin.Context){
+		status,result:=controller.FilterExpert(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
 
-	g.GET("/waitingreq",func(ctx *gin.Context){
-		ctx.JSON(200,controller.GetWaitingRequest(ctx))
+	g.GET("/waitingreq/:expertid",func(ctx *gin.Context){
+		status,result:=controller.GetWaitingRequest(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
-	g.GET("/rejectreq",func(ctx *gin.Context){
-		ctx.JSON(200,controller.RejectWaitingResult(ctx))
+	g.GET("/rejectreq/:expertid",func(ctx *gin.Context){
+		status,result:=controller.RejectWaitingResult(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
-	g.GET("/acceptreq",func(ctx *gin.Context){
-		ctx.JSON(200,controller.AcceptWaitingRequest(ctx))
+	g.GET("/acceptreq/:expertid",func(ctx *gin.Context){
+		status,result:=controller.AcceptWaitingRequest(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
-	g.GET("/complete",func(ctx *gin.Context){
-		ctx.JSON(200,controller.CompletedRequest(ctx))
+	g.GET("/complete/:cost/:expertid",func(ctx *gin.Context){
+		status,result:=controller.CompletedRequest(ctx)
+		if status!=200{
+			ctx.JSON(status,result)
+		}else{
+			ctx.JSON(200,result)
+		}	
 	})
 }

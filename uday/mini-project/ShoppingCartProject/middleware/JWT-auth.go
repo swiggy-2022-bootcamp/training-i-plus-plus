@@ -16,6 +16,18 @@ type Credentials struct{
 func GetUser()entity.User{
 	return User
 }
+
+// Login godoc
+// @Summary Login Authentication
+// @Description get string by ID
+// @Consume application/x-www-form-urlencoded
+// @Accept json
+// @Produce json
+// @Param credentials body Credentials true "Credentials"
+// @Success 200 {object} string
+// @Failure 400 {object} string
+// @Failure 500 {object} string
+// @Router /user/loginuser [post]
 func Login(ctx *gin.Context)string{
 	var credentials Credentials
 	ctx.BindJSON(&credentials)
@@ -43,8 +55,9 @@ func Login(ctx *gin.Context)string{
 
 func CheckAuth(ctx *gin.Context)bool{
  	 
-	tokenStr:=ctx.GetHeader("token")
-	fmt.Println(tokenStr)
+	tokenStr:=ctx.GetHeader("Authorization")
+	fmt.Println("token",tokenStr)
+	
 	claims:=&Claims{}
 	tkn,err:=jwt.ParseWithClaims(tokenStr, claims,
 		func(t *jwt.Token)(interface{},error){

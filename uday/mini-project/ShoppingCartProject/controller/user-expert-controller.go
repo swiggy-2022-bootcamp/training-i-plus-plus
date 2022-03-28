@@ -30,7 +30,7 @@ func  CreateRelation(userid primitive.ObjectID, expertid primitive.ObjectID,skil
 	 service.CreateRelation(userid , expertid ,skill )
 }
 
-func  RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) bool{	 
+func  RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) (int,bool){	 
 	return service.RemoveRelation(userid,expertid)
 }
 

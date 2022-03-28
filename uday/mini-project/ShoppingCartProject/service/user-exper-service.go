@@ -16,6 +16,7 @@ var ueCollection *mongo.Collection = database.GetCollection(database.DB, "user_e
 var waitlistCollection *mongo.Collection = database.GetCollection(database.DB, "waiting_list")
 
 
+
 func  AddWaitingList(userid primitive.ObjectID,skill string){
 	newRelation:=entity.UserExpert{userid,userid,true,-1,skill,time.Now().Format("01-02-2006 15:04:05"),"","Pending"};
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -34,7 +35,7 @@ func CreateRelation(userid primitive.ObjectID, expertid primitive.ObjectID,skill
 	 }
 }
 
-func RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) bool{
+func RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) (int,bool){
 
 	var result entity.UserExpert
 	var boolean=false
@@ -85,7 +86,7 @@ func RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) bool{
 	if err22!=nil{
 		fmt.Println(err22)
 	}
-	return boolean 
+	return 200,boolean 
 }
 
  func  AddCost(userid primitive.ObjectID, expertid primitive.ObjectID, cost int){
