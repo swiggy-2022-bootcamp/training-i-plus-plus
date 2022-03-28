@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
@@ -27,8 +28,7 @@ func GetJWT(group string) (string, error) {
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true
 	claims["group"] = group
-	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
-	// claims["exp"] = time.Now().Add(time.Minute * 30000000).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 500).Unix()
 	tokenString, err := token.SignedString(mySigningKey)
 
 	if err != nil {
@@ -53,6 +53,14 @@ func SignUp() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
+
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
+
+		if err != nil {
+			panic(err)
+		}
+
+		register.Password = string(hashedPassword)
 
 		newSignUp := models.SignUp{
 			Username: register.Username,
@@ -147,7 +155,7 @@ func IsAuthorized() gin.HandlerFunc {
 
 		token, err := jwt.Parse(strArr[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf(("Invalid signing method"))
+				return nil, fmt.Errorf(("invalid signing method"))
 			}
 
 			return mySigningKey, nil
