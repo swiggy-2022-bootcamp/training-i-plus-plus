@@ -1,5 +1,5 @@
 package literals
 
 const (
-	AppPrefix = "Auth"
+	AppPrefix = "Cart"
 )

@@ -10,7 +10,7 @@ import (
 
 type WebServerConfig struct {
 	Port        string `required:"true" split_words:"true"`
-	RoutePrefix string `required:"false" split_words:"true" default:"/product"`
+	RoutePrefix string `required:"false" split_words:"true" default:"/cart"`
 }
 
 func FromEnv() (*WebServerConfig, error) {

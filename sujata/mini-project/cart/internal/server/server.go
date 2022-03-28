@@ -2,10 +2,16 @@ package server
 
 import (
 	"cart/config"
+	"cart/internal/services"
 	"cart/util"
+	"context"
 	"net/http"
 
+	mongodao "cart/internal/dao"
+
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type Server struct {
@@ -36,6 +42,12 @@ func RunServer() error {
 	}
 
 	// Initialize services
+	services.InitAddProductToCartService(&routerConfigs)
+	services.InitDeleteProductFromCartService(&routerConfigs)
+	services.InitGetCartService(&routerConfigs)
+
+	intializeDao()
+
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)
 
@@ -45,5 +57,16 @@ func RunServer() error {
 		return err
 	}
 
+	return nil
+}
+
+func intializeDao() error {
+	// Initialize mongo database connection
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	if err != nil {
+		return err
+	}
+
+	mongodao.InitMongoDAO(client)
 	return nil
 }
