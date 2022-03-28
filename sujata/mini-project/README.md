@@ -9,8 +9,9 @@
 - **Auth**
 - **Product**
 - **Search**
-- **User**
 - **Cart**
+- **Order**
+- **User**
 
 ## Tech Stack
 
@@ -44,6 +45,10 @@ This service allows the following endpoints
 
 Elastic search and `Search` service working is documented inside the `elasticsearch` directory. It also contains info/related documents for data syncing with logstash between mongodb and elastic search.
 
+## Cart Service
+
+This service allows user of type `BUYER` to add a product to his/her cart, delete a product from the cart and then, can fetch all the products of the cart using GetCart API.
+
 ## Steps to run Sonarqube
 
 - Run the following command in root of the project/microservices to generate coverage file.<br>
@@ -59,3 +64,4 @@ Elastic search and `Search` service working is documented inside the `elasticsea
 ## References
 
 - Requirement Document - [Online Shopping Store](https://docs.google.com/document/d/1cnCHEVkOgFDYSmZmSbxcDlZiLjCZXr1W9jHf62id7T8/edit?usp=sharing)
+- Combined Fields in Elastic Search - [Official Documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-combined-fields-query.html)

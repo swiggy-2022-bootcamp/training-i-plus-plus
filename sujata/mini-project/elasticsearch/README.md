@@ -3,10 +3,10 @@
 Elastic Search is used for fuzzy searching of the products by user of Role -> BUYER. The following steps are involved for implementing this feature in `Search` service.
 
 1. User (BUYER) will search for the product which will be passed as the query string along with JWT token issued for that user to `Search` service. <br>
-   > URL: <search_service_host:port>/v1/search?product=<searched_product>
+   > URL: <search_service_host:port>/search/v1/search?product=<searched_product>
 2. `Search` service will check the do the authentication using the public key for JWT token of the user and will authorize its ROLE of type `BUYER`.
-3. Elastic Search will do fuzzy matching on name and description of the documents and will return the related documents back to `Search` service.
-4. `Search` service will then send these documents and related info to the user.
+3. Elastic Search will do [combined field query](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-combined-fields-query.html) on name and description of the documents and will return the related documents back to `Search` service.
+4. `Search` service will then send the list of products and related info to the user.
 
 ## Data syncing from Mongodb to elastic search
 
