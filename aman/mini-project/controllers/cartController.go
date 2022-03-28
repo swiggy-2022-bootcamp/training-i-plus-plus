@@ -12,26 +12,53 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var orderCollection *mongo.Collection = database.OpenCollection(database.Client, "cart")
 
-func GetOrder() gin.HandlerFunc {
+func GetCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-		orderId := c.Param("order_id")
-		var order models.Cart
+		// orderId := c.Param("cart_id")
+		// var order models.Cart
 
-		err := orderCollection.FindOne(ctx, bson.M{"order_id": orderId}).Decode(&order)
-		defer cancel()
+		////////
+		findOptions := options.Find()
+		var results []models.User
+		cur, err := userCollection.Find(ctx, bson.M{"user_type": "Buyer"}, findOptions)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the orders"})
+			fmt.Println(err)
 		}
-		c.JSON(http.StatusOK, order)
+		for cur.Next(ctx) {
+			var elem models.User
+			err := cur.Decode(&elem)
+			if err != nil {
+				fmt.Println(err)
+			}
+
+			results = append(results, elem)
+
+		}
+
+		if err := cur.Err(); err != nil {
+			fmt.Println(err)
+		}
+
+		cur.Close(ctx)
+
+		////////
+
+		// err := orderCollection.FindOne(ctx, bson.M{"cart_id": orderId}).Decode(&order)
+		defer cancel()
+		// if err != nil {
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the orders"})
+		// }
+		c.JSON(http.StatusOK, results)
 	}
 }
 
-func CreateOrder() gin.HandlerFunc {
+func CreateCart() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var order models.Cart

@@ -8,7 +8,6 @@ import (
 
 type Cart struct {
 	ID         primitive.ObjectID `bson:"_id"`
-	Order_Date time.Time          `json:"order_date" validate:"required"`
 	Created_at time.Time          `json:"created_at"`
 	Updated_at time.Time          `json:"updated_at"`
 	Cart_id    string             `json:"order_id"`

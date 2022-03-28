@@ -9,6 +9,6 @@ import (
 
 func CartRoutes(r *gin.Engine) {
 	r.Use(middleware.Authentication())
-	r.GET("/cart/:cart_id", controllers.GetProduct())
-	r.POST("/cart", controllers.CreateProduct())
+	r.GET("/cart/:cart_id", controllers.GetCart())
+	r.POST("/cart", controllers.CreateCart())
 }
