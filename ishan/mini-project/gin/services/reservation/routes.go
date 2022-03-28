@@ -9,4 +9,5 @@ import (
 func ReservationRoutes(router *gin.Engine) {
 	router.POST("/reservation", middleware.CheckAuthMiddleware, ReserveSeat)
 	router.GET("/reservation", middleware.CheckAuthMiddleware, FetchReservations)
+	router.DELETE("/reservation/:id", middleware.CheckAuthMiddleware, CancelReservation)
 }

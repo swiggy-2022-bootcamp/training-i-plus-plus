@@ -94,3 +94,35 @@ func FetchReservations(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"payload": reservations})
 }
+
+func CancelReservation(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	userId := c.GetString("User")
+	objID, err := primitive.ObjectIDFromHex(userId)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	ReservationId := c.Param("id")
+
+	if ReservationId == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Rservation Id Not supplied"})
+		return
+	}
+
+	ReservationID, err := primitive.ObjectIDFromHex(ReservationId)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	result, err := db.DataStore.Collection("reservation").DeleteOne(ctx, bson.M{"_id": ReservationID, "user": objID})
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"payload": result.DeletedCount})
+}
