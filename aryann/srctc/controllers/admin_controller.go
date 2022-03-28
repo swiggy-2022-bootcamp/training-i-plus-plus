@@ -28,13 +28,11 @@ func CreateAdmin() gin.HandlerFunc {
 		var admin models.Admin
 		defer cancel()
 
-		//validate the request body
 		if err := c.BindJSON(&admin); err != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&admin); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -108,13 +106,11 @@ func CreateTrain() gin.HandlerFunc {
 		var train models.Train
 		defer cancel()
 
-		//validate the request body
 		if err := c.BindJSON(&train); err != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&train); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -163,13 +159,11 @@ func EditTrain() gin.HandlerFunc {
 
 		objId, _ := primitive.ObjectIDFromHex(trainId)
 
-		//validate the request body
 		if err := c.BindJSON(&train); err != nil {
 			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&train); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -183,7 +177,6 @@ func EditTrain() gin.HandlerFunc {
 			return
 		}
 
-		//get updated train details
 		var updatedTrain models.Train
 		if result.MatchedCount == 1 {
 			err := trainCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedTrain)
@@ -231,13 +224,11 @@ func CreateTicket() gin.HandlerFunc {
 		var availticket models.Ticket
 		defer cancel()
 
-		//validate the request body
 		if err := c.BindJSON(&availticket); err != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&availticket); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -330,7 +321,6 @@ func GetAllTickets() gin.HandlerFunc {
 			return
 		}
 
-		//reading from the db in an optimal way
 		defer results.Close(ctx)
 		for results.Next(ctx) {
 			var singleTicket models.Ticket

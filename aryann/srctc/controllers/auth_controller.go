@@ -26,13 +26,12 @@ func GetJWT(group string) (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
 	claims["authorized"] = true
-	claims["group"] = group //group should be USER or ADMIN
+	claims["group"] = group
 	claims["exp"] = time.Now().Add(time.Hour * 24).Unix()
 	// claims["exp"] = time.Now().Add(time.Minute * 30000000).Unix()
 	tokenString, err := token.SignedString(mySigningKey)
 
 	if err != nil {
-		fmt.Errorf("something Went Wrong: %s", err.Error())
 		return "", err
 	}
 
@@ -45,13 +44,11 @@ func SignUp() gin.HandlerFunc {
 		var register models.SignUp
 		defer cancel()
 
-		//validate the request body
 		if err := c.BindJSON(&register); err != nil {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&register); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -64,7 +61,7 @@ func SignUp() gin.HandlerFunc {
 			Password: register.Password,
 		}
 
-		if register.TypeOf == "ADMIN" || register.TypeOf == "USER" {
+		if register.TypeOf == "admin" || register.TypeOf == "user" {
 			result, err := registerCollection.InsertOne(ctx, newSignUp)
 			if err != nil {
 				c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -87,33 +84,31 @@ func Login() gin.HandlerFunc {
 		var register models.SignUp
 		defer cancel()
 
-		//validate the request body
 		if err := c.BindJSON(&register); err != nil {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error in binding", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		//use the validator library to validate required fields
 		if validationErr := avalidate.Struct(&register); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error in validate register", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-		if register.TypeOf == "ADMIN" {
+		if register.TypeOf == "admin" {
 			var admin_reg models.SignUp
 			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
-			token, err := GetJWT("ADMIN")
+			token, err := GetJWT("admin")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Token: token})
 			return
-		} else if register.TypeOf == "USER" {
+		} else if register.TypeOf == "user" {
 			var user_reg models.SignUp
 			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
 			if err != nil {
@@ -121,7 +116,7 @@ func Login() gin.HandlerFunc {
 				return
 			}
 
-			token, err := GetJWT("USER")
+			token, err := GetJWT("user")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -143,7 +138,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 func IsAuthorized() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearToken := c.Request.Header.Get("Authorization")
-		//normally Authorization the_token_xxx
+
 		strArr := strings.Split(bearToken, " ")
 		if len(strArr) != 2 {
 			respondWithError(c, 401, "No bearer token")
@@ -152,7 +147,7 @@ func IsAuthorized() gin.HandlerFunc {
 
 		token, err := jwt.Parse(strArr[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf(("invalid Signing Method"))
+				return nil, fmt.Errorf(("Invalid signing method"))
 			}
 
 			return mySigningKey, nil

@@ -25,12 +25,7 @@ var purchasedCollection *mongo.Collection = database.GetCollection(database.DB, 
 var ticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
 var validate = validator.New()
 
-const (
-	topic         = "purchased"
-	brokerAddress = "localhost:9092"
-)
-
-type kafka_booking_ticket struct {
+type kafka_purchase struct {
 	insertedid string
 	purchased  models.Purchased
 }
@@ -45,13 +40,11 @@ func CreateUser() gin.HandlerFunc {
 		var user models.User
 		defer cancel()
 
-		// validate the json body
 		if err := c.BindJSON(&user); err != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		// validate the user
 		if validationErr := validate.Struct(&user); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
@@ -127,19 +120,16 @@ func PurchaseTicket() gin.HandlerFunc {
 		var purchased models.Purchased
 		defer cancel()
 
-		// //validate the request body
 		if err := c.BindJSON(&purchased); err != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in binding", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		// //use the validator library to validate required fields
 		if validationErr := validate.Struct(&purchased); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error in validating", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-		//check and update avaiable tickets
 		var ticket models.Ticket
 
 		err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
@@ -186,7 +176,7 @@ func PurchaseTicket() gin.HandlerFunc {
 		}
 
 		iid := fmt.Sprintf("%v", result.InsertedID)
-		new_produce_ticket := kafka_booking_ticket{
+		new_produce_ticket := kafka_purchase{
 			insertedid: iid,
 			purchased:  newpurchased,
 		}
@@ -244,11 +234,11 @@ func DeletePurchased() gin.HandlerFunc {
 	}
 }
 
-func produce_booked_ticket(nbt kafka_booking_ticket) {
-	l := log.New(os.Stdout, "kafka producer lol ", 0)
+func produce_booked_ticket(nbt kafka_purchase) {
+	l := log.New(os.Stdout, "Kafka Producer: ", 0)
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic,
+		Brokers: []string{"localhost:9092"},
+		Topic:   "purchased",
 		Logger:  l,
 	})
 
@@ -263,29 +253,27 @@ func produce_booked_ticket(nbt kafka_booking_ticket) {
 }
 
 func consume_booked_ticket() {
-	l := log.New(os.Stdout, "kafka producer lol 2 ", 0)
+	l := log.New(os.Stdout, "Kafka Consumer: ", 0)
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic,
+		Brokers: []string{"localhost:9092"},
+		Topic:   "purchased",
 		Logger:  l,
 	})
 
 	for {
-		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
-			panic("could not read message " + err.Error())
+			panic("Could not read message " + err.Error())
 		}
 
-		// after receiving the message, log its value
-		fmt.Println("received: ", string(msg.Value))
+		fmt.Println("Received message: ", string(msg.Value))
 		nbtr := models.Purchased{}
 		json.Unmarshal([]byte(msg.Value), &nbtr)
 		fmt.Println(nbtr)
-		update_tickets_booked := bson.M{"tickets_booked": string(msg.Key)}
+		update_tickets_booked := bson.M{"purchasedticket": string(msg.Key)}
 		_, err = userCollection.UpdateOne(context.Background(), bson.M{"_id": nbtr.User_id}, bson.M{"$push": update_tickets_booked})
 		if err != nil {
-			panic("could not update booked ticket " + err.Error())
+			panic("Could not update purchased ticket " + err.Error())
 		}
 	}
 }
