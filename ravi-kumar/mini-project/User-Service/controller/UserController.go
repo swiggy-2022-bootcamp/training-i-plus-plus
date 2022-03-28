@@ -1,201 +1,75 @@
 package controller
 
 import (
-	mockdata "User-Service/model"
-	"context"
-	"encoding/json"
+	errors "User-Service/errors"
+	service "User-Service/service"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"sync"
-	"time"
-
-	"User-Service/config"
 
 	//"go.mongodb.org/mongo-driver/bson"
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/gin-gonic/gin"
 )
 
-var wg1 sync.WaitGroup
-var orderingWg sync.WaitGroup
-var fulfillOrdersWg sync.WaitGroup
-
-var client *mongo.Client
-var mongoURL string = config.MONGO_URL
-
-func init() {
-	// Initialize a new mongo client with options
-	client, _ = mongo.NewClient(options.Client().ApplyURI(mongoURL))
+func CreateUser(c *gin.Context) {
+	result := service.CreateUser(&c.Request.Body)
+	c.JSON(http.StatusOK, result)
 }
 
-func CreateUser(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	var newUser mockdata.User
-	json.NewDecoder(req.Body).Decode(&newUser)
-	collection := client.Database("swiggy_mini").Collection("users")
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	result, _ := collection.InsertOne(ctx, newUser)
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(result)
+func GetAllUsers(c *gin.Context) {
+	users := service.GetAllUsers()
+	c.JSON(http.StatusOK, users)
 }
 
-func GetAllUsers(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	var allUsers []mockdata.User
-	collection := client.Database("swiggy_mini").Collection("users")
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, _ := collection.Find(ctx, bson.M{})
-
-	for cursor.Next(ctx) {
-		var user mockdata.User
-		cursor.Decode(&user)
-		allUsers = append(allUsers, user)
-	}
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(allUsers)
-}
-
-func GetUserById(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	//storing route variables for a request
-	variables := mux.Vars(req)
-	var userId string = variables["userId"]
-	var userRetrieved mockdata.User
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("users")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed user id")
-		return
-	}
-
-	result := collection.FindOne(ctx, bson.M{"_id": objectId})
-
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("user with given id not found")
-		return
-	}
-
-	result.Decode(&userRetrieved)
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(userRetrieved)
-}
-
-func UpdateUserById(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	//storing route variables for a request
-	variables := mux.Vars(req)
-	userId := variables["userId"]
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-
-	updatedUser := &mockdata.User{}
-	unmarshalErr := json.Unmarshal(reqBody, updatedUser)
-	if unmarshalErr != nil {
-		log.Print("Couldn't unmarshall user body in request")
-		res.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("users")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed user id")
-		return
-	}
-
-	result, error := collection.UpdateByID(ctx, objectId, bson.M{"$set": updatedUser})
-	if error != nil {
-		fmt.Println(error)
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(res).Encode("Internal server error")
-		return
-	}
-	if result.MatchedCount == 0 {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("user with given id not found")
-		return
-	}
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode("user updated")
-}
-
-func DeleteUserbyId(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	variables := mux.Vars(req)
-	userId := variables["userId"]
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("users")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(userId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed user id")
-		return
-	}
-
-	result, error := collection.DeleteOne(ctx, bson.M{"_id": objectId})
+func GetUserById(c *gin.Context) {
+	userId := c.Param("userId")
+	userRetrieved, error := service.GetUserById(userId)
 
 	if error != nil {
-		fmt.Println(error)
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(res).Encode("Internal server error")
-		return
+		userError, ok := error.(*errors.UserError)
+		if ok {
+			c.JSON(userError.Status, userError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("userError casting error in GetUserById")
+			return
+		}
 	}
+	c.JSON(http.StatusOK, userRetrieved)
+}
 
-	if result.DeletedCount == 0 {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("user with given id not found")
-		return
+func UpdateUserById(c *gin.Context) {
+	userId := c.Param("userId")
+	userRetrieved, error := service.UpdateUserById(userId, &c.Request.Body)
+
+	if error != nil {
+		userError, ok := error.(*errors.UserError)
+		if ok {
+			c.JSON(userError.Status, userError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("userError casting error in UpdateUserById")
+			return
+		}
 	}
+	c.JSON(http.StatusOK, userRetrieved)
 
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode("user deleted")
+}
+
+func DeleteUserbyId(c *gin.Context) {
+	userId := c.Param("userId")
+	successMessage, error := service.DeleteUserbyId(userId)
+
+	if error != nil {
+		userError, ok := error.(*errors.UserError)
+		if ok {
+			c.JSON(userError.Status, userError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("userError casting error in DeleteUserbyId")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, successMessage)
 }
 
 // func Authorize(userName string, password string) bool {

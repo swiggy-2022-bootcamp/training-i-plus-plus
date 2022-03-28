@@ -1,199 +1,77 @@
 package controller
 
 import (
-	"Inventory-Service/config"
-	mockdata "Inventory-Service/model"
+	errors "Inventory-Service/errors"
+	service "Inventory-Service/service"
 
-	"context"
-	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"time"
 
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/gin-gonic/gin"
 )
 
-var client *mongo.Client
-var mongoURL string = config.MONGO_URL
-
-func init() {
-	// Initialize a new mongo client with options
-	client, _ = mongo.NewClient(options.Client().ApplyURI(mongoURL))
+func CreateProduct(c *gin.Context) {
+	result := service.CreateProduct(&c.Request.Body)
+	c.JSON(http.StatusOK, result)
 }
 
-func CreateProduct(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	var newProduct mockdata.Product
-	json.NewDecoder(req.Body).Decode(&newProduct)
-	collection := client.Database("swiggy_mini").Collection("product")
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	result, _ := collection.InsertOne(ctx, newProduct)
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(result)
+func GetCatalog(c *gin.Context) {
+	allProducts := service.GetCatalog()
+	c.JSON(http.StatusOK, allProducts)
 }
 
-func GetCatalog(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	var allProducts []mockdata.Product
-	collection := client.Database("swiggy_mini").Collection("product")
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, err := collection.Find(ctx, bson.M{})
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	for cursor.Next(ctx) {
-		var product mockdata.Product
-		cursor.Decode(&product)
-		allProducts = append(allProducts, product)
-	}
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(allProducts)
-}
-
-func GetProductById(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	//storing route variables for a request
-	variables := mux.Vars(req)
-	var productId string = variables["productId"]
-	var productRetrieved mockdata.Product
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("product")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(productId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed prodcut id")
-		return
-	}
-
-	result := collection.FindOne(ctx, bson.M{"_id": objectId})
-
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("product with given id not found")
-		return
-	}
-
-	result.Decode(&productRetrieved)
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode(productRetrieved)
-}
-
-func UpdateProductById(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	//storing route variables for a request
-	variables := mux.Vars(req)
-	productId := variables["productId"]
-
-	reqBody, _ := ioutil.ReadAll(req.Body)
-
-	updatedProduct := &mockdata.Product{}
-	unmarshalErr := json.Unmarshal(reqBody, updatedProduct)
-	if unmarshalErr != nil {
-		log.Print("Couldn't unmarshall user body in request")
-		res.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("product")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(productId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed product id")
-		return
-	}
-
-	result, error := collection.UpdateByID(ctx, objectId, bson.M{"$set": updatedProduct})
-	if error != nil {
-		fmt.Println(error)
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(res).Encode("Internal server error")
-		return
-	}
-	if result.MatchedCount == 0 {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("product with given id not found")
-		return
-	}
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode("product updated")
-}
-
-func DeleteProductbyId(res http.ResponseWriter, req *http.Request) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	variables := mux.Vars(req)
-	productId := variables["productId"]
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	collection := client.Database("swiggy_mini").Collection("product")
-
-	//convert userId string to objectId type
-	objectId, err := primitive.ObjectIDFromHex(productId)
-	if err != nil {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(res).Encode("Malformed product id")
-		return
-	}
-
-	result, error := collection.DeleteOne(ctx, bson.M{"_id": objectId})
+func GetProductById(c *gin.Context) {
+	var productId string = c.Param("productId")
+	productRetrieved, error := service.GetProductById(productId)
 
 	if error != nil {
-		fmt.Println(error)
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(res).Encode("Internal server error")
-		return
+		productError, ok := error.(*errors.ProductError)
+		if ok {
+			c.JSON(productError.Status, productError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("productError casting error in GetProductById")
+			return
+		}
 	}
-
-	if result.DeletedCount == 0 {
-		res.Header().Add("Content-type", "application/json")
-		res.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(res).Encode("product with given id not found")
-		return
-	}
-
-	res.Header().Add("Content-type", "application/json")
-	res.WriteHeader(http.StatusOK)
-	json.NewEncoder(res).Encode("product deleted")
+	c.JSON(http.StatusOK, productRetrieved)
 }
+
+func UpdateProductById(c *gin.Context) {
+	var productId string = c.Param("productId")
+	productRetrieved, error := service.UpdateProductById(productId, &c.Request.Body)
+
+	if error != nil {
+		productError, ok := error.(*errors.ProductError)
+		if ok {
+			c.JSON(productError.Status, productError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("productError casting error in GetProductById")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, productRetrieved)
+}
+
+func DeleteProductbyId(c *gin.Context) {
+	var productId string = c.Param("productId")
+	successMessage, error := service.DeleteProductbyId(productId)
+
+	if error != nil {
+		productError, ok := error.(*errors.ProductError)
+		if ok {
+			c.JSON(productError.Status, productError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("productError casting error in GetProductById")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, *successMessage)
+}
+
+//decomissioned code base
 
 // func GetCatalog(res http.ResponseWriter, req *http.Request) {
 // 	res.Header().Add("Content-type", "application/json")

@@ -3,31 +3,19 @@ package main
 import (
 	"Order-Service/config"
 	"Order-Service/controller"
-	"context"
-	"log"
-	"net/http"
-	"time"
+	"strconv"
 
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	// Initialize a new mongo client with options
-	client, _ := mongo.NewClient(options.Client().ApplyURI(config.MONGO_URL))
-	_ = client.Connect(ctx)
+	r := gin.Default()
 
-	//go kafka.Consume(ctx)
+	r.POST("/order", controller.PlaceOrder)
+	r.GET("/:userId/order", controller.GetOrders)
+	r.POST("/order/:orderId/payment", controller.OrderPayment)
+	r.POST("/order/:orderId/deliver", controller.DeliverOrder)
 
-	router := mux.NewRouter()
-
-	router.HandleFunc("/order", controller.PlaceOrder).Methods(http.MethodPost)
-	router.HandleFunc("/{userId}/order", controller.GetOrders).Methods(http.MethodGet)
-	router.HandleFunc("/order/{orderId}/payment", controller.OrderPayment).Methods(http.MethodPost)
-	router.HandleFunc("/order/{orderId}/deliver", controller.DeliverOrder).Methods(http.MethodPost)
-
-	log.Print("Order Service: Starting server at port ", config.ORDER_SERVICE_SERVER_PORT)
-	http.ListenAndServe(":5003", router)
+	portAddress := ":" + strconv.Itoa(config.ORDER_SERVICE_SERVER_PORT)
+	r.Run(portAddress)
 }

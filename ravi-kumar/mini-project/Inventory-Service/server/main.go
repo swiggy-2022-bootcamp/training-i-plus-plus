@@ -3,32 +3,30 @@ package main
 import (
 	"Inventory-Service/config"
 	"Inventory-Service/controller"
-	"context"
-	"log"
-	"net/http"
-	"time"
+	"strconv"
 
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	// Initialize a new mongo client with options
-	client, _ := mongo.NewClient(options.Client().ApplyURI(config.MONGO_URL))
-	_ = client.Connect(ctx)
+	r := gin.Default()
 
-	//go kafka.Consume(ctx)
+	r.POST("/catalog", controller.CreateProduct)
+	r.GET("/catalog", controller.GetCatalog)
+	r.GET("/catalog/:productId", controller.GetProductById)
+	r.PUT("/catalog/:productId", controller.UpdateProductById)
+	r.DELETE("/catalog/:productId", controller.DeleteProductbyId)
 
-	router := mux.NewRouter()
+	portAddress := ":" + strconv.Itoa(config.INVENTORY_SERVICE_SERVER_PORT)
+	r.Run(portAddress)
 
-	router.HandleFunc("/catalog", controller.CreateProduct).Methods(http.MethodPost)
-	router.HandleFunc("/catalog", controller.GetCatalog).Methods(http.MethodGet)
-	router.HandleFunc("/catalog/{productId}", controller.GetProductById).Methods(http.MethodGet)
-	router.HandleFunc("/catalog/{productId}", controller.UpdateProductById).Methods(http.MethodPut)
-	router.HandleFunc("/catalog/{productId}", controller.DeleteProductbyId).Methods(http.MethodDelete)
+	/*
+		inventoryRoutes.GET("/catalog", controller.GetCatalog)
+		inventoryRoutes.GET("/catalog/{productId}", controller.GetProductById)
+		inventoryRoutes.PUT("/catalog/{productId}", controller.UpdateProductById)
+		inventoryRoutes.DELETE("/catalog/{productId}", controller.DeleteProductbyId)
+	*/
 
-	log.Print("Inventory Service: Starting server at port ", config.INVENTORY_SERVICE_SERVER_PORT)
-	http.ListenAndServe(":5002", router)
+	// log.Print("Inventory Service: Starting server at port ", config.INVENTORY_SERVICE_SERVER_PORT)
+	// http.ListenAndServe(":5002", router)
 }
