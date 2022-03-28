@@ -4,11 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
-	"sample.akash.com/api"
 )
 
 const (
-	Port = "7777"
+	Port = "7778"
 )
 
 func Start() {
@@ -21,13 +20,6 @@ func Start() {
 			"message": "hello-world",
 		})
 	})
-
-	router.POST("/register", api.Register)
-	router.GET("/login", api.Login)
-	router.GET("/user/:username", api.QueryOne)
-	router.GET("/user/all", api.QueryAll)
-	router.PUT("/user/update", api.Update)
-	router.DELETE("/user/delete/:username", api.Delete)
 
 	// Start listening
 	port := Port

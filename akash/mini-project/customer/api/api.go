@@ -44,15 +44,10 @@ func Register(c *gin.Context) {
 
 func QueryOne(c *gin.Context) {
 
-	jsonData := struct {
-		Username string `json:"username"`
-	}{}
-	if err := c.BindJSON(&jsonData); err != nil {
-		panic(err)
-	}
-	log.Info("Find user with username : ", jsonData.Username)
+	username := c.Param("username")
+	log.Info("Find user with username : ", username)
 
-	user := db.FindOneWithUsername(jsonData.Username)
+	user := db.FindOneWithUsername(username)
 	if user != nil {
 		c.JSON(http.StatusOK, user)
 	} else {
@@ -67,15 +62,10 @@ func QueryAll(c *gin.Context) {
 
 func Delete(c *gin.Context) {
 
-	jsonData := struct {
-		Username string `json:"username"`
-	}{}
-	if err := c.BindJSON(&jsonData); err != nil {
-		panic(err)
-	}
-	log.Info("Delete user with username : ", jsonData.Username)
+	username := c.Param("username")
+	log.Info("Delete user with username : ", username)
 
-	if db.DeleteUser(jsonData.Username) == true {
+	if db.DeleteUser(username) == true {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"user delete successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"delete failed"}`))
