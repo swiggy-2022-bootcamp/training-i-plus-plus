@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
+	"products.akash.com/api"
 )
 
 const (
@@ -20,6 +21,11 @@ func Start() {
 			"message": "hello-world",
 		})
 	})
+
+	router.GET("/product/:id", api.QueryOne)
+	router.GET("/product/all", api.QueryAll)
+	router.POST("/product/add", api.AddProduct)
+	router.DELETE("/product/delete/:id", api.Delete)
 
 	// Start listening
 	port := Port

@@ -8,8 +8,8 @@ import (
 )
 
 func init() {
-	server.Start()
 	db.Connect()
+	server.Start()
 }
 
 func main() {
