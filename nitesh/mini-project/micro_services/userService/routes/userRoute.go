@@ -7,8 +7,9 @@ import (
 )
 
 func UserRouter(gin *gin.Engine) {
-	t := gin.Group("/user")
+	u := gin.Group("/user")
 	{
-		t.POST("/book", controllers.BookTicket())
+		u.POST("/signup", controllers.Signup())
+		u.POST("/login", controllers.Login())
 	}
 }
