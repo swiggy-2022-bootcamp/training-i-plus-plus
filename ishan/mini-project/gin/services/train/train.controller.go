@@ -21,6 +21,10 @@ type TrainBody struct {
 	Stations    []string `json:"stations"`
 }
 
+func init() {
+	db.ConnectDB()
+}
+
 func createNewTrain(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
@@ -56,7 +60,20 @@ func getTrainsByCondition(condition bson.D) ([]bson.M, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 	matchStage := bson.D{{"$match", condition}}
-	cursor, err := db.DataStore.Collection("train").Aggregate(ctx, mongo.Pipeline{matchStage})
+	group := bson.D{
+		{
+			"$group", bson.D{
+				{
+					"_id", "$_id",
+				},
+			},
+		},
+	}
+
+	trainLookupStage := bson.D{{"$lookup", bson.D{{"from", "train"}, {"localField", "_id"}, {"foreignField", "_id"}, {"as", "trainInfo"}}}}
+	trainUnwindStage := bson.D{{"$unwind", bson.D{{"path", "$trainInfo"}, {"preserveNullAndEmptyArrays", false}}}}
+
+	cursor, err := db.DataStore.Collection("train").Aggregate(ctx, mongo.Pipeline{matchStage, group, trainLookupStage, trainUnwindStage})
 	if err != nil {
 		return nil, err
 	}
@@ -72,6 +89,9 @@ func getTrainsByCondition(condition bson.D) ([]bson.M, error) {
 func FetchTrains(c *gin.Context) {
 	name := c.Query("name")
 	number := c.Query("number")
+	source := c.Query("source")
+	destination := c.Query("destination")
+
 	var condition bson.D
 
 	if name != "" {
@@ -80,6 +100,16 @@ func FetchTrains(c *gin.Context) {
 
 	if number != "" {
 		condition = append(condition, bson.E{Key: "number", Value: number})
+	}
+
+	if source != "" && destination != "" {
+		condition = append(condition, bson.E{Key: "stations", Value: source})
+		condition = append(condition, bson.E{Key: "stations", Value: destination})
+	}
+
+	if name == "" && source == "" && destination == "" && number == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Provide query Parameter"})
+		return
 	}
 
 	res, err := getTrainsByCondition(condition)

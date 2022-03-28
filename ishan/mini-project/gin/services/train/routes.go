@@ -7,6 +7,6 @@ import (
 )
 
 func TrainRoutes(router *gin.Engine) {
-	router.POST("/train", middleware.CheckAuthMiddleware, createNewTrain)
+	router.POST("/train", middleware.CheckAuthMiddleware, middleware.CheckAdminRole, createNewTrain)
 	router.GET("/train", FetchTrains)
 }

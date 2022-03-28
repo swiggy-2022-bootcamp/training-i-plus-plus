@@ -17,10 +17,20 @@ func CheckAuthMiddleware(c *gin.Context) {
 			return
 		} else {
 			c.Set("User", ok.ID)
+			c.Set("Role", ok.Role)
 			c.Next()
 		}
 	} else {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Auth Token Not supplied"})
+		return
+	}
+}
+
+func CheckAdminRole(c *gin.Context) {
+	if c.GetString("Role") == "admin" {
+		c.Next()
+	} else {
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Role not authorized"})
 		return
 	}
 }

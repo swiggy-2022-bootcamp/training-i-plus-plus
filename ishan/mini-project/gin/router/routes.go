@@ -1,4 +1,4 @@
-package main
+package router
 
 import (
 	"swiggy/gin/services/auth"
@@ -8,8 +8,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ApplyRoutes(router *gin.Engine) {
+func ApplyRoutes() *gin.Engine {
+	router := gin.Default()
+
 	auth.AuthRoutes(router)
 	train.TrainRoutes(router)
 	reservation.ReservationRoutes(router)
+	return router
 }

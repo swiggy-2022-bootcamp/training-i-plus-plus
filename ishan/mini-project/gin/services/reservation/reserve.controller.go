@@ -21,6 +21,10 @@ type ReserveBody struct {
 	Destination     string `json:"destination"`
 }
 
+func init() {
+	db.ConnectDB()
+}
+
 func ReserveSeat(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()

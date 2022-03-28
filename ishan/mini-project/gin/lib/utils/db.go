@@ -12,6 +12,10 @@ import (
 
 var DataStore *mongo.Database
 
+func init() {
+	ConnectDB()
+}
+
 func ConnectDB() (*mongo.Client, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))

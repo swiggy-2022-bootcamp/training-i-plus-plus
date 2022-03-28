@@ -14,15 +14,20 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type loginBody struct {
+type LoginBody struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-type signUpBody struct {
+type SignUpBody struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 	Role     string `json:"role"`
+}
+
+func init() {
+	db.ConnectDB()
+	JWTManager.NewJWTManager("Ishan", time.Hour*50)
 }
 
 func Login(c *gin.Context) {
@@ -30,7 +35,7 @@ func Login(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	body := loginBody{}
+	body := LoginBody{}
 
 	if err := c.BindJSON(&body); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
@@ -62,7 +67,7 @@ func Signup(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	body := signUpBody{}
+	body := SignUpBody{}
 
 	if err := c.BindJSON(&body); err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
