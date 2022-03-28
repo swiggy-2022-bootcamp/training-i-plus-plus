@@ -17,6 +17,7 @@ func main() {
 	routes.UserRoutes(r)
 	routes.SellerRoutes(r)
 	routes.ProductRoutes(r)
+	routes.CartRoutes(r)
 	r.POST("/", test)
 	r.Run()
 }
