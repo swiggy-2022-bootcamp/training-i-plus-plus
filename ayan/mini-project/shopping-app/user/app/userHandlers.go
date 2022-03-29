@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"user/domain"
 
@@ -22,12 +23,12 @@ func (uh *UserHandlers) GetUserByEmail(c *gin.Context) {
 	} else {
 		user, err := uh.service.FindUserByEmail(userEmail)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, err.Error())
 		} else {
 
 			data, err := json.Marshal(user)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			c.Data(http.StatusOK, "application/json", data)
 		}
@@ -38,6 +39,7 @@ func (uh *UserHandlers) Register(c *gin.Context) {
 
 	var newUser domain.User
 	err := c.Bind(&newUser)
+	fmt.Println(newUser, err)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, nil)
@@ -45,12 +47,12 @@ func (uh *UserHandlers) Register(c *gin.Context) {
 	} else {
 		regUser, err := uh.service.Register(newUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, err.Error())
 		} else {
 
 			data, err := json.Marshal(regUser)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			c.Data(http.StatusCreated, "application/json", data)
 		}
@@ -66,14 +68,14 @@ func (uh *UserHandlers) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, nil)
 
 	} else {
-		token, err := uh.service.Login(user.Email(), user.Password())
+		token, err := uh.service.Login(user.Email, user.Password)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, err.Error())
 		} else {
 
 			data, err := json.Marshal(token)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			c.Data(http.StatusOK, "application/json", data)
 		}
@@ -89,14 +91,14 @@ func (uh *UserHandlers) UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, nil)
 
 	} else {
-		user, err := uh.service.Register(updatedUser)
+		user, err := uh.service.UpdateUser(updatedUser)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, err)
+			c.JSON(http.StatusInternalServerError, err.Error())
 		} else {
 
 			data, err := json.Marshal(user)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, err)
+				c.JSON(http.StatusInternalServerError, err.Error())
 			}
 			c.Data(http.StatusCreated, "application/json", data)
 		}
@@ -108,4 +110,26 @@ func (uh *UserHandlers) HelloWorldHandler(c *gin.Context) {
 	token := "Hello world"
 	data, _ := json.Marshal(token)
 	c.Data(http.StatusOK, "application/json", data)
+}
+
+func (uh *UserHandlers) DeleteUserByEmail(c *gin.Context) {
+
+	userEmail, ok := c.Params.Get("userEmail")
+
+	if !ok {
+		c.JSON(http.StatusBadRequest, nil)
+
+	} else {
+		user, err := uh.service.DeleteUserByEmail(userEmail)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err.Error())
+		} else {
+
+			data, err := json.Marshal(user)
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, err.Error())
+			}
+			c.Data(http.StatusOK, "application/json", data)
+		}
+	}
 }

@@ -1,7 +1,13 @@
 package domain
 
-import "errors"
+import (
+	"errors"
+	"fmt"
 
+	"user/utils"
+)
+
+//go:generate D:/Users/ayandut/go/bin/mockgen.exe -destination=../mocks/domain/mockUserService.go -package=domain users/domain UserService
 type UserService interface {
 	Register(User) (*User, error)
 	Login(string, string) (string, error)
@@ -9,6 +15,7 @@ type UserService interface {
 	VerifyCredentials(string, string) (bool, error)
 	VerifyToken(string, string) (bool, error)
 	UpdateUser(User) (*User, error)
+	DeleteUserByEmail(string) (*User, error)
 }
 
 type DefaultUserService struct {
@@ -23,10 +30,17 @@ func NewUserService(userDB UserRepositoryDB) UserService {
 
 func (usvc *DefaultUserService) Register(user User) (*User, error) {
 
-	_, err := usvc.FindUserByEmail(user.email)
-	if err != nil {
+	_, err := usvc.FindUserByEmail(user.Email)
+	fmt.Println("(usvc *DefaultUserService) Register : ", err)
+	if err == nil {
+		fmt.Println("(usvc *DefaultUserService) Register : err is nil")
 		return nil, errors.New("user already exists")
 	}
+	hash, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = hash
 	u, err := usvc.userDB.Save(user)
 	return u, err
 }
@@ -38,7 +52,8 @@ func (usvc *DefaultUserService) Login(email string, password string) (string, er
 		return "", err
 	}
 	if isValid {
-		token := "$" + email + "$" + password + "$"
+		hash, _ := utils.HashPassword(password)
+		token := "$" + email + "$" + hash + "$"
 		return token, nil
 	}
 	return "", errors.New("invalid user credentials")
@@ -49,7 +64,7 @@ func (usvc *DefaultUserService) VerifyCredentials(email string, password string)
 	if err != nil {
 		return false, err
 	}
-	if password == user.Password() {
+	if utils.CheckPasswordHash(password, user.Password) {
 		return true, nil
 	}
 	return false, errors.New("invalid credentials")
@@ -58,6 +73,7 @@ func (usvc *DefaultUserService) VerifyCredentials(email string, password string)
 func (usvc *DefaultUserService) FindUserByEmail(email string) (*User, error) {
 
 	user, err := usvc.userDB.FindUserByEmail(email)
+	fmt.Println("(usvc *DefaultUserService) FindUserByEmail : ", user, err)
 	return user, err
 }
 
@@ -67,7 +83,7 @@ func (usvc *DefaultUserService) VerifyToken(email string, token string) (bool, e
 	if err != nil {
 		return false, err
 	}
-	actualToken, err := usvc.Login(email, user.Password())
+	actualToken, err := usvc.Login(email, user.Password)
 	if err != nil {
 		return false, err
 	}
@@ -76,10 +92,28 @@ func (usvc *DefaultUserService) VerifyToken(email string, token string) (bool, e
 
 func (usvc *DefaultUserService) UpdateUser(user User) (*User, error) {
 
-	_, err := usvc.FindUserByEmail(user.Email())
+	_, err := usvc.FindUserByEmail(user.Email)
 	if err != nil {
 		return nil, err
 	}
+	hash, err := utils.HashPassword(user.Password)
+	if err != nil {
+		return nil, err
+	}
+	user.Password = hash
 	u, err := usvc.userDB.UpdateUser(user)
 	return u, err
+}
+
+func (usvc *DefaultUserService) DeleteUserByEmail(email string) (*User, error) {
+
+	u, err := usvc.FindUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	err = usvc.userDB.DeleteUserByEmail(email)
+	if err != nil {
+		return nil, err
+	}
+	return u, nil
 }
