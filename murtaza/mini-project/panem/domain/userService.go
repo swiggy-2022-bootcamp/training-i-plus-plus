@@ -4,6 +4,7 @@ type UserService interface {
 	CreateUserInMongo(string, string, string, string, string, string, Role) (User, error)
 	GetMongoUserByUserId(int) (*User, error)
 	DeleteUserByUserId(int) error
+	UpdateUser(User, int) (*User, error)
 }
 
 type service struct {
@@ -35,7 +36,14 @@ func (s service) DeleteUserByUserId(userId int) error {
 	return nil
 }
 
-// func (s service)
+func (s service) UpdateUser(user User, userId int) (*User, error) {
+	user.Id = userId
+	res, err := s.userMongoRepository.UpdateUser(user)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
+}
 
 func NewUserService(userMongoRepository UserMongoRepository) UserService {
 	return &service{

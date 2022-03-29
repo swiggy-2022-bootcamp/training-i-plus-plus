@@ -83,6 +83,34 @@ func (h UserHandler) deleteUser(c *gin.Context) {
 	}
 }
 
+func (h UserHandler) updateUser(c *gin.Context) {
+	params := c.Params
+	userId, err := params.Get("userId")
+
+	if err == false {
+		c.JSON(http.StatusBadRequest, "userId missing in request")
+	}
+
+	var newUser domain.User
+	err2 := json.NewDecoder(c.Request.Body).Decode(&newUser)
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, err2)
+	} else {
+		if err2 != nil {
+			c.JSON(http.StatusInternalServerError, err2)
+		}
+
+		userId, _ := strconv.ParseInt(userId, 10, 0)
+		user, err := h.userService.UpdateUser(newUser, int(userId))
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err2)
+		} else {
+			data, _ := user.MarshalJSON()
+			c.Data(http.StatusNoContent, "application/json", data)
+		}
+	}
+}
+
 func (h UserHandler) demoHandlerFunc(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"message": "Hello world",

@@ -55,6 +55,33 @@ func (umr userMongoRepository) FindUserByUsername(username string) (*domain.User
 	return result.toDomainEntity(), err
 }
 
+func (umr userMongoRepository) UpdateUser(user domain.User) (*domain.User, error) {
+	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
+
+	change := mgo.Change{
+		Update: bson.M{
+			"$set": bson.M{
+				"firstname": user.FirstName,
+				"lastname":  user.LastName,
+				"username":  user.Username,
+				"password":  user.Password,
+				"phone":     user.Phone,
+				"email":     user.Email,
+				"role":      0,
+				"updatedat": time.Now(),
+			},
+		},
+	}
+
+	var updatedUser domain.User
+	_, err := users.Find(bson.M{"id": user.Id}).Apply(change, &updatedUser)
+
+	if err != nil {
+		return nil, err
+	}
+	return &updatedUser, nil
+}
+
 func NewUserMongoRepository() userMongoRepository {
 
 	fmt.Println("Connecting to ", DBUrl)

@@ -160,4 +160,5 @@ type UserMongoRepository interface {
 	FindUserById(int) (*User, error)
 	FindUserByUsername(string) (*User, error)
 	DeleteUserByUserId(int) error
+	UpdateUser(User) (*User, error)
 }
