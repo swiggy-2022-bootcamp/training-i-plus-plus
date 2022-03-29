@@ -59,7 +59,7 @@ func LoginUser() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": msg})
 			return
 		}
-		token, err := services.CreateToken(foundUser.Email, foundUser.Name, foundUser.IsAdmin)
+		token, err := services.CreateToken(foundUser.Id, foundUser.Email, foundUser.Name, foundUser.IsAdmin)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"tejas/dto"
 	"tejas/models"
+	"tejas/services"
 	"tejas/utils"
 
 	"github.com/gin-gonic/gin"
@@ -104,6 +105,88 @@ func Availabilty() gin.HandlerFunc {
 				trainsResponse[i].PerStationCharge = train.PerStationCharge
 			}
 			c.JSON(http.StatusOK, gin.H{"trains": trainsResponse})
+			return
+		}
+	}
+}
+
+func ReserveSeat() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+		defer cancel()
+
+		var rs dto.ReserveSeatDTO
+		c.BindJSON(&rs)
+
+		fmt.Println(rs.Date.UTC())
+		var schedule models.Schedule
+		err := models.ScheduleCollection.FindOne(ctx, bson.M{"date": rs.Date}).Decode(&schedule)
+
+		if err != nil && err.Error() == "mongo: no documents in result" {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			return
+		} else {
+			var train models.TrainsWithSchedule
+			for _, t := range schedule.Trains {
+				if t.Id == rs.TrainId {
+					train = t
+					break
+				}
+			}
+
+			if train.Id != rs.TrainId {
+				c.JSON(http.StatusNotFound, gin.H{"error": "Train not found"})
+			}
+
+			var fromIndex = -1
+			var toIndex = -1
+
+			for i, station := range train.Stations {
+				if station.Code == rs.From {
+					fromIndex = i
+				}
+				if station.Code == rs.To {
+					toIndex = i
+				}
+			}
+			if fromIndex < toIndex && fromIndex != -1 && toIndex != -1 {
+				for seatNumber, seat := range train.Seats {
+					available := true
+					for i := fromIndex; i <= toIndex; i++ {
+						if seat[i] {
+							available = false
+							break
+						}
+					}
+					if available {
+						for i := fromIndex; i <= toIndex; i++ {
+							seat[i] = true
+						}
+						_, err := models.ScheduleCollection.UpdateOne(ctx, bson.M{"date": rs.Date}, bson.M{"$set": schedule})
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+							return
+						}
+						user, _ := c.MustGet("user_details").(services.SignedDetails)
+
+						amount := train.PerStationCharge * (toIndex - fromIndex + 1)
+						paymentDetails, err := Payment(user.UserId, amount)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+							return
+						}
+						ticket, err := TicketGeneration(user.UserId, rs.TrainId, rs.From, rs.To, rs.Date, paymentDetails.Transaction_id, seatNumber)
+						if err != nil {
+							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+							return
+						}
+						c.JSON(http.StatusOK, gin.H{"ticket": ticket})
+						return
+					}
+				}
+
+			}
+			c.JSON(http.StatusNotFound, gin.H{"error": "Seat not found"})
 			return
 		}
 	}

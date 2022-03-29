@@ -7,6 +7,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -17,14 +18,16 @@ func init() {
 }
 
 type SignedDetails struct {
-	Name    string `json:"name"`
-	EmailId string `json:"emailId"`
-	IsAdmin bool   `json:"isAdmin"`
+	UserId  primitive.ObjectID `json:"userId"`
+	Name    string             `json:"name"`
+	EmailId string             `json:"emailId"`
+	IsAdmin bool               `json:"isAdmin"`
 	jwt.StandardClaims
 }
 
-func CreateToken(emailId, name string, isAdmin bool) (singedToken string, err error) {
+func CreateToken(id primitive.ObjectID, emailId, name string, isAdmin bool) (singedToken string, err error) {
 	claims := &SignedDetails{
+		UserId:  id,
 		Name:    name,
 		EmailId: emailId,
 		IsAdmin: isAdmin,
