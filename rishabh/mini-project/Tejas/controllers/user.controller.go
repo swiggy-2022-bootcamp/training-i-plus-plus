@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"authApp/configs"
-	"authApp/models"
-	"authApp/services"
 	"context"
 	"fmt"
 	"net/http"
+	"tejas/configs"
+	"tejas/models"
+	"tejas/services"
 	"time"
 
 	"github.com/gin-gonic/gin"

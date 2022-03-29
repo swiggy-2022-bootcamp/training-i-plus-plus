@@ -1,8 +1,8 @@
 package main
 
 import (
-	"authApp/configs"
-	"authApp/routes"
+	"tejas/configs"
+	"tejas/routes"
 
 	"github.com/gin-gonic/gin"
 )

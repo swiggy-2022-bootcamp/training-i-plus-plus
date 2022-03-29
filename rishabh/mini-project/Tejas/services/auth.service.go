@@ -1,9 +1,9 @@
 package services
 
 import (
-	"authApp/configs"
 	"errors"
 	"log"
+	"tejas/configs"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"

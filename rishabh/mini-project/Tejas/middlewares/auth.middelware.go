@@ -1,9 +1,9 @@
 package middlewares
 
 import (
-	"authApp/services"
 	"net/http"
 	"strings"
+	"tejas/services"
 
 	"github.com/gin-gonic/gin"
 )

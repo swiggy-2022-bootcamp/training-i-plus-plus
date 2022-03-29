@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"authApp/controllers"
+	"tejas/controllers"
 
 	"github.com/gin-gonic/gin"
 )

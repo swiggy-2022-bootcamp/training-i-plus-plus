@@ -3,7 +3,7 @@
 ## Setup
 
 1. Dev Server
-   - npm install -g nodemon
-   - nodemon --exec go run main.go --signal SIGTERM
+   - gin run main.go
 2. Prod Server
-   - go run main.go
+   - go build -o app
+   - ./app
