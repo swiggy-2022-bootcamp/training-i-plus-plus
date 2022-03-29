@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${fileDirname}"
+            "program": "/Users/murtaza896/ipp/training-i-plus-plus/murtaza/mini-project/panem"
         }
     ]
 }

@@ -1,39 +1,44 @@
 package domain
 
 type UserService interface {
-	CreateUser(string, string, string, string, string, string, Role) (User, error)
-	DeleteUserByUsername(string) (bool, error)
-	GetUserByUserId(int) (*User, error)
+	CreateUserInMongo(string, string, string, string, string, string, Role) (User, error)
+	GetMongoUserByUserId(int) (*User, error)
+	DeleteUserByUserId(int) error
 }
 
 type service struct {
-	userRepository UserRepository
+	userMongoRepository UserMongoRepository
 }
 
-func (s service) CreateUser(firstName, lastName, username, phone, email, password string, role Role) (User, error) {
+func (s service) CreateUserInMongo(firstName, lastName, username, phone, email, password string, role Role) (User, error) {
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
-	persistedUser, err := s.userRepository.Save(*user)
+	persistedUser, err := s.userMongoRepository.InsertUser(*user)
 	if err != nil {
 		return User{}, err
 	}
-	user.SetId(persistedUser.Id())
-	return *user, nil
+	return persistedUser, nil
 }
 
-func (s service) DeleteUserByUsername(username string) (bool, error) {
-	_, err := s.userRepository.FindByUsername(username)
+func (s service) GetMongoUserByUserId(userId int) (*User, error) {
+	res, err := s.userMongoRepository.FindUserById(userId)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
-	return s.userRepository.DeleteUserByUsername(username)
+	return res, nil
 }
 
-func (s service) GetUserByUserId(userId int) (*User, error) {
-	return s.userRepository.FindByUserId(userId)
+func (s service) DeleteUserByUserId(userId int) error {
+	err := s.userMongoRepository.DeleteUserByUserId(userId)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func NewUserService(userRepository UserRepository) UserService {
+// func (s service)
+
+func NewUserService(userMongoRepository UserMongoRepository) UserService {
 	return &service{
-		userRepository: userRepository,
+		userMongoRepository: userMongoRepository,
 	}
 }

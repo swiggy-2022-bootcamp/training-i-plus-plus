@@ -69,14 +69,14 @@ func (u UserPersistedEntity) toDomainEntity() *domain.User {
 func NewUserPersistedEntity(u domain.User) *UserPersistedEntity {
 	currentTime := time.Now()
 	return &UserPersistedEntity{
-		id:        1,
-		firstName: u.FirstName(),
-		lastName:  u.LastName(),
-		username:  u.Username(),
-		password:  u.Password(),
-		email:     u.Email(),
-		phone:     u.Phone(),
-		role:      u.Role(),
+		id:        0,
+		firstName: u.FirstName,
+		lastName:  u.LastName,
+		username:  u.Username,
+		password:  u.Password,
+		email:     u.Email,
+		phone:     u.Phone,
+		role:      u.Role,
 		createdAt: currentTime,
 		updatedAt: currentTime,
 	}

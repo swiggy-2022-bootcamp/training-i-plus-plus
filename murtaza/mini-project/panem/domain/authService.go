@@ -15,16 +15,16 @@ type AuthService interface {
 }
 
 type authService struct {
-	userRepository UserRepository
+	userMongoRepository UserMongoRepository
 }
 
 func (as authService) AuthenticateUser(username, password string) (string, error) {
-	user, err := as.userRepository.FindByUsername(username)
+	user, err := as.userMongoRepository.FindUserByUsername(username)
 	if err != nil {
 		return "", err
 	}
-	if user.Password() == password {
-		return generateJWT(user.Id(), user.Role())
+	if user.Password == password {
+		return generateJWT(user.Id, user.Role)
 	} else {
 		return "", errors.New("invalid credentials")
 	}
@@ -55,6 +55,6 @@ func generateJWT(id int, role Role) (string, error) {
 	}).SignedString([]byte(secret))
 }
 
-func NewAuthService(userRepository UserRepository) AuthService {
-	return &authService{userRepository: userRepository}
+func NewAuthService(userMongoRepository UserMongoRepository) AuthService {
+	return &authService{userMongoRepository: userMongoRepository}
 }

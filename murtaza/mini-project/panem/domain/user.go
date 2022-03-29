@@ -34,105 +34,115 @@ func GetEnumByIndex(idx int) (Role, error) {
 	}
 }
 
+// type User struct {
+// 	id        int
+// 	firstName string
+// 	lastName  string
+// 	username  string
+// 	password  string
+// 	phone     string
+// 	email     string
+// 	role      Role
+// }
 type User struct {
-	id        int
-	firstName string
-	lastName  string
-	username  string
-	password  string
-	phone     string
-	email     string
-	role      Role
+	Id        int    `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Username  string `json:"username"`
+	Password  string `json:"password"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	Role      Role   `json:"role"`
 }
 
 // ----- getters and setters --------
 
-func (u User) Id() int {
-	return u.id
-}
+// func (u User) Id() int {
+// 	return u.id
+// }
 
 func (u *User) SetId(id int) {
-	u.id = id
+	u.Id = id
 }
 
-func (u User) Email() string {
-	return u.email
-}
+// func (u User) Email() string {
+// 	return u.email
+// }
 
 func (u *User) SetEmail(email string) {
-	u.email = email
+	u.Email = email
 }
 
-func (u User) FirstName() string {
-	return u.firstName
-}
+// func (u User) FirstName() string {
+// 	return u.firstName
+// }
 
 func (u *User) SetFirstName(firstName string) {
-	u.firstName = firstName
+	u.FirstName = firstName
 }
 
-func (u User) LastName() string {
-	return u.lastName
-}
+// func (u User) LastName() string {
+// 	return u.lastName
+// }
 
 func (u *User) SetLastName(lastName string) {
-	u.lastName = lastName
+	u.LastName = lastName
 }
 
-func (u User) Username() string {
-	return u.username
-}
+// func (u User) Username() string {
+// 	return u.username
+// }
 
 func (u *User) SetUsername(username string) {
-	u.username = username
+	u.Username = username
 }
 
-func (u User) Password() string {
-	return u.password
-}
+// func (u User) Password() string {
+// 	return u.password
+// }
 
 func (u *User) SetPassword(password string) {
-	u.password = password
+	u.Password = password
 }
 
-func (u User) Phone() string {
-	return u.phone
-}
+// func (u User) Phone() string {
+// 	return u.phone
+// }
 
 func (u *User) SetPhone(phone string) {
-	u.phone = phone
+	u.Phone = phone
 }
 
-func (u User) Role() Role {
-	return u.role
-}
+// func (u User) Role() Role {
+// 	return u.role
+// }
 
 func (u *User) SetRole(r Role) {
-	u.role = r
+	u.Role = r
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
-		"id":        u.Id(),
-		"firstName": u.FirstName(),
-		"lastName":  u.LastName(),
-		"email":     u.Email(),
-		"password":  u.Password(),
-		"username":  u.Username(),
-		"phone":     u.Phone(),
-		"role":      u.Role(),
+		"id":        u.Id,
+		"firstName": u.FirstName,
+		"lastName":  u.LastName,
+		"email":     u.Email,
+		"password":  u.Password,
+		"username":  u.Username,
+		"phone":     u.Phone,
+		"role":      u.Role,
 	})
 }
 
 func NewUser(firstName, lastName, username, phone, email, password string, role Role) *User {
 	return &User{
-		firstName: firstName,
-		lastName:  lastName,
-		username:  username,
-		phone:     phone,
-		email:     email,
-		password:  password,
-		role:      role,
+		FirstName: firstName,
+		LastName:  lastName,
+		Username:  username,
+		Phone:     phone,
+		Email:     email,
+		Password:  password,
+		Role:      role,
 	}
 }
 
@@ -143,4 +153,11 @@ type UserRepository interface {
 	FindByUserId(int) (*User, error)
 	Save(User) (User, error)
 	DeleteUserByUsername(string) (bool, error)
+}
+
+type UserMongoRepository interface {
+	InsertUser(User) (User, error)
+	FindUserById(int) (*User, error)
+	FindUserByUsername(string) (*User, error)
+	DeleteUserByUserId(int) error
 }
