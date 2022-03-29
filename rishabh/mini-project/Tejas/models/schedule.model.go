@@ -1,8 +1,10 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"time"
+)
 
-type trainsWithSchedule struct {
+type TrainsWithSchedule struct {
 	Id               int       `json:"_id" bson:"_id"`
 	Stations         []Station `json:"stations" bson:"stations"`
 	Seats            [][]bool  `json:"seats" bson:"seats"`
@@ -10,6 +12,6 @@ type trainsWithSchedule struct {
 }
 
 type Schedule struct {
-	Date   primitive.DateTime   `json:"date" bson:"date"`
-	Trains []trainsWithSchedule `json:"trains" bson:"trains"`
+	Date   time.Time            `json:"date" bson:"date"`
+	Trains []TrainsWithSchedule `json:"trains" bson:"trains"`
 }

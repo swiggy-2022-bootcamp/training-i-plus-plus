@@ -7,10 +7,9 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TrainRoutes(router *gin.Engine) {
-	adminOnly := router.Group("/api/train")
+func ScheduleRoutes(router *gin.Engine) {
+	adminOnly := router.Group("/api/schedule")
 	adminOnly.Use(middlewares.AuthenticateJWT())
 	adminOnly.Use(middlewares.OnlyAdmin())
-	adminOnly.POST("/add", controllers.AddTrain())
-	adminOnly.POST("/remove", controllers.RemoveTrain())
+	adminOnly.POST("/add", controllers.AddTrainSchedule())
 }

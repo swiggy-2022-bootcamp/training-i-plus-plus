@@ -51,5 +51,7 @@ func RemoveTrain() gin.HandlerFunc {
 }
 
 func fillTrainDefaults(train *models.Train) {
-	train.PerStationCharge = 500
+	if train.PerStationCharge == 0 {
+		train.PerStationCharge = 500
+	}
 }
