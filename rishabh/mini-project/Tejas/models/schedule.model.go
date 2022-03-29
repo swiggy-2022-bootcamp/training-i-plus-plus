@@ -1,7 +1,10 @@
 package models
 
 import (
+	"tejas/configs"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type TrainsWithSchedule struct {
@@ -15,3 +18,5 @@ type Schedule struct {
 	Date   time.Time            `json:"date" bson:"date"`
 	Trains []TrainsWithSchedule `json:"trains" bson:"trains"`
 }
+
+var ScheduleCollection *mongo.Collection = configs.GetCollection(configs.DB, "schedules")

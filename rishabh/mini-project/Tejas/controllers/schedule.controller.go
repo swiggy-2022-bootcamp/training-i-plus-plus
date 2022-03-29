@@ -3,16 +3,12 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"tejas/configs"
 	"tejas/dto"
 	"tejas/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
-
-var scheduleCollection *mongo.Collection = configs.GetCollection(configs.DB, "schedules")
 
 func AddTrainSchedule() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -23,12 +19,12 @@ func AddTrainSchedule() gin.HandlerFunc {
 		c.BindJSON(&singleSchedule)
 
 		var schedule models.Schedule
-		err := scheduleCollection.FindOne(ctx, bson.M{"date": singleSchedule.Date}).Decode(&schedule)
+		err := models.ScheduleCollection.FindOne(ctx, bson.M{"date": singleSchedule.Date}).Decode(&schedule)
 
 		if err != nil && err.Error() == "mongo: no documents in result" {
 			schedule.Date = singleSchedule.Date
 			fillTrainDetailsAndAppend(&schedule, singleSchedule)
-			_, err := scheduleCollection.InsertOne(ctx, schedule)
+			_, err := models.ScheduleCollection.InsertOne(ctx, schedule)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
@@ -39,7 +35,7 @@ func AddTrainSchedule() gin.HandlerFunc {
 			schedule.Date = singleSchedule.Date
 			fillTrainDetailsAndAppend(&schedule, singleSchedule)
 
-			_, err := scheduleCollection.UpdateOne(ctx, bson.M{"date": singleSchedule.Date}, bson.M{"$set": schedule})
+			_, err := models.ScheduleCollection.UpdateOne(ctx, bson.M{"date": singleSchedule.Date}, bson.M{"$set": schedule})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return

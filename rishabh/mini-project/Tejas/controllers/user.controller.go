@@ -3,7 +3,6 @@ package controllers
 import (
 	"context"
 	"net/http"
-	"tejas/configs"
 	"tejas/models"
 	"tejas/services"
 	"time"
@@ -11,10 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
-
-var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users")
 
 const requestTimeout = 10 * time.Second
 
@@ -29,7 +25,7 @@ func RegisterUser() gin.HandlerFunc {
 		hashPassword := services.HashPassword(user.Password)
 		user.Password = hashPassword
 
-		result, err := userCollection.InsertOne(ctx, user)
+		result, err := models.UserCollection.InsertOne(ctx, user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
@@ -49,7 +45,7 @@ func LoginUser() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
+		err := models.UserCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
 		defer cancel()
 
 		if err != nil {

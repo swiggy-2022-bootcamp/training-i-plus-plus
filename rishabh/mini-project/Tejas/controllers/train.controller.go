@@ -4,15 +4,11 @@ import (
 	"context"
 	"net/http"
 	"strconv"
-	"tejas/configs"
 	"tejas/models"
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 )
-
-var trainCollection *mongo.Collection = configs.GetCollection(configs.DB, "trains")
 
 func AddTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -23,7 +19,7 @@ func AddTrain() gin.HandlerFunc {
 		c.BindJSON(&train)
 		fillTrainDefaults(&train)
 
-		result, err := trainCollection.InsertOne(ctx, train)
+		result, err := models.TrainCollection.InsertOne(ctx, train)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
@@ -37,7 +33,7 @@ func RemoveTrain() gin.HandlerFunc {
 		defer cancel()
 
 		var id, err = strconv.Atoi(c.Query("id"))
-		result, err := trainCollection.DeleteOne(ctx, bson.M{"_id": id})
+		result, err := models.TrainCollection.DeleteOne(ctx, bson.M{"_id": id})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
