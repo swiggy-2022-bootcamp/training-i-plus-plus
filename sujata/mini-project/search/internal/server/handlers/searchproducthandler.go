@@ -22,12 +22,6 @@ func SearchProductHandler(config *util.RouterConfig) http.HandlerFunc {
 		log.Info(searchedProduct)
 		service := services.GetSearchProductService()
 
-		// Validate the request
-		if err := service.ValidateRequest(); err != nil {
-			http.Error(w, err.ErrorMessage, err.HttpResponseCode)
-			return
-		}
-
 		// Process the request
 		resp, err := service.ProcessRequest(ctx, searchedProduct)
 		if err != nil {
@@ -35,6 +29,7 @@ func SearchProductHandler(config *util.RouterConfig) http.HandlerFunc {
 			return
 		}
 
+		w.Header().Set("Content-Type", "application/json")
 		_, goErr = w.Write(resp)
 		if goErr != nil {
 			log.WithError(goErr).Error("an error occurred while writing the response")

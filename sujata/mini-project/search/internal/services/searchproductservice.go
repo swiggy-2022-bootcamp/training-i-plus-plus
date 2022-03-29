@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"search/internal/errors"
+	model "search/internal/model"
 	"search/util"
 	"sync"
 
@@ -17,7 +18,6 @@ import (
 )
 
 type SearchProductService interface {
-	ValidateRequest() *errors.ServerError
 	ProcessRequest(ctx context.Context, searchedProduct string) ([]byte, *errors.ServerError)
 }
 
@@ -46,11 +46,6 @@ func GetSearchProductService() SearchProductService {
 	return searchProductServiceStruct
 }
 
-func (s *searchProductService) ValidateRequest() *errors.ServerError {
-
-	return nil
-}
-
 func (service *searchProductService) ProcessRequest(ctx context.Context, searchedProduct string) ([]byte, *errors.ServerError) {
 	var goErr error
 
@@ -68,20 +63,33 @@ func (service *searchProductService) ProcessRequest(ctx context.Context, searche
 		return nil, nil
 	}
 
-	reqBody, _ := json.Marshal(productIds)
+	ids := model.ProductIds{Ids: productIds}
+	var bodyBytes []byte
+
+	reqBody, goErr := json.Marshal(ids)
+	if goErr != nil {
+		log.WithError(goErr).Error("an error occurred while marshalling the request body for Products service")
+		return bodyBytes, &errors.InternalError
+	}
+
 	reqBodyBytes := bytes.NewBuffer(reqBody)
 
 	resp, goErr := http.Post(service.config.WebServerConfig.ProductServiceUrl, "application/json", reqBodyBytes)
-	if goErr != nil {
-		log.Fatalln(err)
+	if goErr != nil || resp.StatusCode != http.StatusOK {
+		log.WithFields(logrus.Fields{
+			"Error":      goErr,
+			"StatusCode": resp.StatusCode,
+		}).Error("an error occurred while calling to service: ", service.config.WebServerConfig.ProductServiceUrl)
+		return bodyBytes, &errors.InternalError
 	}
+
 	defer resp.Body.Close()
 
-	var bodyBytes []byte
 	if resp.StatusCode == http.StatusOK {
 		bodyBytes, goErr = io.ReadAll(resp.Body)
 		if goErr != nil {
-			log.Fatal(goErr)
+			log.WithField("Error: ", goErr).Error("an error occurred while reading the body bytes from response body")
+			return bodyBytes, &errors.InternalError
 		}
 		bodyString := string(bodyBytes)
 		log.Info(bodyString)
