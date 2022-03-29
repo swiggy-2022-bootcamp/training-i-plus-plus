@@ -28,7 +28,7 @@ func (t *TrainServiceImpl) CreateTrain(train *models.Train) error{
 func (t *TrainServiceImpl) GetTrain(name *string) (*models.Train, error){
 	var train *models.Train
 	query := bson.D{bson.E{Key:"train_number", Value: name}}
-	err := t.traincollection.FindOne(t.ctx, query).Decode(&user)
+	err := t.traincollection.FindOne(t.ctx, query).Decode(&train)
 	return train, err
 }
 
@@ -52,27 +52,25 @@ func (t *TrainServiceImpl) GetAll() ([]*models.Train, error){
 
 	cursor.Close(t.ctx)
 
-	if len(users) == 0 {
+	if len(trains) == 0 {
 		return nil, errors.New("documents not found")
 	}
 	return trains, nil
 }
 
 func (t *TrainServiceImpl) UpdateTrain(train *models.Train) error{
-	filter := bson.D{bson.E{Key:"train_number", Value: train.Name}}
+	filter := bson.D{bson.E{Key:"train_number", Value: train.Train_number}}
 	update := bson.D{
 		bson.E{
 			Key:"$set", 
 			Value: bson.D{
 				bson.E{Key:"train_number", Value: train.Train_number}, 
-				bson.E{Key:"train_name", Value: user.Train_name}, 
-				bson.E{Key:"source", Value: user.Source}, 
-				bson.E{Key:"destination", Value: user.Destination}, 
-				bson.E{Key:"seat_available", Value: user.Seat_available}, 
-				bson.E{Key:"total_seats", Value: user.Total_seats}
-			}
-		}
-	}
+				bson.E{Key:"train_name", Value: train.Train_name}, 
+				bson.E{Key:"source", Value: train.Source}, 
+				bson.E{Key:"destination", Value: train.Destination}, 
+				bson.E{Key:"seat_available", Value: train.Seat_available}, 
+				bson.E{Key:"total_seats", Value: train.Total_seats},
+			}}}
 
 	result,_ := t.traincollection.UpdateOne(t.ctx, filter, update)
 	if result.MatchedCount != 1{

@@ -6,6 +6,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"errors"
+	"fmt"
 )
 
 type TicketServiceImpl struct {
@@ -25,8 +26,9 @@ func (t *TicketServiceImpl) CreateTicket(ticket *models.Ticket) error{
 	return err
 }
 
-func (t *TicketServiceImpl) GetTicker(pnr_number *string) (*models.Ticket, error){
+func (t *TicketServiceImpl) GetTicket(pnr_number *string) (*models.Ticket, error){
 	var ticket *models.Ticket
+	fmt.Println("pnr_num: ", pnr_number)
 	query := bson.D{bson.E{Key:"pnr_number", Value: pnr_number}}
 	err := t.ticketcollection.FindOne(t.ctx, query).Decode(&ticket)
 	return ticket, err
@@ -35,18 +37,21 @@ func (t *TicketServiceImpl) GetTicker(pnr_number *string) (*models.Ticket, error
 func (t *TicketServiceImpl) GetAll() ([]*models.Ticket, error){
 	var tickets []*models.Ticket
 	cursor, err := t.ticketcollection.Find(t.ctx, bson.D{{}})
+	// fmt.Println("error1: ", err.Error())
 	if err != nil{
 		return nil, err
 	}
 	for cursor.Next(t.ctx){
 		var ticket models.Ticket
-		err := cursor.Decode(&tickets)
+		err := cursor.Decode(&ticket)
 		if err != nil {
 			return nil, err
 		}
+		// fmt.Println("error2: ", err.Error())
 		tickets = append(tickets, &ticket)
 	}
 	if err := cursor.Err(); err != nil{
+		// fmt.Println("error3: ", err.Error())
 		return nil, err
 	}
 
@@ -71,9 +76,7 @@ func (t *TicketServiceImpl) UpdateTicket(ticket *models.Ticket) error{
 				bson.E{Key:"passenger_name", Value: ticket.Passenger_name},
 				bson.E{Key:"source", Value: ticket.Source},
 				bson.E{Key:"destination", Value: ticket.Destination},
-			}
-		}
-	}
+			}}}
 	result,_ := t.ticketcollection.UpdateOne(t.ctx, filter, update)
 	if result.MatchedCount != 1{
 		return errors.New("no match found for update")

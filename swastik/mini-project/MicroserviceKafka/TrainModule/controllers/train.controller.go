@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"net/http"
-	"fmt"
+	// "fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/swastiksahoo153/train-module/models"
 	"github.com/swastiksahoo153/train-module/services"
@@ -78,8 +78,8 @@ func (tc *TrainController) DeleteTrain(ctx *gin.Context) {
 func (tc *TrainController) RegisterTrainRoutes(rg *gin.RouterGroup) {
 	trainroute := rg.Group("/train")
 	trainroute.POST("/create", tc.CreateTrain)
-	trainroute.GET("/get/:name", tc.GetTrain)
+	trainroute.GET("/get/:train_number", tc.GetTrain)
 	trainroute.GET("/getall", tc.GetAll)
 	trainroute.PATCH ("/update", tc.UpdateTrain)
-	trainroute.DELETE("/delete/:name", tc.DeleteTrain)
+	trainroute.DELETE("/delete/:train_number", tc.DeleteTrain)
 }

@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"net/http"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/swastiksahoo153/ticket-module/models"
 	"github.com/swastiksahoo153/ticket-module/services"
+	"fmt"
 )
 
 type TicketController struct{
@@ -24,7 +24,7 @@ func (tc *TicketController) CreateTicket(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return 
 	}
-	err := tc.TicketService.CreateTicket(&train)
+	err := tc.TicketService.CreateTicket(&ticket)
 	if err != nil{
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return 
@@ -33,8 +33,9 @@ func (tc *TicketController) CreateTicket(ctx *gin.Context) {
 }
 
 func (tc *TicketController) GetTicket(ctx *gin.Context) {
-	pnrnumber := ctx.Param("pnr_number")
-	ticket, err := uc.TicketService.GetTicket(&pnrnumber)
+	pnr_number := ctx.Param("pnr_number")
+	fmt.Println("pnr Number:: ", pnr_number)
+	ticket, err := tc.TicketService.GetTicket(&pnr_number)
 	if err != nil{
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return 
@@ -44,6 +45,7 @@ func (tc *TicketController) GetTicket(ctx *gin.Context) {
 
 func (tc *TicketController) GetAll(ctx *gin.Context) {
 	tickets, err := tc.TicketService.GetAll()
+	// fmt.Println("tickets: ", tickets, "errors: ", err.Error())
 	if err != nil{
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
@@ -57,7 +59,7 @@ func (tc *TicketController) UpdateTicket(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return 
 	}
-	err := tc.TicketService.UpdateTicket(&train)
+	err := tc.TicketService.UpdateTicket(&ticket)
 	if err != nil{
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return 
@@ -78,8 +80,8 @@ func (tc *TicketController) DeleteTicket(ctx *gin.Context) {
 func (tc *TicketController) RegisterTicketRoutes(rg *gin.RouterGroup) {
 	ticketroute := rg.Group("/ticket")
 	ticketroute.POST("/create", tc.CreateTicket)
-	ticketroute.GET("/get/:name", tc.GetTicket)
+	ticketroute.GET("/get/:pnr_number", tc.GetTicket)
 	ticketroute.GET("/getall", tc.GetAll)
 	ticketroute.PATCH("/update", tc.UpdateTicket)
-	ticketroute.DELETE("/delete/:name", tc.DeleteTicket)
+	ticketroute.DELETE("/delete/:pnr_number", tc.DeleteTicket)
 }

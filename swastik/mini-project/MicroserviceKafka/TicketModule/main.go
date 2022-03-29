@@ -51,7 +51,7 @@ func init(){
 	fmt.Println("mongo connection established")
 
 	ticketcollection = mongoclient.Database("ticketdb").Collection("tickets")
-	ticketservice = services.NewUserService(ticketcollection, ctx)
+	ticketservice = services.NewTicketService(ticketcollection, ctx)
 	ticketcontroller = controllers.New(ticketservice)
 	server = gin.Default()
 }

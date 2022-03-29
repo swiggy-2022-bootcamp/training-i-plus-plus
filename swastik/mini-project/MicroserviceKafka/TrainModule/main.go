@@ -51,7 +51,7 @@ func init(){
 	fmt.Println("mongo connection established")
 
 	traincollection = mongoclient.Database("traindb").Collection("trains")
-	trainservice = services.NewUserService(traincollection, ctx)
+	trainservice = services.NewTrainService(traincollection, ctx)
 	traincontroller = controllers.New(trainservice)
 	server = gin.Default()
 }
@@ -60,7 +60,7 @@ func main(){
 	defer mongoclient.Disconnect(ctx)
 
 	basepath := server.Group("/v1")
-	traincontroller.RegisterTicketRoutes(basepath)
+	traincontroller.RegisterTrainRoutes(basepath)
 
 	log.Fatal(server.Run(":8081"))
 }
