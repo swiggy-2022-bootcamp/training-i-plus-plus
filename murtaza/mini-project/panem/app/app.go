@@ -19,6 +19,10 @@ func Start() {
 		userService: domain.NewUserService(userMongoRepository),
 	}
 
+	authHandler := AuthHandler{
+		authService: domain.NewAuthService(userMongoRepository),
+	}
+
 	r := Routes{
 		router: gin.Default(),
 	}
@@ -27,11 +31,17 @@ func Start() {
 
 	users := v1.Group("/users")
 
+	users.Use(authHandler.authMiddleware)
 	users.GET("/", userHandler.getAllUsers)
 	users.GET("/:userId", userHandler.getUserByUserId)
-	users.POST("/", userHandler.createUser)
 	users.DELETE("/:userId", userHandler.deleteUser)
 	users.PUT("/:userId", userHandler.updateUser)
+
+	login := v1.Group("/login")
+	login.POST("/", authHandler.handleLogin)
+
+	signup := v1.Group("/signup")
+	signup.POST("/signup", userHandler.createUser)
 
 	r.router.Run(":8089")
 }
