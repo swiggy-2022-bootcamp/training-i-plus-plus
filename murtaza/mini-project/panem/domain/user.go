@@ -34,16 +34,6 @@ func GetEnumByIndex(idx int) (Role, error) {
 	}
 }
 
-// type User struct {
-// 	id        int
-// 	firstName string
-// 	lastName  string
-// 	username  string
-// 	password  string
-// 	phone     string
-// 	email     string
-// 	role      Role
-// }
 type User struct {
 	Id        int    `json:"id"`
 	FirstName string `json:"first_name"`
@@ -57,65 +47,33 @@ type User struct {
 
 // ----- getters and setters --------
 
-// func (u User) Id() int {
-// 	return u.id
-// }
-
 func (u *User) SetId(id int) {
 	u.Id = id
 }
-
-// func (u User) Email() string {
-// 	return u.email
-// }
 
 func (u *User) SetEmail(email string) {
 	u.Email = email
 }
 
-// func (u User) FirstName() string {
-// 	return u.firstName
-// }
-
 func (u *User) SetFirstName(firstName string) {
 	u.FirstName = firstName
 }
-
-// func (u User) LastName() string {
-// 	return u.lastName
-// }
 
 func (u *User) SetLastName(lastName string) {
 	u.LastName = lastName
 }
 
-// func (u User) Username() string {
-// 	return u.username
-// }
-
 func (u *User) SetUsername(username string) {
 	u.Username = username
 }
-
-// func (u User) Password() string {
-// 	return u.password
-// }
 
 func (u *User) SetPassword(password string) {
 	u.Password = password
 }
 
-// func (u User) Phone() string {
-// 	return u.phone
-// }
-
 func (u *User) SetPhone(phone string) {
 	u.Phone = phone
 }
-
-// func (u User) Role() Role {
-// 	return u.role
-// }
 
 func (u *User) SetRole(r Role) {
 	u.Role = r
