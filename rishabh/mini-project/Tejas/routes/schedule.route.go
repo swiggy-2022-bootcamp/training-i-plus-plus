@@ -8,6 +8,9 @@ import (
 )
 
 func ScheduleRoutes(router *gin.Engine) {
+	public := router.Group("/api/schedule")
+	public.GET("/", controllers.Availabilty())
+
 	adminOnly := router.Group("/api/schedule")
 	adminOnly.Use(middlewares.AuthenticateJWT())
 	adminOnly.Use(middlewares.OnlyAdmin())
