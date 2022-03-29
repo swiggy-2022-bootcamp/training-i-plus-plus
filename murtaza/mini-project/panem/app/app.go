@@ -43,5 +43,8 @@ func Start() {
 	signup := v1.Group("/signup")
 	signup.POST("/signup", userHandler.createUser)
 
+	auth := v1.Group("/auth")
+	auth.GET("/", authHandler.isTokenValid)
+
 	r.router.Run(":8089")
 }
