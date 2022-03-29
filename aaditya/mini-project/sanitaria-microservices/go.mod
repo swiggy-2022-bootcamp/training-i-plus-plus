@@ -3,6 +3,7 @@ module sanitaria-microservices
 go 1.17
 
 require (
+	github.com/confluentinc/confluent-kafka-go v1.8.2
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-playground/validator/v10 v10.10.1

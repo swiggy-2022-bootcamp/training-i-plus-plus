@@ -20,6 +20,10 @@ import (
 var doctorCollection *mongo.Collection = configs.GetCollection(configs.DB, "doctors")
 var validate = validator.New()
 
+const (
+    topic         = "Appointment"
+)
+
 func RegisterDoctor() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -229,52 +233,62 @@ func GetAllDoctors() gin.HandlerFunc {
 	}
 }
 
-// func OpenSlotsForAppointments() gin.HandlerFunc{
-// 	return func (c *gin.Context)  {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-//         id := c.Param("id")
-//         var doctor models.Doctor
-//         defer cancel()
+func OpenSlotsForAppointments() gin.HandlerFunc{
+	return func (c *gin.Context)  {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        id := c.Param("doctorId")
+        var doctor models.Doctor
+        defer cancel()
 
-//         objId, _ := primitive.ObjectIDFromHex(id)
+        objId, _ := primitive.ObjectIDFromHex(id)
 
-//         err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&doctor)
-//         if err != nil {
-//             c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-//             return
-//         }
+        err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&doctor)
+        if err != nil {
+            c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+        }
 
-// 		var newAppointment models.Appointment
-// 		if err = c.BindJSON(&newAppointment); err!=nil{
-// 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-//             return
-// 		}
-// 		currentAppointments := doctor.Appointments
-// 		currentAppointments = append(currentAppointments,newAppointment)
+		var appointment models.Appointment
+		if err = c.BindJSON(&appointment); err!=nil{
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+            return
+		}
+		newAppointment := models.Appointment{
+			Id : primitive.NewObjectID(),
+			Slot : appointment.Slot,
+			Fees : appointment.Fees,
+			Occupied : false,
+			DoctorID : objId, 
+		}
+		currentAppointments := doctor.Appointments
+		currentAppointments = append(currentAppointments,newAppointment)
 
-// 		update := bson.M{"appointments": currentAppointments}
+		update := bson.M{"appointments": currentAppointments}
 
-// 		result, err := doctorCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
+		result, updateErr := doctorCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
+		if updateErr != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": updateErr.Error()}})
+			return
+		}
+		p, err_ :=  configs.CreateProducer()
+		if err_ != nil{
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err_.Error()}})
+			return
+		}
+		configs.ProduceAppointment(p,topic,newAppointment)
+		var updatedDoctor models.Doctor
+		if result.MatchedCount == 1 {
+			err = doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedDoctor)
 
-// 		//get updated user details
-// 		var updatedDoctor models.Doctor
-// 		if result.MatchedCount == 1 {
-// 			err := doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedDoctor)
-
-// 			if err != nil {
-// 				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 				return
-// 			}
-// 		}
-
-// 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
-// 	}
-// }
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				return
+			}
+		}
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
+	}
+}
 
 // func BookAppointmentForGeneralUser(userId string) (models.Appointment, error){
 // 	ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)

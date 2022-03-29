@@ -16,5 +16,5 @@ func DoctorRoutes(router *gin.Engine){
 	private.PUT("/doctor/:id", controllers.EditDoctorByID())
 	private.DELETE("/doctor/:id", controllers.DeleteDoctorByID())
 	private.GET("/doctors", controllers.GetAllDoctors())
-	//private.POST("/doctors-openSlots/:id",controllers.OpenSlotsForAppointments())
+	private.POST("/doctors/add-appointment/:doctorId",controllers.OpenSlotsForAppointments())
 }

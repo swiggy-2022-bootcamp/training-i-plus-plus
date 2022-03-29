@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	//"log"
 	"sanitaria-microservices/doctorModule/configs"
 	"time"
 	jwt "github.com/dgrijalva/jwt-go"
