@@ -1,0 +1,90 @@
+2022/03/29 20:42:59 reader.go:311: entering loop for consumer group, my-group
+2022/03/29 20:43:18 consumergroup.go:946: joined group my-group as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191 in generation 5
+2022/03/29 20:43:18 consumergroup.go:1006: selected as leader for group, my-group
+2022/03/29 20:43:18 consumergroup.go:1034: using 'range' balancer to assign group, my-group
+2022/03/29 20:43:18 consumergroup.go:1036: found member: gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191/[]byte(nil)
+2022/03/29 20:43:18 consumergroup.go:1039: found topic/partition: reservations/0
+2022/03/29 20:43:18 consumergroup.go:960: assigned member/topic/partitions gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191/reservations/[0]
+2022/03/29 20:43:18 consumergroup.go:967: joinGroup succeeded for response, my-group.  generationID=5, memberID=gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191
+2022/03/29 20:43:18 consumergroup.go:800: Joined group my-group as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191 in generation 5
+2022/03/29 20:43:18 consumergroup.go:1133: Syncing 1 assignments for generation 5 as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-5bd4fc15-5869-47e1-b497-49d26bad5191
+2022/03/29 20:43:18 consumergroup.go:1098: sync group finished for group, my-group
+2022/03/29 20:43:18 reader.go:141: subscribed to topics and partitions: map[{topic:reservations partition:0}:7]
+2022/03/29 20:43:18 consumergroup.go:467: started heartbeat for group, my-group [3s]
+2022/03/29 20:43:18 reader.go:289: started commit for group my-group
+2022/03/29 20:43:18 reader.go:1263: initializing kafka reader for partition 0 of reservations starting at offset 7
+2022/03/29 20:43:18 reader.go:1445: the kafka reader for partition 0 of reservations is seeking to offset 7
+2022/03/29 20:43:27 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 7
+2022/03/29 20:43:32 consumergroup.go:454: committed offsets for group my-group: 
+	topic: reservations
+		partition 0: 8
+2022/03/29 20:43:41 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:43:50 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:43:59 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:08 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:17 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:26 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:35 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:44 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:44:53 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:02 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:11 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:20 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:29 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:38 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:47 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:45:56 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:05 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:14 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:23 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:32 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:41 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:46:50 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:47:00 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:47:09 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:47:18 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 8
+2022/03/29 20:47:26 reader.go:311: entering loop for consumer group, my-group
+2022/03/29 20:47:51 consumergroup.go:946: joined group my-group as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8 in generation 6
+2022/03/29 20:47:51 consumergroup.go:1006: selected as leader for group, my-group
+2022/03/29 20:47:51 consumergroup.go:1034: using 'range' balancer to assign group, my-group
+2022/03/29 20:47:51 consumergroup.go:1036: found member: gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8/[]byte(nil)
+2022/03/29 20:47:51 consumergroup.go:1039: found topic/partition: reservations/0
+2022/03/29 20:47:51 consumergroup.go:960: assigned member/topic/partitions gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8/reservations/[0]
+2022/03/29 20:47:51 consumergroup.go:967: joinGroup succeeded for response, my-group.  generationID=6, memberID=gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8
+2022/03/29 20:47:51 consumergroup.go:800: Joined group my-group as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8 in generation 6
+2022/03/29 20:47:51 consumergroup.go:1133: Syncing 1 assignments for generation 6 as member gin.exe@LAPTOP-RULD3VCE (github.com/segmentio/kafka-go)-c2957a54-d030-4d51-9a6e-a71c7c720fc8
+2022/03/29 20:47:51 consumergroup.go:1098: sync group finished for group, my-group
+2022/03/29 20:47:51 reader.go:141: subscribed to topics and partitions: map[{topic:reservations partition:0}:8]
+2022/03/29 20:47:51 consumergroup.go:467: started heartbeat for group, my-group [3s]
+2022/03/29 20:47:51 reader.go:289: started commit for group my-group
+2022/03/29 20:47:51 reader.go:1263: initializing kafka reader for partition 0 of reservations starting at offset 8
+2022/03/29 20:47:51 reader.go:1445: the kafka reader for partition 0 of reservations is seeking to offset 8
+2022/03/29 20:47:51 consumergroup.go:454: committed offsets for group my-group: 
+	topic: reservations
+		partition 0: 9
+2022/03/29 20:48:00 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:09 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:18 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:27 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:36 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:45 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:48:54 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:03 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:12 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:21 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:30 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:39 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:48 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:49:57 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:06 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:15 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:24 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:33 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:42 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:50:51 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:00 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:09 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:18 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:27 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:36 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
+2022/03/29 20:51:45 reader.go:1348: no messages received from kafka within the allocated time for partition 0 of reservations at offset 9
