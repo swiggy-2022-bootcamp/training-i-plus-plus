@@ -44,14 +44,14 @@ func GetClient(c *gin.Context) {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
-    id := c.Param("id")
-    if id == "" {
+    email := c.Param("email")
+    if email == "" {
         c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
         return
     }
 
     var user models.Client
-    err := configs.UsersCollection.FindOne(ctx, models.Client{ID: id}).Decode(&user)
+    err := configs.UsersCollection.FindOne(ctx, models.Client{Email: email}).Decode(&user)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching user", "error": err.Error()})
         return
