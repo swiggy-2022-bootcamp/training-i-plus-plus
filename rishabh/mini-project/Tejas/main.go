@@ -21,6 +21,7 @@ func main() {
 
 	// init routes
 	routes.UserRoutes(router)
+	routes.TrainRoutes(router)
 
 	router.Run("localhost:" + configs.EnvPORT())
 }

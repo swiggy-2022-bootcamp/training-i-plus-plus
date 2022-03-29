@@ -1,6 +1,6 @@
 package models
 
-type Payement struct {
+type Payment struct {
 	Transaction_id string `json:"transaction_id" bson:"transaction_id"`
 	User_id        string `json:"user_id" bson:"user_id"`
 	Amount         int    `json:"amount" bson:"amount"`

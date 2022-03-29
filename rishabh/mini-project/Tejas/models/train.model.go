@@ -1,16 +1,18 @@
 package models
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"time"
 )
 
 type Station struct {
-	Code          string             `json:"code" bson:"code"`
-	ArrivalTime   primitive.DateTime `json:"arrivalTime" bson:"arrivalTime"`
-	DepartureTime primitive.DateTime `json:"departureTime" bson:"departureTime"`
+	Code          string    `json:"code" bson:"code"`
+	ArrivalTime   time.Time `json:"arrival_time" bson:"arrival_time"`
+	DepartureTime time.Time `json:"departure_time" bson:"departure_time"`
 }
 
 type Train struct {
-	Id       primitive.ObjectID `json:"_id" bson:"_id"`
-	Stations []Station          `json:"stations" bson:"stations"`
+	Id               int       `json:"_id" bson:"_id"`
+	Name             string    `json:"name" bson:"name"`
+	Stations         []Station `json:"stations" bson:"stations"`
+	PerStationCharge int       `json:"per_station_charge" bson:"per_station_charge"`
 }

@@ -3,9 +3,10 @@ package models
 import "go.mongodb.org/mongo-driver/bson/primitive"
 
 type trainsWithSchedule struct {
-	Id       primitive.ObjectID `json:"_id" bson:"_id"`
-	Stations []Station          `json:"stations" bson:"stations"`
-	Seats    [][]bool           `json:"seats" bson:"seats"`
+	Id               int       `json:"_id" bson:"_id"`
+	Stations         []Station `json:"stations" bson:"stations"`
+	Seats            [][]bool  `json:"seats" bson:"seats"`
+	PerStationCharge int       `json:"per_station_charge" bson:"per_station_charge"`
 }
 
 type Schedule struct {

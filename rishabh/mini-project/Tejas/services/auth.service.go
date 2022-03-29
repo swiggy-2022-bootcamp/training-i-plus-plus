@@ -27,6 +27,7 @@ func CreateToken(emailId, name string, isAdmin bool) (singedToken string, err er
 	claims := &SignedDetails{
 		Name:    name,
 		EmailId: emailId,
+		IsAdmin: isAdmin,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Local().Add(time.Hour * time.Duration(24)).Unix(),
 		},
