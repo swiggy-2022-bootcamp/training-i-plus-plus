@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"tejas/configs"
 	"tejas/models"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -25,6 +25,7 @@ func RegisterUser() gin.HandlerFunc {
 
 		var user models.User
 		c.BindJSON(&user)
+		fillUserDefaults(&user)
 		hashPassword := services.HashPassword(user.Password)
 		user.Password = hashPassword
 
@@ -51,8 +52,6 @@ func LoginUser() gin.HandlerFunc {
 		err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).Decode(&foundUser)
 		defer cancel()
 
-		fmt.Println(user, foundUser)
-
 		if err != nil {
 			c.JSON(http.StatusNotFound, gin.H{"error": "User with this email doesn't exists "})
 			return
@@ -65,11 +64,16 @@ func LoginUser() gin.HandlerFunc {
 			return
 		}
 
-		token, err := services.CreateToken(foundUser.Email, foundUser.Name)
+		token, err := services.CreateToken(foundUser.Email, foundUser.Name, foundUser.IsAdmin)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"token": token, "user": foundUser})
 	}
+}
+
+func fillUserDefaults(user *models.User) {
+	user.IsAdmin = false
+	user.Id = primitive.NewObjectID()
 }

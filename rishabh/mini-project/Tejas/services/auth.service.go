@@ -19,10 +19,11 @@ func init() {
 type SignedDetails struct {
 	Name    string `json:"name"`
 	EmailId string `json:"emailId"`
+	IsAdmin bool   `json:"isAdmin"`
 	jwt.StandardClaims
 }
 
-func CreateToken(emailId, name string) (singedToken string, err error) {
+func CreateToken(emailId, name string, isAdmin bool) (singedToken string, err error) {
 	claims := &SignedDetails{
 		Name:    name,
 		EmailId: emailId,
@@ -66,6 +67,27 @@ func ValidateToken(tokenReceived string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func GetClaimsFromToken(tokenReceived string) (SignedDetails, error) {
+	var claims SignedDetails
+	token, err := jwt.ParseWithClaims(
+		tokenReceived,
+		&claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(SECRET_KEY), nil
+		},
+	)
+
+	if err != nil {
+		return claims, err
+	}
+
+	if token.Valid {
+		return claims, nil
+	}
+
+	return claims, errors.New("Token is invalid")
 }
 
 func HashPassword(password string) string {

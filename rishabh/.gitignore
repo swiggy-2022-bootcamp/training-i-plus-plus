@@ -15,4 +15,5 @@
 # vendor/
 
 *.env
-*/gin-bin
+*gin-bin
+*app
