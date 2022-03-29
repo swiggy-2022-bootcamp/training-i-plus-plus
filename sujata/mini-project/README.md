@@ -43,7 +43,9 @@ This service allows the following endpoints
 
 ## Search Service
 
-Elastic search and `Search` service working is documented inside the `elasticsearch` directory. It also contains info/related documents for data syncing with logstash between mongodb and elastic search.
+Elastic search and `Search` service working is documented inside the `elasticsearch` directory. It also contains info/related documents for data syncing with logstash between mongodb and elastic search. <br>
+
+![Search Service Diagram](./static/images/swimlane@2x.png)
 
 ## Cart Service
 
@@ -65,3 +67,5 @@ This service allows user of type `BUYER` to add a product to his/her cart, delet
 
 - Requirement Document - [Online Shopping Store](https://docs.google.com/document/d/1cnCHEVkOgFDYSmZmSbxcDlZiLjCZXr1W9jHf62id7T8/edit?usp=sharing)
 - Combined Fields in Elastic Search - [Official Documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-combined-fields-query.html)
+- [Go Elastic - Official Go client for ElasticSearch](https://github.com/elastic/go-elasticsearch)
+- Working with go client for elasticsearch - [Elastic Blog](https://www.elastic.co/blog/the-go-client-for-elasticsearch-working-with-data)
