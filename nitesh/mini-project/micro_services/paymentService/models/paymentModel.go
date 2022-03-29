@@ -23,3 +23,20 @@ type PayNotes struct {
 	ClassBooked   string
 	TrainId       string
 }
+
+type PaymentResponse struct {
+	Amount   int
+	Currency string
+	Customer struct {
+		Name  string
+		Email string
+	}
+	PaymentLink string
+	ExpireTime  string
+	Notes       struct {
+		User_id       string
+		DateOfBooking string
+		ClassBooked   string
+		TrainId       string
+	}
+}

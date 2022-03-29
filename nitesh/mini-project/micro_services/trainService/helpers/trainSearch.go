@@ -28,15 +28,17 @@ func IsTrainAvailableOnGivenWeekDay(weekday string, trainRecord models.Train) bo
 
 func FilterDetailsOnWeekdayAwailability(
 	weekday string,
-	trainDetails models.Train,
-) bool {
-	if IsTrainAvailableOnGivenWeekDay(weekday, trainDetails) {
-		return true
+	trainDetails []models.Train,
+) []models.Train {
+	var filteredTrainDetails []models.Train
+	for _, rec := range trainDetails {
+		if IsTrainAvailableOnGivenWeekDay(weekday, rec) {
+			filteredTrainDetails = append(filteredTrainDetails, rec)
+		}
 	}
 
-	return false
+	return filteredTrainDetails
 }
-
 func findElementIndex(ele string, array []string) int {
 	for idx, st := range array {
 		if ele == st {
@@ -85,7 +87,20 @@ func getPriceByClasses(i, j int, avlClasses []string) []int {
 	return priceArray
 }
 
-func CalculatePrice(
+func CalculatePriceMany(
+	source, destination string,
+	trainDetails []models.Train,
+) []models.Train {
+	for idx := range trainDetails {
+		i := findElementIndex(source, trainDetails[idx].Stations)
+		j := findElementIndex(destination, trainDetails[idx].Stations)
+
+		trainDetails[idx].Price = getPriceByClasses(i, j, trainDetails[idx].AvlClasses)
+	}
+	return trainDetails
+}
+
+func CalculatePriceOne(
 	source, destination string,
 	trainDetails models.Train,
 ) models.Train {

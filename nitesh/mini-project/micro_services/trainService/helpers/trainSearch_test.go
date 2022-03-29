@@ -1,8 +1,8 @@
 package helper
 
 import (
-	models "rail/models/train"
 	"testing"
+	models "userService/models"
 )
 
 // table driven test

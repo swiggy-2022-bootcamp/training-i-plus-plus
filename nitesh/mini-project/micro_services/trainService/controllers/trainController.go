@@ -58,7 +58,7 @@ func CheckAvailability() gin.HandlerFunc {
 			g.JSON(http.StatusBadRequest, gin.H{"msg": "train not available"})
 			return
 		}
-		responseTrainDetails := helper.CalculatePrice(
+		responseTrainDetails := helper.CalculatePriceOne(
 			trainDetails.FromStationCode,
 			trainDetails.ToStationCode,
 			trainDetails,
@@ -73,8 +73,6 @@ type SearchQuery struct {
 	Destination string
 	Date        string
 }
-
-var trainCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
 
 func SearchRoute() gin.HandlerFunc {
 	return func(g *gin.Context) {
@@ -122,7 +120,7 @@ func SearchRoute() gin.HandlerFunc {
 		weekday := parseDate.Weekday().String()
 		responseTrainDetails := helper.FilterDetailsOnWeekdayAwailability(weekday, trainDetails)
 
-		responseTrainDetails = helper.CalculatePrice(
+		responseTrainDetails = helper.CalculatePriceMany(
 			search.Source,
 			search.Destination,
 			trainDetails,

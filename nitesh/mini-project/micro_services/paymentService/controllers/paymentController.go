@@ -11,6 +11,25 @@ import (
 	razorpay "github.com/razorpay/razorpay-go"
 )
 
+// ShowAccount godoc
+// @Summary      Pay for train ticket
+// @Description  Get razorpay payment link along with user details for ticket
+// @Tags         payment
+// @Accept       json
+// @Produce      json
+// @Param        Date  			body 	string  true  "date of Booking"
+// @Param        Amount 		body	int   	true  "amount of tickets"
+// @Param        Currency 		body	string  true  "type of currency in which transaction will happend"
+// @Param        TrainID 		body	string  true  "train number"
+// @Param        ReferenceID 	body	string  false "reference id is a unique id for payment gatway"
+// @Param        ClassBooking 	body	string  true  "to which class the tickets belongs, e.g, SL, AC-1, AC-2, etc"
+// @Param        Name 			body	string  true  "user name"
+// @Param        Email 			body	string  true  "user email id"
+// @Param        User_id 		body	string  true  "user unique id"
+// @Success      200  {object}  models.PaymentResponse
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /payment/pay [post]
 func PayForTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		err := godotenv.Load(".env")
