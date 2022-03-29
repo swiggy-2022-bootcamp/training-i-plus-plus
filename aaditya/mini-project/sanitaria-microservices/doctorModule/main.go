@@ -1,11 +1,16 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
 	"sanitaria-microservices/doctorModule/configs"
 	"sanitaria-microservices/doctorModule/routes"
-)
+	"sanitaria-microservices/doctorModule/services"
 
+	"github.com/gin-gonic/gin"
+)
+const(
+	consumerTopic = "Booked-appointment"
+)
 func main(){
 	router := gin.Default()
 
@@ -17,6 +22,13 @@ func main(){
 
 	//connect database
 	configs.ConnectDB()
+
+	consumer, err := services.CreateConsumer()
+	if err != nil{
+		fmt.Println("Error in creating kafka-consumer.")
+	}else{
+		go services.ConsumeBookedAppointment(consumer,consumerTopic)
+	}
 
 	//routes
 	routes.DoctorRoutes(router)

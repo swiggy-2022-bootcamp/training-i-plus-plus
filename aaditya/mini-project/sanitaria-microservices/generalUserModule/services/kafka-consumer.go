@@ -3,14 +3,14 @@ package services
 import (
 	"encoding/json"
 	"fmt"
-	"sanitaria-microservices/appointmentModule/models"
+	"sanitaria-microservices/generalUserModule/models"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 func CreateConsumer() (*kafka.Consumer, error){
 	consumer, err := kafka.NewConsumer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost:9092",
-		"group.id":          "group1",
+		"group.id":          "group2",
 		"auto.offset.reset": "earliest",
 	})
 	if err != nil {
@@ -19,7 +19,7 @@ func CreateConsumer() (*kafka.Consumer, error){
 	return consumer, nil
 }
 
-func ConsumeAppointment(consumer *kafka.Consumer, topic string){
+func ConsumeBookedAppointment(consumer *kafka.Consumer, topic string){
 	consumer.SubscribeTopics([]string{topic}, nil)
 
 	for {
@@ -33,7 +33,7 @@ func ConsumeAppointment(consumer *kafka.Consumer, topic string){
 				fmt.Println("Error in unmarshalling kafka message into appointment struct")
 				return
 			}
-			AddAppointmentToDB(appointment)
+			UpdateGeneralUserDB(appointment)
 		} 
 	}
 

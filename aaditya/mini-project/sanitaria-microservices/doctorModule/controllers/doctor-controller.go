@@ -271,12 +271,12 @@ func OpenSlotsForAppointments() gin.HandlerFunc{
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": updateErr.Error()}})
 			return
 		}
-		p, err_ :=  configs.CreateProducer()
+		p, err_ :=  services.CreateProducer()
 		if err_ != nil{
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err_.Error()}})
 			return
 		}
-		configs.ProduceAppointment(p,topic,newAppointment)
+		services.ProduceAppointment(p,topic,newAppointment)
 		var updatedDoctor models.Doctor
 		if result.MatchedCount == 1 {
 			err = doctorCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&updatedDoctor)
@@ -289,75 +289,3 @@ func OpenSlotsForAppointments() gin.HandlerFunc{
 		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
 	}
 }
-
-// func BookAppointmentForGeneralUser(userId string) (models.Appointment, error){
-// 	ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
-// 	defer cancel()
-
-// 	results,err := doctorCollection.Find(ctx,bson.M{})
-// 	if err != nil {
-// 		return models.Appointment{}, errors.New(" No doctors available")
-// 	}
-
-// 	defer results.Close(ctx)
-// 		for results.Next(ctx) {
-// 			var singleDoctor models.Doctor
-// 			if err = results.Decode(&singleDoctor); err != nil {
-// 				return models.Appointment{}, errors.New("could not fetch doctor details")
-// 			}
-
-// 			allAppointments := singleDoctor.Appointments
-			
-// 			for i,appointment := range allAppointments{
-// 				if !appointment.Occupied{
-// 					appointment.Occupied = true;
-// 					allAppointments[i] = appointment
-
-// 					update := bson.M{"appointments":allAppointments}
-// 					_, err := doctorCollection.UpdateOne(ctx, bson.M{"_id": singleDoctor.Id}, bson.M{"$set": update})
-// 					if err != nil {
-// 						return models.Appointment{}, errors.New("failed to update doctor details")
-// 					}
-
-
-// 					return appointment,nil
-// 				}
-// 			}
-
-		
-// 		}
-
-// 		return models.Appointment{}, errors.New("no appointment available currently. please check back later")
-// }
-
-// func ListAvailableAppointments() ([]models.Appointment, error){
-// 	ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
-// 	defer cancel()
-// 	availableAppointments := make([]models.Appointment,0, 10)
-// 	results,err := doctorCollection.Find(ctx,bson.M{})
-// 	if err != nil {
-// 		fmt.Println("no doctors available")
-// 		return availableAppointments, errors.New("no doctors available")
-// 	}
-	
-// 	defer results.Close(ctx)
-// 		for results.Next(ctx) {
-// 			var singleDoctor models.Doctor
-// 			if err = results.Decode(&singleDoctor); err != nil {
-// 				fmt.Println("could not fetch doctor details")
-// 				return availableAppointments, errors.New("could not fetch doctor details")
-// 			}
-
-// 			allAppointments := singleDoctor.Appointments
-			
-// 			for _,appointment := range allAppointments{
-// 				if !appointment.Occupied{
-// 					availableAppointments = append(availableAppointments, appointment)
-// 				}
-// 			}
-
-		
-// 		}
-
-// 		return availableAppointments, nil
-// }
