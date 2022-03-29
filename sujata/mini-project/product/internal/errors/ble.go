@@ -1,6 +1,9 @@
 package errors
 
-import "net/http"
+import (
+	"net/http"
+	"product/internal/literals"
+)
 
 var (
 	UnmarshalError = ServerError{
@@ -10,6 +13,11 @@ var (
 
 	InternalError = ServerError{
 		ErrorMessage:     "an error occurred while handling the request",
+		HttpResponseCode: http.StatusInternalServerError,
+	}
+
+	MarshalError = ServerError{
+		ErrorMessage:     literals.MarshalError,
 		HttpResponseCode: http.StatusInternalServerError,
 	}
 )

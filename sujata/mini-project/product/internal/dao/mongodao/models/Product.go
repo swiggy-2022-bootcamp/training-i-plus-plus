@@ -6,3 +6,11 @@ type Product struct {
 	Price       float32 `json:"price" bson:"price"`
 	Quantity    int     `json:"quantity" bson:"quantity"`
 }
+
+type ProductIds struct {
+	Ids []string `json:"ids"`
+}
+
+type Products struct {
+	Products []Product `json:"products"`
+}

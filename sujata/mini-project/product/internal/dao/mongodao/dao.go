@@ -7,11 +7,14 @@ import (
 	"sync"
 
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MongoDAO interface {
 	AddProduct(ctx context.Context, user model.Product) *errors.ServerError
+	GetProduct(ctx context.Context, productId string) (model.Product, *errors.ServerError)
 }
 
 type mongoDAO struct {
@@ -54,4 +57,21 @@ func (dao *mongoDAO) AddProduct(ctx context.Context, product model.Product) *err
 
 	log.Info("product created successfully")
 	return nil
+}
+
+func (dao *mongoDAO) GetProduct(ctx context.Context, productId string) (model.Product, *errors.ServerError) {
+	productCollection := dao.client.Database("shopKart").Collection("products")
+
+	objID, _ := primitive.ObjectIDFromHex(productId)
+	filter := bson.M{"_id": objID}
+	result := productCollection.FindOne(ctx, filter)
+
+	var product model.Product
+	err := result.Decode(&product)
+	if err != nil {
+		log.WithError(err).Error("an error occurred while decoding the product")
+		return product, &errors.InternalError
+	}
+
+	return product, nil
 }

@@ -48,6 +48,7 @@ func RunServer() error {
 
 	// Initialize services
 	services.InitAddProductService(&routerConfigs)
+	services.InitGetProductsService(&routerConfigs)
 
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)

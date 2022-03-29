@@ -29,4 +29,9 @@ func (r *Router) InitializeRoutes(routerConfig *util.RouterConfig) {
 		middleware.AuthHandler(handlers.AddProductHandler(routerConfig))).
 		Methods(http.MethodPost).
 		Name(literals.AddProductAPIName)
+
+	s.HandleFunc(literals.GetProductsEndpoint,
+		handlers.GetProductsHandler(routerConfig)).
+		Methods(http.MethodPost).
+		Name(literals.GetProductsAPIName)
 }
