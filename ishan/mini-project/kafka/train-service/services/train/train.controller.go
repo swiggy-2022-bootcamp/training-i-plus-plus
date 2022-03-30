@@ -121,34 +121,3 @@ func FetchTrains(c *gin.Context) {
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"payload": res})
 }
-
-func UpdateTrainInfo(c *gin.Context) {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
-	defer cancel()
-
-	body := TrainBody{}
-	if err := c.BindJSON(&body); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Incorrect Body"})
-		return
-	}
-	train := Train{
-		ID:          primitive.NewObjectID(),
-		Destination: body.Destination,
-		Source:      body.Source,
-		Number:      body.Number,
-		Stations:    body.Stations,
-		Name:        body.Name,
-	}
-	train.ID = primitive.NewObjectID()
-	res, err := db.DataStore.Collection("train").InsertOne(ctx, train)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-
-	oid, ok := res.InsertedID.(primitive.ObjectID)
-	if !ok {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("can not convert to oid %v", err)})
-	}
-	c.IndentedJSON(http.StatusOK, gin.H{"name": train.Name, "Id": oid.Hex()})
-}

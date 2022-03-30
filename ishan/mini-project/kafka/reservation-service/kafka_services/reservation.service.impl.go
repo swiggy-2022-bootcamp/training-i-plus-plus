@@ -16,7 +16,7 @@ func init() {
 }
 
 // Method to Send Product to ordered_product topic
-func MakeReservation(reservationId, userId primitive.ObjectID) error {
+func MakeReservation(reservationId, userId primitive.ObjectID, seat int32) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
 	defer cancel()
 
@@ -35,6 +35,7 @@ func MakeReservation(reservationId, userId primitive.ObjectID) error {
 		Cost:            reservation.Cost,
 		DateOfJourney:   reservation.DateOfJourney,
 		BoardingStation: reservation.BoardingStation,
+		Seat:            seat,
 	}
 	if _, err := kf.WriteMessage(ctx, "reservations", reservationBody); err != nil {
 		return err

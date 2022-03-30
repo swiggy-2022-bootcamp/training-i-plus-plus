@@ -15,7 +15,7 @@ func init() {
 
 type TrainData struct {
 	Train string `json:"Train"`
-	Seat  int    `json:"Seat"`
+	Seat  int32  `json:"Seat"`
 }
 
 // Method to Send Product to ordered_product topic

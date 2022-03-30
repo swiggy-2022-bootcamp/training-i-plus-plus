@@ -40,6 +40,6 @@ func Consume(ctx context.Context) {
 		t := trainservice.TrainData{}
 		json.Unmarshal(msg.Value, &t)
 
-		trainservice.UpdateTrainInfo(t.Train, 1)
+		trainservice.UpdateTrainInfo(t.Train, t.Seat)
 	}
 }

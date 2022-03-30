@@ -15,6 +15,7 @@ type ReserveType struct {
 	DateOfJourney   string             `bson:"dateOfJourney"`
 	BoardingStation string             `bson:"boardingStation"`
 	Destination     string             `bson:"destination"`
+	Seat            int32              `bson:"seat"`
 }
 
 type ReservationInfoType struct {

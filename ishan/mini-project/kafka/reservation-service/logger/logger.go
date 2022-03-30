@@ -2,12 +2,16 @@ package logger
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"os"
+	"strconv"
+	"time"
 )
 
 func Loggerx() *log.Logger {
-	LOG_FILE_LOCATION := "kafka.log"
+	year, month, day := time.Now().Date()
+	LOG_FILE_LOCATION := fmt.Sprintf("./logs/kafka_%v-%v-%v.log", strconv.Itoa(day), strconv.Itoa(int(month)), strconv.Itoa(year))
 
 	flag.Parse()
 	if _, err := os.Stat(LOG_FILE_LOCATION); os.IsNotExist(err) {
