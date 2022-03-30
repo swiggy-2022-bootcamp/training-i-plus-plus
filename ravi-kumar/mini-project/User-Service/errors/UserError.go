@@ -11,6 +11,10 @@ func (productError *UserError) Error() string {
 	return productError.ErrorMessage
 }
 
+func UnauthorizedError() *UserError {
+	return &UserError{http.StatusUnauthorized, "Incorrect Credentials"}
+}
+
 func MalformedIdError() *UserError {
 	return &UserError{http.StatusBadRequest, "Malformed user id"}
 }

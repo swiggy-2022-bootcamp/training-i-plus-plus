@@ -3,6 +3,7 @@ package controller
 import (
 	errors "Inventory-Service/errors"
 	service "Inventory-Service/service"
+	"strconv"
 
 	"fmt"
 	"net/http"
@@ -18,6 +19,29 @@ func CreateProduct(c *gin.Context) {
 func GetCatalog(c *gin.Context) {
 	allProducts := service.GetCatalog()
 	c.JSON(http.StatusOK, allProducts)
+}
+
+func UpdateProductQuantity(c *gin.Context) {
+	var productId string = c.Param("productId")
+	updateCount, err := strconv.Atoi(c.Param("updateCount"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, "update count should be a valid integer")
+		return
+	}
+
+	quantityAfterUpdation, error := service.UpdateProductQuantity(productId, updateCount)
+
+	if error != nil {
+		productError, ok := error.(*errors.ProductError)
+		if ok {
+			c.JSON(productError.Status, productError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("productError casting error in UpdateProductQuantity")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, quantityAfterUpdation)
 }
 
 func GetProductById(c *gin.Context) {
@@ -47,7 +71,7 @@ func UpdateProductById(c *gin.Context) {
 			c.JSON(productError.Status, productError.ErrorMessage)
 			return
 		} else {
-			fmt.Println("productError casting error in GetProductById")
+			fmt.Println("productError casting error in UpdateProductById")
 			return
 		}
 	}
@@ -64,7 +88,7 @@ func DeleteProductbyId(c *gin.Context) {
 			c.JSON(productError.Status, productError.ErrorMessage)
 			return
 		} else {
-			fmt.Println("productError casting error in GetProductById")
+			fmt.Println("productError casting error in DeleteProductbyId")
 			return
 		}
 	}

@@ -2,17 +2,52 @@ package controller
 
 import (
 	errors "User-Service/errors"
+	mockdata "User-Service/model"
 	service "User-Service/service"
+	"encoding/json"
 	"fmt"
 	"net/http"
 
 	//"go.mongodb.org/mongo-driver/bson"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+func LogInUser(c *gin.Context) {
+	var logInDTO mockdata.LogInDTO
+	json.NewDecoder(c.Request.Body).Decode(&logInDTO)
+	jwtToken, error := service.LogInUser(logInDTO)
+
+	if error != nil {
+		userError, ok := error.(*errors.UserError)
+		if ok {
+			c.JSON(userError.Status, userError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("userError casting error in GetUserById")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, jwtToken)
+}
+
 func CreateUser(c *gin.Context) {
-	result := service.CreateUser(&c.Request.Body)
-	c.JSON(http.StatusOK, result)
+	result, jwtToken, err := service.CreateUser(&c.Request.Body)
+	if err != nil {
+		c.JSON(http.StatusFailedDependency, err)
+		return
+	}
+
+	//response body
+	type ResponseBody struct {
+		InsertId string
+		JwtToken string
+	}
+
+	insertedId := result.InsertedID.(primitive.ObjectID).Hex()
+	var responseBody ResponseBody = ResponseBody{insertedId, jwtToken}
+
+	c.JSON(http.StatusOK, responseBody)
 }
 
 func GetAllUsers(c *gin.Context) {

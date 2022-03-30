@@ -3,6 +3,7 @@ package main
 import (
 	"Inventory-Service/config"
 	"Inventory-Service/controller"
+	"Inventory-Service/middleware"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,11 +12,12 @@ import (
 func main() {
 	r := gin.Default()
 
-	r.POST("/catalog", controller.CreateProduct)
-	r.GET("/catalog", controller.GetCatalog)
-	r.GET("/catalog/:productId", controller.GetProductById)
-	r.PUT("/catalog/:productId", controller.UpdateProductById)
-	r.DELETE("/catalog/:productId", controller.DeleteProductbyId)
+	r.POST("/catalog", middleware.IfAuthorized(controller.CreateProduct))
+	r.GET("/catalog", middleware.IfAuthorized(controller.GetCatalog))
+	r.GET("/catalog/:productId", middleware.IfAuthorized(controller.GetProductById))
+	r.PUT("/catalog/:productId", middleware.IfAuthorized(controller.UpdateProductById))
+	r.DELETE("/catalog/:productId", middleware.IfAuthorized(controller.DeleteProductbyId))
+	r.POST("/catalog/:productId/:updateCount", middleware.IfAuthorized(controller.UpdateProductQuantity))
 
 	portAddress := ":" + strconv.Itoa(config.INVENTORY_SERVICE_SERVER_PORT)
 	r.Run(portAddress)

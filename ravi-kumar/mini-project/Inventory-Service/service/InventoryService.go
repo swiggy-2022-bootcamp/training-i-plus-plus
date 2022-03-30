@@ -3,12 +3,13 @@ package service
 import (
 	"Inventory-Service/config"
 	errors "Inventory-Service/errors"
+	kafka "Inventory-Service/kafka"
 	mockdata "Inventory-Service/model"
 	"context"
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"strconv"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -66,13 +67,13 @@ func GetProductById(productId string) (productRetrieved *mockdata.Product, err e
 	objectId, err := primitive.ObjectIDFromHex(productId)
 
 	if err != nil {
-		return nil, &errors.ProductError{Status: http.StatusBadRequest, ErrorMessage: "Malformed prodcut id"}
+		return nil, errors.MalformedIdError()
 	}
 
 	result := productCollection.FindOne(ctx, bson.M{"_id": objectId})
 
 	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		return nil, &errors.ProductError{Status: http.StatusNotFound, ErrorMessage: "product with given id not found"}
+		return nil, errors.IdNotFoundError()
 	}
 
 	result.Decode(&productRetrieved)
@@ -86,22 +87,29 @@ func UpdateProductById(productId string, body *io.ReadCloser) (productRetrieved 
 	var updatedProduct mockdata.Product
 	unmarshalErr := json.NewDecoder(*body).Decode(&updatedProduct)
 	if unmarshalErr != nil {
-		return nil, &errors.ProductError{Status: http.StatusBadRequest, ErrorMessage: "Couldn't unmarshall user body in request"}
+		return nil, errors.UnmarshallError()
 	}
+
+	return UpdateProductByIdWorker(productId, updatedProduct)
+}
+
+func UpdateProductByIdWorker(productId string, updatedProduct mockdata.Product) (productRetrieved *mockdata.Product, err error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	_ = client.Connect(ctx)
 
 	//convert userId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(productId)
 	if err != nil {
-		return nil, &errors.ProductError{Status: http.StatusBadRequest, ErrorMessage: "Malformed product id"}
+		return nil, errors.MalformedIdError()
 	}
 
 	result, error := productCollection.UpdateByID(ctx, objectId, bson.M{"$set": updatedProduct})
 	if error != nil {
-		return nil, &errors.ProductError{Status: http.StatusInternalServerError, ErrorMessage: "Internal server error"}
+		return nil, errors.InternalServerError()
 	}
 
 	if result.MatchedCount == 0 {
-		return nil, &errors.ProductError{Status: http.StatusNotFound, ErrorMessage: "product with given id not found"}
+		return nil, errors.IdNotFoundError()
 	}
 	return GetProductById(productId)
 }
@@ -113,19 +121,54 @@ func DeleteProductbyId(productId string) (successMessage *string, err error) {
 	//convert userId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(productId)
 	if err != nil {
-		return nil, &errors.ProductError{Status: http.StatusBadRequest, ErrorMessage: "Malformed product id"}
+		return nil, errors.MalformedIdError()
 	}
 
 	result, error := productCollection.DeleteOne(ctx, bson.M{"_id": objectId})
 
 	if error != nil {
-		return nil, &errors.ProductError{Status: http.StatusInternalServerError, ErrorMessage: "Internal server error"}
+		return nil, errors.InternalServerError()
 	}
 
 	if result.DeletedCount == 0 {
-		return nil, &errors.ProductError{Status: http.StatusNotFound, ErrorMessage: "product with given id not found"}
+		return nil, errors.IdNotFoundError()
 	}
 	msg := "product deleted"
 	successMessage = &msg
 	return
+}
+
+func UpdateProductQuantity(productId string, updateCount int) (quantityAfterUpdation *int, err error) {
+	productRetrieved, error := GetProductById(productId)
+
+	if error != nil {
+		productError, ok := error.(*errors.ProductError)
+		if ok {
+			return nil, productError
+		} else {
+			fmt.Println("productError casting error in UpdateProductQuantity")
+			return
+		}
+	}
+
+	productRetrieved.QuantityLeft += updateCount
+	if productRetrieved.QuantityLeft < 0 {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("productId: "+productId+" --- status: out of stock (critical)"))
+
+		return nil, errors.OutOfStockError()
+	}
+
+	//if quantity below threshold, notify monitoring service
+	if productRetrieved.QuantityLeft < 20 {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("productId: "+productId+" --- status: quantity below threshold ("+strconv.Itoa(productRetrieved.QuantityLeft)+")"))
+	}
+
+	_, err = UpdateProductByIdWorker(productId, *productRetrieved)
+	if err != nil {
+		return nil, err
+	}
+
+	return &productRetrieved.QuantityLeft, nil
 }

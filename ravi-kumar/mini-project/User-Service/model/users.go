@@ -10,6 +10,11 @@ type User struct {
 	Address  string             `json: "address" bson: "address"`
 }
 
+type LogInDTO struct {
+	UserName string `json: "userName" bson: "userName"`
+	Password string `json: "password" bson: "password"`
+}
+
 // var AllUsers = []User{
 // 	{
 // 		//UserId:   1,

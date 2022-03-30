@@ -34,3 +34,7 @@ func PaymentIncompleteError() *OrderError {
 func InternalServerError() *OrderError {
 	return &OrderError{http.StatusInternalServerError, "Internal Server Error"}
 }
+
+func UserNotFoundError() *OrderError {
+	return &OrderError{http.StatusNotFound, "User not found"}
+}

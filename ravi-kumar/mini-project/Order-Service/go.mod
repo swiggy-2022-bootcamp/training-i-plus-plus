@@ -8,9 +8,15 @@ require (
 	go.mongodb.org/mongo-driver v1.8.4
 )
 
-require github.com/pierrec/lz4/v4 v4.1.14 // indirect
+require (
+	github.com/onrik/logrus v0.9.0 // indirect
+	github.com/pierrec/lz4/v4 v4.1.14 // indirect
+	github.com/sirupsen/logrus v1.8.1 // indirect
+)
 
 require (
+	github.com/alessiosavi/Requests v0.3.8
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/gin-gonic/gin v1.7.7 // indirect
 	github.com/go-playground/locales v0.13.0 // indirect
@@ -33,7 +39,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	golang.org/x/crypto v0.0.0-20201216223049-8b5274cf687f // indirect
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e // indirect
-	golang.org/x/sys v0.0.0-20200116001909-b77594299b42 // indirect
+	golang.org/x/sys v0.0.0-20210514084401-e8d321eab015 // indirect
 	golang.org/x/text v0.3.5 // indirect
 	gopkg.in/yaml.v2 v2.2.8 // indirect
 )

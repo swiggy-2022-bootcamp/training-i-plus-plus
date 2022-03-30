@@ -3,9 +3,11 @@ package service
 import (
 	"User-Service/config"
 	errors "User-Service/errors"
+	"User-Service/middleware"
 	mockdata "User-Service/model"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"time"
 
@@ -25,17 +27,36 @@ func init() {
 	userCollection = client.Database("swiggy_mini").Collection("users")
 }
 
-func CreateUser(body *io.ReadCloser) *mongo.InsertOneResult {
+func LogInUser(logInDTO mockdata.LogInDTO) (jwtToken string, err error) {
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	_ = client.Connect(ctx)
+
+	result := userCollection.FindOne(ctx, bson.M{"username": logInDTO.UserName, "password": logInDTO.Password})
+
+	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
+		return "", errors.UnauthorizedError()
+	}
+	jwtToken, _ = middleware.GenerateJWT(logInDTO.UserName)
+	return
+}
+
+func CreateUser(body *io.ReadCloser) (insertResult *mongo.InsertOneResult, jwtToken string, err error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	_ = client.Connect(ctx)
 
 	var newUser mockdata.User
 	json.NewDecoder(*body).Decode(&newUser)
 
+	jwtToken, err = middleware.GenerateJWT(newUser.UserName)
+	if err != nil {
+		fmt.Println(err.Error())
+		return nil, "", err
+	}
+
 	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
 	result, _ := userCollection.InsertOne(ctx, newUser)
 
-	return result
+	return result, jwtToken, nil
 }
 
 func GetAllUsers() (allUsers []mockdata.User) {
