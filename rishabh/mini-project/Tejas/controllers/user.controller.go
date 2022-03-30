@@ -10,10 +10,30 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	_ "go.mongodb.org/mongo-driver/mongo"
 )
 
 const requestTimeout = 10 * time.Second
 
+type RegisterUserResponse struct {
+	Result string `json:"result"`
+	Id     string `json:"id"`
+}
+type LoginUserResponse struct {
+	Token string `json:"token"`
+}
+
+// ShowAcount godoc
+// @Summary      Sign up the user
+// @Description  User registration API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Details body 	dto.RegisterUserDto  true  "user details"
+// @Success      200  {object}  RegisterUserResponse
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /api/user/register [post]
 func RegisterUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
@@ -29,10 +49,22 @@ func RegisterUser() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
-		c.JSON(http.StatusOK, gin.H{"result": result})
+
+		c.JSON(http.StatusOK, gin.H{"result": "User created successfully", "id": result.InsertedID})
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Login the user
+// @Description  User login API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        creds 	body 	dto.UserLoginDto  true  "credentials"
+// @Success      200  {object}  LoginUserResponse
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /api/user/login [post]
 func LoginUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)

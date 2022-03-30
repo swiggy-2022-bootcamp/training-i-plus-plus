@@ -1,0 +1,107 @@
+definitions:
+  controllers.LoginUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  controllers.RegisterUserResponse:
+    properties:
+      id:
+        type: string
+      result:
+        type: string
+    type: object
+  dto.RegisterUserDto:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.UserLoginDto:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+host: localhost:3000
+info:
+  contact:
+    email: swiggyb2026@datascience.manipal.edu
+    name: Rishabh Mishra
+    url: htpps://rishabhmishra.me
+  description: Swagger Train Reservation System API.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Tejas API
+  version: "1.0"
+paths:
+  /api/user/login:
+    post:
+      consumes:
+      - application/json
+      description: User login API
+      parameters:
+      - description: credentials
+        in: body
+        name: creds
+        required: true
+        schema:
+          $ref: '#/definitions/dto.UserLoginDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.LoginUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Login the user
+      tags:
+      - User
+  /api/user/register:
+    post:
+      consumes:
+      - application/json
+      description: User registration API
+      parameters:
+      - description: user details
+        in: body
+        name: Details
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RegisterUserDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.RegisterUserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Sign up the user
+      tags:
+      - User
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
