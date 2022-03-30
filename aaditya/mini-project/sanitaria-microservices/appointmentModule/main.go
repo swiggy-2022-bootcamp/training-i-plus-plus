@@ -1,16 +1,25 @@
 package main
 
 import (
-	"fmt"
+	"io"
+	"os"
 	"sanitaria-microservices/appointmentModule/configs"
 	"sanitaria-microservices/appointmentModule/routes"
 	"sanitaria-microservices/appointmentModule/services"
 	"github.com/gin-gonic/gin"
 )
 
-const consumerTopic = "Appointment"
+
 func main(){
-	router := gin.Default()
+	
+	// Logging to a file.
+    file,err := os.OpenFile("server.log", os.O_APPEND| os.O_CREATE | os.O_WRONLY, 0644)
+    if err == nil{
+		gin.DefaultWriter = io.MultiWriter(file)
+	}
+	
+	router := gin.New()
+	router.Use(services.UseLogger(services.DefaultLoggerFormatter), gin.Recovery())
 
 	router.GET("/", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -20,12 +29,8 @@ func main(){
 
 	//connect database
 	configs.ConnectDB()
-	consumer, err := services.CreateConsumer()
-	if err != nil{
-		fmt.Println("Error in creating kafka-consumer.")
-	}else{
-		go services.ConsumeAppointment(consumer,consumerTopic)
-	}
+
+	services.StartKafkaConsumer()
 
 	//routes
 	routes.AppointmentRoutes(router)
