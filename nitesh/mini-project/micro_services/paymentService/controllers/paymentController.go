@@ -4,12 +4,16 @@ import (
 	"net/http"
 	"os"
 	paymentHelper "paymentService/helpers"
+	"paymentService/logger"
 	models "paymentService/models"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 	razorpay "github.com/razorpay/razorpay-go"
+	"github.com/sirupsen/logrus"
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 // ShowAccount godoc
 // @Summary      Pay for train ticket
@@ -35,6 +39,7 @@ func PayForTicket() gin.HandlerFunc {
 		err := godotenv.Load(".env")
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
 			return
 		}
 
@@ -44,16 +49,22 @@ func PayForTicket() gin.HandlerFunc {
 		var payTicketDetails models.PayTicket
 		if err := c.BindJSON(&payTicketDetails); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"err": err.Error()}).Error("fail to bind body to gin json")
 			return
 		}
 
 		referenceID, err := paymentHelper.RandRefrenceID(8)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"err": err.Error()}).Error("fail to create new refrence id")
 			return
 		}
 
+		log.Debug("referenceId created successfully")
+
 		client := razorpay.NewClient(key_id, key_secret)
+		log.Debug("razorpay client is created")
+
 		data := gin.H{
 			"amount":       payTicketDetails.Amount,
 			"currency":     payTicketDetails.Currency,
@@ -73,8 +84,10 @@ func PayForTicket() gin.HandlerFunc {
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err, "body": body})
+			log.WithFields(logrus.Fields{"err": err.Error()}).Error("fail to create payment link")
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"link": body})
+		log.Info("payment link successfully sent")
 	}
 }
