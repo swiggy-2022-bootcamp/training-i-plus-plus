@@ -20,12 +20,24 @@ const (
     topic         = "Booked-appointment"
 )
 
+// GetAllAppointments godoc
+// @Summary To display all the available appointments.
+// @Description This request will fetch all the available appointments(open slots).
+// @Tags Appointment
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {array} 	models.Appointment
+// @Failure	401  {number} 	http.http.StatusUnauthorized
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /appointments [get]
 func GetAllAppointments() gin.HandlerFunc{
 	return func (c *gin.Context)  {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var appointments []models.Appointment
 		defer cancel()
-
+		
 		results, err := appointmentCollection.Find(ctx, bson.M{})
 
 		if err != nil {
@@ -50,6 +62,19 @@ func GetAllAppointments() gin.HandlerFunc{
 	}
 }
 
+// BookAppointment godoc
+// @Summary To book a doctor's appointment.
+// @Description This request will book and an appointment for the user with given userId.
+// @Tags Appointment
+// @Schemes http
+// @Param userId path string true "GeneralUser id"
+// @Accept json
+// @Produce json
+// @Success      200  {object} 	models.Appointment
+// @Failure	401  {number} 	http.http.StatusUnauthorized
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /book-appointment/{userId} [POST]
 func BookAppointment() gin.HandlerFunc{
 	return func (c *gin.Context)  {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

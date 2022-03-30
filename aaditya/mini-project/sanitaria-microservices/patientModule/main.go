@@ -7,7 +7,21 @@ import (
 	"sanitaria-microservices/patientModule/routes"
 	"sanitaria-microservices/patientModule/services"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	docs "sanitaria-microservices/patientModule/docs"
 )
+
+// @title          Sanitaria - Patient Module
+// @version        1.0
+// @description    This microservice is for appointment module in the sanitaria application.
+// @contact.name   Aaditya Khetan
+// @contact.email  aadityakhetan123@gmail.com
+// @license.name  Apache 2.0
+// @host      localhost:8084
+// @securityDefinitions.apikey  Bearer Token
+// @in                          header
+// @name                        Authorization
 
 func main(){
 	// Logging to a file.
@@ -24,6 +38,9 @@ func main(){
 				"data": "Server started successfully.",
 		})
 	})
+
+	docs.SwaggerInfo.Title = "Sanitaria - Patient Module"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	//connect database
 	configs.ConnectDB()

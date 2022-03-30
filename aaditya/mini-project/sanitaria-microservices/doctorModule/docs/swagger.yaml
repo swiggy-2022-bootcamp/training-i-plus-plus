@@ -1,0 +1,260 @@
+definitions:
+  models.Appointment:
+    properties:
+      doctorID:
+        type: string
+      fees:
+        type: integer
+      generalUserID:
+        type: string
+      id:
+        type: string
+      occupied:
+        type: boolean
+      slot:
+        type: string
+    type: object
+  models.Doctor:
+    properties:
+      address:
+        type: string
+      age:
+        type: integer
+      appointments:
+        items:
+          $ref: '#/definitions/models.Appointment'
+        type: array
+      category:
+        type: string
+      emailId:
+        type: string
+      id:
+        type: string
+      medicalLicenseLink:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      yoe:
+        type: number
+    required:
+    - address
+    - age
+    - category
+    - emailId
+    - medicalLicenseLink
+    - name
+    - password
+    - yoe
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: aadityakhetan123@gmail.com
+    name: Aaditya Khetan
+  description: This microservice is for doctor module in the sanitaria application.
+  license:
+    name: Apache 2.0
+  title: Sanitaria - Doctor Module
+  version: "1.0"
+paths:
+  /doctor/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Edit details of a doctor.
+      parameters:
+      - description: Doctor id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Delete doctor by ID.
+      tags:
+      - Doctor
+    get:
+      consumes:
+      - application/json
+      description: View all the details of a doctor.
+      parameters:
+      - description: Doctor id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Doctor'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get doctor by ID.
+      tags:
+      - Doctor
+    put:
+      consumes:
+      - application/json
+      description: Edit details of a doctor.
+      parameters:
+      - description: Doctor id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Doctor'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Edit doctor by ID.
+      tags:
+      - Doctor
+  /doctorLogin:
+    post:
+      consumes:
+      - application/json
+      description: This request will login a doctor.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "404":
+          description: Not Found
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: User login for a doctor profile.
+      tags:
+      - Doctor
+  /doctorRegistration:
+    post:
+      consumes:
+      - application/json
+      description: This request will create a new doctor profile for a user.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Doctor'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To register a new doctor in the sanitaria application
+      tags:
+      - Doctor
+  /doctors:
+    get:
+      consumes:
+      - application/json
+      description: Get details of all doctors.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Doctor'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get all doctors list.
+      tags:
+      - Doctor
+  /doctors/add-appointment/{doctorId}:
+    post:
+      consumes:
+      - application/json
+      description: A doctor can add as many slots as required through this request.
+      parameters:
+      - description: Doctor id
+        in: path
+        name: doctorId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Appointment'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Add slots for appointment.
+      tags:
+      - Doctor
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

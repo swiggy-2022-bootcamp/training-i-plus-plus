@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	//"errors"
 	"fmt"
 	"net/http"
 	"sanitaria-microservices/doctorModule/configs"
@@ -24,6 +23,17 @@ const (
     topic         = "Appointment"
 )
 
+// RegisterDoctor godoc
+// @Summary To register a new doctor in the sanitaria application
+// @Description This request will create a new doctor profile for a user.
+// @Tags Doctor
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	201  {object} 	models.Doctor
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /doctorRegistration [POST]
 func RegisterDoctor() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -67,6 +77,18 @@ func RegisterDoctor() gin.HandlerFunc {
     }
 }
 
+// LoginDoctor godoc
+// @Summary User login for a doctor profile.
+// @Description This request will login a doctor.
+// @Tags Doctor
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {string} 	token
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /doctorLogin [POST]
 func LoginDoctor() gin.HandlerFunc {
 	return func (c *gin.Context)  {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -88,22 +110,34 @@ func LoginDoctor() gin.HandlerFunc {
 		passwordIsValid, msg := services.VerifyPassword(doctor.User.Password, foundDoctor.User.Password)
 		defer cancel()
 		if !passwordIsValid{
-			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			c.JSON(http.StatusBadRequest, gin.H{"error": msg})
 			return
 		}
 
 		if foundDoctor.User.EmailId == ""{
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
+			c.JSON(http.StatusNotFound, gin.H{"error":"user not found"})
 		}
 		token, err := services.CreateToken(foundDoctor.User.EmailId, foundDoctor.User.Name)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: token, Data: map[string]interface{}{"data": foundDoctor}})
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": token}})
 	}
 }
 
+// GetDoctorByID godoc
+// @Summary Get doctor by ID.
+// @Description View all the details of a doctor.
+// @Tags Doctor
+// @Schemes
+// @Param id path string true "Doctor id"
+// @Accept json
+// @Produce json
+// @Success	200  {object} 	models.Doctor
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /doctor/{id} [GET]
 func GetDoctorByID() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -123,6 +157,19 @@ func GetDoctorByID() gin.HandlerFunc {
     }
 }
 
+// EditDoctorByID godoc
+// @Summary Edit doctor by ID.
+// @Description Edit details of a doctor.
+// @Tags Doctor
+// @Schemes
+// @Param id path string true "Doctor id"
+// @Accept json
+// @Produce json
+// @Success	200  {object} 	models.Doctor
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /doctor/{id} [PUT]
 func EditDoctorByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -175,6 +222,19 @@ func EditDoctorByID() gin.HandlerFunc {
 	}
 }
 
+// DeleteDoctorByID godoc
+// @Summary Delete doctor by ID.
+// @Description Edit details of a doctor.
+// @Tags Doctor
+// @Schemes
+// @Param id path string true "Doctor id"
+// @Accept json
+// @Produce json
+// @Success	200  {string} 	User successfully deleted!
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /doctor/{id} [DELETE]
 func DeleteDoctorByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -203,6 +263,17 @@ func DeleteDoctorByID() gin.HandlerFunc {
 	}
 }
 
+// GetAllDoctors godoc
+// @Summary Get all doctors list.
+// @Description Get details of all doctors.
+// @Tags Doctor
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {array} 	models.Doctor
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /doctors [GET]
 func GetAllDoctors() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -233,6 +304,19 @@ func GetAllDoctors() gin.HandlerFunc {
 	}
 }
 
+// AddSlotsForAppointment godoc
+// @Summary Add slots for appointment.
+// @Description A doctor can add as many slots as required through this request.
+// @Tags Doctor
+// @Schemes
+// @Param doctorId path string true "Doctor id"
+// @Accept json
+// @Produce json
+// @Success	200  {array} 	models.Appointment
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /doctors/add-appointment/{doctorId} [POST]
 func OpenSlotsForAppointments() gin.HandlerFunc{
 	return func (c *gin.Context)  {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -286,6 +370,6 @@ func OpenSlotsForAppointments() gin.HandlerFunc{
 				return
 			}
 		}
-		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor}})
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedDoctor.Appointments}})
 	}
 }

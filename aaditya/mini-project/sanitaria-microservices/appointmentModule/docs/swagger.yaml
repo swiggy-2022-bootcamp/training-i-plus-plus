@@ -1,0 +1,86 @@
+definitions:
+  models.Appointment:
+    properties:
+      doctorID:
+        type: string
+      fees:
+        type: integer
+      generalUserID:
+        type: string
+      id:
+        type: string
+      occupied:
+        type: boolean
+      slot:
+        type: string
+    type: object
+host: localhost:8082
+info:
+  contact:
+    email: aadityakhetan123@gmail.com
+    name: Aaditya Khetan
+  description: This microservice is for doctor module in the sanitaria application.
+  license:
+    name: Apache 2.0
+  title: Sanitaria - Doctor Module
+  version: "1.0"
+paths:
+  /appointments:
+    get:
+      consumes:
+      - application/json
+      description: This request will fetch all the available appointments(open slots).
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Appointment'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: To display all the available appointments.
+      tags:
+      - Appointment
+  /book-appointment/{userId}:
+    post:
+      consumes:
+      - application/json
+      description: This request will book and an appointment for the user with given
+        userId.
+      parameters:
+      - description: GeneralUser id
+        in: path
+        name: userId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Appointment'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To book a doctor's appointment.
+      tags:
+      - Appointment
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
