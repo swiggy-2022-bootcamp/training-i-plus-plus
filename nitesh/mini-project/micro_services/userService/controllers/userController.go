@@ -31,6 +31,20 @@ func VerifyPassword() {
 
 }
 
+// ShowAccount godoc
+// @Summary      Sign up the user
+// @Description  user registration API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        FirstName  body 	string  true  "first name of user"
+// @Param        LastName 	body	string  true  "last name of user"
+// @Param        Password 	body	string  true  "password"
+// @Param        Email 		body	string  true  "email id"
+// @Success      200  {object} 	models.SignUpResponse
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /user/signup [post]
 func Signup() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
@@ -112,6 +126,18 @@ func Signup() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Login the user
+// @Description  user log in API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        Password 	body	string  true  "password"
+// @Param        Email 		body	string  true  "email id"
+// @Success      200  {object} 	models.User
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /user/login [post]
 func Login() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
@@ -159,6 +185,18 @@ func GetUsers(gin *gin.Context) {
 
 }
 
+// ShowAccount 	 godoc
+// @Summary      Get user details on ID
+// @Description  get user details using ID
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        User_ID 	body	string  true  "unique user id"
+// @Param        Token  	header	string  true  "user token"
+// @Success      200  {object} 	models.User
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /user/getUserDetails [post]
 func GetUserDetails() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)

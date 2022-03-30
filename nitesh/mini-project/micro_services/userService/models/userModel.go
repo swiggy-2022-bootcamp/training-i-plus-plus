@@ -24,3 +24,8 @@ type User struct {
 	Created_at time.Time          `json:"created_at"`
 	User_id    string             `json:"user_id"`
 }
+
+type SignUpResponse struct {
+	Token          string
+	InsertedNumber int
+}
