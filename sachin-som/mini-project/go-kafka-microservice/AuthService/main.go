@@ -4,21 +4,27 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 
+	"github.com/go-kafka-microservice/AuthService/controllers"
 	"github.com/go-kafka-microservice/AuthService/database"
 	"github.com/go-kafka-microservice/AuthService/services"
 	"github.com/go-kafka-microservice/AuthService/utils"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 var (
-	ctx            context.Context
-	err            error
-	jwtUtils       utils.JWTUtils
-	mongoClient    *mongo.Client
-	userCollection *mongo.Collection
-	authServices   services.AuthServices
+	ctx             context.Context
+	err             error
+	httpListener    net.Listener
+	grpcServer      *grpc.Server
+	jwtUtils        utils.JWTUtils
+	mongoClient     *mongo.Client
+	userCollection  *mongo.Collection
+	authServices    services.AuthServices
+	authControllers controllers.AuthControllers
 )
 
 func init() {
@@ -40,10 +46,28 @@ func init() {
 
 	// Initialize authService
 	authServices = services.NewAuthServiceImpl(jwtUtils, userCollection, ctx)
+
+	// Initialize (gRPC Service Implementation Server) authControllers
+	authControllers = *controllers.NewAuthControllers(authServices)
+
+	// Create TCP HTTP connection
+	httpListener, err = net.Listen("tcp", ":8000")
+	if err != nil {
+		log.Fatal("Error in httpListening (8000): ", err.Error())
+	}
 }
 func main() {
 	defer mongoClient.Disconnect(ctx)
 
-	// TODO: Need to create gRPC server
-	fmt.Println("Auth Service.")
+	// Create gRPC Server
+	grpcServer = grpc.NewServer()
+
+	// Register gRPC Services
+	controllers.RegisterAuthServicesServer(grpcServer, authControllers)
+
+	// Start the Server
+	if err = grpcServer.Serve(httpListener); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("(AuthService): Started Server on Port 8000.")
 }

@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package AuthService;
+package controllers;
 
-option go_package = "github.com/go-kafka-microservice/AuthService";
+option go_package = "github.com/go-kafka-microservice/AuthService;controllers";
 
 
 message Credentials {
