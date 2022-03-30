@@ -12,5 +12,5 @@ func TrainRoutes(router *gin.Engine) {
 	adminOnly.Use(middlewares.AuthenticateJWT())
 	adminOnly.Use(middlewares.OnlyAdmin())
 	adminOnly.POST("/add", controllers.AddTrain())
-	adminOnly.POST("/remove", controllers.RemoveTrain())
+	adminOnly.DELETE("/remove", controllers.RemoveTrain())
 }

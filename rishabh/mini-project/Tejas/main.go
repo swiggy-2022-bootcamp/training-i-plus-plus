@@ -26,6 +26,7 @@ func main() {
 	routes.UserRoutes(router)
 	routes.TrainRoutes(router)
 	routes.ScheduleRoutes(router)
+	routes.HealthCheckRoutes(router)
 
 	router.Run("localhost:" + configs.EnvPORT())
 }
