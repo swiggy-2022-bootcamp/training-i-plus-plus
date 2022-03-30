@@ -8,11 +8,20 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	_ "auth/internal/errors"
+	_ "auth/internal/literals"
+
 	log "github.com/sirupsen/logrus"
 )
 
-// SignupHandler handles the http request, performs marshalling/unmarshalling and writes the
-// the http response.
+// Signin godoc
+// @Summary Signin the user to his/her account
+// @Description It accepts user email and password from user and then, creates a JWT Token signed by private key and return the JWT token back to user.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} model.User
+// @Router /auth/v1/signin [post]
 func SigninHandler(config *util.RouterConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 

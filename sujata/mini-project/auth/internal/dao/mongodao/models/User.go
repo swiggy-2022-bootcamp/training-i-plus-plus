@@ -8,11 +8,11 @@ const (
 )
 
 type User struct {
-	Email     string `json:"email" bson:"email"`
-	Firstname string `json:"firstname" bson:"firstname"`
-	Lastname  string `json:"lastname" bson:"lastname"`
-	Password  string `json:"password" bson:"password"`
-	Address   string `json:"address" bson:"address"`
+	Email     string `json:"email" bson:"email" example:"sd@gmail.com"`
+	Firstname string `json:"firstname" bson:"firstname" example:"Sujata"`
+	Lastname  string `json:"lastname" bson:"lastname" example:"Dwivedi"`
+	Password  string `json:"password" bson:"password" example:"password"`
+	Address   string `json:"address" bson:"address" example:"India"`
 	// Enum for user role type (BUYER or SELLER)
-	Role Role `json:"role" bson:"role"`
+	Role Role `json:"role" bson:"role" example:"SELLER"`
 }

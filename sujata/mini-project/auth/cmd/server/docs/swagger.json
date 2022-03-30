@@ -1,0 +1,63 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/auth/v1/signin": {
+            "post": {
+                "description": "It accepts user email and password from user and then, creates a JWT Token signed by private key and return the JWT token back to user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Signin the user to his/her account",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.User": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string",
+                    "example": "India"
+                },
+                "email": {
+                    "type": "string",
+                    "example": "sd@gmail.com"
+                },
+                "firstname": {
+                    "type": "string",
+                    "example": "Sujata"
+                },
+                "lastname": {
+                    "type": "string",
+                    "example": "Dwivedi"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                },
+                "role": {
+                    "description": "Enum for user role type (BUYER or SELLER)",
+                    "type": "string",
+                    "example": "SELLER"
+                }
+            }
+        }
+    }
+}

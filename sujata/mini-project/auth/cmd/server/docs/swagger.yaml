@@ -1,0 +1,43 @@
+definitions:
+  model.User:
+    properties:
+      address:
+        example: India
+        type: string
+      email:
+        example: sd@gmail.com
+        type: string
+      firstname:
+        example: Sujata
+        type: string
+      lastname:
+        example: Dwivedi
+        type: string
+      password:
+        example: password
+        type: string
+      role:
+        description: Enum for user role type (BUYER or SELLER)
+        example: SELLER
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /auth/v1/signin:
+    post:
+      consumes:
+      - application/json
+      description: It accepts user email and password from user and then, creates
+        a JWT Token signed by private key and return the JWT token back to user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: Signin the user to his/her account
+      tags:
+      - auth
+swagger: "2.0"

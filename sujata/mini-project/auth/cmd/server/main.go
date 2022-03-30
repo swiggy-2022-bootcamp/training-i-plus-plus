@@ -8,6 +8,10 @@ import (
 	"runtime"
 	"strings"
 
+	_ "auth/cmd/server/docs"
+	_ "auth/internal/errors"
+	_ "auth/internal/server/handlers"
+
 	"github.com/dgrijalva/jwt-go"
 	log "github.com/sirupsen/logrus"
 )

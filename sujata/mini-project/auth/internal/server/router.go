@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 type Router struct {
@@ -23,6 +25,8 @@ func (r *Router) InitializeRouter(routerConfig *util.RouterConfig) {
 
 func (r *Router) InitializeRoutes(routerConfig *util.RouterConfig) {
 	s := (*r).PathPrefix(routerConfig.WebServerConfig.RoutePrefix).Subrouter()
+	// Swagger
+	s.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	s.HandleFunc(literals.SignupEndpoint,
 		handlers.SignupHandler(routerConfig)).
