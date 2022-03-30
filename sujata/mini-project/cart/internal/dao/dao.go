@@ -18,6 +18,7 @@ type MongoDAO interface {
 	DeleteProduct(ctx context.Context, productId string, email string) *errors.ServerError
 	UpdateProductQuantity(ctx context.Context) *errors.ServerError
 	GetCart(ctx context.Context, email string) (model.Cart, *errors.ServerError)
+	DeleteCart(ctx context.Context, email string) *errors.ServerError
 }
 
 type mongoDAO struct {
@@ -122,4 +123,23 @@ func (dao *mongoDAO) GetCart(ctx context.Context, email string) (model.Cart, *er
 	}
 
 	return cart, nil
+}
+
+func (dao *mongoDAO) DeleteCart(ctx context.Context, email string) *errors.ServerError {
+	cartCollection := dao.client.Database("shopKart").Collection("cart")
+
+	filter := bson.M{"email": email}
+	result, err := cartCollection.DeleteOne(ctx, filter)
+	if err != nil {
+		log.WithError(err).Error("an error occurred while deleting cart for user: ", email)
+		return &errors.InternalError
+	}
+
+	if result.DeletedCount == 0 {
+		log.Error("Deleted documents: 0, expected 1")
+		return &errors.InternalError
+	}
+
+	log.Info("Cart deleted successfully for user: ", email)
+	return nil
 }

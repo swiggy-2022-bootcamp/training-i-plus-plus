@@ -2,6 +2,7 @@ package server
 
 import (
 	"cart/config"
+	subscriber "cart/internal/kafkasubscriber"
 	"cart/internal/services"
 	"cart/util"
 	"context"
@@ -47,6 +48,8 @@ func RunServer() error {
 	services.InitGetCartService(&routerConfigs)
 
 	intializeDao()
+
+	subscriber.KafkaSubscriberInit()
 
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)
