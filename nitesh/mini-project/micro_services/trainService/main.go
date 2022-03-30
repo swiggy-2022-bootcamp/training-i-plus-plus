@@ -1,16 +1,20 @@
 package main
 
 import (
-	"log"
 	"os"
 	"trainService/docs"
+	"trainService/logger"
+	"trainService/middleware"
 	"trainService/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 // @title           Swagger Train-Ticket Booking System API
 // @version         1.0
@@ -30,15 +34,17 @@ import (
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Fatal("Failed to load .env file", err.Error())
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
 	}
 	docs.SwaggerInfo.Title = "Swagger Train-Ticket Booking System API"
 
 	PORT := os.Getenv("PORT")
-	router := gin.Default()
+	router := gin.New()
+	router.Use(middleware.Logging(), gin.Recovery())
 
 	routes.TrainRouter(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
+	log.WithFields(logrus.Fields{"Port": PORT}).Info("server listening on this port")
 	router.Run(":" + PORT)
 }

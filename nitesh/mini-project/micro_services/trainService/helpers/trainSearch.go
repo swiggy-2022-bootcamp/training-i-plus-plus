@@ -26,7 +26,7 @@ func IsTrainAvailableOnGivenWeekDay(weekday string, trainRecord models.Train) bo
 	}
 }
 
-func FilterDetailsOnWeekdayAwailability(
+func FilterDetailsOnWeekdayAvailability(
 	weekday string,
 	trainDetails []models.Train,
 ) []models.Train {

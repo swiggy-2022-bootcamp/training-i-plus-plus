@@ -2,9 +2,13 @@ package routes
 
 import (
 	"trainService/controllers"
+	"trainService/logger"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 func TrainRouter(gin *gin.Engine) {
 	t := gin.Group("/train")
@@ -13,4 +17,5 @@ func TrainRouter(gin *gin.Engine) {
 		t.GET("/searchRoute", controllers.SearchRoute())
 		t.GET("/trainDetails", controllers.TrainDetails())
 	}
+	log.Trace("train routes are added. ")
 }

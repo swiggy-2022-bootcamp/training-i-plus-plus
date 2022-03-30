@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"paymentService/logger"
+	"paymentService/middleware"
 	"paymentService/routes"
 
 	"paymentService/docs"
@@ -39,7 +40,8 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Train-Ticket Booking System API"
 
 	PORT := os.Getenv("PORT")
-	router := gin.Default()
+	router := gin.New()
+	router.Use(middleware.Logging(), gin.Recovery())
 
 	routes.PaymentRoutes(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

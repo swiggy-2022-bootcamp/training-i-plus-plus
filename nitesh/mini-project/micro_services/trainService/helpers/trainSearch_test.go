@@ -101,7 +101,7 @@ func TestFilterDetailsOnWeekdayAwailability(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		actualLength := len(FilterDetailsOnWeekdayAwailability(tc.weekday, tc.trainRecord))
+		actualLength := len(FilterDetailsOnWeekdayAvailability(tc.weekday, tc.trainRecord))
 		if actualLength != tc.expectedLen {
 			t.Errorf(
 				"actualLength -%v is not equals to expectedLength - %v",

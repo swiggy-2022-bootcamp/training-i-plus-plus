@@ -6,12 +6,16 @@ import (
 	"time"
 	"trainService/database"
 	helper "trainService/helpers"
+	"trainService/logger"
 	models "trainService/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 var trainCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
 
@@ -39,28 +43,39 @@ func CheckAvailability() gin.HandlerFunc {
 
 		if err := g.BindJSON(&search); err != nil {
 			g.JSON(http.StatusOK, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("failed to load .env file")
 			return
 		}
 
-		var trainDetails models.Train
+		log.Debug("gin json binding done.")
 
+		var trainDetails models.Train
 		err := trainCollection.FindOne(ctx, bson.M{"TrainID": search.TrainID}).Decode(&trainDetails)
 
 		if err != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": "no data found"})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("o data found")
 			return
 		}
+
+		log.Debug("train ID found in DB.")
+		log.Trace("train ID found in DB.")
 
 		//-------------check for date availability
 		layout := "01/02/06"
 		parseDate, err := time.Parse(layout, search.Date)
 		if err != nil {
 			g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("failed to parse date")
 			return
 		}
 
+		log.Debug("date present in query is parsed.")
+		log.Trace("date present in query is parsed.")
+
 		if time.Now().After(parseDate) {
 			g.JSON(http.StatusBadRequest, gin.H{"error": "invalid date"})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("invalid date")
 			return
 		}
 
@@ -68,8 +83,11 @@ func CheckAvailability() gin.HandlerFunc {
 		isAvailable := helper.IsTrainAvailableOnGivenWeekDay(weekday, trainDetails)
 		if !isAvailable {
 			g.JSON(http.StatusBadRequest, gin.H{"msg": "train not available"})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("train is not available")
 			return
 		}
+		log.Debug("train is available on given date.")
+
 		responseTrainDetails := helper.CalculatePriceOne(
 			trainDetails.FromStationCode,
 			trainDetails.ToStationCode,
@@ -108,17 +126,20 @@ func SearchRoute() gin.HandlerFunc {
 
 		if err := g.BindJSON(&search); err != nil {
 			g.JSON(http.StatusOK, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("fail in gin json bind")
 			return
 		}
+
+		log.Debug("gin json binding done.")
 
 		cursor, err := trainCollection.Find(
 			ctx,
 			bson.D{{"Stations", bson.D{{"$all", bson.A{search.Source, search.Destination}}}}},
 		)
-		// Decode(&trainDetails)
 
 		if err != nil {
 			g.JSON(http.StatusOK, gin.H{"error": "no routes"})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("no routes present")
 			return
 		}
 
@@ -126,6 +147,7 @@ func SearchRoute() gin.HandlerFunc {
 
 		if err := cursor.All(ctx, &trainDetails); err != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("error in response cursor of mongo db")
 			return
 		}
 
@@ -134,24 +156,27 @@ func SearchRoute() gin.HandlerFunc {
 		parseDate, err := time.Parse(layout, search.Date)
 		if err != nil {
 			g.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("fail to parse search date")
 			return
 		}
 
 		if time.Now().After(parseDate) {
 			g.JSON(http.StatusBadRequest, gin.H{"error": "invalid date"})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("invalid date")
 			return
 		}
 
 		weekday := parseDate.Weekday().String()
-		responseTrainDetails := helper.FilterDetailsOnWeekdayAwailability(weekday, trainDetails)
-
+		responseTrainDetails := helper.FilterDetailsOnWeekdayAvailability(weekday, trainDetails)
+		log.Debug("filtering train details on the basis of week day availability is done")
 		responseTrainDetails = helper.CalculatePriceMany(
 			search.Source,
 			search.Destination,
-			trainDetails,
+			responseTrainDetails,
 		)
 
 		g.JSON(http.StatusOK, gin.H{"trainDetails": responseTrainDetails})
+		log.Info("succesfully sending train details")
 	}
 }
 
@@ -177,17 +202,21 @@ func TrainDetails() gin.HandlerFunc {
 
 		if err := c.BindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("fail in gin json bind")
 			return
 		}
+		log.Debug("gin json binding done.")
 
 		var TrainDetails models.Train
 		err := trainCollection.FindOne(ctx, bson.M{"TrainNumber": body.TrainNumber}).
 			Decode(&TrainDetails)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("fail to fetch records from DB")
 			return
 		}
 
+		log.WithFields(logrus.Fields{"TrainNumber": body.TrainNumber}).Debug("found train record of given train number.")
 		c.JSON(http.StatusOK, gin.H{"trainDetails": TrainDetails})
 	}
 }
