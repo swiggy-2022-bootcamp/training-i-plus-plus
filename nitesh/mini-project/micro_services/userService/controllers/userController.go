@@ -59,7 +59,8 @@ func Signup() gin.HandlerFunc {
 
 		if err := g.BindJSON(&user); err != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error to bind the input json")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("Error to bind the input json")
 			return
 		}
 		log.Info("input/body json bind done")
@@ -68,14 +69,16 @@ func Signup() gin.HandlerFunc {
 		validationErr := validate.Struct(user)
 		if validationErr != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
-			log.WithFields(logrus.Fields{"error": validationErr.Error()}).Error("User validation error")
+			log.WithFields(logrus.Fields{"error": validationErr.Error()}).
+				Error("User validation error")
 			return
 		}
 
 		log.Info("user validation done")
 
 		count, err := userCollection.CountDocuments(ctx, bson.M{"email": user.Email})
-		log.WithFields(logrus.Fields{"count": count, "error": err.Error(), "email": user.Email}).Debug("response of count document of current user")
+		log.WithFields(logrus.Fields{"count": count, "error": err.Error(), "email": user.Email}).
+			Debug("response of count document of current user")
 
 		defer cancel()
 		if err != nil {
@@ -84,14 +87,16 @@ func Signup() gin.HandlerFunc {
 				http.StatusBadRequest,
 				gin.H{"error": "Error! occured while checking for email"},
 			)
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error! occured while checking for email")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("Error! occured while checking for email")
 			return
 		}
 
 		if count > 0 {
 			// log.Panic("Email is already exists.")
 			g.JSON(http.StatusBadRequest, gin.H{"error": "User already exists."})
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error! occured while checking for email")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("Error! occured while checking for email")
 
 			return
 		}
@@ -141,7 +146,8 @@ func Signup() gin.HandlerFunc {
 			http.StatusOK,
 			gin.H{"insertedNumber": insertedNumber, "Token": user.Token},
 		)
-		log.WithFields(logrus.Fields{"insertedNumber": insertedNumber}).Info("user successfully registered")
+		log.WithFields(logrus.Fields{"insertedNumber": insertedNumber}).
+			Info("user successfully registered")
 	}
 }
 
@@ -183,7 +189,8 @@ func Login() gin.HandlerFunc {
 				http.StatusBadRequest,
 				gin.H{"error": "User not found", "details": err.Error()},
 			)
-			log.WithFields(logrus.Fields{"error": err.Error(), "email": user.Email}).Error("user not found")
+			log.WithFields(logrus.Fields{"error": err.Error(), "email": user.Email}).
+				Error("user not found")
 			return
 		}
 
@@ -242,7 +249,8 @@ func GetUserDetails() gin.HandlerFunc {
 			Decode(&UserDetails)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"error": err.Error(), "user_id": body.UserID}).Error("user id not found")
+			log.WithFields(logrus.Fields{"error": err.Error(), "user_id": body.UserID}).
+				Error("user id not found")
 			return
 		}
 

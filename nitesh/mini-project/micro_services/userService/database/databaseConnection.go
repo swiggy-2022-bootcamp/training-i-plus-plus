@@ -24,7 +24,8 @@ func DBintance() *mongo.Client {
 	client, err := mongo.NewClient(options.Client().ApplyURI(MongoDb_URL))
 
 	if err != nil {
-		log.WithFields(logrus.Fields{"error": err.Error()}).Error("new mongo client creation failed")
+		log.WithFields(logrus.Fields{"error": err.Error()}).
+			Error("new mongo client creation failed")
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 

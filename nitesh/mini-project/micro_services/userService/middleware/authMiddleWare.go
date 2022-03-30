@@ -19,7 +19,8 @@ func AuthenticateToken() gin.HandlerFunc {
 		claims, err := helper.VerifyToken(clientToken)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("verification of token failed")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("verification of token failed")
 			return
 		}
 

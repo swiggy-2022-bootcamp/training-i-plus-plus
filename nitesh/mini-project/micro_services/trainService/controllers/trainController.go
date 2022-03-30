@@ -147,7 +147,8 @@ func SearchRoute() gin.HandlerFunc {
 
 		if err := cursor.All(ctx, &trainDetails); err != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("error in response cursor of mongo db")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("error in response cursor of mongo db")
 			return
 		}
 
@@ -212,11 +213,13 @@ func TrainDetails() gin.HandlerFunc {
 			Decode(&TrainDetails)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"error": err.Error()}).Error("fail to fetch records from DB")
+			log.WithFields(logrus.Fields{"error": err.Error()}).
+				Error("fail to fetch records from DB")
 			return
 		}
 
-		log.WithFields(logrus.Fields{"TrainNumber": body.TrainNumber}).Debug("found train record of given train number.")
+		log.WithFields(logrus.Fields{"TrainNumber": body.TrainNumber}).
+			Debug("found train record of given train number.")
 		c.JSON(http.StatusOK, gin.H{"trainDetails": TrainDetails})
 	}
 }

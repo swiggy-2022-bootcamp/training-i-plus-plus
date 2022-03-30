@@ -56,7 +56,8 @@ func PayForTicket() gin.HandlerFunc {
 		referenceID, err := paymentHelper.RandRefrenceID(8)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-			log.WithFields(logrus.Fields{"err": err.Error()}).Error("fail to create new refrence id")
+			log.WithFields(logrus.Fields{"err": err.Error()}).
+				Error("fail to create new refrence id")
 			return
 		}
 
