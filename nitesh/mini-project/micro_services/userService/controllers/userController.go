@@ -2,11 +2,14 @@ package controllers
 
 import (
 	"context"
-	"log"
+
+	"github.com/sirupsen/logrus"
+
 	"net/http"
 	"time"
 	"userService/database"
 	helper "userService/helpers"
+	"userService/logger"
 	"userService/models"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +19,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 var userCollection *mongo.Collection = database.OpenCollection(
 	database.MongoClient,
@@ -46,6 +51,7 @@ func VerifyPassword() {
 // @Failure      500  {number} 	http.StatusInternalServerError
 // @Router       /user/signup [post]
 func Signup() gin.HandlerFunc {
+
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 		defer cancel()
@@ -53,30 +59,40 @@ func Signup() gin.HandlerFunc {
 
 		if err := g.BindJSON(&user); err != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error to bind the input json")
 			return
 		}
+		log.Info("input/body json bind done")
 
 		validate = validator.New()
 		validationErr := validate.Struct(user)
 		if validationErr != nil {
 			g.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
+			log.WithFields(logrus.Fields{"error": validationErr.Error()}).Error("User validation error")
 			return
 		}
 
+		log.Info("user validation done")
+
 		count, err := userCollection.CountDocuments(ctx, bson.M{"email": user.Email})
+		log.WithFields(logrus.Fields{"count": count, "error": err.Error(), "email": user.Email}).Debug("response of count document of current user")
+
 		defer cancel()
 		if err != nil {
-			log.Panic(err)
+			// log.Panic(err)
 			g.JSON(
 				http.StatusBadRequest,
 				gin.H{"error": "Error! occured while checking for email"},
 			)
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error! occured while checking for email")
 			return
 		}
 
 		if count > 0 {
 			// log.Panic("Email is already exists.")
 			g.JSON(http.StatusBadRequest, gin.H{"error": "User already exists."})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Error! occured while checking for email")
+
 			return
 		}
 
@@ -85,20 +101,18 @@ func Signup() gin.HandlerFunc {
 			bcrypt.DefaultCost,
 		)
 		if err != nil {
-			log.Panic("Password not hashed!")
+			// log.Panic("Password not hashed!")
 			g.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Password not hashed!")
 			return
 		}
 		user.Password = string(hashedPassword)
+		log.Info("password successfully hashed")
 
 		user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		user.Id = primitive.NewObjectID()
 		user.User_id = user.Id.Hex()
 		defer cancel()
-		if err != nil {
-			g.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
-			return
-		}
 
 		user.Token, err = helper.CreateToken(
 			user.Email,
@@ -106,16 +120,20 @@ func Signup() gin.HandlerFunc {
 			user.LastName,
 			user.User_id,
 		)
+
 		defer cancel()
 		if err != nil {
 			g.JSON(http.StatusBadGateway, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Token not created")
 			return
 		}
 
+		log.Info("user token created successfully.")
 		insertedNumber, insertErr := userCollection.InsertOne(ctx, user)
 		defer cancel()
 		if insertErr != nil {
 			g.JSON(http.StatusBadGateway, gin.H{"error": insertErr.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("Insertion to mongoDB failed")
 			return
 		}
 
@@ -123,6 +141,7 @@ func Signup() gin.HandlerFunc {
 			http.StatusOK,
 			gin.H{"insertedNumber": insertedNumber, "Token": user.Token},
 		)
+		log.WithFields(logrus.Fields{"insertedNumber": insertedNumber}).Info("user successfully registered")
 	}
 }
 
@@ -139,6 +158,7 @@ func Signup() gin.HandlerFunc {
 // @Failure      500  {number} 	http.StatusInternalServerError
 // @Router       /user/login [post]
 func Login() gin.HandlerFunc {
+
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 100*time.Millisecond)
 		defer cancel()
@@ -147,11 +167,13 @@ func Login() gin.HandlerFunc {
 		if err := g.BindJSON(&user); err != nil {
 			g.JSON(
 				http.StatusBadRequest,
-				gin.H{"error": "User JSON bind error", "details": err.Error()},
+				gin.H{"error": "gin JSON bind error", "details": err.Error()},
 			)
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("gin JSON bind error")
 			return
 		}
 
+		log.Debug("gin JSON binding is done")
 		var userRecord models.User
 		err := userCollection.FindOne(ctx, bson.M{"email": user.Email}).
 			Decode(&userRecord)
@@ -161,6 +183,7 @@ func Login() gin.HandlerFunc {
 				http.StatusBadRequest,
 				gin.H{"error": "User not found", "details": err.Error()},
 			)
+			log.WithFields(logrus.Fields{"error": err.Error(), "email": user.Email}).Error("user not found")
 			return
 		}
 
@@ -174,10 +197,12 @@ func Login() gin.HandlerFunc {
 				http.StatusBadGateway,
 				gin.H{"error": "wrong password", "details": err.Error()},
 			)
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("user password is wrong")
 			return
 		}
 
 		g.JSON(http.StatusOK, gin.H{"user": userRecord})
+		log.WithFields(logrus.Fields{"email": user.Email}).Info("user successfully logged in")
 	}
 }
 
@@ -208,6 +233,7 @@ func GetUserDetails() gin.HandlerFunc {
 
 		if err := c.BindJSON(&body); err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("gin JSON bind error")
 			return
 		}
 
@@ -216,6 +242,7 @@ func GetUserDetails() gin.HandlerFunc {
 			Decode(&UserDetails)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error(), "user_id": body.UserID}).Error("user id not found")
 			return
 		}
 
@@ -234,5 +261,6 @@ func GetUserDetails() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, gin.H{"userDetails": response})
+		log.WithFields(logrus.Fields{"user_id": body.UserID}).Info("user found in DB")
 	}
 }

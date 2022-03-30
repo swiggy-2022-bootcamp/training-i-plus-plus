@@ -5,6 +5,7 @@ import (
 	helper "userService/helpers"
 
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 )
 
 func AuthenticateToken() gin.HandlerFunc {
@@ -12,11 +13,13 @@ func AuthenticateToken() gin.HandlerFunc {
 		clientToken := c.Request.Header.Get("token")
 		if clientToken == "" {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "token not found"})
+			log.Error("token not found")
 			return
 		}
 		claims, err := helper.VerifyToken(clientToken)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("verification of token failed")
 			return
 		}
 
@@ -25,6 +28,7 @@ func AuthenticateToken() gin.HandlerFunc {
 		c.Set("lastName", claims.LastName)
 		c.Set("userId", claims.User_id)
 
+		log.Debug("user successfully authenticated")
 		c.Next()
 	}
 }
