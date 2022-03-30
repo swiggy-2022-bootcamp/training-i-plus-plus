@@ -42,5 +42,8 @@ func init() {
 	authServices = services.NewAuthServiceImpl(jwtUtils, userCollection, ctx)
 }
 func main() {
+	defer mongoClient.Disconnect(ctx)
+
+	// TODO: Need to create gRPC server
 	fmt.Println("Auth Service.")
 }
