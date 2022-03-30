@@ -2,7 +2,7 @@ package helper
 
 import (
 	"testing"
-	models "userService/models"
+	models "trainService/models"
 )
 
 // table driven test

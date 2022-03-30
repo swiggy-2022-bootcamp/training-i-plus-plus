@@ -15,6 +15,18 @@ import (
 
 var trainCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
 
+// ShowAccount godoc
+// @Summary      Check Availability
+// @Description  check whether train is available on particular date or not
+// @Tags         Train
+// @Accept       json
+// @Produce      json
+// @Param        TrainID  body 	string  true  "unique train id"
+// @Param        Date 	  body	string  true  "date of booking"
+// @Success      200  {object} 	models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train/checkAvailability [post]
 func CheckAvailability() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*200)
@@ -74,6 +86,19 @@ type SearchQuery struct {
 	Date        string
 }
 
+// ShowAccount godoc
+// @Summary      Search route from source to destination stations
+// @Description  search route from source to destination stations on specific date
+// @Tags         Train
+// @Accept       json
+// @Produce      json
+// @Param        Source  		body 	string  true  "source station code"
+// @Param        Destination 	body	string  true  "destination station code"
+// @Param        Date 			body	string  true  "date of booking"
+// @Success      200  {array} 	models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train/searchRoute [post]
 func SearchRoute() gin.HandlerFunc {
 	return func(g *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
@@ -130,6 +155,17 @@ func SearchRoute() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Get details of sepecific train with its number
+// @Description  Get details of sepecific train with its number
+// @Tags         Train
+// @Accept       json
+// @Produce      json
+// @Param        TrainNumber  body 	string  true  "unique train number"
+// @Success      200  {object} 	models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train/trainDetails [post]
 func TrainDetails() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
