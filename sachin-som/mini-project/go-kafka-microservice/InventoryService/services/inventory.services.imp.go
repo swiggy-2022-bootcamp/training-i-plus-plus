@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	pb "github.com/go-kafka-microservice/AuthProto"
 	goKafka "github.com/go-kafka-microservice/InventoryService/goKafka/producer"
 	"github.com/go-kafka-microservice/InventoryService/models"
 	"go.mongodb.org/mongo-driver/bson"
@@ -15,12 +16,14 @@ type InventoryServicesImpl struct {
 	InventoryCollection *mongo.Collection
 	ProductCollection   *mongo.Collection
 	Ctx                 context.Context
+	AuthProtoClient     pb.AuthServicesClient
 }
 
-func NewInventoryService(inventoryCollection *mongo.Collection, productCollection *mongo.Collection, ctx context.Context) *InventoryServicesImpl {
+func NewInventoryService(inventoryCollection *mongo.Collection, productCollection *mongo.Collection, authProtoClient pb.AuthServicesClient, ctx context.Context) *InventoryServicesImpl {
 	return &InventoryServicesImpl{
 		InventoryCollection: inventoryCollection,
 		ProductCollection:   productCollection,
+		AuthProtoClient:     authProtoClient,
 		Ctx:                 ctx,
 	}
 }
@@ -96,4 +99,14 @@ func (is *InventoryServicesImpl) GetProduct(inventoryId, productId primitive.Obj
 	}
 
 	return nil, errors.New("No Product Found.")
+}
+
+func (is *InventoryServicesImpl) AuthorizeUser(tokenStr string) (string, error) {
+	res, err := is.AuthProtoClient.Authorize(is.Ctx, &pb.TokenRequest{
+		Token: tokenStr,
+	})
+	if err != nil {
+		return "", err
+	}
+	return res.Token, nil
 }

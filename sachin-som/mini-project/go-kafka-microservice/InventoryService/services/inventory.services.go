@@ -9,4 +9,5 @@ type InventoryServices interface {
 	RegisterInventory(*models.Inventory) (string, error)
 	AddProduct(primitive.ObjectID, *models.Product) error
 	GetProduct(primitive.ObjectID, primitive.ObjectID) (*models.Product, error)
+	AuthorizeUser(string) (string, error)
 }
