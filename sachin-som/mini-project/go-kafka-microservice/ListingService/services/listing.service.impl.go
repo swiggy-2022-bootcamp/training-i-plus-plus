@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	pb "github.com/go-kafka-microservice/AuthProto"
 	gokafkaConsumer "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
 	gokafkaProducer "github.com/go-kafka-microservice/ListingService/goKafka/producer"
 	"github.com/go-kafka-microservice/ListingService/models"
@@ -16,14 +17,16 @@ type ListingServiceImpl struct {
 	KafkaConsumerService gokafkaConsumer.GoKafkaServices
 	kafkaProducerService gokafkaProducer.GoKafkaServices
 	ProductCollection    *mongo.Collection
+	AuthProtoClient      pb.AuthServicesClient
 	Ctx                  context.Context
 }
 
-func NewListingServiceImpl(kafkaConsumerService gokafkaConsumer.GoKafkaServices, kafkaProducerService gokafkaProducer.GoKafkaServices, productCollection *mongo.Collection, ctx context.Context) *ListingServiceImpl {
+func NewListingServiceImpl(kafkaConsumerService gokafkaConsumer.GoKafkaServices, kafkaProducerService gokafkaProducer.GoKafkaServices, productCollection *mongo.Collection, authProtoClient pb.AuthServicesClient, ctx context.Context) *ListingServiceImpl {
 	return &ListingServiceImpl{
 		kafkaProducerService: kafkaProducerService,
 		KafkaConsumerService: kafkaConsumerService,
 		ProductCollection:    productCollection,
+		AuthProtoClient:      authProtoClient,
 		Ctx:                  ctx,
 	}
 }
@@ -74,4 +77,14 @@ func (ls *ListingServiceImpl) MakeOrder(productId, ownerId primitive.ObjectID) e
 		return err
 	}
 	return nil
+}
+
+func (ls *ListingServiceImpl) AuthorizeUser(tokenStr string) (string, error) {
+	res, err := ls.AuthProtoClient.Authorize(ls.Ctx, &pb.TokenRequest{
+		Token: tokenStr,
+	})
+	if err != nil {
+		return "", err
+	}
+	return res.Token, nil
 }

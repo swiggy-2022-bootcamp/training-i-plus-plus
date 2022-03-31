@@ -6,20 +6,20 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-kafka-microservice/InventoryService/services"
+	"github.com/go-kafka-microservice/ListingService/services"
 )
 
-type InventoryMiddleware struct {
-	InventoryService services.InventoryServices
+type ListingMiddleware struct {
+	ListingService services.ListingService
 }
 
-func NewInventoryMiddleware(inventoryService services.InventoryServices) *InventoryMiddleware {
-	return &InventoryMiddleware{
-		InventoryService: inventoryService,
+func NewListingMiddleware(listingService services.ListingService) *ListingMiddleware {
+	return &ListingMiddleware{
+		ListingService: listingService,
 	}
 }
 
-func (im *InventoryMiddleware) AuthorizeUser() gin.HandlerFunc {
+func (im *ListingMiddleware) AuthorizeUser() gin.HandlerFunc {
 	return func(gctx *gin.Context) {
 		authHeaderReq := gctx.Request.Header.Get("Authorization")
 		authHeader := strings.Split(authHeaderReq, "Bearer ")
@@ -30,7 +30,8 @@ func (im *InventoryMiddleware) AuthorizeUser() gin.HandlerFunc {
 		}
 
 		fmt.Println(authHeader[1])
-		_, err := im.InventoryService.AuthorizeUser(authHeader[1])
+		// TODO: Need to use refreshed token
+		_, err := im.ListingService.AuthorizeUser(authHeader[1])
 		if err != nil {
 			gctx.JSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 			gctx.Abort()

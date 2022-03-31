@@ -6,28 +6,34 @@ import (
 
 	confluentKafka "github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
+	pb "github.com/go-kafka-microservice/AuthProto"
 	"github.com/go-kafka-microservice/ListingService/controllers"
 	"github.com/go-kafka-microservice/ListingService/database"
 	gokafkaConsumer "github.com/go-kafka-microservice/ListingService/goKafka/consumer"
 	gokafkaProducer "github.com/go-kafka-microservice/ListingService/goKafka/producer"
+	"github.com/go-kafka-microservice/ListingService/middleware"
 	"github.com/go-kafka-microservice/ListingService/routes"
 	"github.com/go-kafka-microservice/ListingService/services"
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 var (
 	err                  error
 	server               *gin.Engine
 	kafkaConsumer        *kafka.Reader
-	kafkaProducer        *confluentKafka.Producer
-	ctx                  context.Context
 	mongoClient          *mongo.Client
+	grpcConn             *grpc.ClientConn
+	ctx                  context.Context
+	kafkaProducer        *confluentKafka.Producer
 	listingRouter        *routes.ListingRoutes
 	productCollection    *mongo.Collection
+	authProtoClient      pb.AuthServicesClient
 	kafkaConsumerService gokafkaConsumer.GoKafkaServices
 	kafkaProducerService gokafkaProducer.GoKafkaServices
+	listingMiddleware    *middleware.ListingMiddleware
 	listingService       services.ListingService
 	listingController    *controllers.ListingController
 )
@@ -54,8 +60,23 @@ func init() {
 	kafkaConsumerService = gokafkaConsumer.NewGokafkaServiceImpl(kafkaConsumer, productCollection, ctx)
 	kafkaProducerService = gokafkaProducer.NewKafkaProducer(kafkaProducer)
 
+	// Create gRPC Client
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithBlock())
+	grpcConn, err = grpc.Dial("localhost:8000", opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// initialiaze authService client
+	authProtoClient = pb.NewAuthServicesClient(grpcConn)
+
 	// Initialize Listing Service
-	listingService = services.NewListingServiceImpl(kafkaConsumerService, kafkaProducerService, productCollection, ctx)
+	listingService = services.NewListingServiceImpl(kafkaConsumerService, kafkaProducerService, productCollection, authProtoClient, ctx)
+
+	// Initialize Listing Middleware
+	listingMiddleware = middleware.NewListingMiddleware(listingService)
 
 	// Initialize listing Controller
 	listingController = controllers.NewListingController(listingService)
@@ -68,6 +89,10 @@ func init() {
 }
 
 func main() {
+	defer mongoClient.Disconnect(ctx)
+
+	// Register Middlewares
+	server.Use(listingMiddleware.AuthorizeUser())
 
 	// Register All routes
 	basePath := server.Group("/v1/listing")

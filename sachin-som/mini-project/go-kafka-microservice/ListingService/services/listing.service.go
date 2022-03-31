@@ -8,4 +8,5 @@ import (
 type ListingService interface {
 	ShowProducts() ([]*models.Product, error)
 	MakeOrder(primitive.ObjectID, primitive.ObjectID) error
+	AuthorizeUser(string) (string, error)
 }
