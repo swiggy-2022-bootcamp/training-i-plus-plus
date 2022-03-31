@@ -4,25 +4,24 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"srctc/database"
 	"srctc/middlewares"
 	"srctc/models"
+	"srctc/repository"
 	"srctc/responses"
 	"strings"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
+// var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
+var registerrepo repository.AuthRepository
 
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var register models.SignUp
 		defer cancel()
 
@@ -36,6 +35,7 @@ func SignUp() gin.HandlerFunc {
 			return
 		}
 
+		// hash password
 		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
 
 		if err != nil {
@@ -52,7 +52,10 @@ func SignUp() gin.HandlerFunc {
 		}
 
 		if register.TypeOf == "admin" || register.TypeOf == "user" {
-			result, err := registerCollection.InsertOne(ctx, newSignUp)
+
+			// result, err := registerCollection.InsertOne(ctx, newSignUp)
+			result, err := registerrepo.Insert(newSignUp)
+
 			if err != nil {
 				c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -70,7 +73,7 @@ func SignUp() gin.HandlerFunc {
 
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var register models.SignUp
 		defer cancel()
 
@@ -85,8 +88,9 @@ func Login() gin.HandlerFunc {
 		}
 
 		if register.TypeOf == "admin" {
-			var admin_reg models.SignUp
-			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
+			// var admin_reg models.SignUp
+			// err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
+			admin_reg, err := registerrepo.Read(register.Username)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -108,8 +112,10 @@ func Login() gin.HandlerFunc {
 			return
 
 		} else if register.TypeOf == "user" {
-			var user_reg models.SignUp
-			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
+			// var user_reg models.SignUp
+			// err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
+			_, err := registerrepo.Read(register.Username)
+
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
 				return

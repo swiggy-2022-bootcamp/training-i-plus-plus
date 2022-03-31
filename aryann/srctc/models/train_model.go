@@ -1,6 +1,9 @@
 package models
 
+import "go.mongodb.org/mongo-driver/bson/primitive"
+
 type Train struct {
-	Source      string `json:"source,omitempty" validate:"required"`
-	Destination string `json:"destination,omitempty" validate:"required"`
+	Id          primitive.ObjectID `json:"id,omitempty" validate:"required"`
+	Source      string             `json:"source,omitempty" validate:"required"`
+	Destination string             `json:"destination,omitempty" validate:"required"`
 }
