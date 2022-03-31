@@ -39,7 +39,7 @@ func (as *AuthServicesImpl) Authenticate(credentials *models.Credentials) (strin
 		return "", nil
 	}
 
-	token, err := as.JWTUtils.GenerateToken(credentials, time.Now().Add(5*time.Minute))
+	token, err := as.JWTUtils.GenerateToken(credentials, time.Now().Add(5*time.Hour))
 
 	return token, err
 }

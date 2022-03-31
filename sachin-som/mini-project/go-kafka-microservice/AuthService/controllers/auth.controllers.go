@@ -43,8 +43,14 @@ func (ac AuthControllers) Authenticate(ctx context.Context, in *pb.Credentials) 
 
 func (ac AuthControllers) Authorize(ctx context.Context, in *pb.TokenRequest) (*pb.Response, error) {
 	token, err := ac.AuthServices.Authorize(in.Token)
+	if err != nil {
+		return &pb.Response{
+			Token: "",
+			Err:   err.Error(),
+		}, err
+	}
 	return &pb.Response{
 		Token: token,
-		Err:   err.Error(),
-	}, err
+		Err:   "",
+	}, nil
 }

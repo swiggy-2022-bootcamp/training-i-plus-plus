@@ -45,7 +45,7 @@ func (ju *JWTUtilsImpl) GenerateToken(credentials *models.Credentials, exp time.
 }
 
 func (ju *JWTUtilsImpl) ValidateToken(tokenStr string, exp time.Time) (string, error) {
-	claims := models.Claims{}
+	claims := &models.Claims{}
 	tkn, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
@@ -53,10 +53,10 @@ func (ju *JWTUtilsImpl) ValidateToken(tokenStr string, exp time.Time) (string, e
 		return "", err
 	}
 	if !tkn.Valid {
-		return "", errors.New("")
+		return "", errors.New("Provide a valid token.")
 	}
-	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) > 30*time.Second {
-		return ju.RefreshToken(&claims, exp)
+	if time.Unix(claims.ExpiresAt, 0).Sub(time.Now()) < 30*time.Second {
+		return ju.RefreshToken(claims, exp)
 	}
 	return "", nil
 }
