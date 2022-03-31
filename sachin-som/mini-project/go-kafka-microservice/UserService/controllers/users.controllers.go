@@ -19,6 +19,15 @@ func NewUserControllers(userService services.UserService) *UserControllers {
 	}
 }
 
+// CreateUser godoc
+// @Summary Create User
+// @Description creates a new user
+// @Accept  json
+// @Produce  json
+// @Success 200 {array} string
+// @Failure 400,404 {string} string "error"
+// @Tags User
+// @Router /create [get]
 func (uc *UserControllers) CreateUser(gctx *gin.Context) {
 	var user models.User
 	if err := gctx.ShouldBindJSON(&user); err != nil {
