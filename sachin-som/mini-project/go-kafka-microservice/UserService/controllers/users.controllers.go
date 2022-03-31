@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -63,10 +62,6 @@ func (uc *UserControllers) Login(gctx *gin.Context) {
 		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	fmt.Println("*****************************")
-	fmt.Println(token)
-	fmt.Println("IN CONTROLLLERS")
-	fmt.Println("**************************")
 	gctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
