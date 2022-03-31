@@ -29,11 +29,10 @@ func (as *AuthServicesImpl) Authenticate(credentials *models.Credentials) (strin
 	// Get the stored pwd in userdb
 	// TODO: Can communicate through gRPC to UserService
 	var user models.User
-	filter := bson.D{bson.E{Value: "email", Key: credentials.Email}}
+	filter := bson.D{bson.E{Key: "email", Value: credentials.Email}}
 	if err := as.UserCollection.FindOne(as.Ctx, filter).Decode(&user); err != nil {
 		return "", nil
 	}
-
 	// Check for password
 	// TODO: Need to call MatchPassword for hashed password
 	if user.Password != credentials.Password {
@@ -41,6 +40,7 @@ func (as *AuthServicesImpl) Authenticate(credentials *models.Credentials) (strin
 	}
 
 	token, err := as.JWTUtils.GenerateToken(credentials, time.Now().Add(5*time.Minute))
+
 	return token, err
 }
 

@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	jwtKey = os.Getenv("JWT_SECRET")
+	jwtKey = []byte(os.Getenv("JWT_SECRET"))
 )
 
 type JWTUtils interface {
@@ -38,8 +38,10 @@ func (ju *JWTUtilsImpl) GenerateToken(credentials *models.Credentials, exp time.
 
 	// Create the JWT string
 	tokenString, err := token.SignedString(jwtKey)
-
-	return tokenString, err
+	if err != nil {
+		return "", nil
+	}
+	return tokenString, nil
 }
 
 func (ju *JWTUtilsImpl) ValidateToken(tokenStr string, exp time.Time) (string, error) {

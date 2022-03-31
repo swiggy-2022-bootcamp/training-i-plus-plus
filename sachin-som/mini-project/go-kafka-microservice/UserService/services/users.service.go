@@ -11,4 +11,5 @@ import (
 type UserService interface {
 	CreateUser(*models.User) error
 	GetUser(primitive.ObjectID) (*models.User, error)
+	Login(*models.Credentials) (string, error)
 }

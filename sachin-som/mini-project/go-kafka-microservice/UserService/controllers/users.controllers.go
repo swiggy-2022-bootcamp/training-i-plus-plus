@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -47,8 +48,31 @@ func (uc *UserControllers) GetUser(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, gin.H{"message": user})
 }
 
+func (uc *UserControllers) Login(gctx *gin.Context) {
+	var credentials models.Credentials
+	if err := gctx.ShouldBindJSON(&credentials); err != nil {
+		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if credentials.Email == "" || credentials.Password == "" {
+		gctx.JSON(http.StatusBadRequest, gin.H{"message": "Please Provide email and password."})
+		return
+	}
+	token, err := uc.UserService.Login(&credentials)
+	if err != nil {
+		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
+	fmt.Println("*****************************")
+	fmt.Println(token)
+	fmt.Println("IN CONTROLLLERS")
+	fmt.Println("**************************")
+	gctx.JSON(http.StatusOK, gin.H{"token": token})
+}
+
 func (uc *UserControllers) RegisterUserRoutes(rg *gin.RouterGroup) {
 	userGroup := rg.Group("/")
 	userGroup.POST("/create", uc.CreateUser)
 	userGroup.GET("/get/:id", uc.GetUser)
+	userGroup.POST("/login", uc.Login)
 }

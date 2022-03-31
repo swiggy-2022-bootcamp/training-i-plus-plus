@@ -24,7 +24,7 @@ var (
 	mongoClient     *mongo.Client
 	userCollection  *mongo.Collection
 	authServices    services.AuthServices
-	authControllers controllers.AuthControllers
+	authControllers *controllers.AuthControllers
 )
 
 func init() {
@@ -48,7 +48,7 @@ func init() {
 	authServices = services.NewAuthServiceImpl(jwtUtils, userCollection, ctx)
 
 	// Initialize (gRPC Service Implementation Server) authControllers
-	authControllers = *controllers.NewAuthControllers(authServices)
+	authControllers = controllers.NewAuthControllers(authServices)
 
 	// Create TCP HTTP connection
 	httpListener, err = net.Listen("tcp", ":8000")
@@ -63,7 +63,7 @@ func main() {
 	grpcServer = grpc.NewServer()
 
 	// Register gRPC Services
-	controllers.RegisterAuthServicesServer(grpcServer, authControllers)
+	controllers.RegisterAuthServicesServer(grpcServer, *authControllers)
 
 	// Start the Server
 	if err = grpcServer.Serve(httpListener); err != nil {

@@ -5,11 +5,13 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/go-kafka-microservice/AuthService/controllers"
 	"github.com/go-kafka-microservice/UserService/controllers"
 	"github.com/go-kafka-microservice/UserService/database"
 	"github.com/go-kafka-microservice/UserService/services"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -17,10 +19,12 @@ var (
 	ctx         context.Context
 	server      *gin.Engine
 	mongoClient *mongo.Client
+	grpcConn    *grpc.ClientConn
 
-	userController *controllers.UserControllers
-	userService    services.UserService
-	userCollection *mongo.Collection
+	userController    *controllers.UserControllers
+	authServiceClient pb.AuthServicesClient
+	userService       services.UserService
+	userCollection    *mongo.Collection
 )
 
 func init() {
@@ -38,8 +42,19 @@ func init() {
 	// Create User Collection in MongoDB
 	userCollection = mongoClient.Database("UserDB").Collection("users")
 
+	// Create gRPC Client
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithBlock())
+	grpcConn, err = grpc.Dial("localhost:8000", opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	// initialiaze authService client
+	authServiceClient = pb.NewAuthServicesClient(grpcConn)
+
 	// Initialize layers
-	userService = services.NewUserServiceImpl(userCollection, ctx)
+	userService = services.NewUserServiceImpl(userCollection, authServiceClient, grpcConn, ctx)
 	userController = controllers.NewUserControllers(userService)
 
 	// Initialize gin server
@@ -48,6 +63,7 @@ func init() {
 
 func main() {
 	defer mongoClient.Disconnect(ctx)
+	defer grpcConn.Close()
 
 	// Define Base path and register routes
 	basePath := server.Group("/v1/users")
