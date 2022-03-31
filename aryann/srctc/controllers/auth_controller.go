@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"srctc/database"
+	"srctc/middlewares"
 	"srctc/models"
 	"srctc/responses"
 	"strings"
@@ -18,25 +19,6 @@ import (
 )
 
 var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
-
-var (
-	mySigningKey = []byte("secret")
-)
-
-func GetJWT(group string) (string, error) {
-	token := jwt.New(jwt.SigningMethodHS256)
-	claims := token.Claims.(jwt.MapClaims)
-	claims["authorized"] = true
-	claims["group"] = group
-	claims["exp"] = time.Now().Add(time.Hour * 500).Unix()
-	tokenString, err := token.SignedString(mySigningKey)
-
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
-}
 
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -109,13 +91,22 @@ func Login() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
-			token, err := GetJWT("admin")
+			token, err := middlewares.GetJWT("admin")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
+
+			// compare password
+			err = bcrypt.CompareHashAndPassword([]byte(admin_reg.Password), []byte(register.Password))
+			if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in comparing password", Data: map[string]interface{}{"data": err.Error()}})
+				return
+			}
+
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Token: token})
 			return
+
 		} else if register.TypeOf == "user" {
 			var user_reg models.SignUp
 			err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
@@ -124,7 +115,7 @@ func Login() gin.HandlerFunc {
 				return
 			}
 
-			token, err := GetJWT("user")
+			token, err := middlewares.GetJWT("user")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
@@ -158,7 +149,7 @@ func IsAuthorized() gin.HandlerFunc {
 				return nil, fmt.Errorf(("invalid signing method"))
 			}
 
-			return mySigningKey, nil
+			return middlewares.GetMySigingKey(), nil
 		})
 		if err != nil {
 			respondWithError(c, 501, err.Error())
