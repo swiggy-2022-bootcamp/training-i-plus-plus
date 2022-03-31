@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"ticket_reservation_system/helper"
 	"ticket_reservation_system/model"
@@ -81,12 +82,20 @@ func Login() gin.HandlerFunc {
 			c.JSON(http.StatusBadGateway, gin.H{"error": "incorrect password", "details": err.Error()})
 			return
 		}
-		token, refreshToken, _ := helper.GenerateAllTokens(user.UserName)
+		//token, refreshToken, _ := helper.GenerateAllTokens(user.UserName)
 
-		helper.UpdateAllTokens(token, refreshToken, user.UserName)
+		// helper.UpdateAllTokens(token, refreshToken, user.UserName)
 
-		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": gin.H{
-			"token":         user.Token,
-			"refresh_token": user.Refresh_token}})
+		// c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": gin.H{
+		// 	"token":         user.Token,
+		// 	"refresh_token": user.Refresh_token}})
+		fmt.Print("before token")
+		token, err := helper.CreateToken(user.UserName, user.EmailId)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		fmt.Print("after token")
+		c.JSON(http.StatusOK, gin.H{"token": token})
 	}
 }

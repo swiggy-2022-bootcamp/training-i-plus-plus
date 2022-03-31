@@ -11,7 +11,8 @@ func main() {
 	router := gin.Default()
 	config.DatabaseConn()
 
-	routes.UserRoute(router)
+	routes.UserRoutes(router)
+	routes.TrainRoutes(router)
 
 	router.Run(":5001")
 }

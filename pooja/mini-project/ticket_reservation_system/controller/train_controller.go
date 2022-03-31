@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"ticket_reservation_system/config"
 	"ticket_reservation_system/model"
@@ -55,9 +56,10 @@ func GetTrainByTrainNumber() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		trainnumber := c.Param("trainnumber")
+		fmt.Print("get train", trainnumber)
 		var train model.Train
 		defer cancel()
-		if err := trainCollection.FindOne(ctx, bson.M{"trainNumber": trainnumber}).Decode(&train); err != nil {
+		if err := trainCollection.FindOne(ctx, bson.M{"trainnumber": trainnumber}).Decode(&train); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})
 			return
 		}

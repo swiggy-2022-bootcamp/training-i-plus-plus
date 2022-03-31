@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"ticket_reservation_system/config"
+	"ticket_reservation_system/helper"
 	"ticket_reservation_system/model"
 	"time"
 
@@ -27,6 +28,9 @@ func SearchTrains() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
 			return
 		}
+		token := c.Request.Header.Get("Cookie")
+		claims, msg := helper.ValidateToken(token)
+		fmt.Println(claims, msg)
 		/*var train model.Train
 		if err := trainCollection.FindOne(ctx, bson.M{"departurestation": searchReq.DepartureStation}).Decode(&train); err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"status": http.StatusInternalServerError, "error": err.Error()})

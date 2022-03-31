@@ -6,22 +6,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRoute(router *gin.Engine) {
-	router.POST("/user", controller.AddUser())
-	router.GET("/user/:username", controller.GetUserByUsername())
-	router.PUT("/user/:username", controller.UpdateUserPassword())
-	router.DELETE("/user/:username", controller.DeleteUserByUsername())
+func UserRoutes(router *gin.Engine) {
+	userRouter := router.Group("/user")
+
+	router.POST("/add", controller.AddUser())
+	router.GET("/get/:username", controller.GetUserByUsername())
+	router.PUT("/update/:username", controller.UpdateUserPassword())
+	router.DELETE("/delete/:username", controller.DeleteUserByUsername())
 
 	router.GET("/users", controller.GetUsers())
 
-	router.POST("/signup", controller.Signup())
-	router.POST("/login", controller.Login())
-
-	router.POST("/train", controller.AddTrain())
-	router.GET("/train/:trainnumber", controller.GetTrainByTrainNumber())
-	router.GET("/trains", controller.GetAllTrains())
-	router.PUT("/train/:train_number", controller.UpdateTrainDetails())
-	router.DELETE("/train/:train_number", controller.DeleteTrain())
+	userRouter.POST("/signup", controller.Signup())
+	userRouter.POST("/login", controller.Login())
 
 	router.GET("/search_trains", controller.SearchTrains())
 	router.POST("/booking/book_ticket", controller.BookTickets())
