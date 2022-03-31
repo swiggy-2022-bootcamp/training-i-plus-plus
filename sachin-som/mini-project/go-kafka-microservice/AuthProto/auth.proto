@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package AuthProto;
+
+option go_package = "github.com/go-kafka-microservice/AuthProto;AuthProto";
+
+
+message Credentials {
+    string Email = 1;
+    string Password = 2;
+}
+
+message TokenRequest {
+    string Token = 1;
+} 
+
+message Response {
+    string Token = 1;
+    string Err = 2;
+}
+
+// Define Service
+service AuthServices {
+    rpc Authenticate(Credentials) returns (Response) {}
+	rpc Authorize(TokenRequest) returns (Response) {}
+}

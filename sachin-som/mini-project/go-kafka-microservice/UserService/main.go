@@ -5,7 +5,7 @@ import (
 	"log"
 
 	"github.com/gin-gonic/gin"
-	pb "github.com/go-kafka-microservice/AuthService/controllers"
+	pb "github.com/go-kafka-microservice/AuthProto"
 	"github.com/go-kafka-microservice/UserService/controllers"
 	"github.com/go-kafka-microservice/UserService/database"
 	"github.com/go-kafka-microservice/UserService/services"

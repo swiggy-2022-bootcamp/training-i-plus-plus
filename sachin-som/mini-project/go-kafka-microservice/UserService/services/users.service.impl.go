@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 
-	pb "github.com/go-kafka-microservice/AuthService/controllers"
+	pb "github.com/go-kafka-microservice/AuthProto"
 	"github.com/go-kafka-microservice/UserService/models"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

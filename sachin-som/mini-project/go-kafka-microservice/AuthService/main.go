@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 
+	pb "github.com/go-kafka-microservice/AuthProto"
 	"github.com/go-kafka-microservice/AuthService/controllers"
 	"github.com/go-kafka-microservice/AuthService/database"
 	"github.com/go-kafka-microservice/AuthService/services"
@@ -63,7 +64,7 @@ func main() {
 	grpcServer = grpc.NewServer()
 
 	// Register gRPC Services
-	controllers.RegisterAuthServicesServer(grpcServer, *authControllers)
+	pb.RegisterAuthServicesServer(grpcServer, *authControllers)
 
 	// Start the Server
 	if err = grpcServer.Serve(httpListener); err != nil {
