@@ -2,9 +2,11 @@ package main
 
 import (
 	"net/http"
+	"time"
 
-	"github.com/dhi13man/healthcare-app/controllers"
-	"github.com/dhi13man/healthcare-app/models"
+	"github.com/dhi13man/healthcare-app/users_service/controllers"
+	// users_models "github.com/dhi13man/healthcare-app/users_service/models"
+	bookkeeping_models "github.com/dhi13man/healthcare-app/bookkeeping_service/models"
 	"github.com/gin-gonic/gin"
 )
 
@@ -14,7 +16,7 @@ func main() {
 	router.GET("/", func(context *gin.Context) {
 		context.JSON(
 			http.StatusOK,
-			models.NewDisease(
+			bookkeeping_models.NewDisease(
 				"Covid-19",
 				[]string{},
 				[]string{"Fever", "Cough", "Shortness of breath"},
@@ -24,5 +26,6 @@ func main() {
 
 	router.POST("/users/", controllers.CreateClient)
 
-	router.Run()
+	go router.Run("localhost/users_service:8081")
+	time.Sleep(100 * time.Second)
 }
