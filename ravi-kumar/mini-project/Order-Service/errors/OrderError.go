@@ -7,8 +7,12 @@ type OrderError struct {
 	ErrorMessage string
 }
 
-func (productError *OrderError) Error() string {
-	return productError.ErrorMessage
+func (orderError *OrderError) Error() string {
+	return orderError.ErrorMessage
+}
+
+func AccessDenied() *OrderError {
+	return &OrderError{http.StatusUnauthorized, "Access denied over this API"}
 }
 
 func MalformedIdError() *OrderError {

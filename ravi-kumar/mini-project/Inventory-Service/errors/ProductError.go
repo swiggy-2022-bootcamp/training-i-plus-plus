@@ -7,6 +7,10 @@ type ProductError struct {
 	ErrorMessage string
 }
 
+func AccessDenied() *ProductError {
+	return &ProductError{http.StatusUnauthorized, "Access denied over this API"}
+}
+
 func (productError *ProductError) Error() string {
 	return productError.ErrorMessage
 }

@@ -2,6 +2,7 @@ package controller
 
 import (
 	errors "Inventory-Service/errors"
+	mockdata "Inventory-Service/model"
 	service "Inventory-Service/service"
 	"strconv"
 
@@ -12,6 +13,14 @@ import (
 )
 
 func CreateProduct(c *gin.Context) {
+	//access: Seller
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+
+	if mockdata.Role(acessorUserRole) != mockdata.Seller {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	result := service.CreateProduct(&c.Request.Body)
 	c.JSON(http.StatusOK, result)
 }
@@ -22,6 +31,13 @@ func GetCatalog(c *gin.Context) {
 }
 
 func UpdateProductQuantity(c *gin.Context) {
+	//access: Admin and Seller
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	if !(mockdata.Role(acessorUserRole) == mockdata.Seller || mockdata.Role(acessorUserRole) == mockdata.Admin) {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	var productId string = c.Param("productId")
 	updateCount, err := strconv.Atoi(c.Param("updateCount"))
 	if err != nil {
@@ -62,6 +78,14 @@ func GetProductById(c *gin.Context) {
 }
 
 func UpdateProductById(c *gin.Context) {
+	//access: Seller
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+
+	if mockdata.Role(acessorUserRole) != mockdata.Seller {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	var productId string = c.Param("productId")
 	productRetrieved, error := service.UpdateProductById(productId, &c.Request.Body)
 
@@ -79,6 +103,14 @@ func UpdateProductById(c *gin.Context) {
 }
 
 func DeleteProductbyId(c *gin.Context) {
+	//access: Seller
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+
+	if mockdata.Role(acessorUserRole) != mockdata.Seller {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	var productId string = c.Param("productId")
 	successMessage, error := service.DeleteProductbyId(productId)
 

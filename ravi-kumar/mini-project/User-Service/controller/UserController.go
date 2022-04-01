@@ -7,10 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	//"go.mongodb.org/mongo-driver/bson"
 	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func LogInUser(c *gin.Context) {
@@ -32,7 +32,7 @@ func LogInUser(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
-	result, jwtToken, err := service.CreateUser(&c.Request.Body)
+	insertedId, jwtToken, err := service.CreateUser(&c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusFailedDependency, err)
 		return
@@ -44,19 +44,33 @@ func CreateUser(c *gin.Context) {
 		JwtToken string
 	}
 
-	insertedId := result.InsertedID.(primitive.ObjectID).Hex()
 	var responseBody ResponseBody = ResponseBody{insertedId, jwtToken}
 
 	c.JSON(http.StatusOK, responseBody)
 }
 
 func GetAllUsers(c *gin.Context) {
+	//access: only admin
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	if mockdata.Role(acessorUserRole) != mockdata.Admin {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
 	users := service.GetAllUsers()
 	c.JSON(http.StatusOK, users)
 }
 
 func GetUserById(c *gin.Context) {
+	//access: admin or the user itself
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
+
+	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	userRetrieved, error := service.GetUserById(userId)
 
 	if error != nil {
@@ -73,7 +87,16 @@ func GetUserById(c *gin.Context) {
 }
 
 func UpdateUserById(c *gin.Context) {
+	//access: admin or the user itself
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
+
+	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	userRetrieved, error := service.UpdateUserById(userId, &c.Request.Body)
 
 	if error != nil {
@@ -91,7 +114,16 @@ func UpdateUserById(c *gin.Context) {
 }
 
 func DeleteUserbyId(c *gin.Context) {
+	//access: admin or the user itself
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
+
+	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
 	successMessage, error := service.DeleteUserbyId(userId)
 
 	if error != nil {

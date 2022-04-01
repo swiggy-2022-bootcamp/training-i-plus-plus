@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -24,16 +25,25 @@ func IfAuthorized(endPoint func(c *gin.Context)) gin.HandlerFunc {
 		tokenString := authHeader[len(BEARER_SCHEMA):]
 		fmt.Println(tokenString)
 
-		jwtToken, error := ValidateToken(tokenString)
+		userId, userRole, error := ValidateToken(tokenString)
 
 		if error != nil {
 			ctx := context.Context(context.Background())
 			kafka.Produce(ctx, nil, []byte("Unauthorized API access averted"))
 			c.JSON(http.StatusUnauthorized, "Invalid token. "+error.Error())
+			return
 		}
 
-		if jwtToken.Valid {
-			endPoint(c)
-		}
+		c.Params = append(c.Params, gin.Param{
+			Key:   "acessorUserId",
+			Value: userId,
+		},
+			gin.Param{
+				Key:   "acessorUserRole",
+				Value: strconv.Itoa(int(userRole)),
+			},
+		)
+
+		endPoint(c)
 	}
 }

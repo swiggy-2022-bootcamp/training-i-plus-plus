@@ -11,6 +11,9 @@ func (productError *UserError) Error() string {
 	return productError.ErrorMessage
 }
 
+func AccessDenied() *UserError {
+	return &UserError{http.StatusUnauthorized, "Access denied over this API"}
+}
 func UnauthorizedError() *UserError {
 	return &UserError{http.StatusUnauthorized, "Incorrect Credentials"}
 }

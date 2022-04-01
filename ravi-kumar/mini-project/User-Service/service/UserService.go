@@ -36,27 +36,36 @@ func LogInUser(logInDTO mockdata.LogInDTO) (jwtToken string, err error) {
 	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
 		return "", errors.UnauthorizedError()
 	}
-	jwtToken, _ = middleware.GenerateJWT(logInDTO.UserName)
+
+	var user mockdata.User
+	result.Decode(&user)
+
+	fmt.Println("role: ", user.Role)
+
+	jwtToken, _ = middleware.GenerateJWT(user.Id.Hex(), user.Role)
 	return
 }
 
-func CreateUser(body *io.ReadCloser) (insertResult *mongo.InsertOneResult, jwtToken string, err error) {
+func CreateUser(body *io.ReadCloser) (insertedId string, jwtToken string, err error) {
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	_ = client.Connect(ctx)
 
 	var newUser mockdata.User
 	json.NewDecoder(*body).Decode(&newUser)
 
-	jwtToken, err = middleware.GenerateJWT(newUser.UserName)
-	if err != nil {
-		fmt.Println(err.Error())
-		return nil, "", err
-	}
-
 	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
 	result, _ := userCollection.InsertOne(ctx, newUser)
 
-	return result, jwtToken, nil
+	insertedId = result.InsertedID.(primitive.ObjectID).Hex()
+
+	jwtToken, err = middleware.GenerateJWT(insertedId, newUser.Role)
+
+	if err != nil {
+		fmt.Println(err.Error())
+		return "", "", err
+	}
+
+	return insertedId, jwtToken, nil
 }
 
 func GetAllUsers() (allUsers []mockdata.User) {

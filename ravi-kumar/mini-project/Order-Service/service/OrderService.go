@@ -42,7 +42,7 @@ func PlaceOrder(body *io.ReadCloser) (result *mongo.InsertOneResult, err error) 
 		return nil, errors.UserNotFoundError()
 	}
 
-	success, errorResponse, errorProductIndex := UpdateProductQuantity(orderPlaced.Items, -1)
+	success, errorResponse, errorProductIndex := UpdateProductQuantity(userId, orderPlaced.Items, -1)
 	if !success {
 		errorMessage := ReadCloserToString(errorResponse.Body) + ". Product Id: " + orderPlaced.Items[*errorProductIndex] + " (Order rolled back)"
 		return nil, &errors.OrderError{Status: http.StatusBadRequest, ErrorMessage: errorMessage}
@@ -164,7 +164,7 @@ func DeliverOrder(orderId string) (successMessage *string, err error) {
 }
 
 func IsValidUser(userId string) bool {
-	jwtToken, _ := middleware.GenerateJWT(userId)
+	jwtToken, _ := middleware.GenerateJWT(userId, mockdata.Admin)
 	url := "http://localhost:5004/users/"
 
 	// Create a Bearer string by appending string access token
@@ -190,8 +190,8 @@ func IsValidUser(userId string) bool {
 	return true
 }
 
-func UpdateProductQuantity(productIds []string, quantity int) (success bool, errorResponse *http.Response, errorProductIndex *int) {
-	jwtToken, _ := middleware.GenerateJWT("internalAPICall")
+func UpdateProductQuantity(userId string, productIds []string, quantity int) (success bool, errorResponse *http.Response, errorProductIndex *int) {
+	jwtToken, _ := middleware.GenerateJWT(userId, mockdata.Admin)
 
 	// Create a Bearer string by appending string access token
 	var bearer = "Bearer " + jwtToken
@@ -215,7 +215,7 @@ func UpdateProductQuantity(productIds []string, quantity int) (success bool, err
 
 		if resp.StatusCode != http.StatusOK {
 			//roll back
-			UpdateProductQuantity(productIds[:index], 1)
+			UpdateProductQuantity(userId, productIds[:index], 1)
 			return false, resp, &index
 		}
 	}
