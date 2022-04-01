@@ -7,8 +7,9 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swastiksahoo153/train-module/controllers"
-	"github.com/swastiksahoo153/train-module/services"
+	"github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers"
+	"github.com/swastiksahoo153/MicroserviceKafka/TrainModule/services"
+	kf "github.com/swastiksahoo153/MicroserviceKafka/TrainModule/kafkaConsumer"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -21,7 +22,7 @@ var (
 	ctx         	context.Context
 	trainservice    services.TrainService
 	traincontroller controllers.TrainController
-	traincollection	*mongo.Collection
+	Traincollection	*mongo.Collection
 	mongoclient 	*mongo.Client
 	err         	error
 )
@@ -50,8 +51,8 @@ func init(){
 
 	fmt.Println("mongo connection established")
 
-	traincollection = mongoclient.Database("traindb").Collection("trains")
-	trainservice = services.NewTrainService(traincollection, ctx)
+	Traincollection = mongoclient.Database("traindb").Collection("trains")
+	trainservice = services.NewTrainService(Traincollection, ctx)
 	traincontroller = controllers.New(trainservice)
 	server = gin.Default()
 }
@@ -61,6 +62,8 @@ func main(){
 
 	basepath := server.Group("/v1")
 	traincontroller.RegisterTrainRoutes(basepath)
+
+	go kf.Consume(ctx)
 
 	log.Fatal(server.Run(":8081"))
 }

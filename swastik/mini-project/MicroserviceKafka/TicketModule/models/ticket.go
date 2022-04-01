@@ -8,5 +8,4 @@ type Ticket struct{
 	Passenger_name	string	`json:"passenger_name"`
 	Source			string	`json:"source"`
 	Destination		string	`json:"destination"`
-
 }		

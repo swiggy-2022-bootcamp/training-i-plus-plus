@@ -4,8 +4,8 @@ import (
 	"net/http"
 	// "fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/swastiksahoo153/train-module/models"
-	"github.com/swastiksahoo153/train-module/services"
+	"github.com/swastiksahoo153/MicroserviceKafka/TrainModule/models"
+	"github.com/swastiksahoo153/MicroserviceKafka/TrainModule/services"
 )
 
 type TrainController struct{

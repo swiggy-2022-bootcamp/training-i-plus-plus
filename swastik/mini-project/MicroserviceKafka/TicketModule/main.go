@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/swastiksahoo153/ticket-module/controllers"
-	"github.com/swastiksahoo153/ticket-module/services"
+	"github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers"
+	"github.com/swastiksahoo153/MicroserviceKafka/TicketModule/services"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"

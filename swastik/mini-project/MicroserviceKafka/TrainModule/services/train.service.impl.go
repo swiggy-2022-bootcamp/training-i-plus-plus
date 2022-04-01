@@ -1,7 +1,7 @@
 package services
 
 import (
-	"github.com/swastiksahoo153/train-module/models"
+	"github.com/swastiksahoo153/MicroserviceKafka/TrainModule/models"
 	"go.mongodb.org/mongo-driver/mongo"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,6 +21,11 @@ func NewTrainService (traincollection *mongo.Collection, ctx context.Context) Tr
 }
 
 func (t *TrainServiceImpl) CreateTrain(train *models.Train) error{
+	var seats_available []int
+	for i := 1; i<= train.Total_seats; i++{
+		seats_available = append(seats_available, i)
+	}
+	train.Seats_available = seats_available
 	_, err := t.traincollection.InsertOne(t.ctx, train)
 	return err
 }
@@ -68,7 +73,6 @@ func (t *TrainServiceImpl) UpdateTrain(train *models.Train) error{
 				bson.E{Key:"train_name", Value: train.Train_name}, 
 				bson.E{Key:"source", Value: train.Source}, 
 				bson.E{Key:"destination", Value: train.Destination}, 
-				bson.E{Key:"seat_available", Value: train.Seat_available}, 
 				bson.E{Key:"total_seats", Value: train.Total_seats},
 			}}}
 

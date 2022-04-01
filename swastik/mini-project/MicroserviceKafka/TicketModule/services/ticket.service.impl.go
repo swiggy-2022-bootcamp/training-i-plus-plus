@@ -1,12 +1,14 @@
 package services
 
 import (
-	"github.com/swastiksahoo153/ticket-module/models"
+	"github.com/swastiksahoo153/MicroserviceKafka/TicketModule/models"
+	kf "github.com/swastiksahoo153/MicroserviceKafka/TicketModule/kafkaProducer"
 	"go.mongodb.org/mongo-driver/mongo"
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"errors"
 	"fmt"
+	"time"
 )
 
 type TicketServiceImpl struct {
@@ -22,7 +24,12 @@ func NewTicketService (ticketcollection *mongo.Collection, ctx context.Context) 
 }
 
 func (t *TicketServiceImpl) CreateTicket(ticket *models.Ticket) error{
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
 	_, err := t.ticketcollection.InsertOne(t.ctx, ticket)
+	if _, err := kf.Produce(ctx, "ticket", ticket); err != nil {
+		return err
+	}
 	return err
 }
 

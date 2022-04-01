@@ -1,6 +1,6 @@
 package services
 
-import "github.com/swastiksahoo153/train-module/models"
+import "github.com/swastiksahoo153/MicroserviceKafka/TrainModule/models"
 
 type TrainService interface {
 	CreateTrain(*models.Train) error

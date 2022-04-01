@@ -1,6 +1,6 @@
 package services
 
-import "github.com/swastiksahoo153/ticket-module/models"
+import "github.com/swastiksahoo153/MicroserviceKafka/TicketModule/models"
 
 type TicketService interface {
 	CreateTicket(*models.Ticket) error

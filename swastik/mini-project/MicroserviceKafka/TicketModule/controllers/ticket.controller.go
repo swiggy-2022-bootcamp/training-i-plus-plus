@@ -3,8 +3,8 @@ package controllers
 import (
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/swastiksahoo153/ticket-module/models"
-	"github.com/swastiksahoo153/ticket-module/services"
+	"github.com/swastiksahoo153/MicroserviceKafka/TicketModule/models"
+	"github.com/swastiksahoo153/MicroserviceKafka/TicketModule/services"
 	"fmt"
 )
 
