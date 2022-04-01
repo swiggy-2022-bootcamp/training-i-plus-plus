@@ -1,11 +1,59 @@
 basePath: /v1/users
+definitions:
+  requests.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  requests.UserRequest:
+    properties:
+      email:
+        type: string
+      fullname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    required:
+    - fullname
+    - password
+    - phone
+    type: object
+  responses.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  responses.TokenResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  responses.UserResponse:
+    properties:
+      email:
+        type: string
+      fullname:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+    required:
+    - fullname
+    - password
+    - phone
+    type: object
 host: localhost:8001
 info:
   contact:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: This is a sample server celler server.
+  description: This is a service for user management.
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -14,28 +62,104 @@ info:
   version: "1.0"
 paths:
   /create:
-    get:
+    post:
       consumes:
       - application/json
-      description: creates a new user
+      description: user creation API
+      parameters:
+      - description: user request structure
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UserRequest'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            items:
-              type: string
-            type: array
+            $ref: '#/definitions/responses.MessageResponse'
         "400":
-          description: error
+          description: Bad Request
           schema:
-            type: string
-        "404":
-          description: error
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
           schema:
-            type: string
-      summary: Create User
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      summary: Create New User
+      tags:
+      - User
+  /get/{id}:
+    get:
+      consumes:
+      - application/json
+      description: user get API
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      summary: Get User By Id
+      tags:
+      - User
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: login user API
+      parameters:
+      - description: user credentials structure
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/requests.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.TokenResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      summary: Login User
       tags:
       - User
 swagger: "2.0"
