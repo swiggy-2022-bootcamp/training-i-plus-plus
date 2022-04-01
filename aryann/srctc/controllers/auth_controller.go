@@ -13,11 +13,9 @@ import (
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"golang.org/x/crypto/bcrypt"
 )
 
-// var registerCollection *mongo.Collection = database.GetCollection(database.DB, "signup")
-var registerrepo repository.AuthRepository
+var registerRepo repository.AuthRepository
 
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -36,7 +34,7 @@ func SignUp() gin.HandlerFunc {
 		}
 
 		// hash password
-		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
+		hashedPassword, err := middlewares.HashMyPassword(register.Password)
 
 		if err != nil {
 			panic(err)
@@ -53,8 +51,7 @@ func SignUp() gin.HandlerFunc {
 
 		if register.TypeOf == "admin" || register.TypeOf == "user" {
 
-			// result, err := registerCollection.InsertOne(ctx, newSignUp)
-			result, err := registerrepo.Insert(newSignUp)
+			result, err := registerRepo.Create(newSignUp)
 
 			if err != nil {
 				c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -64,10 +61,9 @@ func SignUp() gin.HandlerFunc {
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 			return
 		} else {
-			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error not valid group"})
+			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error not valid user group"})
 			return
 		}
-
 	}
 }
 
@@ -87,52 +83,44 @@ func Login() gin.HandlerFunc {
 			return
 		}
 
+		reg, err := registerRepo.Read(register.Username)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		err = middlewares.ComparePassword(reg.Password, register.Password)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in comparing password", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
 		if register.TypeOf == "admin" {
-			// var admin_reg models.SignUp
-			// err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&admin_reg)
-			admin_reg, err := registerrepo.Read(register.Username)
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
-				return
-			}
+
 			token, err := middlewares.GetJWT("admin")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 
-			// compare password
-			err = bcrypt.CompareHashAndPassword([]byte(admin_reg.Password), []byte(register.Password))
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in comparing password", Data: map[string]interface{}{"data": err.Error()}})
-				return
-			}
-
-			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Token: token})
+			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "you have successfully logged in", Token: token})
 			return
 
 		} else if register.TypeOf == "user" {
-			// var user_reg models.SignUp
-			// err := registerCollection.FindOne(ctx, bson.M{"username": register.Username}).Decode(&user_reg)
-			_, err := registerrepo.Read(register.Username)
-
-			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in locating user", Data: map[string]interface{}{"data": err.Error()}})
-				return
-			}
 
 			token, err := middlewares.GetJWT("user")
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error in generating token", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
-			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Token: token})
+
+			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "you have successfully logged in", Token: token})
 			return
+
 		} else {
-			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error not valid group"})
+			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusInternalServerError, Message: "error not valid user group"})
 			return
 		}
-
 	}
 }
 
@@ -140,7 +128,7 @@ func respondWithError(c *gin.Context, code int, message interface{}) {
 	c.AbortWithStatusJSON(code, gin.H{"error": message})
 }
 
-func IsAuthorized() gin.HandlerFunc {
+func IsAuthorized(group string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		bearToken := c.Request.Header.Get("Authorization")
 
@@ -165,6 +153,12 @@ func IsAuthorized() gin.HandlerFunc {
 			respondWithError(c, 401, "Invalid token")
 			return
 		}
+
+		if token.Claims.(jwt.MapClaims)["group"] != group {
+			respondWithError(c, 401, "unauthorized user")
+			return
+		}
+
 		c.Next()
 	}
 }

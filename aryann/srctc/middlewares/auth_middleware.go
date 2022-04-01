@@ -4,6 +4,7 @@ import (
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -27,4 +28,26 @@ func GetJWT(group string) (string, error) {
 
 func GetMySigingKey() []byte {
 	return mySigningKey
+}
+
+func HashMyPassword(password string) (string, error) {
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(hashedPassword), nil
+}
+
+func ComparePassword(hashedPassword, password string) error {
+
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -7,7 +7,7 @@ import (
 )
 
 func AdminRoute(router *gin.Engine) {
-	router.Use(controllers.IsAuthorized())
+	router.Use(controllers.IsAuthorized("admin"))
 	router.POST("/admin", controllers.CreateAdmin())
 	router.GET("/admin/:adminid", controllers.GetAdmin())
 	router.DELETE("/admin/:adminid", controllers.DeleteAdmin())
