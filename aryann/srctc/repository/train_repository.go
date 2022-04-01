@@ -24,7 +24,7 @@ func init() {
 
 type TrainRepository struct{}
 
-func (trn TrainRepository) Insert(newTrain models.Train) (interface{}, error) {
+func (trn TrainRepository) Create(newTrain models.Train) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTrain.InsertOne(ctx, &newTrain)
 	if err == nil {

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	collectionTicketName = "ticket"
+	collectionTicketName = "tickets"
 	collectionTicket     = new(mongo.Collection)
 )
 
@@ -24,7 +24,7 @@ func init() {
 
 type TicketRepository struct{}
 
-func (avl TicketRepository) Insert(newTicket models.Ticket) (interface{}, error) {
+func (avl TicketRepository) Create(newTicket models.Ticket) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTicket.InsertOne(ctx, &newTicket)
 	if err == nil {
@@ -43,7 +43,7 @@ func (avl TicketRepository) Read(objId primitive.ObjectID) (models.Ticket, error
 func (avl TicketRepository) ReadTrainId(objId primitive.ObjectID) (models.Ticket, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	var user models.Ticket
-	err := collectionTicket.FindOne(ctx, bson.M{"trainid": objId}).Decode(&user)
+	err := collectionTicket.FindOne(ctx, bson.M{"train_id": objId}).Decode(&user)
 	return user, err
 }
 
@@ -51,12 +51,12 @@ func (avl TicketRepository) Update(updateTicket models.Ticket, objId primitive.O
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	//update := bson.M{"departure": updateTicket.Departure, "arrival": updateTicket.Arrival}
 	updatebson := bson.M{}
-	if updateTicket.Departure != "" {
-		updatebson["departure"] = updateTicket.Departure
-	}
-	if updateTicket.Arrival != "" {
-		updatebson["arrival"] = updateTicket.Arrival
-	}
+	// if updateTicket.Departure != "" {
+	// 	updatebson["departure"] = updateTicket.Departure
+	// }
+	// if updateTicket.Arrival != "" {
+	// 	updatebson["arrival"] = updateTicket.Arrival
+	// }
 	if updateTicket.Capacity != 0 {
 		updatebson["capacity"] = updateTicket.Capacity
 	}

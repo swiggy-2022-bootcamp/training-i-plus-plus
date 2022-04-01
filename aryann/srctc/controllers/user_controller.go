@@ -28,38 +28,37 @@ var purchasedRepo repository.PurchasedRepository
 var ticketRepo repository.TicketRepository
 var trainRepo repository.TrainRepository
 
-func CreateUser() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		var user models.User
-		defer cancel()
+// func CreateUser() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+// 		var user models.User
+// 		defer cancel()
 
-		if err := c.BindJSON(&user); err != nil {
-			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
+// 		if err := c.BindJSON(&user); err != nil {
+// 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+// 			return
+// 		}
 
-		if validationErr := validate.Struct(&user); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-			return
-		}
+// 		if validationErr := validate.Struct(&user); validationErr != nil {
+// 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+// 			return
+// 		}
 
-		newUser := models.User{
-			Name:        user.Name,
-			Email:       user.Email,
-			PurchasedID: []primitive.ObjectID{},
-		}
+// 		newUser := models.User{
+// 			Name:  user.Name,
+// 			Email: user.Email,
+// 		}
 
-		result, err := userRepo.Create(newUser)
-		// result, err := userCollection.InsertOne(ctx, newUser)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-			return
-		}
+// 		result, err := userRepo.Create(newUser)
+// 		// result, err := userCollection.InsertOne(ctx, newUser)
+// 		if err != nil {
+// 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+// 			return
+// 		}
 
-		c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
-	}
-}
+// 		c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+// 	}
+// }
 
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -98,15 +97,15 @@ func DeleteUser() gin.HandlerFunc {
 			return
 		}
 
-		if result.(int) < 1 {
-			c.JSON(http.StatusNotFound,
-				responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
-			)
-			return
-		}
+		// if result.(int) < 1 {
+		// 	c.JSON(http.StatusNotFound,
+		// 		responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
+		// 	)
+		// 	return
+		// }
 
 		c.JSON(http.StatusOK,
-			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!", "result": result}},
 		)
 	}
 }
@@ -167,6 +166,7 @@ func PurchaseTicket() gin.HandlerFunc {
 			Arrival:        trainbooked.Destination,
 			Departure_time: ticket.Departure_time,
 			Arrival_time:   ticket.Arrival_time,
+			Cost:           ticket.Cost,
 		}
 
 		result, err := purchasedRepo.Create(newpurchased)
@@ -232,15 +232,15 @@ func DeletePurchased() gin.HandlerFunc {
 			return
 		}
 
-		if result.(int) < 1 {
-			c.JSON(http.StatusNotFound,
-				responses.PurchasedResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Purchased with specified ID not found!"}},
-			)
-			return
-		}
+		// if result.(int) < 1 {
+		// 	c.JSON(http.StatusNotFound,
+		// 		responses.PurchasedResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Purchased with specified ID not found!"}},
+		// 	)
+		// 	return
+		// }
 
 		c.JSON(http.StatusOK,
-			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!"}},
+			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!", "result": result}},
 		)
 	}
 }
