@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -15,6 +15,7 @@ import (
 var (
 	collectionTicketName = "tickets"
 	collectionTicket     = new(mongo.Collection)
+	logger5              = logger.NewLoggerService("ticket_repository")
 )
 
 func init() {
@@ -28,7 +29,8 @@ func (avl TicketRepository) Create(newTicket models.Ticket) (interface{}, error)
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTicket.InsertOne(ctx, &newTicket)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger5.Log("Created a new ticket: ", result.InsertedID)
+		// fmt.Println("Inserted a single document: ", result.InsertedID)
 	}
 	return result.InsertedID, err
 }
@@ -62,7 +64,8 @@ func (avl TicketRepository) Update(updateTicket models.Ticket, objId primitive.O
 	}
 	result, err := collectionTicket.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": updatebson})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.UpsertedID)
+		logger5.Log("Updated a ticket: ", result.UpsertedID)
+		// fmt.Println("Updated a single document: ", result.UpsertedID)
 	}
 	return result.UpsertedID, err
 }
@@ -71,7 +74,8 @@ func (avl TicketRepository) Delete(objId primitive.ObjectID) (interface{}, error
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTicket.DeleteOne(ctx, bson.M{"_id": objId})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.DeletedCount)
+		logger5.Log("Deleted a ticket: ", result.DeletedCount)
+		// fmt.Println("Updated a single document: ", result.DeletedCount)
 	}
 	return result.DeletedCount, err
 }

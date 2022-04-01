@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -15,6 +15,7 @@ import (
 var (
 	collectionAdminName = "admins"
 	collectionAdmin     = new(mongo.Collection)
+	logger2             = logger.NewLoggerService("admin_repository")
 )
 
 func init() {
@@ -28,7 +29,7 @@ func (adm AdminRepository) Create(newAdmin models.Admin) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionAdmin.InsertOne(ctx, &newAdmin)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger2.Log("Created a new admin: ", newAdmin.Name)
 	}
 	return result.InsertedID, err
 }
@@ -51,7 +52,8 @@ func (adm AdminRepository) Update(updateAdmin models.Admin, objId primitive.Obje
 	}
 	result, err := collectionAdmin.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": updatebson})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.UpsertedID)
+		logger2.Log("Updated Admin details: ", result.UpsertedID)
+		// fmt.Println("Updated a single document: ", result.UpsertedID)
 	}
 	return result.UpsertedID, err
 }
@@ -60,7 +62,8 @@ func (adm AdminRepository) Delete(objId primitive.ObjectID) (interface{}, error)
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionAdmin.DeleteOne(ctx, bson.M{"_id": objId})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.DeletedCount)
+		logger2.Log("Deleted Admin: ", objId)
+		// fmt.Println("Updated a single document: ", result.DeletedCount)
 	}
 	return result.DeletedCount, err
 }

@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -13,6 +13,7 @@ import (
 
 var (
 	collectionAuth = new(mongo.Collection)
+	logger3        = logger.NewLoggerService("auth_repository")
 )
 
 func init() {
@@ -26,7 +27,8 @@ func (ath AuthRepository) Create(newUser models.SignUp) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionAuth.InsertOne(ctx, &newUser)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger3.Log("Created a new user: ", newUser.Username)
+		// fmt.Println("Inserted a single document: ", result.InsertedID)
 	}
 
 	return result.InsertedID, err

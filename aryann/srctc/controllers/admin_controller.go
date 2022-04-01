@@ -13,47 +13,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// var adminCollection *mongo.Collection = database.GetCollection(database.DB, "admins")
-// var trainCollection *mongo.Collection = database.GetCollection(database.DB, "trains")
-// var ticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
 var avalidate = validator.New()
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
-
-// var adminRepo repository.AdminRepository
-// var trainRepo repository.TrainRepository
-// var ticketRepo repository.TicketRepository
-
-// func CreateAdmin() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		var admin models.Admin
-// 		defer cancel()
-
-// 		if err := c.BindJSON(&admin); err != nil {
-// 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		if validationErr := avalidate.Struct(&admin); validationErr != nil {
-// 			c.JSON(http.StatusBadRequest, responses.AdminResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-// 			return
-// 		}
-
-// 		newAdmin := models.Admin{
-// 			Name:  admin.Name,
-// 			Email: admin.Email,
-// 		}
-
-// 		result, err := adminCollection.InsertOne(ctx, newAdmin)
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		c.JSON(http.StatusCreated, responses.AdminResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
-// 	}
-// }
 
 func GetAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -248,11 +210,9 @@ func CreateTicket() gin.HandlerFunc {
 			return
 		}
 		newTicket := models.Ticket{
-			Train_id: ticket.Train_id,
-			Capacity: ticket.Capacity,
-			Cost:     ticket.Cost,
-			// Departure:      ticket.Departure,
-			// Arrival:        ticket.Arrival,
+			Train_id:       ticket.Train_id,
+			Capacity:       ticket.Capacity,
+			Cost:           ticket.Cost,
 			Departure_time: ticket.Departure_time,
 			Arrival_time:   ticket.Arrival_time,
 		}

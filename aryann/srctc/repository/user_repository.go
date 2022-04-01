@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -15,6 +15,7 @@ import (
 var (
 	collectionUserName = "users"
 	collectionUser     = new(mongo.Collection)
+	logger7            = logger.NewLoggerService("purchased_repository")
 )
 
 func init() {
@@ -28,7 +29,8 @@ func (usr UserRepository) Create(newUser models.User) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionUser.InsertOne(ctx, &newUser)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger7.Log("User created successfully", newUser.Name)
+		// fmt.Println("Inserted a single document: ", result.InsertedID)
 	}
 	return result.InsertedID, err
 }
@@ -53,7 +55,8 @@ func (usr UserRepository) Update(updateUser models.User, objId primitive.ObjectI
 	result, err := collectionUser.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": updatebson})
 	//result, err := collectionUser.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.UpsertedID)
+		logger7.Log("User updated successfully", updateUser.Name)
+		// fmt.Println("Updated a single document: ", result.UpsertedID)
 	}
 	return result.UpsertedID, err
 }
@@ -62,7 +65,8 @@ func (usr UserRepository) Delete(objId primitive.ObjectID) (interface{}, error) 
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionUser.DeleteOne(ctx, bson.M{"_id": objId})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.DeletedCount)
+		logger7.Log("User deleted successfully", objId)
+		// fmt.Println("Updated a single document: ", result.DeletedCount)
 	}
 	return result.DeletedCount, err
 }

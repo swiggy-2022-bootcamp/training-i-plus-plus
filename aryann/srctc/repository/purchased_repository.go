@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -15,6 +15,7 @@ import (
 var (
 	collectionPurchasedName = "purchased"
 	collectionPurchased     = new(mongo.Collection)
+	logger4                 = logger.NewLoggerService("purchased_repository")
 )
 
 func init() {
@@ -28,7 +29,8 @@ func (btk PurchasedRepository) Create(newPurchased models.Purchased) (interface{
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionPurchased.InsertOne(ctx, &newPurchased)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger4.Log("Created a new purchase: ", result.InsertedID)
+		// fmt.Println("Inserted a single document: ", result.InsertedID)
 	}
 	return result.InsertedID, err
 }
@@ -44,7 +46,8 @@ func (btk PurchasedRepository) Delete(objId primitive.ObjectID) (interface{}, er
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionPurchased.DeleteOne(ctx, bson.M{"_id": objId})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.DeletedCount)
+		logger4.Log("Deleted a purchase: ", objId)
+		// fmt.Println("Updated a single document: ", result.DeletedCount)
 	}
 	return result.DeletedCount, err
 }

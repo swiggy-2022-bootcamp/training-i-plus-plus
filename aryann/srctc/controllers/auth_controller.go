@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"log"
 	"net/http"
 	"srctc/middlewares"
 	"srctc/models"
@@ -39,7 +40,8 @@ func SignUp() gin.HandlerFunc {
 		hashedPassword, err := middlewares.HashMyPassword(register.Password)
 
 		if err != nil {
-			panic(err)
+			log.Panic(err)
+			// panic(err)
 		}
 
 		register.Password = string(hashedPassword)
@@ -174,6 +176,7 @@ func IsAuthorized(group string) gin.HandlerFunc {
 
 		token, err := jwt.Parse(strArr[1], func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				log.Fatal("Unexpected signing method")
 				return nil, fmt.Errorf(("invalid signing method"))
 			}
 

@@ -2,8 +2,8 @@ package repository
 
 import (
 	"context"
-	"fmt"
 	"srctc/database"
+	"srctc/logger"
 	"srctc/models"
 	"time"
 
@@ -15,6 +15,7 @@ import (
 var (
 	collectionTrainName = "trains"
 	collectionTrain     = new(mongo.Collection)
+	logger6             = logger.NewLoggerService("train_repository")
 )
 
 func init() {
@@ -28,7 +29,8 @@ func (trn TrainRepository) Create(newTrain models.Train) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTrain.InsertOne(ctx, &newTrain)
 	if err == nil {
-		fmt.Println("Inserted a single document: ", result.InsertedID)
+		logger6.Log("Created a new train journy: " + newTrain.Source + " to " + newTrain.Destination)
+		// fmt.Println("Inserted a single document: ", result.InsertedID)
 	}
 	return result.InsertedID, err
 }
@@ -52,7 +54,8 @@ func (trn TrainRepository) Update(updateTrain models.Train, objId primitive.Obje
 	}
 	result, err := collectionTrain.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": updatebson})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.UpsertedID)
+		logger6.Log("Updated train journey: " + updateTrain.Source + " to " + updateTrain.Destination)
+		// fmt.Println("Updated a single document: ", result.UpsertedID)
 	}
 	return result.UpsertedID, err
 }
@@ -61,7 +64,8 @@ func (trn TrainRepository) Delete(objId primitive.ObjectID) (interface{}, error)
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionTrain.DeleteOne(ctx, bson.M{"_id": objId})
 	if err == nil {
-		fmt.Println("Updated a single document: ", result.DeletedCount)
+		logger6.Log("Deleted a train journey: " + objId.Hex())
+		// fmt.Println("Updated a single document: ", result.DeletedCount)
 	}
 	return result.DeletedCount, err
 }
