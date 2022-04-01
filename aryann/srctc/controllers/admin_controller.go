@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"srctc/kafka"
 	"srctc/models"
 	"srctc/responses"
 	"time"
@@ -16,6 +17,10 @@ import (
 var avalidate = validator.New()
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
+
+func init() {
+	go kafka.Consume_booked_ticket_for_avail()
+}
 
 func GetAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -93,6 +98,8 @@ func CreateTrain() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
+
+		go kafka.Produce_train(newTrain)
 
 		c.JSON(http.StatusCreated, responses.TrainResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
@@ -223,6 +230,8 @@ func CreateTicket() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
+
+		go kafka.Produce_avail_ticket(newTicket)
 
 		c.JSON(http.StatusCreated, responses.TicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}

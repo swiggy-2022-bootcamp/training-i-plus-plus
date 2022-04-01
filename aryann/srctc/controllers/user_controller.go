@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"srctc/kafka"
 	"srctc/models"
 	"srctc/repository"
 	"srctc/responses"
@@ -18,6 +19,11 @@ var validate = validator.New()
 var purchasedRepo repository.PurchasedRepository
 var ticketRepo repository.TicketRepository
 var trainRepo repository.TrainRepository
+
+func init() {
+	go kafka.Consume_avail_ticket()
+	go kafka.Consume_train()
+}
 
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -163,6 +169,8 @@ func GetPurchased() gin.HandlerFunc {
 			return
 		}
 
+		go kafka.Produce_booked_ticket_for_avail(purchased.Train_id, true)
+
 		c.JSON(http.StatusOK, responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": purchased}})
 	}
 }
@@ -175,8 +183,7 @@ func DeletePurchased() gin.HandlerFunc {
 
 		objId, _ := primitive.ObjectIDFromHex(purchasedId)
 
-		_, err := purchasedRepo.Read(objId)
-		// err := purchasedRepo.Delete(objId)
+		purchased, err := purchasedRepo.Read(objId)
 		// result, err := purchasedCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
@@ -190,6 +197,8 @@ func DeletePurchased() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
+
+		go kafka.Produce_booked_ticket_for_avail(purchased.Train_id, false)
 
 		// if result.(int) < 1 {
 		// 	c.JSON(http.StatusNotFound,
