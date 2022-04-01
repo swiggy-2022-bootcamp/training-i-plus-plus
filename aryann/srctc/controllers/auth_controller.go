@@ -16,6 +16,8 @@ import (
 )
 
 var registerRepo repository.AuthRepository
+var adminRepo repository.AdminRepository
+var userRepo repository.UserRepository
 
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -58,8 +60,40 @@ func SignUp() gin.HandlerFunc {
 				return
 			}
 
+			if register.TypeOf == "admin" {
+
+				_, err := adminRepo.Create(models.Admin{
+					Name:  register.Username,
+					Email: register.Email,
+				})
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+					return
+				}
+
+				// c.JSON(http.StatusOK, responses.LoginResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result}})
+				// return
+
+			} else {
+
+				_, err := userRepo.Create(models.User{
+					Name:  register.Username,
+					Email: register.Email,
+				})
+
+				if err != nil {
+					c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+					return
+				}
+
+				// c.JSON(http.StatusOK, responses.LoginResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result}})
+				// return
+			}
+
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 			return
+
 		} else {
 			c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error not valid user group"})
 			return

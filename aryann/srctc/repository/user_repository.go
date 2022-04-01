@@ -24,7 +24,7 @@ func init() {
 
 type UserRepository struct{}
 
-func (usr UserRepository) Insert(newUser models.User) (interface{}, error) {
+func (usr UserRepository) Create(newUser models.User) (interface{}, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	result, err := collectionUser.InsertOne(ctx, &newUser)
 	if err == nil {

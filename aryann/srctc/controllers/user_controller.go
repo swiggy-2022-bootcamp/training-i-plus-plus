@@ -2,41 +2,35 @@ package controllers
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
-	"log"
 	"net/http"
-	"os"
-	"srctc/database"
 	"srctc/models"
+	"srctc/repository"
 	"srctc/responses"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection *mongo.Collection = database.GetCollection(database.DB, "users")
-var purchasedCollection *mongo.Collection = database.GetCollection(database.DB, "purchased")
-var ticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
+// var userCollection *mongo.Collection = database.GetCollection(database.DB, "users")
+// var purchasedCollection *mongo.Collection = database.GetCollection(database.DB, "purchased")
+// var ticketCollection *mongo.Collection = database.GetCollection(database.DB, "tickets")
 var validate = validator.New()
 
-type kafka_purchase struct {
-	insertedid string
-	purchased  models.Purchased
-}
+// type kafka_purchase struct {
+// 	insertedid string
+// 	purchased  models.Purchased
+// }
 
-func init() {
-	go consume_booked_ticket()
-}
+// var userRepo repository.UserRepository
+var purchasedRepo repository.PurchasedRepository
+var ticketRepo repository.TicketRepository
+var trainRepo repository.TrainRepository
 
 func CreateUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var user models.User
 		defer cancel()
 
@@ -56,7 +50,8 @@ func CreateUser() gin.HandlerFunc {
 			PurchasedID: []primitive.ObjectID{},
 		}
 
-		result, err := userCollection.InsertOne(ctx, newUser)
+		result, err := userRepo.Create(newUser)
+		// result, err := userCollection.InsertOne(ctx, newUser)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -69,14 +64,15 @@ func CreateUser() gin.HandlerFunc {
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userId")
 		var user models.User
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
+		user, err := userRepo.Read(objId)
+		// err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -88,20 +84,21 @@ func GetUser() gin.HandlerFunc {
 
 func DeleteUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		userId := c.Param("userid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
-		result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		result, err := userRepo.Delete(objId)
+		// result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		if result.DeletedCount < 1 {
+		if result.(int) < 1 {
 			c.JSON(http.StatusNotFound,
 				responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
 			)
@@ -116,7 +113,7 @@ func DeleteUser() gin.HandlerFunc {
 
 func PurchaseTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		var purchased models.Purchased
 		defer cancel()
 
@@ -132,7 +129,8 @@ func PurchaseTicket() gin.HandlerFunc {
 
 		var ticket models.Ticket
 
-		err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
+		ticket, err := ticketRepo.ReadTrainId(purchased.Train_id)
+		// err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -143,8 +141,10 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"capacity": ticket.Capacity - 1}
-		_, err = ticketCollection.UpdateOne(ctx, bson.M{"trainid": purchased.Train_id}, bson.M{"$set": update})
+		// update := bson.M{"capacity": ticket.Capacity - 1}
+		ticket.Capacity = ticket.Capacity - 1
+		_, err = ticketRepo.Update(ticket, ticket.ID)
+		// _, err = ticketCollection.UpdateOne(ctx, bson.M{"trainid": purchased.Train_id}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
@@ -152,8 +152,8 @@ func PurchaseTicket() gin.HandlerFunc {
 		}
 
 		var trainbooked models.Train
-
-		err = trainCollection.FindOne(ctx, bson.M{"_id": purchased.Train_id}).Decode(&trainbooked)
+		trainbooked, err = trainRepo.Read(purchased.Train_id)
+		// err = trainCollection.FindOne(ctx, bson.M{"_id": purchased.Train_id}).Decode(&trainbooked)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
@@ -169,19 +169,20 @@ func PurchaseTicket() gin.HandlerFunc {
 			Arrival_time:   ticket.Arrival_time,
 		}
 
-		result, err := purchasedCollection.InsertOne(ctx, newpurchased)
+		result, err := purchasedRepo.Create(newpurchased)
+		// result, err := purchasedCollection.InsertOne(ctx, newpurchased)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		iid := fmt.Sprintf("%v", result.InsertedID)
-		new_produce_ticket := kafka_purchase{
-			insertedid: iid,
-			purchased:  newpurchased,
-		}
+		// iid := fmt.Sprintf("%v", result.InsertedID)
+		// new_produce_ticket := kafka_purchase{
+		// 	insertedid: iid,
+		// 	purchased:  newpurchased,
+		// }
 
-		go produce_booked_ticket(new_produce_ticket)
+		// go produce_booked_ticket(new_produce_ticket)
 
 		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
@@ -189,14 +190,15 @@ func PurchaseTicket() gin.HandlerFunc {
 
 func GetPurchased() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		purchasedId := c.Param("purchasedid")
 		var purchased models.Purchased
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(purchasedId)
 
-		err := purchasedCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&purchased)
+		purchased, err := purchasedRepo.Read(objId)
+		// err := purchasedCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&purchased)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -208,20 +210,29 @@ func GetPurchased() gin.HandlerFunc {
 
 func DeletePurchased() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		purchasedId := c.Param("purchasedid")
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(purchasedId)
 
-		result, err := purchasedCollection.DeleteOne(ctx, bson.M{"_id": objId})
+		_, err := purchasedRepo.Read(objId)
+		// err := purchasedRepo.Delete(objId)
+		// result, err := purchasedCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		if result.DeletedCount < 1 {
+		result, err := purchasedRepo.Delete(objId)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		if result.(int) < 1 {
 			c.JSON(http.StatusNotFound,
 				responses.PurchasedResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Purchased with specified ID not found!"}},
 			)
@@ -231,49 +242,5 @@ func DeletePurchased() gin.HandlerFunc {
 		c.JSON(http.StatusOK,
 			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!"}},
 		)
-	}
-}
-
-func produce_booked_ticket(nbt kafka_purchase) {
-	l := log.New(os.Stdout, "Kafka Producer: ", 0)
-	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{"localhost:9092"},
-		Topic:   "purchased",
-		Logger:  l,
-	})
-
-	bytes, _ := json.Marshal(nbt.purchased)
-	err := w.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(nbt.insertedid),
-		Value: []byte(bytes),
-	})
-	if err != nil {
-		panic("could not write message " + err.Error())
-	}
-}
-
-func consume_booked_ticket() {
-	l := log.New(os.Stdout, "Kafka Consumer: ", 0)
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
-		Topic:   "purchased",
-		Logger:  l,
-	})
-
-	for {
-		msg, err := r.ReadMessage(context.Background())
-		if err != nil {
-			panic("Could not read message " + err.Error())
-		}
-
-		fmt.Println("Received message: ", string(msg.Value))
-		nbtr := models.Purchased{}
-		json.Unmarshal([]byte(msg.Value), &nbtr)
-		fmt.Println(nbtr)
-		update_tickets_booked := bson.M{"purchasedticket": string(msg.Key)}
-		_, err = userCollection.UpdateOne(context.Background(), bson.M{"_id": nbtr.User_id}, bson.M{"$push": update_tickets_booked})
-		if err != nil {
-			panic("Could not update purchased ticket " + err.Error())
-		}
 	}
 }

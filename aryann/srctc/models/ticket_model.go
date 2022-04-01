@@ -5,6 +5,7 @@ import (
 )
 
 type Ticket struct {
+	ID             primitive.ObjectID `json:"id,omitempty"`
 	Train_id       primitive.ObjectID `json:"trainid,omitempty"`
 	Capacity       int                `json:"capacity"`
 	Cost           int                `json:"cost"`
