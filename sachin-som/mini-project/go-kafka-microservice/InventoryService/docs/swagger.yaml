@@ -1,0 +1,191 @@
+basePath: /v1/inventory
+definitions:
+  requests.InventoryRequest:
+    properties:
+      inventory_name:
+        type: string
+      owner_id:
+        type: string
+    required:
+    - inventory_name
+    - owner_id
+    type: object
+  requests.ProductRequest:
+    properties:
+      description:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: string
+      product_name:
+        type: string
+      quantity:
+        type: string
+      ratings:
+        type: integer
+    type: object
+  responses.IDResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  responses.MessageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  responses.ProductResponse:
+    properties:
+      _id:
+        type: string
+      description:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: string
+      product_name:
+        type: string
+      quantity:
+        type: string
+      ratings:
+        type: integer
+    type: object
+host: localhost:8002
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a service for inventory and product management.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /:inventoryId/product/:productId:
+    get:
+      consumes:
+      - application/json
+      description: get product from inventory API
+      parameters:
+      - description: Unique Inventory Id
+        in: path
+        name: inventoryId
+        required: true
+        type: string
+      - description: Unique Product Id
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.ProductResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get Product From An Inventory
+      tags:
+      - Product
+  /{inventoryId}/product/add:
+    post:
+      consumes:
+      - application/json
+      description: add product to inventory API
+      parameters:
+      - description: product request structure
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/requests.ProductRequest'
+      - description: unique Inventory Id
+        in: path
+        name: inventoryId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Adds New Product to A Inventory
+      tags:
+      - Product
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: inventory registration API
+      parameters:
+      - description: inventory request structure
+        in: body
+        name: inventory
+        required: true
+        schema:
+          $ref: '#/definitions/requests.InventoryRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.IDResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Creteas New Inventory
+      tags:
+      - Inventory
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	pb "github.com/go-kafka-microservice/AuthProto"
 	goKafka "github.com/go-kafka-microservice/InventoryService/goKafka/producer"
@@ -31,6 +32,7 @@ func NewInventoryService(inventoryCollection *mongo.Collection, productCollectio
 func (is *InventoryServicesImpl) RegisterInventory(inventory *models.Inventory) (string, error) {
 	inventoryId := primitive.NewObjectID()
 	inventory.ID = inventoryId
+	inventory.Products = []primitive.ObjectID{}
 	if _, err := is.InventoryCollection.InsertOne(is.Ctx, inventory); err != nil {
 		return "", err
 	}
@@ -85,6 +87,7 @@ func (is *InventoryServicesImpl) GetProduct(inventoryId, productId primitive.Obj
 	if err := is.InventoryCollection.FindOne(is.Ctx, filterInventory).Decode(&inventory); err != nil {
 		return nil, err
 	}
+	fmt.Println(inventory)
 
 	// Search for Product
 	for _, p := range inventory.Products {
