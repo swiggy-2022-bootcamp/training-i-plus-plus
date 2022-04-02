@@ -1,8 +1,13 @@
 package controllers
 
 import (
+	"invoiceService/logger"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+var log logrus.Logger = *logger.GetLogger()
 
 type Invoice struct {
 	ID            string
@@ -18,7 +23,9 @@ type invoiceMethod interface {
 }
 
 func (invoice *Invoice) SendEmailInvoice() {
+	log.Info("Email invoice sent!")
 }
 
 func (invoice *Invoice) SendSMSInvoice() {
+	log.Info("Mobile invoice sent!")
 }
