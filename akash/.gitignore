@@ -18,4 +18,7 @@
 .DS_Store
 
 # Local MongoDB file for Docker image
-*/gin-demo/mongodb-docker/*
+**/gin-demo/mongodb-docker/**
+
+# Local MongoDB file for Docker images
+**/db/mongo-files/**

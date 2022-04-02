@@ -16,7 +16,7 @@ var (
 
 const (
 	// MongoDBUrl is the default mongodb url that will be used to connect to the database.
-	MongoDBUrl = "mongodb://localhost:2717/shopping_cart_dev_products"
+	MongoDBUrl = "mongodb://localhost:2718/shopping_cart_dev_products"
 )
 
 // Connect connects to mongodb

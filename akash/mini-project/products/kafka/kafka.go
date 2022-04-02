@@ -1,8 +1,8 @@
 package kafka
 
 import (
-	//"encoding/json"
 	"context"
+	"encoding/json"
 	"fmt"
 	"github.com/segmentio/kafka-go"
 	"log"
@@ -11,36 +11,35 @@ import (
 	"time"
 )
 
+const (
+	topic         = "test-topic"
+	brokerAddress = "localhost:9092"
+)
+
 func CreateComment(buyRequest *model.BuyRequest) {
 
-	topic := "buy-requests"
-	partition := 0
-	conn, err := kafka.DialLeader(context.Background(), "tcp", "localhost:9092", topic, partition)
+	l := log.New(os.Stdout, "kafka writer: ", 0)
+
+	w := kafka.NewWriter(kafka.WriterConfig{
+		Brokers: []string{brokerAddress},
+		Topic:   topic,
+		Logger:  l,
+	})
+
+	j, err := json.Marshal(buyRequest)
 	if err != nil {
-		fmt.Println("failed to dial leader:", err)
-		os.Exit(1)
+		fmt.Println(err)
+		return
 	}
 
-	readBytes := make([]byte, 200)
+	err = w.WriteMessages(context.Background(), kafka.Message{
+		Value: []byte(string(j)),
+	})
 	if err != nil {
-		log.Fatal("Failed here ", err)
-	}
-	conn.SetWriteDeadline(time.Now().Add(10 * time.Second))
-	_, err = conn.WriteMessages(
-		kafka.Message{
-			Key:   []byte("0"),
-			Value: readBytes},
-	)
-	if err != nil {
-		fmt.Println("failed to write messages:", err)
+		panic("could not write message " + err.Error())
 	}
 
-	time.Sleep(1 * time.Second)
-
-	if err := conn.Close(); err != nil {
-		fmt.Println("failed to close writer:", err)
-	}
-	fmt.Println("Conn Close")
-	fmt.Println(err)
+	// sleep for a second
+	time.Sleep(time.Second)
 
 }

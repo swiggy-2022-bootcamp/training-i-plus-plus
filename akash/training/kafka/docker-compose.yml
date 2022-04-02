@@ -25,20 +25,3 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-
-  customer-db:
-    image: mongo:latest
-    container_name: customer-db
-    ports:
-      - "2717:27017"
-    volumes:
-      - /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/customer/db/mongo-files:/data/db
-
-  product-db:
-    image: mongo:latest
-    container_name: product-db
-    ports:
-      - "2718:27017"
-    volumes:
-      - /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/products/db/mongo-files:/data/db
-
