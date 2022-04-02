@@ -13,11 +13,11 @@ import (
 
 	"github.com/segmentio/kafka-go"
 	log "github.com/sirupsen/logrus"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type CreateOrderService interface {
-	ValidateRequest() *errors.ServerError
-	ProcessRequest(ctx context.Context, email string, token string) *errors.ServerError
+	ProcessRequest(ctx context.Context, email string, token string) (model.CreateOrderResponse, *errors.ServerError)
 }
 
 var createOrderServiceStruct CreateOrderService
@@ -47,20 +47,15 @@ func GetCreateOrderService() CreateOrderService {
 	return createOrderServiceStruct
 }
 
-func (service *createOrderService) ValidateRequest() *errors.ServerError {
-
-	return nil
-}
-
 // CreateOrderProcessRequest calls CART Service to get product details and then save the details in the order, with
 // order status ORDER_PLACED and then publish this status to Kafka.
 // Note: multiple Orders allowed for same user.
-func (service *createOrderService) ProcessRequest(ctx context.Context, email string, token string) *errors.ServerError {
+func (service *createOrderService) ProcessRequest(ctx context.Context, email string, token string) (model.CreateOrderResponse, *errors.ServerError) {
 
 	// call to CART Service to get the product details
 	respBytes, err := service.callCartService(token)
 	if err != nil {
-		return err
+		return model.CreateOrderResponse{}, err
 	}
 
 	var order model.Order
@@ -74,15 +69,18 @@ func (service *createOrderService) ProcessRequest(ctx context.Context, email str
 	order.OrderStatus = model.ORDER_PLACED
 	order.Email = email
 
-	log.Info(order)
 	// Save the product details to Orders along with name and order Status - "ORDER_PLACED"
 	id, err := service.dao.CreateOrder(ctx, order)
 	if err != nil {
 		log.WithField("Error: ", err).Error("an error occurred while creating the order")
-		return err
+		return model.CreateOrderResponse{}, err
 	}
 
 	log.Info("Inserted Order: ", id)
+
+	response := model.CreateOrderResponse{
+		OrderId: id.(primitive.ObjectID).Hex(),
+	}
 
 	// Publish the order status to kafka
 	err = service.publishToKafka(ctx, order)
@@ -90,7 +88,7 @@ func (service *createOrderService) ProcessRequest(ctx context.Context, email str
 		log.WithField("Error: ", err).Error("an error occurred while publishing the message to kafka")
 	}
 
-	return nil
+	return response, nil
 }
 
 func (service *createOrderService) callCartService(token string) ([]byte, *errors.ServerError) {

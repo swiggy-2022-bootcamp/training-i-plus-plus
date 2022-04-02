@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
 	"order/internal/services"
 	"order/util"
@@ -21,19 +22,15 @@ func CreateOrderHandler(config *util.RouterConfig) http.HandlerFunc {
 
 		service := services.GetCreateOrderService()
 
-		// Validate the request
-		if err := service.ValidateRequest(); err != nil {
-			http.Error(w, err.ErrorMessage, err.HttpResponseCode)
-			return
-		}
-
 		reqToken := req.Header.Get("Authorization")
-		err := service.ProcessRequest(ctx, email, reqToken)
+		resp, err := service.ProcessRequest(ctx, email, reqToken)
 		if err != nil {
 			http.Error(w, err.ErrorMessage, err.HttpResponseCode)
 			return
 		}
 
-		w.WriteHeader(http.StatusCreated)
+		respBytes, _ := json.Marshal(resp)
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(respBytes)
 	}
 }

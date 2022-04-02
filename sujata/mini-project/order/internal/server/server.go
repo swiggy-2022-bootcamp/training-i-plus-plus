@@ -48,6 +48,7 @@ func RunServer() error {
 	// Initialize services
 	services.InitCreateOrderService(&routerConfigs, dao)
 	services.InitGetOrderService(&routerConfigs, dao)
+	services.InitSetOrderStatusService(&routerConfigs, dao)
 
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)

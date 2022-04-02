@@ -10,12 +10,14 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MongoDAO interface {
 	CreateOrder(ctx context.Context, cartProduct model.Order) (interface{}, *errors.ServerError)
 	GetOrders(ctx context.Context, email string) (model.AllOrders, *errors.ServerError)
+	SetOrderStatus(ctx context.Context, orderInfo model.OrderInfo) *errors.ServerError
 }
 
 type mongoDAO struct {
@@ -93,4 +95,28 @@ func (dao *mongoDAO) GetOrders(ctx context.Context, email string) (model.AllOrde
 	}
 
 	return allOrders, nil
+}
+
+func (dao *mongoDAO) SetOrderStatus(ctx context.Context, orderInfo model.OrderInfo) *errors.ServerError {
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
+
+	objID, _ := primitive.ObjectIDFromHex(orderInfo.OrderId)
+	update := bson.M{
+		"$set": bson.M{
+			"orderStatus": orderInfo.OrderStatus,
+		},
+	}
+
+	ra, err := cartCollection.UpdateByID(ctx, objID, update)
+	if err != nil {
+		log.WithError(err).Error("an error occurred while updating the order status")
+		return &errors.InternalError
+	}
+
+	if ra.ModifiedCount == 0 {
+		log.Error("Modified count is 0, but expected 1")
+		return &errors.InternalError
+	}
+
+	return nil
 }

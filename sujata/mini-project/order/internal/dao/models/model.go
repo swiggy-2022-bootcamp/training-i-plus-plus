@@ -35,3 +35,12 @@ type UserOrder struct {
 type AllOrders struct {
 	Orders []UserOrder `json:"orders" bson:"orders"`
 }
+
+type CreateOrderResponse struct {
+	OrderId string `json:"orderId"`
+}
+
+type OrderInfo struct {
+	OrderId     string      `json:"orderId"`
+	OrderStatus OrderStatus `json:"orderStatus"`
+}
