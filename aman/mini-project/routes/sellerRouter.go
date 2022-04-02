@@ -7,7 +7,7 @@ import (
 )
 
 func SellerRoutes(r *gin.Engine) {
-	r.GET("/sellers/:id", controllers.GetUser())
-	r.POST("/sellers/signup", controllers.SignUp())
-	r.POST("/sellers/login", controllers.Login())
+	r.GET("/sellers/:id", controllers.GetSeller())
+	r.POST("/sellers/signup", controllers.SellerSignUp())
+	r.POST("/sellers/login", controllers.SellerLogin())
 }

@@ -7,7 +7,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CartRoutes(r *gin.Engine) {
+func CartItemsRoutes(r *gin.Engine) {
 	r.Use(middleware.Authentication())
-	r.GET("/cart/:cart_id", controllers.GetCart())
+	r.POST("/cart/add", controllers.AddCartItem())
+	r.POST("/cart/:product_id", controllers.RemoveCartItem())
 }

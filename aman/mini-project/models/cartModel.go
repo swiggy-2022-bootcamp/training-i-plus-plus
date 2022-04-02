@@ -1,14 +1,7 @@
 package models
 
-import (
-	"time"
-
-	"go.mongodb.org/mongo-driver/bson/primitive"
-)
-
 type Cart struct {
-	ID         primitive.ObjectID `bson:"_id"`
-	Created_at time.Time          `json:"created_at"`
-	Updated_at time.Time          `json:"updated_at"`
-	Cart_id    string             `json:"order_id"`
+	Name     *string
+	Price    *float64
+	Quantity int
 }

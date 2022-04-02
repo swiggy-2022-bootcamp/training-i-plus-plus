@@ -96,6 +96,8 @@ func CreateProduct() gin.HandlerFunc {
 				return
 			}
 
+			product.Seller_id = c.Request.Header.Get("id")
+
 			validationErr := validate.Struct(product)
 			if validationErr != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": validationErr.Error()})
