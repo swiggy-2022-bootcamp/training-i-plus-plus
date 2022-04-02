@@ -11,4 +11,5 @@ func CartItemsRoutes(r *gin.Engine) {
 	r.Use(middleware.Authentication())
 	r.POST("/cart/add", controllers.AddCartItem())
 	r.POST("/cart/:product_id", controllers.RemoveCartItem())
+	r.POST("/cartUpdate/:product_id", controllers.UpdateCartItem())
 }
