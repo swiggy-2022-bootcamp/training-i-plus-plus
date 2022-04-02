@@ -3,10 +3,6 @@ package kafka
 import (
 	"TrainService/logger"
 	"TrainService/models"
-	"context"
-	"encoding/json"
-
-	"github.com/segmentio/kafka-go"
 )
 
 const (
@@ -18,17 +14,17 @@ var logger8 = logger.NewLoggerService("Kafka Producer")
 
 func Produce_train(nt models.Train) {
 	logger8.Log("Produce Train")
-	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic1,
-	})
+	// w := kafka.NewWriter(kafka.WriterConfig{
+	// 	Brokers: []string{brokerAddress},
+	// 	Topic:   topic1,
+	// })
 
-	bytes, _ := json.Marshal(nt)
-	err := w.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(nt.Destination),
-		Value: []byte(bytes),
-	})
-	if err != nil {
-		panic("could not write message " + err.Error())
-	}
+	// bytes, _ := json.Marshal(nt)
+	// err := w.WriteMessages(context.Background(), kafka.Message{
+	// 	Key:   []byte(nt.Destination),
+	// 	Value: []byte(bytes),
+	// })
+	// if err != nil {
+	// 	panic("could not write message " + err.Error())
+	// }
 }

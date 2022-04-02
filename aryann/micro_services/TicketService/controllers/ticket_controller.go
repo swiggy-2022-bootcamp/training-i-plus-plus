@@ -68,7 +68,7 @@ func CreateTicket() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce_ticket(newTicket)
+		// go kafka.Produce_ticket(newTicket)
 
 		c.JSON(http.StatusCreated, responses.TicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}

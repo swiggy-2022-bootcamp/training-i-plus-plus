@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"TrainService/kafka"
 	"TrainService/middlewares"
 	"TrainService/models"
 	"TrainService/repository"
@@ -49,7 +48,7 @@ func CreateTrain() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce_train(newTrain)
+		// go kafka.Produce_train(newTrain)
 
 		c.JSON(http.StatusCreated, responses.TrainResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
