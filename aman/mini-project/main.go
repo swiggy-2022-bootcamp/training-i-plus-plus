@@ -20,6 +20,7 @@ func main() {
 	routes.CartRoutes(r)
 	routes.InventoryRoutes(r)
 	routes.CartItemsRoutes(r)
+	routes.OrderRoutes(r)
 	r.POST("/", test)
 	r.Run()
 }
