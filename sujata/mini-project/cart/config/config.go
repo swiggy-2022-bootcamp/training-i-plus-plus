@@ -9,8 +9,11 @@ import (
 )
 
 type WebServerConfig struct {
-	Port        string `required:"true" split_words:"true"`
-	RoutePrefix string `required:"false" split_words:"true" default:"/cart"`
+	Port         string `required:"true" split_words:"true"`
+	RoutePrefix  string `required:"false" split_words:"true" default:"/cart"`
+	Db           string `required:"true" split_words:"true"`
+	DbCollection string `required:"true" split_words:"true"`
+	MongoUrl     string `required:"true" split_words:"true"`
 }
 
 func FromEnv() (*WebServerConfig, error) {

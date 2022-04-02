@@ -2,7 +2,6 @@ package util
 
 import (
 	"cart/config"
-	"fmt"
 	"net/http"
 
 	"github.com/dgrijalva/jwt-go"
@@ -20,9 +19,8 @@ func ExtractDetailsFromToken(req *http.Request) (string, string) {
 	claims := token.Claims.(jwt.MapClaims)
 	userInfo := claims["CustomUserInfo"].(map[string]interface{})
 
-	fmt.Println("Userinfoo", userInfo)
 	email := userInfo["Email"].(string)
-	role := userInfo["role"].(string)
+	role := userInfo["Role"].(string)
 
 	return role, email
 }

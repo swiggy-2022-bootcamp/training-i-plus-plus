@@ -1,6 +1,7 @@
 package mongodao
 
 import (
+	"cart/config"
 	model "cart/internal/dao/models"
 	"cart/internal/errors"
 	"context"
@@ -23,15 +24,17 @@ type MongoDAO interface {
 
 type mongoDAO struct {
 	client *mongo.Client
+	config *config.WebServerConfig
 }
 
 var mongoDao MongoDAO
 var mongoDaoOnce sync.Once
 
-func InitMongoDAO(client *mongo.Client) MongoDAO {
+func InitMongoDAO(client *mongo.Client, config *config.WebServerConfig) MongoDAO {
 	mongoDaoOnce.Do(func() {
 		mongoDao = &mongoDAO{
 			client: client,
+			config: config,
 		}
 	})
 
@@ -48,7 +51,7 @@ func GetMongoDAO() MongoDAO {
 
 // AddProduct add product details to the cart of the user
 func (dao *mongoDAO) AddProduct(ctx context.Context, cartProduct model.CartProduct, email string) *errors.ServerError {
-	cartCollection := dao.client.Database("shopKart").Collection("cart")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	filter := bson.M{"email": email}
 
@@ -74,7 +77,7 @@ func (dao *mongoDAO) AddProduct(ctx context.Context, cartProduct model.CartProdu
 
 // DeleteProduct removes the product details from the cart of the user
 func (dao *mongoDAO) DeleteProduct(ctx context.Context, productId string, email string) *errors.ServerError {
-	cartCollection := dao.client.Database("shopKart").Collection("cart")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	filter := bson.M{"email": email}
 	update := bson.M{
@@ -110,7 +113,7 @@ func (dao *mongoDAO) UpdateProductQuantity(ctx context.Context) *errors.ServerEr
 
 // GetCart returns products in cart of the user along with total price
 func (dao *mongoDAO) GetCart(ctx context.Context, email string) (model.Cart, *errors.ServerError) {
-	cartCollection := dao.client.Database("shopKart").Collection("cart")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	filter := bson.M{"email": email}
 	result := cartCollection.FindOne(ctx, filter)
@@ -126,7 +129,7 @@ func (dao *mongoDAO) GetCart(ctx context.Context, email string) (model.Cart, *er
 }
 
 func (dao *mongoDAO) DeleteCart(ctx context.Context, email string) *errors.ServerError {
-	cartCollection := dao.client.Database("shopKart").Collection("cart")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	filter := bson.M{"email": email}
 	result, err := cartCollection.DeleteOne(ctx, filter)

@@ -21,12 +21,14 @@ var addProductToCartServiceOnce sync.Once
 
 type addProductToCartService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitAddProductToCartService(config *util.RouterConfig) AddProductToCartService {
+func InitAddProductToCartService(config *util.RouterConfig, dao mongodao.MongoDAO) AddProductToCartService {
 	addProductToCartServiceOnce.Do(func() {
 		addProductToCartServiceStruct = &addProductToCartService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -51,9 +53,7 @@ func (s *addProductToCartService) ValidateRequest(product model.CartProduct) *er
 }
 
 func (s *addProductToCartService) ProcessRequest(ctx context.Context, email string, product model.CartProduct) *errors.ServerError {
-	dao := mongodao.GetMongoDAO()
-
-	err := dao.AddProduct(ctx, product, email)
+	err := s.dao.AddProduct(ctx, product, email)
 	if err != nil {
 		log.WithField("Error: ", err).Error("an error occurred while inserting product in the cart for user: ", email)
 		return err

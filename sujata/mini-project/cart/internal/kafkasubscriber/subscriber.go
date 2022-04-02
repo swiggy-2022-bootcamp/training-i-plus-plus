@@ -3,10 +3,11 @@ package subscriber
 import (
 	mongodao "cart/internal/dao"
 	"context"
-	"log"
+	l "log"
 	"os"
 
 	"github.com/segmentio/kafka-go"
+	log "github.com/sirupsen/logrus"
 )
 
 const (
@@ -14,7 +15,7 @@ const (
 )
 
 func KafkaSubscriberInit() {
-	l := log.New(os.Stdout, "kafka reader: ", 0)
+	logger := l.New(os.Stdout, "kafka reader: ", 0)
 
 	// initialize a new reader with the brokers and topic
 	// the groupID identifies the consumer and prevents
@@ -24,7 +25,7 @@ func KafkaSubscriberInit() {
 		Topic:   "OrderStatus",
 		GroupID: "cart-ms-group",
 		// assign the logger to the reader
-		Logger: l,
+		Logger: logger,
 	})
 
 	go readMessage(reader)
@@ -38,14 +39,17 @@ func readMessage(reader *kafka.Reader) {
 		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := reader.ReadMessage(ctx)
 		if err != nil {
-
+			log.WithError(err).Error("an error occurred while reading the kafka message")
 		}
 
 		userEmail := string(msg.Key)
 		orderStatus := string(msg.Value)
 
 		if orderStatus == ORDER_PLACED {
-			dao.DeleteCart(ctx, userEmail)
+			err := dao.DeleteCart(ctx, userEmail)
+			if err != nil {
+				log.WithField("Error: ", err).Error("an error occurred while deleting the cart")
+			}
 		}
 	}
 }

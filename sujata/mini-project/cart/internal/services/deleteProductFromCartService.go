@@ -20,12 +20,14 @@ var deleteProductFromCartServiceOnce sync.Once
 
 type deleteProductFromCartService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitDeleteProductFromCartService(config *util.RouterConfig) DeleteProductFromCartService {
+func InitDeleteProductFromCartService(config *util.RouterConfig, dao mongodao.MongoDAO) DeleteProductFromCartService {
 	deleteProductFromCartServiceOnce.Do(func() {
 		deleteProductFromCartServiceStruct = &deleteProductFromCartService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -55,9 +57,7 @@ func (s *deleteProductFromCartService) ValidateRequest(productId string) *errors
 }
 
 func (s *deleteProductFromCartService) ProcessRequest(ctx context.Context, productId string, email string) *errors.ServerError {
-	dao := mongodao.GetMongoDAO()
-
-	err := dao.DeleteProduct(ctx, productId, email)
+	err := s.dao.DeleteProduct(ctx, productId, email)
 	if err != nil {
 		log.WithField("Error: ", err).Error("an error occurred while deleting the product: ", productId, " from the cart for user: ", email)
 		return err

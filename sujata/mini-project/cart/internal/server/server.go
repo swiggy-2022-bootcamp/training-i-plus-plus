@@ -42,12 +42,15 @@ func RunServer() error {
 		WebServerConfig: webServerConfig,
 	}
 
-	// Initialize services
-	services.InitAddProductToCartService(&routerConfigs)
-	services.InitDeleteProductFromCartService(&routerConfigs)
-	services.InitGetCartService(&routerConfigs)
+	dao, err := intializeDao(webServerConfig)
+	if err != nil {
+		return err
+	}
 
-	intializeDao()
+	// Initialize services
+	services.InitAddProductToCartService(&routerConfigs, dao)
+	services.InitDeleteProductFromCartService(&routerConfigs, dao)
+	services.InitGetCartService(&routerConfigs, dao)
 
 	subscriber.KafkaSubscriberInit()
 
@@ -63,13 +66,14 @@ func RunServer() error {
 	return nil
 }
 
-func intializeDao() error {
+func intializeDao(config *config.WebServerConfig) (mongodao.MongoDAO, error) {
 	// Initialize mongo database connection
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.MongoUrl))
 	if err != nil {
-		return err
+		log.WithError(err).Error("an error occurred while connecting to the database")
+		return nil, err
 	}
 
-	mongodao.InitMongoDAO(client)
-	return nil
+	dao := mongodao.InitMongoDAO(client, config)
+	return dao, nil
 }

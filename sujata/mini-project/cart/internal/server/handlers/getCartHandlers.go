@@ -34,9 +34,15 @@ func GetCartHandler(config *util.RouterConfig) http.HandlerFunc {
 		if goErr != nil {
 			log.WithError(goErr).Error("an error occurred while marhsalling the cart response")
 			http.Error(w, errors.MarshalError.ErrorMessage, errors.MarshalError.HttpResponseCode)
+			return
 		}
 
 		w.Header().Set("Content-Type", "application/json")
-		w.Write(respBytes)
+		_, goErr = w.Write(respBytes)
+		if goErr != nil {
+			log.WithError(goErr).Error("an error occurred while writing the response")
+			http.Error(w, errors.InternalError.ErrorMessage, errors.InternalError.HttpResponseCode)
+			return
+		}
 	}
 }
