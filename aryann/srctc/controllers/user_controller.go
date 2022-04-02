@@ -21,7 +21,6 @@ var ticketRepo repository.TicketRepository
 var trainRepo repository.TrainRepository
 
 func init() {
-	go kafka.Consume_purchased_ticket()
 	go kafka.Consume_ticket()
 	go kafka.Consume_train()
 }
@@ -151,8 +150,6 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Consume_purchased_ticket()
-
 		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": "Ticket successfully purchased!"}})
 	}
 }
@@ -199,8 +196,6 @@ func DeletePurchased() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
-
-		// go kafka.Produce_purchased_ticket(purchased.Train_id)
 
 		// if result.(int) < 1 {
 		// 	c.JSON(http.StatusNotFound,
