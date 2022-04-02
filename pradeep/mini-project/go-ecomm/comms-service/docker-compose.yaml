@@ -1,0 +1,18 @@
+version: '3'
+services:
+  email_backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: go-ecomm/comms-service
+    environment:
+      BOOTSTRAP_SERVERS: pkc-xrnwx.asia-south2.gcp.confluent.cloud:9092
+      SECURITY_PROTOCOL: SASL_SSL
+      SASL_USERNAME: 7ABBHKKEMPQ3SDID
+      SASL_PASSWORD: 9diVkQpVROzNJroxZW/gPcE+EHWJ+vYO0vd6XFmHAFO/EzaKtw5y8e7CYG31iYIj
+      SASL_MECHANISM: PLAIN
+      KAFKA_TOPIC: email_topic
+      EMAIL_HOST: smtp.mailtrap.io
+      EMAIL_PORT: 2525
+      EMAIL_USERNAME: a09d873245007f
+      EMAIL_PASSWORD: 47971650eb854b
