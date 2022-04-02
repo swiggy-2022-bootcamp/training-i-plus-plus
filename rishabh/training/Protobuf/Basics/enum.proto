@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+// Person represents a user in the system.
+message Person{
+  int32 age = 1;                      // The person's age.
+  string first_name = 2;              // The person's first name.  
+  string last_name = 3;               // optional
+  bytes avatar = 4;                   // base64-encoded image
+  bool is_verified = 5;               // is the user's email address verified?
+  float height = 6;                   // in inches
+  repeated string phone_numbers = 7;  // phone numbers
+    
+  enum EyeColor {                     // The person's eye color.
+    EYE_COLOR_UNKNOWN_UNSPECIFIED = 0;
+    EYE_COLOR_BLUE = 2;
+    EYE_COLOR_GREEN = 3;
+    EYE_COLOR_BROWN = 4;
+  };
+
+  EyeColor eye_color = 8;
+}
