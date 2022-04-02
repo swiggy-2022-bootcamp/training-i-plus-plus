@@ -25,12 +25,14 @@ var createOrderServiceOnce sync.Once
 
 type createOrderService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitCreateOrderService(config *util.RouterConfig) CreateOrderService {
+func InitCreateOrderService(config *util.RouterConfig, dao mongodao.MongoDAO) CreateOrderService {
 	createOrderServiceOnce.Do(func() {
 		createOrderServiceStruct = &createOrderService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -74,9 +76,7 @@ func (service *createOrderService) ProcessRequest(ctx context.Context, email str
 
 	log.Info(order)
 	// Save the product details to Orders along with name and order Status - "ORDER_PLACED"
-	dao := mongodao.GetMongoDAO()
-
-	id, err := dao.CreateOrder(ctx, order)
+	id, err := service.dao.CreateOrder(ctx, order)
 	if err != nil {
 		log.WithField("Error: ", err).Error("an error occurred while creating the order")
 		return err
@@ -94,7 +94,7 @@ func (service *createOrderService) ProcessRequest(ctx context.Context, email str
 }
 
 func (service *createOrderService) callCartService(token string) ([]byte, *errors.ServerError) {
-	url := "http://localhost:8004/cart/v1/product"
+	url := service.config.WebServerConfig.ProductBaseUrl
 	var bodyBytes []byte
 
 	// Create a new request using http

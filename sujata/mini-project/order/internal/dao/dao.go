@@ -3,6 +3,7 @@ package mongodao
 import (
 	"context"
 	"fmt"
+	"order/config"
 	model "order/internal/dao/models"
 	"order/internal/errors"
 	"sync"
@@ -19,15 +20,17 @@ type MongoDAO interface {
 
 type mongoDAO struct {
 	client *mongo.Client
+	config *config.WebServerConfig
 }
 
 var mongoDao MongoDAO
 var mongoDaoOnce sync.Once
 
-func InitMongoDAO(client *mongo.Client) MongoDAO {
+func InitMongoDAO(client *mongo.Client, config *config.WebServerConfig) MongoDAO {
 	mongoDaoOnce.Do(func() {
 		mongoDao = &mongoDAO{
 			client: client,
+			config: config,
 		}
 	})
 
@@ -44,7 +47,7 @@ func GetMongoDAO() MongoDAO {
 
 // AddProduct add product details to the cart of the user
 func (dao *mongoDAO) CreateOrder(ctx context.Context, order model.Order) (interface{}, *errors.ServerError) {
-	cartCollection := dao.client.Database("shopKart").Collection("order")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	ra, err := cartCollection.InsertOne(ctx, order)
 	if err != nil {
@@ -64,26 +67,29 @@ func (dao *mongoDAO) CreateOrder(ctx context.Context, order model.Order) (interf
 
 // GetOrders get all the orders related to a particular user
 func (dao *mongoDAO) GetOrders(ctx context.Context, email string) (model.AllOrders, *errors.ServerError) {
-	cartCollection := dao.client.Database("shopKart").Collection("order")
+	cartCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 	allOrders := model.AllOrders{}
 
 	filter := bson.M{"email": email}
 	cursor, err := cartCollection.Find(ctx, filter)
 	if err != nil {
 		log.WithError(err).Error("an error occurred while getting all the orders")
+		return allOrders, &errors.InternalError
 	}
 
 	for cursor.Next(context.TODO()) {
 		var order model.UserOrder
 		if err := cursor.Decode(&order); err != nil {
 			log.WithError(err).Error("an error occurred while decoding the cursor element")
+			return allOrders, &errors.InternalError
 		}
 		fmt.Println(order)
 		allOrders.Orders = append(allOrders.Orders, order)
 	}
 
 	if err := cursor.Err(); err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("error from db cursor")
+		return allOrders, &errors.InternalError
 	}
 
 	return allOrders, nil

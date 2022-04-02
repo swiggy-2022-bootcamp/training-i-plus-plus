@@ -28,7 +28,6 @@ func CreateOrderHandler(config *util.RouterConfig) http.HandlerFunc {
 		}
 
 		reqToken := req.Header.Get("Authorization")
-		log.Info("after req token ---------")
 		err := service.ProcessRequest(ctx, email, reqToken)
 		if err != nil {
 			http.Error(w, err.ErrorMessage, err.HttpResponseCode)

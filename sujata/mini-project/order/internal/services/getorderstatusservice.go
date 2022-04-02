@@ -18,12 +18,14 @@ var getOrderServiceOnce sync.Once
 
 type getOrderService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitGetOrderService(config *util.RouterConfig) GetOrderService {
+func InitGetOrderService(config *util.RouterConfig, dao mongodao.MongoDAO) GetOrderService {
 	getOrderServiceOnce.Do(func() {
 		getOrderServiceStruct = &getOrderService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -39,7 +41,5 @@ func GetGetOrderService() GetOrderService {
 }
 
 func (s *getOrderService) ProcessRequest(ctx context.Context, email string) (model.AllOrders, *errors.ServerError) {
-	dao := mongodao.GetMongoDAO()
-
-	return dao.GetOrders(ctx, email)
+	return s.dao.GetOrders(ctx, email)
 }
