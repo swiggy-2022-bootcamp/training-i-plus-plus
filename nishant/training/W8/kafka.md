@@ -12,6 +12,8 @@ docker exec -it [container_name] /bin/sh
 
 docker exec -it w8_kafka_1 /bin/sh
 
+docker exec -it kafka_notification_service_kafka_1 /bin/sh
+
 cd /bin
 ls -a
 ```
