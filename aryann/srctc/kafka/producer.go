@@ -7,34 +7,30 @@ import (
 	"srctc/models"
 
 	"github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var logger8 = logger.NewLoggerService("Kafka Producer")
 
-func Produce_booked_ticket_for_avail(trainid primitive.ObjectID, update bool) {
-	logger8.Log("kafka producer booking ticket")
+func Produce_purchased_ticket(newPurchase models.Purchased) {
+	logger8.Log("Produce Purchased Ticket")
 	w := kafka.NewWriter(kafka.WriterConfig{
-		Brokers: []string{brokerAddress},
-		Topic:   topic1,
+		Brokers:  []string{"localhost:9092"},
+		Topic:    "purchasedticket",
+		Balancer: &kafka.LeastBytes{},
 	})
-	var updatestring string
-	if update {
-		updatestring = "increment"
-	} else {
-		updatestring = "decrement"
-	}
+
+	bytes, _ := json.Marshal(newPurchase)
 	err := w.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(trainid.String()),
-		Value: []byte(updatestring),
+		Key:   []byte(newPurchase.Train_id.String()),
+		Value: bytes,
 	})
 	if err != nil {
 		panic("could not write message " + err.Error())
 	}
 }
 
-func Produce_avail_ticket(nat models.Ticket) {
-	logger8.Log("kafka producer avail ticket")
+func Produce_ticket(nat models.Ticket) {
+	logger8.Log("Produce Ticket")
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic2,
@@ -51,7 +47,7 @@ func Produce_avail_ticket(nat models.Ticket) {
 }
 
 func Produce_train(nt models.Train) {
-	logger8.Log("kafka producer avail ticket")
+	logger8.Log("Produce Train")
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic3,

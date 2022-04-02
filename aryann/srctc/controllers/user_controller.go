@@ -21,7 +21,8 @@ var ticketRepo repository.TicketRepository
 var trainRepo repository.TrainRepository
 
 func init() {
-	go kafka.Consume_avail_ticket()
+	go kafka.Consume_purchased_ticket()
+	go kafka.Consume_ticket()
 	go kafka.Consume_train()
 }
 
@@ -62,6 +63,13 @@ func DeleteUser() gin.HandlerFunc {
 			return
 		}
 
+		signup, err := userRepo.Delete(objId)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
 		// if result.(int) < 1 {
 		// 	c.JSON(http.StatusNotFound,
 		// 		responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
@@ -70,7 +78,7 @@ func DeleteUser() gin.HandlerFunc {
 		// }
 
 		c.JSON(http.StatusOK,
-			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!", "result": result}},
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!", "result": result, "signup": signup}},
 		)
 	}
 }
@@ -134,22 +142,18 @@ func PurchaseTicket() gin.HandlerFunc {
 			Cost:           ticket.Cost,
 		}
 
-		result, err := purchasedRepo.Create(newpurchased)
-		// result, err := purchasedCollection.InsertOne(ctx, newpurchased)
+		go kafka.Produce_purchased_ticket(newpurchased)
+
+		// result, err := purchasedRepo.Create(newpurchased)
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		// iid := fmt.Sprintf("%v", result.InsertedID)
-		// new_produce_ticket := kafka_purchase{
-		// 	insertedid: iid,
-		// 	purchased:  newpurchased,
-		// }
+		go kafka.Consume_purchased_ticket()
 
-		// go produce_booked_ticket(new_produce_ticket)
-
-		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": "Ticket successfully purchased!"}})
 	}
 }
 
@@ -168,8 +172,6 @@ func GetPurchased() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
-
-		go kafka.Produce_booked_ticket_for_avail(purchased.Train_id, true)
 
 		c.JSON(http.StatusOK, responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": purchased}})
 	}
@@ -198,7 +200,7 @@ func DeletePurchased() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce_booked_ticket_for_avail(purchased.Train_id, false)
+		// go kafka.Produce_purchased_ticket(purchased.Train_id)
 
 		// if result.(int) < 1 {
 		// 	c.JSON(http.StatusNotFound,
@@ -208,7 +210,7 @@ func DeletePurchased() gin.HandlerFunc {
 		// }
 
 		c.JSON(http.StatusOK,
-			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!", "result": result}},
+			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!", "result": result, "purchased": purchased}},
 		)
 	}
 }

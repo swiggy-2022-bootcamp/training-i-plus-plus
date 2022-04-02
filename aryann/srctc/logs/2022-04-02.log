@@ -1,0 +1,66 @@
+2022-04-02 17:29:37 [Kafka Consumer] Consume Purchasing Ticket
+2022-04-02 17:29:37 [Kafka Consumer] Consume Train
+2022-04-02 17:29:37 [Kafka Consumer] Consume Ticket
+2022-04-02 17:29:38 [main] Connected to MongoDB
+2022-04-02 17:30:35 [Kafka Consumer] Consume Purchasing Ticket
+2022-04-02 17:30:35 [Kafka Consumer] Consume Train
+2022-04-02 17:30:35 [Kafka Consumer] Consume Ticket
+2022-04-02 17:30:35 [main] Connected to MongoDB
+2022-04-02 17:32:38 [train_repository] Created a new train journy: bangalore to delhi
+2022-04-02 17:32:38 [Kafka Producer] Produce Train
+2022-04-02 17:32:40 [Kafka Consumer] Inserted new ticket models.Train{Source:"bangalore", Destination:"delhi"}
+2022-04-02 17:33:29 [ticket_repository] Created a new ticket:  ObjectID("62483b9192856b32760f637f")
+2022-04-02 17:33:29 [Kafka Producer] Produce Ticket
+2022-04-02 17:33:30 [Kafka Consumer] Inserted new able ticket models.Ticket{ID:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Train_id:primitive.ObjectID{0x62, 0x48, 0x3b, 0x5e, 0x92, 0x85, 0x6b, 0x32, 0x76, 0xf, 0x63, 0x7e}, Capacity:500, Cost:20, Departure_time:"Jan 2, 2006 at 3:04pm (MST)", Arrival_time:"Jan 2, 2006 at 4:04pm (MST)"}
+2022-04-02 20:04:23 [Kafka Consumer] Consume Ticket
+2022-04-02 20:04:23 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:04:23 [Kafka Consumer] Consume Train
+2022-04-02 20:04:23 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:04:23 [Kafka Consumer] Inserted new train journey models.Train{Source:"bangalore", Destination:"delhi"}
+2022-04-02 20:04:23 [Kafka Consumer] Created new ticket models.Ticket{ID:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Train_id:primitive.ObjectID{0x62, 0x48, 0x3b, 0x5e, 0x92, 0x85, 0x6b, 0x32, 0x76, 0xf, 0x63, 0x7e}, Capacity:500, Cost:20, Departure_time:"Jan 2, 2006 at 3:04pm (MST)", Arrival_time:"Jan 2, 2006 at 4:04pm (MST)"}
+2022-04-02 20:04:23 [main] Connected to MongoDB
+2022-04-02 20:04:23 [purchased_repository] Created a new purchase:  ObjectID("62485eef693110cd222778f3")
+2022-04-02 20:05:09 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-02 20:05:09 [Kafka Producer] Produce Purchased Ticket
+2022-04-02 20:05:09 [purchased_repository] Created a new purchase:  ObjectID("62485f1d693110cd222778f4")
+2022-04-02 20:08:15 [Kafka Consumer] Consume Train
+2022-04-02 20:08:15 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:08:15 [Kafka Consumer] Consume Ticket
+2022-04-02 20:08:15 [Kafka Consumer] Created new ticket models.Ticket{ID:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Train_id:primitive.ObjectID{0x62, 0x48, 0x3b, 0x5e, 0x92, 0x85, 0x6b, 0x32, 0x76, 0xf, 0x63, 0x7e}, Capacity:500, Cost:20, Departure_time:"Jan 2, 2006 at 3:04pm (MST)", Arrival_time:"Jan 2, 2006 at 4:04pm (MST)"}
+2022-04-02 20:08:15 [Kafka Consumer] Inserted new train journey models.Train{Source:"bangalore", Destination:"delhi"}
+2022-04-02 20:08:15 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:08:15 [purchased_repository] Created a new purchase:  ObjectID("62485fd7f9cbb5eefedd82c3")
+2022-04-02 20:08:15 [main] Connected to MongoDB
+2022-04-02 20:08:19 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-02 20:08:19 [Kafka Producer] Produce Purchased Ticket
+2022-04-02 20:10:48 [Kafka Consumer] Consume Ticket
+2022-04-02 20:10:48 [Kafka Consumer] Consume Train
+2022-04-02 20:10:48 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:10:48 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:10:48 [Kafka Consumer] Created new ticket models.Ticket{ID:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Train_id:primitive.ObjectID{0x62, 0x48, 0x3b, 0x5e, 0x92, 0x85, 0x6b, 0x32, 0x76, 0xf, 0x63, 0x7e}, Capacity:500, Cost:20, Departure_time:"Jan 2, 2006 at 3:04pm (MST)", Arrival_time:"Jan 2, 2006 at 4:04pm (MST)"}
+2022-04-02 20:10:48 [Kafka Consumer] Inserted new train journey models.Train{Source:"bangalore", Destination:"delhi"}
+2022-04-02 20:10:48 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:10:48 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:10:48 [purchased_repository] Created a new purchase:  ObjectID("62486070721a03f0420a67a0")
+2022-04-02 20:10:48 [purchased_repository] Created a new purchase:  ObjectID("62486070721a03f0420a67a1")
+2022-04-02 20:10:48 [main] Connected to MongoDB
+2022-04-02 20:10:52 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-02 20:10:52 [Kafka Producer] Produce Purchased Ticket
+2022-04-02 20:11:28 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-02 20:11:28 [Kafka Producer] Produce Purchased Ticket
+2022-04-02 20:12:38 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:12:38 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:12:38 [Kafka Consumer] Consume Ticket
+2022-04-02 20:12:38 [Kafka Consumer] Consume Train
+2022-04-02 20:12:38 [Kafka Consumer] Inserted new train journey models.Train{Source:"bangalore", Destination:"delhi"}
+2022-04-02 20:12:38 [Kafka Consumer] Created new ticket models.Ticket{ID:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Train_id:primitive.ObjectID{0x62, 0x48, 0x3b, 0x5e, 0x92, 0x85, 0x6b, 0x32, 0x76, 0xf, 0x63, 0x7e}, Capacity:500, Cost:20, Departure_time:"Jan 2, 2006 at 3:04pm (MST)", Arrival_time:"Jan 2, 2006 at 4:04pm (MST)"}
+2022-04-02 20:12:38 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:12:38 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:12:38 [purchased_repository] Created a new purchase:  ObjectID("624860de0c2583902c2e18e0")
+2022-04-02 20:12:38 [purchased_repository] Created a new purchase:  ObjectID("624860de0c2583902c2e18df")
+2022-04-02 20:12:38 [main] Connected to MongoDB
+2022-04-02 20:12:42 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-02 20:12:42 [Kafka Producer] Produce Purchased Ticket
+2022-04-02 20:12:42 [Kafka Consumer] Consume Purchased Ticket
+2022-04-02 20:12:42 [Kafka Consumer] Created new purchased ticket models.Purchased{Train_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, Departure:"", Arrival:"", Departure_time:"", Arrival_time:"", Cost:0, User_id:primitive.ObjectID{0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}}
+2022-04-02 20:12:42 [purchased_repository] Created a new purchase:  ObjectID("624860e20c2583902c2e18e1")

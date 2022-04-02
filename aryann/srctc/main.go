@@ -12,14 +12,12 @@ import (
 var logger1 = logger.NewLoggerService("main")
 
 func UserRouter() *gin.Engine {
-	fmt.Println("user check")
 	router := gin.Default()
 	routes.UserRoute(router)
 	return router
 }
 
 func AdminRouter() *gin.Engine {
-	fmt.Println("admin check")
 	router := gin.Default()
 	routes.AdminRoute(router)
 	return router

@@ -19,7 +19,7 @@ var avalidate = validator.New()
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 func init() {
-	go kafka.Consume_booked_ticket_for_avail()
+	go kafka.Consume_purchased_ticket()
 }
 
 func GetAdmin() gin.HandlerFunc {
@@ -65,8 +65,15 @@ func DeleteAdmin() gin.HandlerFunc {
 		// 	return
 		// }
 
+		admindel, err := adminRepo.Delete(objId)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
 		c.JSON(http.StatusOK,
-			responses.AdminResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Admin successfully deleted!", "result": result}},
+			responses.AdminResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Admin successfully deleted!", "result": result, "admin": admindel}},
 		)
 	}
 }
@@ -231,7 +238,7 @@ func CreateTicket() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce_avail_ticket(newTicket)
+		go kafka.Produce_ticket(newTicket)
 
 		c.JSON(http.StatusCreated, responses.TicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}

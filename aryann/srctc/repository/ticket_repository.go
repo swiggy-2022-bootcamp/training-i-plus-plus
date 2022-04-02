@@ -64,7 +64,7 @@ func (avl TicketRepository) Update(updateTicket models.Ticket, objId primitive.O
 	}
 	result, err := collectionTicket.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": updatebson})
 	if err == nil {
-		logger5.Log("Updated a ticket: ", result.UpsertedID)
+		logger5.Log("Updated a ticket: ", updateTicket.ID)
 		// fmt.Println("Updated a single document: ", result.UpsertedID)
 	}
 	return result.UpsertedID, err

@@ -2,3 +2,38 @@
 2022-04-01 21:50:46 [main] Connected to MongoDB
 2022-04-01 21:53:55 [main] Connected to MongoDB
 2022-04-01 21:54:10 [admin_repository] Created a new admin:  dd
+2022-04-01 23:31:20 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:31:20 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:31:20 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:31:20 [main] Connected to MongoDB
+2022-04-01 23:32:15 [ticket_repository] Updated a ticket:  <nil>
+2022-04-01 23:32:15 [purchased_repository] Created a new purchase:  ObjectID("62473e2732a72d74696f9807")
+2022-04-01 23:36:14 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:36:14 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:36:14 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:36:14 [main] Connected to MongoDB
+2022-04-01 23:36:19 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-01 23:36:19 [purchased_repository] Created a new purchase:  ObjectID("62473f1b8f4fc93363995384")
+2022-04-01 23:38:14 [Kafka Producer] kafka producer booking ticket
+2022-04-01 23:43:38 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:43:38 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:43:38 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:43:57 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:43:57 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:43:57 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:47:33 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:47:33 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:47:33 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:50:01 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:50:01 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:01 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:16 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:16 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:16 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:50:58 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:58 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:50:58 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:52:37 [Kafka Consumer] kafka producer booking ticket
+2022-04-01 23:52:37 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:52:37 [Kafka Consumer] kafka consumer  ticket
+2022-04-01 23:52:37 [main] Connected to MongoDB

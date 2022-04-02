@@ -9,7 +9,6 @@ import (
 	"srctc/repository"
 
 	"github.com/segmentio/kafka-go"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 const (
@@ -20,52 +19,35 @@ const (
 )
 
 var (
-	ticketRepo repository.TicketRepository
-	logger9    = logger.NewLoggerService("Kafka Consumer")
+	purchasedRepo repository.PurchasedRepository
+	logger9       = logger.NewLoggerService("Kafka Consumer")
 )
 
-func Consume_booked_ticket_for_avail() {
-	logger9.Log("kafka producer booking ticket")
+func Consume_purchased_ticket() {
+	logger9.Log("Consume Purchased Ticket")
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic1,
 	})
 
 	for {
-		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			panic("could not read message " + err.Error())
 		}
-		// after receiving the message, log its value
-		//fmt.Println("received: ", string(msg.Value))
-		trainid, err := primitive.ObjectIDFromHex(string(msg.Key))
 
-		if err != nil {
-			panic("incorrect train id " + err.Error())
-		}
-
-		ticket, err := ticketRepo.ReadTrainId(trainid)
-
-		if err != nil {
-			panic("could not find the train " + err.Error())
-		}
-
-		if string(msg.Value) == "increment" {
-			ticket.Capacity += 1
-		} else {
-			ticket.Capacity -= 1
-		}
-
-		_, err = ticketRepo.Update(ticket, ticket.ID)
-		if err != nil {
-			panic("could not update booked ticket " + err.Error())
+		purchased := models.Purchased{}
+		json.Unmarshal([]byte(msg.Value), &purchased)
+		res := fmt.Sprintf("Created new purchased ticket %#v", purchased)
+		logger9.Log(res)
+		if _, err := purchasedRepo.Create(purchased); err != nil {
+			panic("could not create purchased ticket " + err.Error())
 		}
 	}
 }
 
-func Consume_avail_ticket() {
-	logger9.Log("kafka consumer  ticket")
+func Consume_ticket() {
+	logger9.Log("Consume Ticket")
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic2,
@@ -80,13 +62,13 @@ func Consume_avail_ticket() {
 		// after receiving the message, log its value
 		natr := models.Ticket{}
 		json.Unmarshal([]byte(msg.Value), &natr)
-		res := fmt.Sprintf("Inserted new able ticket %#v", natr)
+		res := fmt.Sprintf("Created new ticket %#v", natr)
 		logger9.Log(res)
 	}
 }
 
 func Consume_train() {
-	logger9.Log("kafka consumer  ticket")
+	logger9.Log("Consume Train")
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic3,
@@ -101,7 +83,7 @@ func Consume_train() {
 		// after receiving the message, log its value
 		ntr := models.Train{}
 		json.Unmarshal([]byte(msg.Value), &ntr)
-		res := fmt.Sprintf("Inserted new ticket %#v", ntr)
+		res := fmt.Sprintf("Inserted new train journey %#v", ntr)
 		logger9.Log(res)
 	}
 }
