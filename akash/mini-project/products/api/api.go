@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"products.akash.com/db"
+	"products.akash.com/kafka"
 	"products.akash.com/log"
 	"products.akash.com/model"
 )
@@ -54,5 +55,18 @@ func Delete(c *gin.Context) {
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"delete failed"}`))
 	}
+}
 
+func Buy(c *gin.Context) {
+
+	buyRequest := model.BuyRequest{}
+	if err := c.BindJSON(&buyRequest); err != nil {
+		panic(err)
+	}
+
+	log.Info("Buy request received: ", buyRequest)
+
+	kafka.CreateComment(&buyRequest)
+
+	c.JSON(http.StatusOK, buyRequest)
 }

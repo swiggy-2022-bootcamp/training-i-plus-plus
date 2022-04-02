@@ -26,6 +26,7 @@ func Start() {
 	router.GET("/product/all", api.QueryAll)
 	router.POST("/product/add", api.AddProduct)
 	router.DELETE("/product/delete/:id", api.Delete)
+	router.POST("/product/buy/", api.Buy)
 
 	// Start listening
 	port := Port

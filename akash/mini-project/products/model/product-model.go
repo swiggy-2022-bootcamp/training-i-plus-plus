@@ -8,3 +8,9 @@ type Product struct {
 	Seller        string `json:"seller"`
 	SellerContact string `json:"seller-contact"`
 }
+
+type BuyRequest struct {
+	Username  string `json:"username"`
+	ProductId string `json:"product-id"`
+	Quantity  string `json:"quantity"`
+}
