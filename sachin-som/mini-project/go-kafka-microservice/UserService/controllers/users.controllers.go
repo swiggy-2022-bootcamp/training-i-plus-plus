@@ -37,11 +37,12 @@ func (uc *UserControllers) CreateUser(gctx *gin.Context) {
 		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
-	if err := uc.UserService.CreateUser(&user); err != nil {
+	userId, err := uc.UserService.CreateUser(&user)
+	if err != nil {
 		gctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
-	gctx.JSON(http.StatusCreated, gin.H{"message": "User Created."})
+	gctx.JSON(http.StatusCreated, gin.H{"message": userId})
 }
 
 // GetUser godoc
@@ -50,17 +51,17 @@ func (uc *UserControllers) CreateUser(gctx *gin.Context) {
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @securityDefinitions.apikey ApiKeyAuth
-// @Param        id path string  true "user id"
+// @Security     ApiKeyAuth
+// @Param        userId path string  true "user id"
 // @Success      200  {object} 	responses.UserResponse
 // @Failure      400  {object} 	responses.MessageResponse
 // @Failure      500  {object} 	responses.MessageResponse
 // @Failure      502  {object} 	responses.MessageResponse
-// @Router       /get/{id} [get]
+// @Router       /get/{userId} [get]
 func (uc *UserControllers) GetUser(gctx *gin.Context) {
 	var userId primitive.ObjectID
 	var err error
-	if userId, err = primitive.ObjectIDFromHex(gctx.Param("id")); err != nil {
+	if userId, err = primitive.ObjectIDFromHex(gctx.Param("userId")); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
@@ -102,9 +103,67 @@ func (uc *UserControllers) Login(gctx *gin.Context) {
 	gctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
+// UpdateUser godoc
+// @Summary      Update User
+// @Description  user updation API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param userId path string true "User unique identifiation."
+// @Param        user body requests.UserRequest  true "user model structure"
+// @Success      200  {object} 	responses.MessageResponse
+// @Failure      400  {object} 	responses.MessageResponse
+// @Failure      500  {object} 	responses.MessageResponse
+// @Failure      502  {object} 	responses.MessageResponse
+// @Router       /update/{userId} [patch]
+func (uc *UserControllers) UpdateUser(g *gin.Context) {
+	var updatedUser models.User
+	if err := g.ShouldBindJSON(&updatedUser); err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	userId, err := primitive.ObjectIDFromHex(g.Param("userId"))
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err = uc.UserService.UpdateUser(userId, &updatedUser); err != nil {
+		g.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
+	g.JSON(http.StatusOK, gin.H{"message": "User Updated Succesfully."})
+}
+
+// DeleteUser godoc
+// @Summary      Delete User By Id
+// @Description  user deletion API
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Security     ApiKeyAuth
+// @Param        id path string  true "user id"
+// @Success      200  {object} 	responses.MessageResponse
+// @Failure      400  {object} 	responses.MessageResponse
+// @Failure      500  {object} 	responses.MessageResponse
+// @Failure      502  {object} 	responses.MessageResponse
+// @Router       /delete/{userId} [delete]
+func (uc *UserControllers) DeleteUser(g *gin.Context) {
+	userId, err := primitive.ObjectIDFromHex(g.Param("userId"))
+	if err != nil {
+		g.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	if err = uc.UserService.DeleteUser(userId); err != nil {
+		g.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+	}
+	g.JSON(http.StatusOK, gin.H{"message": "User Deleted Succesfully."})
+}
+
 func (uc *UserControllers) RegisterUserRoutes(rg *gin.RouterGroup) {
 	userGroup := rg.Group("/")
 	userGroup.POST("/create", uc.CreateUser)
-	userGroup.GET("/get/:id", uc.GetUser)
+	userGroup.GET("/get/:userId", uc.GetUser)
+	userGroup.PATCH("/update/:userId", uc.UpdateUser)
+	userGroup.DELETE("/delete/:userId", uc.DeleteUser)
 	userGroup.POST("/login", uc.Login)
 }

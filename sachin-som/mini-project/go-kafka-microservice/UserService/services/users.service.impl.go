@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"errors"
 
 	pb "github.com/go-kafka-microservice/AuthProto"
 	"github.com/go-kafka-microservice/UserService/models"
@@ -27,12 +28,12 @@ func NewUserServiceImpl(userCollection *mongo.Collection, authServiceClient pb.A
 	}
 }
 
-func (us *UserServiceImpl) CreateUser(user *models.User) error {
+func (us *UserServiceImpl) CreateUser(user *models.User) (string, error) {
 	user.ID = primitive.NewObjectID()
 	if _, err := us.UserCollection.InsertOne(us.Ctx, user); err != nil {
-		return err
+		return "", err
 	}
-	return nil
+	return user.ID.Hex(), nil
 }
 
 func (us *UserServiceImpl) GetUser(userId primitive.ObjectID) (*models.User, error) {
@@ -44,18 +45,44 @@ func (us *UserServiceImpl) GetUser(userId primitive.ObjectID) (*models.User, err
 	return &user, nil
 }
 
-func (us *UserServiceImpl) Login(credentials *models.Credentials) (string, error) {
+func (us *UserServiceImpl) UpdateUser(userId primitive.ObjectID, updatedUser *models.User) error {
+	filterQ := bson.D{bson.E{Key: "_id", Value: userId}}
+	updateQ := bson.D{
+		bson.E{Key: "full_name", Value: updatedUser.Fullname},
+		bson.E{Key: "email", Value: updatedUser.Email},
+		bson.E{Key: "password", Value: updatedUser.Password},
+		bson.E{Key: "phone", Value: updatedUser.Phone},
+	}
+	res, err := us.UserCollection.UpdateOne(us.Ctx, filterQ, updateQ)
+	if err != nil {
+		return err
+	}
+	if res.MatchedCount != 1 {
+		return errors.New("No User Found.")
+	}
+	if res.ModifiedCount != 1 {
+		return errors.New("User Not Found.")
+	}
+	return nil
+}
 
+func (us *UserServiceImpl) DeleteUser(userId primitive.ObjectID) error {
+	filterQ := bson.D{bson.E{Key: "_Id", Value: userId}}
+	res, err := us.UserCollection.DeleteOne(us.Ctx, filterQ)
+	if err != nil {
+		return err
+	}
+	if res.DeletedCount != 1 {
+		return errors.New("User not deleted.")
+	}
+	return nil
+}
+func (us *UserServiceImpl) Login(credentials *models.Credentials) (string, error) {
 	var opt []grpc.CallOption
 	tokenRes, err := us.AuthServiceClient.Authenticate(us.Ctx, &pb.Credentials{
 		Email:    credentials.Email,
 		Password: credentials.Password,
 	}, opt...)
-	// out := new(pb.Response)
-	// err := us.GrpcConn.Invoke(us.Ctx, "github.com/go-kafka-microservice/AuthServices/controllers.AuthServices/Authorize", pb.Credentials{
-	// 	Email:    credentials.Email,
-	// 	Password: credentials.Password,
-	// }, &out, opt...)
 	if err != nil {
 		return "", err
 	}

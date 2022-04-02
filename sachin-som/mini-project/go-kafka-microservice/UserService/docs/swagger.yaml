@@ -95,7 +95,42 @@ paths:
       summary: Create New User
       tags:
       - User
-  /get/{id}:
+  /delete/{userId}:
+    delete:
+      consumes:
+      - application/json
+      description: user deletion API
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete User By Id
+      tags:
+      - User
+  /get/{userId}:
     get:
       consumes:
       - application/json
@@ -103,7 +138,7 @@ paths:
       parameters:
       - description: user id
         in: path
-        name: id
+        name: userId
         required: true
         type: string
       produces:
@@ -125,6 +160,8 @@ paths:
           description: Bad Gateway
           schema:
             $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
       summary: Get User By Id
       tags:
       - User
@@ -162,4 +199,50 @@ paths:
       summary: Login User
       tags:
       - User
+  /update/{userId}:
+    patch:
+      consumes:
+      - application/json
+      description: user updation API
+      parameters:
+      - description: User unique identifiation.
+        in: path
+        name: userId
+        required: true
+        type: string
+      - description: user model structure
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/requests.UserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+        "502":
+          description: Bad Gateway
+          schema:
+            $ref: '#/definitions/responses.MessageResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update User
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
