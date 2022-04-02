@@ -31,25 +31,26 @@ func GetCart() gin.HandlerFunc {
 			}
 			results = append(results, elem)
 		}
-
+		fmt.Println(results)
 		if err := cur.Err(); err != nil {
 			fmt.Println(err)
 		}
-
+		totalCartValue := float64(0)
 		var productItem models.Product
-		var finalResults []models.Product
+		var finalResults []interface{}
 		for _, elem := range results {
 			productId := elem.Product_id
 			err := productCollection.FindOne(ctx, bson.M{"product_id": productId}).Decode(&productItem)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured finding product items"})
 			}
-			finalResults = append(finalResults, productItem)
+			totalCartValue += float64(*elem.Quantity) * float64(*productItem.Price)
+			finalResults = append(finalResults, gin.H{"Name": productItem.Name, "Price": productItem.Price, "Quantity": elem.Quantity})
 		}
-
+		fmt.Println(finalResults)
 		cur.Close(ctx)
 
 		defer cancel()
-		c.JSON(http.StatusOK, finalResults)
+		c.JSON(http.StatusOK, gin.H{"Cart Items": finalResults, "Total Cart Value": totalCartValue})
 	}
 }
