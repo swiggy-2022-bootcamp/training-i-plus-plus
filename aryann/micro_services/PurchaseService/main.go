@@ -22,6 +22,6 @@ func main() {
 	logger1.Log("Connected to MongoDB")
 
 	userroute := PurchaseRouter()
-	userroute.Run("localhost:6000")
+	userroute.Run("localhost:9000")
 
 }

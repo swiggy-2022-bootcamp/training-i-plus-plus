@@ -1,0 +1,29 @@
+2022-04-03 00:35:06 [main] Connected to MongoDB
+2022-04-03 00:35:53 [Kafka Consumer] Consume Purchased Ticket
+2022-04-03 00:35:54 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:35:54 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:35:54 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:35:54 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:35:54 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:35:54 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:35:54 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:35:54 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:36:42 [Kafka Consumer] Consume Purchased Ticket
+2022-04-03 00:36:42 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:36:42 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:36:42 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:36:42 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:36:42 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:36:42 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:36:42 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:36:42 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:37:32 [Kafka Consumer] Consume Purchased Ticket
+2022-04-03 00:37:33 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:37:33 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:37:33 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:37:33 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:37:33 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:37:33 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:37:33 [ticket_repository] Updated a ticket:  ObjectID("000000000000000000000000")
+2022-04-03 00:37:33 [Kafka Consumer] Purchased Ticket Consumed <nil>
+2022-04-03 00:37:33 [main] Connected to MongoDB

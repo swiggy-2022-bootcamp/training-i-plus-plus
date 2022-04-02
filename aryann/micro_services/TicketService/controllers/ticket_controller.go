@@ -24,6 +24,10 @@ var (
 	ticketRepo repository.TicketRepository
 )
 
+func init() {
+	go kafka.Consume_purchased_ticket()
+}
+
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 func CreateTicket() gin.HandlerFunc {

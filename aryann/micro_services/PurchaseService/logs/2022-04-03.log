@@ -1,0 +1,8 @@
+2022-04-03 00:30:27 [main] Connected to MongoDB
+2022-04-03 00:32:11 [main] Connected to MongoDB
+2022-04-03 00:32:29 [Kafka Producer] Produce_purchased_ticket
+2022-04-03 00:32:29 [purchased_repository] Created a new purchase:  ObjectID("62489dc57063e802160bbc9c")
+2022-04-03 00:32:29 [Kafka Producer] [5] Leader Not Available: the cluster is in the middle of a leadership election and there is currently no leader for this partition and hence it is unavailable for writes
+2022-04-03 00:33:53 [main] Connected to MongoDB
+2022-04-03 00:33:56 [purchased_repository] Created a new purchase:  ObjectID("62489e1cfde39faeff221534")
+2022-04-03 00:33:56 [Kafka Producer] Produce_purchased_ticket

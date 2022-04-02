@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"UserService/kafka"
 	"UserService/models"
 	"UserService/responses"
 	"context"
@@ -15,10 +14,10 @@ import (
 
 var validate = validator.New()
 
-func init() {
-	go kafka.Consume_ticket()
-	go kafka.Consume_train()
-}
+// func init() {
+// 	go kafka.Consume_ticket()
+// 	go kafka.Consume_train()
+// }
 
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {

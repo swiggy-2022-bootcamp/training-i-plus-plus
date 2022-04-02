@@ -1,0 +1,6 @@
+2022-04-03 00:23:59 [main] Connected to MongoDB
+2022-04-03 00:24:25 [train_repository] Created a new train journy: mangalore to delhi
+2022-04-03 00:24:25 [Kafka Producer] Produce Train
+2022-04-03 00:27:40 [main] Connected to MongoDB
+2022-04-03 00:28:13 [train_repository] Updated train journey: raipur to delhi
+2022-04-03 00:28:35 [train_repository] Deleted a train journey: 62489be168ffc516d2ecb06a

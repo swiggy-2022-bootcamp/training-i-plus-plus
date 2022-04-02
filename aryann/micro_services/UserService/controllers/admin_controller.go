@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"UserService/kafka"
 	"UserService/models"
 	"UserService/responses"
 	"context"
@@ -17,9 +16,9 @@ var avalidate = validator.New()
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
-func init() {
-	go kafka.Consume_purchased_ticket()
-}
+// func init() {
+// 	go kafka.Consume_purchased_ticket()
+// }
 
 func GetAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {

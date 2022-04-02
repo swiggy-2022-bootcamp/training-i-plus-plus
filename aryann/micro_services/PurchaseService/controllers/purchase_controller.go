@@ -38,8 +38,6 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce_purchased_ticket(purchased.Train_id)
-
 		// var ticket models.Ticket
 
 		// ticket, err := ticketRepo.ReadTrainId(purchased.Train_id)
@@ -87,6 +85,8 @@ func PurchaseTicket() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
+
+		go kafka.Produce_purchased_ticket(purchased.Train_id)
 
 		c.JSON(http.StatusCreated, responses.PurchasedResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": "Ticket successfully purchased!", "purchased": result}})
 	}

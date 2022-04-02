@@ -90,14 +90,3 @@ func (usr UserRepository) ReadAll() ([]models.User, error) {
 	}
 	return users, nil
 }
-
-func (usr UserRepository) UpdateBookedTicket(userid primitive.ObjectID, bookedticketId primitive.ObjectID) (err error) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	update_tickets_booked := bson.M{"tickets_booked": bookedticketId}
-	defer cancel()
-	_, err = collectionUser.UpdateOne(ctx, bson.M{"_id": userid}, bson.M{"$push": update_tickets_booked})
-	if err != nil {
-		return err
-	}
-	return nil
-}
