@@ -33,4 +33,9 @@ var (
 		ErrorMessage:     literals.AppPrefix + ": " + literals.IncorrectUserPassword,
 		HttpResponseCode: http.StatusUnauthorized,
 	}
+
+	IncorrectUserRoleError = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.IncorrectUserRole,
+		HttpResponseCode: http.StatusBadRequest,
+	}
 )

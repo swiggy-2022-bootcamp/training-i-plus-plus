@@ -19,4 +19,8 @@ var (
 		ErrorMessage:     literals.AppPrefix + ": " + literals.DBUserNotFound,
 		HttpResponseCode: http.StatusNotFound,
 	}
+	UserAlreadyExists = ServerError{
+		ErrorMessage:     literals.AppPrefix + ": " + literals.DBUserAlreadyExists,
+		HttpResponseCode: http.StatusConflict,
+	}
 )

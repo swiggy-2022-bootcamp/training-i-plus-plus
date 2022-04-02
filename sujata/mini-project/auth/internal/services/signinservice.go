@@ -24,12 +24,14 @@ var signinServiceOnce sync.Once
 
 type signinService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitSigninService(config *util.RouterConfig) SignupService {
+func InitSigninService(config *util.RouterConfig, dao mongodao.MongoDAO) SignupService {
 	signinServiceOnce.Do(func() {
 		signinServiceStruct = &signinService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -54,10 +56,8 @@ func (s *signinService) ValidateRequest(user model.User) *errors.ServerError {
 }
 
 func (s *signinService) ProcessRequest(ctx context.Context, user model.User) (model.Token, *errors.ServerError) {
-	dao := mongodao.GetMongoDAO()
-
 	// check email if email does not exists return unauthorised
-	userRecord, err := dao.FindUserByEmail(ctx, user.Email)
+	userRecord, err := s.dao.FindUserByEmail(ctx, user.Email)
 	if err != nil {
 		log.WithField("Error:", err).Error("user not found with email ", user.Email)
 		return model.Token{}, err

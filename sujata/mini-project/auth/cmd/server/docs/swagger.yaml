@@ -1,4 +1,13 @@
 definitions:
+  model.SigninUser:
+    properties:
+      email:
+        example: sd@gmail.com
+        type: string
+      password:
+        example: password
+        type: string
+    type: object
   model.User:
     properties:
       address:
@@ -36,8 +45,25 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.User'
+            $ref: '#/definitions/model.SigninUser'
       summary: Signin the user to his/her account
+      tags:
+      - auth
+  /auth/v1/signup:
+    post:
+      consumes:
+      - application/json
+      description: It checks if the user email exists in database or not, if it exists
+        then it doesn't create new user. Otherwise it creates new user in the database
+        along with his/her details.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: Create a new user in the database
       tags:
       - auth
 swagger: "2.0"

@@ -20,7 +20,7 @@ import (
 // @Tags auth
 // @Accept  json
 // @Produce  json
-// @Success 200 {object} model.User
+// @Success 200 {object} model.SigninUser
 // @Router /auth/v1/signin [post]
 func SigninHandler(config *util.RouterConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {

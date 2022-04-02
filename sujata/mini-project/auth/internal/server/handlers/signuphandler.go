@@ -10,8 +10,14 @@ import (
 	"net/http"
 )
 
-// SignupHandler handles the http request, performs marshalling/unmarshalling and writes the
-// the http response.
+// Signup godoc
+// @Summary Create a new user in the database
+// @Description It checks if the user email exists in database or not, if it exists then it doesn't create new user. Otherwise it creates new user in the database along with his/her details.
+// @Tags auth
+// @Accept  json
+// @Produce  json
+// @Success 201 {object} model.User
+// @Router /auth/v1/signup [post]
 func SignupHandler(config *util.RouterConfig) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
 		ctx := req.Context()
@@ -46,9 +52,6 @@ func SignupHandler(config *util.RouterConfig) http.HandlerFunc {
 			return
 		}
 
-		// marshall the response
-
-		// Return the response along with header
 		w.WriteHeader(http.StatusCreated)
 	}
 }

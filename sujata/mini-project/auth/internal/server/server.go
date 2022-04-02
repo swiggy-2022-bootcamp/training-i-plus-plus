@@ -41,14 +41,14 @@ func RunServer() error {
 	}
 
 	// Initialize dao
-	err = intializeDao()
+	dao, err := intializeDao(webServerConfig)
 	if err != nil {
 		return err
 	}
 
 	// Initialize services
-	services.InitSignupService(&routerConfigs)
-	services.InitSigninService(&routerConfigs)
+	services.InitSignupService(&routerConfigs, dao)
+	services.InitSigninService(&routerConfigs, dao)
 
 	server := NewServer(webServerConfig)
 	server.Router.InitializeRouter(&routerConfigs)
@@ -62,13 +62,13 @@ func RunServer() error {
 	return nil
 }
 
-func intializeDao() error {
+func intializeDao(config *config.WebServerConfig) (mongodao.MongoDAO, error) {
 	// Initialize mongo database connection
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017"))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(config.MongoUrl))
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	mongodao.InitMongoDAO(client)
-	return nil
+	dao := mongodao.InitMongoDAO(client, config)
+	return dao, nil
 }

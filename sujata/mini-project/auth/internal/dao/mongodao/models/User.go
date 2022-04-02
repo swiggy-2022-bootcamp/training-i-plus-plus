@@ -16,3 +16,8 @@ type User struct {
 	// Enum for user role type (BUYER or SELLER)
 	Role Role `json:"role" bson:"role" example:"SELLER"`
 }
+
+type SigninUser struct {
+	Email    string `json:"email" bson:"email" example:"sd@gmail.com"`
+	Password string `json:"password" bson:"password" example:"password"`
+}

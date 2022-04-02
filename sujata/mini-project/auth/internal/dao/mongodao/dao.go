@@ -1,6 +1,7 @@
 package mongodao
 
 import (
+	"auth/config"
 	model "auth/internal/dao/mongodao/models"
 	"auth/internal/errors"
 	"context"
@@ -18,15 +19,17 @@ type MongoDAO interface {
 
 type mongoDAO struct {
 	client *mongo.Client
+	config *config.WebServerConfig
 }
 
 var mongoDao MongoDAO
 var mongoDaoOnce sync.Once
 
-func InitMongoDAO(client *mongo.Client) MongoDAO {
+func InitMongoDAO(client *mongo.Client, config *config.WebServerConfig) MongoDAO {
 	mongoDaoOnce.Do(func() {
 		mongoDao = &mongoDAO{
 			client: client,
+			config: config,
 		}
 	})
 
@@ -42,7 +45,7 @@ func GetMongoDAO() MongoDAO {
 }
 
 func (dao *mongoDAO) AddUser(ctx context.Context, user model.User) *errors.ServerError {
-	userCollection := dao.client.Database("shopKart").Collection("users")
+	userCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 	ra, err := userCollection.InsertOne(ctx, user)
 	if err != nil {
 		log.WithError(err).Error("an error occured while inserting a new user in database")
@@ -59,7 +62,7 @@ func (dao *mongoDAO) AddUser(ctx context.Context, user model.User) *errors.Serve
 }
 
 func (dao *mongoDAO) FindUserByEmail(ctx context.Context, email string) (model.User, *errors.ServerError) {
-	userCollection := dao.client.Database("shopKart").Collection("users")
+	userCollection := dao.client.Database(dao.config.Db).Collection(dao.config.DbCollection)
 
 	userFilter := bson.M{"email": email}
 	singleResult := userCollection.FindOne(ctx, userFilter)

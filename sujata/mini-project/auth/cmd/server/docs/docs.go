@@ -33,6 +33,29 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
+                            "$ref": "#/definitions/model.SigninUser"
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/v1/signup": {
+            "post": {
+                "description": "It checks if the user email exists in database or not, if it exists then it doesn't create new user. Otherwise it creates new user in the database along with his/her details.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Create a new user in the database",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
                             "$ref": "#/definitions/model.User"
                         }
                     }
@@ -41,6 +64,19 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "model.SigninUser": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "sd@gmail.com"
+                },
+                "password": {
+                    "type": "string",
+                    "example": "password"
+                }
+            }
+        },
         "model.User": {
             "type": "object",
             "properties": {
