@@ -25,9 +25,9 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/admin/:adminid": {
+        "/train": {
             "get": {
-                "description": "Get Admin details by providing the adminid",
+                "description": "Get Train journey by providing train id",
                 "consumes": [
                     "application/json"
                 ],
@@ -37,11 +37,11 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Fetch An Admin",
+                "summary": "Fetch a Train journy",
                 "parameters": [
                     {
-                        "description": "admin unique id",
-                        "name": "adminid",
+                        "description": "train unique id",
+                        "name": "trainid",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -53,7 +53,84 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Admin"
+                            "$ref": "#/definitions/models.Train"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "Update Train journey by providing train id",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Edit a Train journy",
+                "parameters": [
+                    {
+                        "description": "train unique id",
+                        "name": "trainid",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Train"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Create Train journey by providing source and destination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create A Train journy",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Train"
                         }
                     },
                     "400": {
@@ -71,7 +148,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Delete an Admin by providing the adminid",
+                "description": "Delete Train journey by providing train id",
                 "consumes": [
                     "application/json"
                 ],
@@ -81,11 +158,11 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Delete An Admin",
+                "summary": "Delete a Train journy",
                 "parameters": [
                     {
-                        "description": "admin unique id",
-                        "name": "adminid",
+                        "description": "train unique id",
+                        "name": "trainid",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -97,167 +174,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Admin"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
-        },
-        "/login": {
-            "post": {
-                "description": "Sign in a user/admin by providing username, email, group and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Login",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
-        },
-        "/register": {
-            "post": {
-                "description": "Register a user/admin by providing username, email, group and password",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Signup",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.SignUp"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/:userId": {
-            "get": {
-                "description": "Get User details by providing the userid",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Fetch A User",
-                "parameters": [
-                    {
-                        "description": "user unique id",
-                        "name": "UserId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            },
-            "delete": {
-                "description": "Delete a User by providing the userid",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Delete A User",
-                "parameters": [
-                    {
-                        "description": "user unique id",
-                        "name": "UserId",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Train"
                         }
                     },
                     "400": {
@@ -277,55 +194,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "models.Admin": {
+        "models.Train": {
             "type": "object",
             "required": [
-                "email",
-                "name"
+                "destination",
+                "source"
             ],
             "properties": {
-                "email": {
+                "destination": {
                     "type": "string"
                 },
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.SignUp": {
-            "type": "object",
-            "required": [
-                "email",
-                "password",
-                "typeOf",
-                "username"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string"
-                },
-                "typeOf": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "required": [
-                "email",
-                "name"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
+                "source": {
                     "type": "string"
                 }
             }
@@ -341,7 +220,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:6000",
+	Host:             "localhost:7000",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Swagger Train Reservation System API",

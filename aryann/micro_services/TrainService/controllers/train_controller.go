@@ -21,6 +21,16 @@ import (
 var avalidate = validator.New()
 var trainRepo repository.TrainRepository
 
+// CreateTrain godoc
+// @Summary      Create A Train journy
+// @Description  Create Train journey by providing source and destination
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train [post]
 func CreateTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -54,6 +64,17 @@ func CreateTrain() gin.HandlerFunc {
 	}
 }
 
+// GetTrain godoc
+// @Summary      Fetch a Train journy
+// @Description  Get Train journey by providing train id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        trainid 		body	string  true  "train unique id"
+// @Success      200  {object}  models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train [get]
 func GetTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -73,6 +94,17 @@ func GetTrain() gin.HandlerFunc {
 	}
 }
 
+// EditTrain godoc
+// @Summary      Edit a Train journy
+// @Description  Update Train journey by providing train id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        trainid 		body	string  true  "train unique id"
+// @Success      200  {object}  models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train [put]
 func EditTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -103,6 +135,17 @@ func EditTrain() gin.HandlerFunc {
 	}
 }
 
+// DeleteTrain godoc
+// @Summary      Delete a Train journy
+// @Description  Delete Train journey by providing train id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        trainid 		body	string  true  "train unique id"
+// @Success      200  {object}  models.Train
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /train [delete]
 func DeleteTrain() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)

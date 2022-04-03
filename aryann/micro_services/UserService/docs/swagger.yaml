@@ -214,8 +214,6 @@ paths:
       tags:
       - user
 securityDefinitions:
-  ApiKeyAuth:
-    in: header
-    name: Authorization
-    type: apiKey
+  BasicAuth:
+    type: basic
 swagger: "2.0"

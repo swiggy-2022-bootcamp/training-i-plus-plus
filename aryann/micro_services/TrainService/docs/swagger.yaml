@@ -1,0 +1,139 @@
+definitions:
+  models.Train:
+    properties:
+      destination:
+        type: string
+      source:
+        type: string
+    required:
+    - destination
+    - source
+    type: object
+host: localhost:7000
+info:
+  contact:
+    email: swiggyb3053@datascience.manipal.edu
+    name: Aryann Dhir
+    url: http://www.swagger.io/support
+  description: Swagger Train Reservation System API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Train Reservation System API
+  version: "1.0"
+paths:
+  /train:
+    delete:
+      consumes:
+      - application/json
+      description: Delete Train journey by providing train id
+      parameters:
+      - description: train unique id
+        in: body
+        name: trainid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Delete a Train journy
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get Train journey by providing train id
+      parameters:
+      - description: train unique id
+        in: body
+        name: trainid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch a Train journy
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: Create Train journey by providing source and destination
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Create A Train journy
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: Update Train journey by providing train id
+      parameters:
+      - description: train unique id
+        in: body
+        name: trainid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Edit a Train journy
+      tags:
+      - user
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

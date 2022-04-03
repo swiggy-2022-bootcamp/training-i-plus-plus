@@ -34,11 +34,7 @@ func UserRouter() *gin.Engine {
 
 // @host      localhost:6000
 
-// @securityDefinitions.apiKey ApiKeyAuth
-// @type apiKey
-// @in header
-// @name Authorization
-
+// @securityDefinitions.basic  BasicAuth
 func main() {
 
 	database.ConnectDB()
@@ -48,7 +44,10 @@ func main() {
 	routes.UserRoute(router)
 
 	docs.SwaggerInfo.Title = "Swagger Train Reservation System API"
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	url := ginSwagger.URL("http://localhost:6000/swagger/doc.json")
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
 
 	// userroute := UserRouter()
 	router.Run("localhost:6000")
