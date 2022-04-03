@@ -47,7 +47,6 @@ func GetCart() gin.HandlerFunc {
 			totalCartValue += float64(*elem.Quantity) * float64(*productItem.Price)
 			finalResults = append(finalResults, gin.H{"Name": productItem.Name, "Price": productItem.Price, "Quantity": elem.Quantity})
 		}
-		fmt.Println(finalResults)
 		cur.Close(ctx)
 
 		defer cancel()

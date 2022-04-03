@@ -51,7 +51,6 @@ func CreateOrder() gin.HandlerFunc {
 			}
 			results = append(results, elem)
 		}
-		fmt.Println(results)
 		if err := cur.Err(); err != nil {
 			fmt.Println(err)
 		}
@@ -68,12 +67,16 @@ func CreateOrder() gin.HandlerFunc {
 			finalResults = append(finalResults, gin.H{"Name": productItem.Name, "Price": productItem.Price, "Quantity": elem.Quantity})
 		}
 
+		_, errDel := cartItemCollection.DeleteMany(ctx, bson.M{"user_id": userID})
+		if errDel != nil {
+			fmt.Println(err)
+		}
 		order.Items = finalResults
 		order.ID = primitive.NewObjectID()
 		order.Order_id = order.ID.Hex()
 		order.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		order.User_id = userID
-		result, insertErr := orderCollection.InsertOne(ctx, order)
+		_, insertErr := orderCollection.InsertOne(ctx, order)
 
 		if insertErr != nil {
 			msg := fmt.Sprintf("order item was not created")
@@ -82,7 +85,7 @@ func CreateOrder() gin.HandlerFunc {
 		}
 
 		defer cancel()
-		c.JSON(http.StatusOK, result)
+		c.JSON(http.StatusOK, gin.H{"Your order ID is ": order.ID, "Order Total": totalCartValue, "Payment": order.Payment_status, "Items Ordered": finalResults})
 	}
 }
 
