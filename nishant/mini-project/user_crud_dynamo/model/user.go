@@ -8,19 +8,21 @@ const (
 	UserTableName = "users"
 )
 
-var defaultUserProjection string = "userId, e	mail"
+var defaultUserProjection string = "userId, email, username"
 
 type User struct {
-	UserId   string `json:"userId,omitempty"`
-	Email    string `json:"email,omitempty"`
-	Password string `json:"password,omitempty"`
+	UserId string `json:"userId,omitempty"`
+	Email  string `json:"email,omitempty"`
+	Pass   []byte `json:"pass,omitempty""`
+	Name   string `json:"username,omitempty"`
 }
 
-func NewUser(email, pass string) *User {
+func NewUser(name, email string, pass []byte) *User {
 	return &User{
-		UserId:   uuid.New().String(),
-		Email:    email,
-		Password: pass,
+		UserId: uuid.New().String(),
+		Email:  email,
+		Pass:   pass,
+		Name:   name,
 	}
 }
 

@@ -13,6 +13,9 @@ type Config struct {
 		ID       string
 		Secret   string
 	}
+	JWT struct {
+		Secret string
+	}
 }
 
 func loadConfig() Config {

@@ -1,0 +1,188 @@
+basePath: /
+definitions:
+  controller.UserAuthResponse:
+    properties:
+      token:
+        type: string
+      userId:
+        type: string
+    type: object
+  controller.UserCreds:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  controller.UserResponse:
+    description: User information
+    properties:
+      email:
+        type: string
+      userId:
+        type: string
+      username:
+        type: string
+    type: object
+  controller.UserUpdateRequest:
+    description: User information
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:7456
+info:
+  contact: {}
+  description: This is user crud service.
+  title: User Service
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: get auth token from username password
+      parameters:
+      - description: user creds
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UserCreds'
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.UserAuthResponse'
+        "400":
+          description: ""
+        "401":
+          description: ""
+        "500":
+          description: ""
+      summary: User Log In
+      tags:
+      - Users
+  /user:
+    get:
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controller.UserResponse'
+            type: array
+        "400":
+          description: ""
+        "401":
+          description: ""
+        "500":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: List all users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      description: register new user
+      parameters:
+      - description: user info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UserUpdateRequest'
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      summary: User Sign-Up
+      tags:
+      - Users
+  /user/{_id}:
+    delete:
+      parameters:
+      - description: UserId
+        in: path
+        name: _id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: ""
+        "401":
+          description: ""
+        "500":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Delete User by id
+      tags:
+      - Users
+    get:
+      parameters:
+      - description: UserId
+        in: path
+        name: _id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controller.UserResponse'
+        "400":
+          description: ""
+        "401":
+          description: ""
+        "500":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Get User by id
+      tags:
+      - Users
+    patch:
+      parameters:
+      - description: UserId
+        in: path
+        name: _id
+        required: true
+        type: string
+      - description: user info
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/controller.UserUpdateRequest'
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: ""
+        "401":
+          description: ""
+        "500":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: Update User by id
+      tags:
+      - Users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

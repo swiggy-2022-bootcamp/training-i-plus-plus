@@ -4,5 +4,8 @@
 		"Region":  "us-west-2",
 		"ID":      "fake",
 		"Secret":  "fake"
+    },
+    "JWT" : {
+        "Secret" : "my Secret"
     }
-}
+}   

@@ -5,7 +5,10 @@ import (
 	"log"
 	"reflect"
 	"strings"
-	"usecase/user_crud_dynamo/model"
+
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/model"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/producer"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -15,25 +18,61 @@ import (
 )
 
 type Controller struct {
-	Dynamo *dynamodb.DynamoDB
+	Dynamo   *dynamodb.DynamoDB
+	Producer *producer.Producer
 }
 
-func (cont Controller) CreateUser(c *gin.Context) {
-	newUser := model.User{}
+// user Structs for req - response
 
-	if err := c.BindJSON(&newUser); err != nil {
+// User request info
+// @Description User information
+type UserUpdateRequest struct {
+	Email    string `json:"email,omitempty"`
+	Password string `json:"password,omitempty"`
+	Name     string `json:"username,omitempty"`
+}
+
+// User Response
+// @Description User information
+type UserResponse struct {
+	UserId string `json:"userId,omitempty"`
+	Email  string `json:"email,omitempty"`
+	Name   string `json:"username,omitempty"`
+}
+
+// CreateUser godoc
+// @Summary User Sign-Up
+// @Description register new user
+// @Tags Users
+// @Param   user      body UserUpdateRequest true  "user info"
+// @Accept  json
+// @Success 200
+// @Failure 500
+// @Router /user [post]
+func (cont Controller) CreateUser(c *gin.Context) {
+	usr := UserUpdateRequest{}
+
+	if err := c.BindJSON(&usr); err != nil {
 		c.Error(err)
 		return
 	}
-	log.Printf("user %+v", newUser)
+	log.Printf("user %+v", usr)
 
-	newUser.GeneraterId()
+	if !utils.IsEmailValid(usr.Email) {
+		c.AbortWithStatusJSON(401, gin.H{
+			"error": "invalid email",
+		})
+		return
+	}
+
+	//newUser.GeneraterId()
+	newUser := model.NewUser(usr.Name, usr.Email, utils.HashPass(usr.Password))
 
 	log.Printf("new user %+v", newUser)
 
 	av, err := dynamodbattribute.MarshalMap(newUser)
 	if err != nil {
-		log.Fatalf("Got error marshalling new movie item: %s", err)
+		log.Fatalf("Got error marshalling new user item: %s", err)
 		c.Error(err)
 		return
 	}
@@ -49,8 +88,24 @@ func (cont Controller) CreateUser(c *gin.Context) {
 		c.Error(err)
 		return
 	}
+
+	//send notification to user
+	cont.Producer.SendWelcomeEmail(*newUser)
+
+	c.Set("userId", newUser.UserId)
+	c.Next()
 }
 
+// ReadUser godoc
+// @Summary Get User by id
+// @Tags Users
+// @Param _id path string true "UserId"
+// @Success 200 {object} UserResponse
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /user/{_id} [get]
+// @Security ApiKeyAuth
 func (cont Controller) ReadUser(c *gin.Context) {
 	id := c.Param("_id")
 	if id == "" {
@@ -79,7 +134,7 @@ func (cont Controller) ReadUser(c *gin.Context) {
 		})
 	}
 
-	usr := model.User{}
+	usr := UserResponse{}
 
 	err = dynamodbattribute.UnmarshalMap(result.Item, &usr)
 	if err != nil {
@@ -89,13 +144,31 @@ func (cont Controller) ReadUser(c *gin.Context) {
 	c.JSON(200, usr)
 }
 
+// UpdateUser godoc
+// @Summary Update User by id
+// @Tags Users
+// @Param _id path string true "UserId"
+// @Param   user      body UserUpdateRequest true  "user info"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /user/{_id} [patch]
+// @Security ApiKeyAuth
 func (cont Controller) UpdateUser(c *gin.Context) {
 	id := c.Param("_id")
 	if id == "" {
 		c.Error(fmt.Errorf("id not found"))
 	}
 
-	usr := model.User{}
+	if id != c.GetString("userId") {
+		c.AbortWithStatusJSON(401, gin.H{
+			"error": "Can only Update logged in user",
+		})
+		return
+	}
+
+	usr := UserUpdateRequest{}
 	if err := c.BindJSON(&usr); err != nil {
 		c.Error(err)
 		return
@@ -124,10 +197,27 @@ func (cont Controller) UpdateUser(c *gin.Context) {
 	})
 }
 
+// DeleteUser godoc
+// @Summary Delete User by id
+// @Tags Users
+// @Param _id path string true "UserId"
+// @Success 200
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /user/{_id} [delete]
+// @Security ApiKeyAuth
 func (cont Controller) DeleteUser(c *gin.Context) {
 	id := c.Param("_id")
 	if id == "" {
 		c.Error(fmt.Errorf("id not found"))
+	}
+
+	if id != c.GetString("userId") {
+		c.AbortWithStatusJSON(401, gin.H{
+			"error": "Can only delete logged in user",
+		})
+		return
 	}
 
 	res, err := cont.Dynamo.DeleteItem(&dynamodb.DeleteItemInput{
@@ -148,13 +238,22 @@ func (cont Controller) DeleteUser(c *gin.Context) {
 	}
 
 	c.Status(200)
-
 }
 
+// ListUser godoc
+// @Summary List all users
+// @Tags Users
+// @Success 200 {array} UserResponse
+// @Failure 500
+// @Failure 400
+// @Failure 401
+// @Router /user [get]
+// @Security ApiKeyAuth
 func (cont Controller) ListUser(c *gin.Context) {
 
 	res, err := cont.Dynamo.Scan(&dynamodb.ScanInput{
-		TableName: aws.String(model.UserTableName),
+		TableName:            aws.String(model.UserTableName),
+		ProjectionExpression: model.GetDefaultUserProjection(),
 	})
 
 	if err != nil {
@@ -178,7 +277,7 @@ func (cont Controller) ListUser(c *gin.Context) {
 	c.JSON(200, result)
 }
 
-func getUserUpdateExpression(user model.User) expression.UpdateBuilder {
+func getUserUpdateExpression(user UserUpdateRequest) expression.UpdateBuilder {
 	// iterate through all fields and set all fields which are not null
 	v := reflect.ValueOf(user)
 	t := reflect.TypeOf(&user).Elem()
