@@ -39,7 +39,7 @@
 <br>
 
 ## Product Service
-<p><img src="./resources/diagram1.png" alt="Kafka Architecture"></p>
+![Optional Text](diagram1.png)
 
 <br>
 
