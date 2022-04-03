@@ -15,52 +15,15 @@ func TestShouldGenereateJWTToken(t *testing.T) {
 	email := "murtaza896@gmail.com"
 	username := "murtaza896"
 	password := "Pass!23"
+	hashedPassword, _ := domain.HashPassword("Pass!23")
 	role := domain.Admin
 
-	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
+	user := domain.NewUser(firstName, lastName, username, phone, email, hashedPassword, role)
 	user.Id = 1
 	mockUserRepo.On("FindUserByUsername", username).Return(user, nil)
 	res, _ := authService.AuthenticateUser(username, password)
 	assert.NotNil(t, res)
-}
-
-func TestShouldParseAuthToken(t *testing.T) {
-	firstName := "Murtaza"
-	lastName := "Sadriwala"
-	phone := "9900887766"
-	email := "murtaza896@gmail.com"
-	username := "murtaza896"
-	password := "Pass!23"
-	role := domain.Admin
-
-	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-	user.Id = 1
-	mockUserRepo.On("FindUserByUsername", username).Return(user, nil)
-	authToken, _ := authService.AuthenticateUser(username, password)
-
-	actualId, actualRole, _ := authService.ParseAuthToken(authToken)
-	assert.Equal(t, 1, actualId)
-	assert.Equal(t, role, actualRole)
-}
-
-func TestAuthenticateUserShouldReturnTokenOnValidCredentials(t *testing.T) {
-
-	firstName := "Murtaza"
-	lastName := "Sadriwala"
-	phone := "9900887766"
-	email := "murtaza896@gmail.com"
-	username := "murtaza896"
-	password := "Pass!23"
-	role := domain.Admin
-
-	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-
-	mockUserRepo.On("FindUserByUsername", username).Return(user, nil)
-	actualResponse, err := authService.AuthenticateUser(user.Username, user.Password)
-
-	assert.Nil(t, err)
-	assert.NotNil(t, actualResponse)
-	assert.True(t, len(actualResponse) > 0)
+	assert.True(t, len(res) > 0)
 }
 
 func TestShouldParseValidAuthToken(t *testing.T) {

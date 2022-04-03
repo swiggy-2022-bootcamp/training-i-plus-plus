@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"golang.org/x/crypto/bcrypt"
 	"panem/utils/errs"
 
 	"github.com/golang-jwt/jwt"
@@ -23,7 +24,9 @@ func (as authService) AuthenticateUser(username, password string) (string, *errs
 	if err != nil {
 		return "", err
 	}
-	if user.Password == password {
+	err2 := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+
+	if err2 == nil {
 		return generateJWT(user.Id, user.Role)
 	} else {
 		return "", errs.NewAuthenticationError("invalid credentials")

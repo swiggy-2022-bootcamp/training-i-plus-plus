@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"golang.org/x/crypto/bcrypt"
 	"panem/utils/errs"
 )
 
@@ -15,8 +16,20 @@ type service struct {
 	userMongoRepository UserMongoRepository
 }
 
+func HashPassword(password string) (string, *errs.AppError) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	if err != nil {
+		return string(bytes), errs.NewUnexpectedError("Unexpected error in password hashing")
+	}
+	return string(bytes), nil
+}
+
 func (s service) CreateUserInMongo(firstName, lastName, username, phone, email, password string, role Role) (User, *errs.AppError) {
-	user := NewUser(firstName, lastName, username, phone, email, password, role)
+	hashedPassword, err := HashPassword(password)
+	if err != nil {
+		return User{}, err
+	}
+	user := NewUser(firstName, lastName, username, phone, email, hashedPassword, role)
 	persistedUser, err := s.userMongoRepository.InsertUser(*user)
 	if err != nil {
 		return User{}, err

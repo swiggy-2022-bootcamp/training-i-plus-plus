@@ -1,6 +1,7 @@
 package domain_test
 
 import (
+	"github.com/stretchr/testify/mock"
 	"panem/domain"
 	"panem/mocks"
 	"panem/utils/errs"
@@ -23,11 +24,11 @@ func TestShouldCreateNewUser(t *testing.T) {
 	phone := "9900887766"
 	email := "murtaza896@gmail.com"
 	username := "murtaza896"
-	password := "Pass!23"
+	password, _ := domain.HashPassword("Pass!23")
 	role := domain.Admin
 
 	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-	mockUserRepo.On("InsertUser", *user).Return(*user, nil)
+	mockUserRepo.On("InsertUser", mock.Anything).Return(*user, nil)
 	userService.CreateUserInMongo(firstName, lastName, username, phone, email, password, role)
 	mockUserRepo.AssertNumberOfCalls(t, "InsertUser", 1)
 }
