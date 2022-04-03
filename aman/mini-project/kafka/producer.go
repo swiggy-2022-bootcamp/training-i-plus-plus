@@ -19,24 +19,19 @@ func Produce(ctx context.Context, msg string) {
 	i := 0
 
 	l := log.New(os.Stdout, "kafka writer: ", 0)
-	// intialize the writer with the broker addresses, and the topic
 	w := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{brokerAddress},
 		Topic:   topic,
-		// assign the logger to the writer
-		Logger: l,
+		Logger:  l,
 	})
 
 	err := w.WriteMessages(ctx, kafka.Message{
-		Key: []byte(strconv.Itoa(i)),
-		// create an arbitrary message payload for the value
+		Key:   []byte(strconv.Itoa(i)),
 		Value: []byte(msg),
 	})
 	if err != nil {
 		panic("could not write message " + err.Error())
 	}
-
-	// log a confirmation once the message is written
 	fmt.Println("Writes:", msg)
 	i++
 }

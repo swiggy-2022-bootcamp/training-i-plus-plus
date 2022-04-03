@@ -21,6 +21,7 @@ func main() {
 	routes.InventoryRoutes(r)
 	routes.CartItemsRoutes(r)
 	routes.OrderRoutes(r)
+	routes.RequestRoutes(r)
 	r.POST("/", test)
 	r.Run()
 }
