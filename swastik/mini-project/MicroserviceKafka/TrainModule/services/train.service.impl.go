@@ -30,9 +30,9 @@ func (t *TrainServiceImpl) CreateTrain(train *models.Train) error{
 	return err
 }
 
-func (t *TrainServiceImpl) GetTrain(name *string) (*models.Train, error){
+func (t *TrainServiceImpl) GetTrain(train_number *string) (*models.Train, error){
 	var train *models.Train
-	query := bson.D{bson.E{Key:"train_number", Value: name}}
+	query := bson.D{bson.E{Key:"train_number", Value: train_number}}
 	err := t.traincollection.FindOne(t.ctx, query).Decode(&train)
 	return train, err
 }

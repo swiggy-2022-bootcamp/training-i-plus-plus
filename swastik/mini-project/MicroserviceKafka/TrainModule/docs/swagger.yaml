@@ -1,0 +1,171 @@
+definitions:
+  models.Train:
+    properties:
+      destination:
+        type: string
+      seats_available:
+        items:
+          type: integer
+        type: array
+      source:
+        type: string
+      total_seats:
+        type: integer
+      train_name:
+        type: string
+      train_number:
+        type: integer
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: swastiksahoo22@gmail.com
+    name: Swastik Sahoo
+  description: This microservice is for train module.
+  license:
+    name: Apache 2.0
+  title: Train Module
+  version: "1.0"
+paths:
+  /train/delete/{train_number}:
+    delete:
+      consumes:
+      - application/json
+      description: To remove a particular train.
+      parameters:
+      - description: Train Number
+        in: path
+        name: train_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Delete Train
+      tags:
+      - Train
+  /train/get/{train_number}:
+    get:
+      consumes:
+      - application/json
+      description: To get train details.
+      parameters:
+      - description: Train Number
+        in: path
+        name: train_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get Train
+      tags:
+      - Train
+  /train/getall:
+    get:
+      consumes:
+      - application/json
+      description: To get every train detail.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Train'
+            type: array
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get all Train details
+      tags:
+      - Train
+  /train/register:
+    post:
+      consumes:
+      - application/json
+      description: To register a new train for the app.
+      parameters:
+      - description: Train structure
+        in: body
+        name: train
+        required: true
+        schema:
+          $ref: '#/definitions/models.Train'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Register Train
+      tags:
+      - Train
+  /train/update/{train_number}:
+    patch:
+      consumes:
+      - application/json
+      description: To update train details.
+      parameters:
+      - description: Train Number
+        in: path
+        name: train_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Update Train
+      tags:
+      - Train
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

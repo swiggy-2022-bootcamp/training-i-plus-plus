@@ -6,6 +6,7 @@ import (
 	"context"
 	"go.mongodb.org/mongo-driver/bson"
 	"errors"
+	"fmt"
 )
 
 type UserServiceImpl struct {
@@ -25,36 +26,41 @@ func (u *UserServiceImpl) CreateUser(user *models.User) error{
 	return err
 }
 
-func (u *UserServiceImpl) GetUser(name *string) (*models.User, error){
+func (u *UserServiceImpl) GetUser(username *string) (*models.User, error){
 	var user *models.User
-	query := bson.D{bson.E{Key:"name", Value: name}}
+	query := bson.D{bson.E{Key:"username", Value: username}}
 	err := u.usercollection.FindOne(u.ctx, query).Decode(&user)
 	return user, err
 }
 
 func (u *UserServiceImpl) GetAll() ([]*models.User, error){
 	var users []*models.User
+	fmt.Println("here1")
 	cursor, err := u.usercollection.Find(u.ctx, bson.D{{}})
 	if err != nil{
 		return nil, err
 	}
+	fmt.Println("here2")
 	for cursor.Next(u.ctx){
 		var user models.User
 		err := cursor.Decode(&user)
+		fmt.Println("here before err")
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("here after error")
 		users = append(users, &user)
 	}
 	if err := cursor.Err(); err != nil{
 		return nil, err
 	}
-
+	fmt.Println("here5")
 	cursor.Close(u.ctx)
 
 	if len(users) == 0 {
 		return nil, errors.New("documents not found")
 	}
+	fmt.Println("here6")
 	return users, nil
 }
 

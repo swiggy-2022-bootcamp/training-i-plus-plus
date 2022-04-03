@@ -1,0 +1,171 @@
+definitions:
+  models.Ticket:
+    properties:
+      date_time:
+        type: string
+      destination:
+        type: string
+      passenger_name:
+        type: string
+      pnr_number:
+        type: integer
+      seat_number:
+        type: integer
+      source:
+        type: string
+      train_number:
+        type: integer
+    type: object
+host: localhost:8082
+info:
+  contact:
+    email: swastiksahoo22@gmail.com
+    name: Swastik Sahoo
+  description: This microservice is for ticket module.
+  license:
+    name: Apache 2.0
+  title: Ticket Module
+  version: "1.0"
+paths:
+  /ticket/book:
+    post:
+      consumes:
+      - application/json
+      description: To book ticket.
+      parameters:
+      - description: Ticket structure
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/models.Ticket'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Book Ticket
+      tags:
+      - Ticket
+  /ticket/delete/{pnr_number}:
+    delete:
+      consumes:
+      - application/json
+      description: To remove a particular ticket.
+      parameters:
+      - description: PNR Number
+        in: path
+        name: pnr_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Delete Ticket
+      tags:
+      - Ticket
+  /ticket/get/{pnr_number}:
+    get:
+      consumes:
+      - application/json
+      description: To get ticket details.
+      parameters:
+      - description: PNR Number
+        in: path
+        name: pnr_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Ticket'
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get Ticket
+      tags:
+      - Ticket
+  /ticket/getall:
+    get:
+      consumes:
+      - application/json
+      description: To get every ticket detail.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Ticket'
+            type: array
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get all Ticket details
+      tags:
+      - Ticket
+  /ticket/update/{pnr_number}:
+    patch:
+      consumes:
+      - application/json
+      description: To update ticket details.
+      parameters:
+      - description: PNR Number
+        in: path
+        name: pnr_number
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Update Ticket
+      tags:
+      - Ticket
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,157 @@
+definitions:
+  models.Address:
+    properties:
+      city:
+        type: string
+      pincode:
+        type: integer
+      state:
+        type: string
+    type: object
+  models.Login:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+  models.User:
+    properties:
+      address:
+        $ref: '#/definitions/models.Address'
+      age:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: swastiksahoo22@gmail.com
+    name: Swastik Sahoo
+  description: This microservice is for user module.
+  license:
+    name: Apache 2.0
+  title: Train Reservation App
+  version: "1.0"
+paths:
+  /user/get/{username}:
+    get:
+      consumes:
+      - application/json
+      description: To get user details.
+      parameters:
+      - description: User Name
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get User
+      tags:
+      - User
+  /user/getall:
+    get:
+      consumes:
+      - application/json
+      description: To get every user detail.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.User'
+            type: array
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get all Users
+      tags:
+      - User
+  /userLogin:
+    post:
+      consumes:
+      - application/json
+      description: To login a new user for the app.
+      parameters:
+      - description: User structire
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      summary: Login User
+      tags:
+      - User
+  /userRegistration:
+    post:
+      consumes:
+      - application/json
+      description: To register a new user for the app.
+      parameters:
+      - description: User structire
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "502":
+          description: Bad Gateway
+          schema:
+            type: number
+      summary: Register User
+      tags:
+      - User
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

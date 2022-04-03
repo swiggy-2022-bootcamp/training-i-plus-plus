@@ -13,6 +13,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"github.com/joho/godotenv"
+
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"	
+	docs "github.com/swastiksahoo153/train-reservation-system/docs"
 )
 
 var (
@@ -54,12 +58,26 @@ func init(){
 	userservice = services.NewUserService(usercollection, ctx)
 	usercontroller = controllers.New(userservice)
 	server = gin.Default()
+
+	docs.SwaggerInfo.Title = "Train Reservation System"
+	server.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
+
+// @title          Users Module
+// @version        1.0
+// @description    This microservice is for user module.
+// @contact.name   Swastik Sahoo
+// @contact.email  swastiksahoo22@gmail.com
+// @license.name  Apache 2.0
+// @host      localhost:8080
+// @securityDefinitions.apikey  Bearer Token
+// @in                          header
+// @name                        Authorization
 func main(){
 	defer mongoclient.Disconnect(ctx)
 
-	basepath := server.Group("/v1")
+	basepath := server.Group("")
 	usercontroller.RegisterUserRoutes(basepath)
 
 	log.Fatal(server.Run(":8080"))
