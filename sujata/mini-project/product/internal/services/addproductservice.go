@@ -52,9 +52,7 @@ func (s *addProductService) ValidateRequest(product model.Product) *errors.Serve
 }
 
 func (service *addProductService) ProcessRequest(ctx context.Context, product model.Product) *errors.ServerError {
-	dao := mongodao.GetMongoDAO()
-
-	err := dao.AddProduct(ctx, product)
+	err := service.dao.AddProduct(ctx, product)
 	if err != nil {
 		log.WithField("Error: ", err).Error("an error occurred while inserting product in db")
 		return err

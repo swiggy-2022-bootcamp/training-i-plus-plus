@@ -43,12 +43,11 @@ func GetGetProductsService() GetProductsService {
 }
 
 func (service *getProductsService) ProcessRequest(ctx context.Context, productIds model.ProductIds) ([]model.Product, *errors.ServerError) {
-	dao := mongodao.GetMongoDAO()
-
 	var products []model.Product
+
 	for idx := 0; idx < len(productIds.Ids); idx++ {
 		id := productIds.Ids[idx]
-		product, err := dao.GetProduct(ctx, id)
+		product, err := service.dao.GetProduct(ctx, id)
 		if err != nil {
 			log.WithField("Error: ", err).Error("an error occurred while getting the product from db")
 			return products, err
