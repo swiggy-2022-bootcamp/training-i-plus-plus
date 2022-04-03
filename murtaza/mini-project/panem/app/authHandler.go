@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"panem/domain"
+	"panem/utils/errs"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,17 +24,18 @@ func (ah AuthHandler) handleLogin(c *gin.Context) {
 	err := json.NewDecoder(c.Request.Body).Decode(&credentials)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		customErr := errs.NewValidationError("Invalid request paylaod")
+		c.JSON(http.StatusBadRequest, customErr)
 	}
-	var username string = credentials.Username
-	var password string = credentials.Password
+	var username = credentials.Username
+	var password = credentials.Password
 
-	jwtToken, err := ah.authService.AuthenticateUser(username, password)
-	if err != nil {
-		c.JSON(http.StatusForbidden, err)
+	jwtToken, err2 := ah.authService.AuthenticateUser(username, password)
+	if err2 != nil {
+		c.JSON(err2.Code, err2)
 	}
 	c.SetCookie("auth-token", jwtToken, 60*1000, "/", "localhost", false, true)
-	c.JSON(http.StatusAccepted, gin.H{"message": "Logged in successfully !"})
+	c.JSON(http.StatusOK, gin.H{"message": "Logged in successfully !"})
 }
 
 func (ah AuthHandler) authMiddleware(c *gin.Context) {
@@ -45,8 +47,8 @@ func (ah AuthHandler) authMiddleware(c *gin.Context) {
 		return
 	}
 
-	userId, _, err := ah.authService.ParseAuthToken(cookie)
-	if err != nil {
+	userId, _, err2 := ah.authService.ParseAuthToken(cookie)
+	if err2 != nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
 		c.Abort()
 		return
@@ -55,7 +57,7 @@ func (ah AuthHandler) authMiddleware(c *gin.Context) {
 	userIdStr := c.Params.ByName("userId")
 	if userIdStr != "" {
 		userIdFromParams, _ := strconv.Atoi(userIdStr)
-		if int(userIdFromParams) != userId {
+		if userIdFromParams != userId {
 			c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
 			c.Abort()
 			return
@@ -81,8 +83,8 @@ func (ah AuthHandler) isTokenValid(c *gin.Context) {
 		return
 	}
 
-	userId, role, err := ah.authService.ParseAuthToken(cookie)
-	if err != nil {
+	userId, role, err2 := ah.authService.ParseAuthToken(cookie)
+	if err2 != nil {
 		c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
 		c.Abort()
 		return
@@ -93,5 +95,5 @@ func (ah AuthHandler) isTokenValid(c *gin.Context) {
 		Role:   role,
 	}
 
-	c.JSON(http.StatusAccepted, authDto)
+	c.JSON(http.StatusOK, authDto)
 }

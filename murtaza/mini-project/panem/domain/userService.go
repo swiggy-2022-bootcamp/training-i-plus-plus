@@ -1,17 +1,19 @@
 package domain
 
+import "panem/utils/errs"
+
 type UserService interface {
-	CreateUserInMongo(string, string, string, string, string, string, Role) (User, error)
-	GetMongoUserByUserId(int) (*User, error)
-	DeleteUserByUserId(int) error
-	UpdateUser(User, int) (*User, error)
+	CreateUserInMongo(string, string, string, string, string, string, Role) (User, *errs.AppError)
+	GetMongoUserByUserId(int) (*User, *errs.AppError)
+	DeleteUserByUserId(int) *errs.AppError
+	UpdateUser(User, int) (*User, *errs.AppError)
 }
 
 type service struct {
 	userMongoRepository UserMongoRepository
 }
 
-func (s service) CreateUserInMongo(firstName, lastName, username, phone, email, password string, role Role) (User, error) {
+func (s service) CreateUserInMongo(firstName, lastName, username, phone, email, password string, role Role) (User, *errs.AppError) {
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 	persistedUser, err := s.userMongoRepository.InsertUser(*user)
 	if err != nil {
@@ -20,7 +22,7 @@ func (s service) CreateUserInMongo(firstName, lastName, username, phone, email, 
 	return persistedUser, nil
 }
 
-func (s service) GetMongoUserByUserId(userId int) (*User, error) {
+func (s service) GetMongoUserByUserId(userId int) (*User, *errs.AppError) {
 	res, err := s.userMongoRepository.FindUserById(userId)
 	if err != nil {
 		return nil, err
@@ -28,7 +30,7 @@ func (s service) GetMongoUserByUserId(userId int) (*User, error) {
 	return res, nil
 }
 
-func (s service) DeleteUserByUserId(userId int) error {
+func (s service) DeleteUserByUserId(userId int) *errs.AppError {
 	err := s.userMongoRepository.DeleteUserByUserId(userId)
 	if err != nil {
 		return err
@@ -36,7 +38,7 @@ func (s service) DeleteUserByUserId(userId int) error {
 	return nil
 }
 
-func (s service) UpdateUser(user User, userId int) (*User, error) {
+func (s service) UpdateUser(user User, userId int) (*User, *errs.AppError) {
 	user.Id = userId
 	res, err := s.userMongoRepository.UpdateUser(user)
 	if err != nil {

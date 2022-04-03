@@ -29,6 +29,6 @@ type UserModel struct {
 
 func (u UserModel) toDomainEntity() *domain.User {
 	domainUser := domain.NewUser(u.FirstName, u.LastName, u.Username, u.Phone, u.Email, u.Password, u.Role)
-	domainUser.SetId(u.Id)
+	domainUser.Id = u.Id
 	return domainUser
 }

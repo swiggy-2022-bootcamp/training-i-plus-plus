@@ -2,7 +2,7 @@ package domain
 
 import (
 	"encoding/json"
-	"errors"
+	"panem/utils/errs"
 )
 
 type Role int
@@ -21,7 +21,7 @@ func (r Role) EnumIndex() int {
 	return int(r)
 }
 
-func GetEnumByIndex(idx int) (Role, error) {
+func GetEnumByIndex(idx int) (Role, *errs.AppError) {
 	switch idx {
 	case 0:
 		return Admin, nil
@@ -30,93 +30,53 @@ func GetEnumByIndex(idx int) (Role, error) {
 	case 2:
 		return Customer, nil
 	default:
-		return -1, errors.New("invalid enum index")
+		return -1, errs.NewUnexpectedError("invalid enum index")
 	}
 }
 
 type User struct {
-	Id        int    `json:"id"`
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	Username  string `json:"username"`
-	Password  string `json:"password"`
-	Phone     string `json:"phone"`
-	Email     string `json:"email"`
-	Role      Role   `json:"role"`
-}
-
-// ----- getters and setters --------
-
-func (u *User) SetId(id int) {
-	u.Id = id
-}
-
-func (u *User) SetEmail(email string) {
-	u.Email = email
-}
-
-func (u *User) SetFirstName(firstName string) {
-	u.FirstName = firstName
-}
-
-func (u *User) SetLastName(lastName string) {
-	u.LastName = lastName
-}
-
-func (u *User) SetUsername(username string) {
-	u.Username = username
-}
-
-func (u *User) SetPassword(password string) {
-	u.Password = password
-}
-
-func (u *User) SetPhone(phone string) {
-	u.Phone = phone
-}
-
-func (u *User) SetRole(r Role) {
-	u.Role = r
+	Id              int    `json:"id"`
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Username        string `json:"username"`
+	Password        string `json:"password"`
+	Phone           string `json:"phone"`
+	Email           string `json:"email"`
+	Role            Role   `json:"role"`
+	PurchaseHistory []int  `json:"purchase_history"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
 	return json.Marshal(map[string]interface{}{
-		"id":        u.Id,
-		"firstName": u.FirstName,
-		"lastName":  u.LastName,
-		"email":     u.Email,
-		"password":  u.Password,
-		"username":  u.Username,
-		"phone":     u.Phone,
-		"role":      u.Role,
+		"id":               u.Id,
+		"firstName":        u.FirstName,
+		"lastName":         u.LastName,
+		"email":            u.Email,
+		"password":         u.Password,
+		"username":         u.Username,
+		"phone":            u.Phone,
+		"role":             u.Role,
+		"purchase_history": u.PurchaseHistory,
 	})
 }
 
 func NewUser(firstName, lastName, username, phone, email, password string, role Role) *User {
 	return &User{
-		FirstName: firstName,
-		LastName:  lastName,
-		Username:  username,
-		Phone:     phone,
-		Email:     email,
-		Password:  password,
-		Role:      role,
+		FirstName:       firstName,
+		LastName:        lastName,
+		Username:        username,
+		Phone:           phone,
+		Email:           email,
+		Password:        password,
+		Role:            role,
+		PurchaseHistory: make([]int, 0),
 	}
 }
 
-type UserRepository interface {
-	GetAllUsers() ([]*User, error)
-	FindByUsername(string) (*User, error)
-	FindByEmail(string) (*User, error)
-	FindByUserId(int) (*User, error)
-	Save(User) (User, error)
-	DeleteUserByUsername(string) (bool, error)
-}
-
 type UserMongoRepository interface {
-	InsertUser(User) (User, error)
-	FindUserById(int) (*User, error)
-	FindUserByUsername(string) (*User, error)
-	DeleteUserByUserId(int) error
-	UpdateUser(User) (*User, error)
+	InsertUser(User) (User, *errs.AppError)
+	FindUserById(int) (*User, *errs.AppError)
+	FindUserByUsername(string) (*User, *errs.AppError)
+	DeleteUserByUserId(int) *errs.AppError
+	UpdateUser(User) (*User, *errs.AppError)
 }

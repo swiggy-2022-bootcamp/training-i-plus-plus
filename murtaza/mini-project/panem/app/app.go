@@ -1,10 +1,10 @@
 package app
 
 import (
+	"github.com/gin-gonic/gin"
 	"panem/domain"
 	"panem/infra"
-
-	"github.com/gin-gonic/gin"
+	"panem/utils/logger"
 )
 
 type Routes struct {
@@ -32,7 +32,7 @@ func Start() {
 	users := v1.Group("/users")
 
 	users.Use(authHandler.authMiddleware)
-	users.GET("/", userHandler.getAllUsers)
+	//users.GET("/", userHandler.getAllUsers)
 	users.GET("/:userId", userHandler.getUserByUserId)
 	users.DELETE("/:userId", userHandler.deleteUser)
 	users.PUT("/:userId", userHandler.updateUser)
@@ -41,10 +41,13 @@ func Start() {
 	login.POST("/", authHandler.handleLogin)
 
 	signup := v1.Group("/signup")
-	signup.POST("/signup", userHandler.createUser)
+	signup.POST("/", userHandler.createUser)
 
 	auth := v1.Group("/auth")
 	auth.GET("/", authHandler.isTokenValid)
 
-	r.router.Run(":8089")
+	err := r.router.Run(":8089")
+	if err != nil {
+		logger.Fatal("Unable to start user service")
+	}
 }

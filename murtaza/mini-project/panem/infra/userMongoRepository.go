@@ -2,60 +2,69 @@ package infra
 
 import (
 	"fmt"
-	"panem/domain"
-	"time"
-
+	"go.uber.org/zap"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
+	"panem/domain"
+	"panem/utils/errs"
+	"panem/utils/logger"
+	"time"
 )
 
 const DBUrl = "mongodb://127.0.0.1:27017/crud_test"
 
-type userMongoRepository struct {
+type UserMongoRepository struct {
 	Session *mgo.Session
 	Mongo   *mgo.DialInfo
 }
 
-func (umr userMongoRepository) InsertUser(newUser domain.User) (domain.User, error) {
+func (umr UserMongoRepository) InsertUser(newUser domain.User) (domain.User, *errs.AppError) {
 	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
 	mongoUser := umr.toPersistedMongoEntity(newUser)
 	if err := users.Insert(mongoUser); err != nil {
-		return domain.User{}, fmt.Errorf("could not insert user")
+		logger.Error("Failed to create user", zap.Error(err))
+		return domain.User{}, errs.NewUnexpectedError(err.Error())
 	}
 	return *mongoUser.toDomainEntity(), nil
 }
 
-func (umr userMongoRepository) FindUserById(id int) (*domain.User, error) {
+func (umr UserMongoRepository) FindUserById(id int) (*domain.User, *errs.AppError) {
 	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
 	var result UserModel
 	err := users.Find(bson.M{"id": id}).One(&result)
 	if err != nil {
-		return nil, err
+		errMessage := fmt.Sprintf("No user found with userId: %d", id)
+		logger.Error(errMessage, zap.Int("userId", id), zap.Error(err))
+		return nil, errs.NewNotFoundError(err.Error())
 	}
 
-	return result.toDomainEntity(), err
+	return result.toDomainEntity(), nil
 }
 
-func (umr userMongoRepository) DeleteUserByUserId(id int) error {
+func (umr UserMongoRepository) DeleteUserByUserId(id int) *errs.AppError {
 	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
 	err := users.Remove(bson.M{"id": id})
 	if err != nil {
-		return err
+		errMessage := fmt.Sprintf("Cannot delete user with userId: %d", id)
+		logger.Error(errMessage, zap.Int("userId", id), zap.Error(err))
+		return errs.NewUnexpectedError(err.Error())
 	}
 	return nil
 }
 
-func (umr userMongoRepository) FindUserByUsername(username string) (*domain.User, error) {
+func (umr UserMongoRepository) FindUserByUsername(username string) (*domain.User, *errs.AppError) {
 	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
 	var result UserModel
 	err := users.Find(bson.M{"username": username}).One(&result)
 	if err != nil {
-		return nil, err
+		errMessage := fmt.Sprintf("Cannot find user with username: %s", username)
+		logger.Error(errMessage, zap.String("username", username), zap.Error(err))
+		return nil, errs.NewNotFoundError(err.Error())
 	}
-	return result.toDomainEntity(), err
+	return result.toDomainEntity(), nil
 }
 
-func (umr userMongoRepository) UpdateUser(user domain.User) (*domain.User, error) {
+func (umr UserMongoRepository) UpdateUser(user domain.User) (*domain.User, *errs.AppError) {
 	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
 
 	change := mgo.Change{
@@ -77,30 +86,32 @@ func (umr userMongoRepository) UpdateUser(user domain.User) (*domain.User, error
 	_, err := users.Find(bson.M{"id": user.Id}).Apply(change, &updatedUser)
 
 	if err != nil {
-		return nil, err
+		errMessage := fmt.Sprintf("Cannot update user with UserId: %d", user.Id)
+		logger.Error(errMessage, zap.Int("userId", user.Id), zap.Error(err))
+		return nil, errs.NewUnexpectedError(err.Error())
 	}
 	return &updatedUser, nil
 }
 
-func NewUserMongoRepository() userMongoRepository {
+func NewUserMongoRepository() UserMongoRepository {
 
 	fmt.Println("Connecting to ", DBUrl)
 	mongo, err := mgo.ParseURL(DBUrl)
 	s, err := mgo.Dial(DBUrl)
 	if err != nil {
-		fmt.Printf("Can't connect to mongo, go error %v\n", err)
+		logger.Fatal(fmt.Sprintf("Can't connect to mongo, go error %v\n", err), zap.Error(err))
 		panic(err.Error())
 	}
 	s.SetSafe(&mgo.Safe{})
-	fmt.Println("Connected to", DBUrl)
+	logger.Info(fmt.Sprintf("Connected to: %s", DBUrl))
 
-	return userMongoRepository{
+	return UserMongoRepository{
 		Session: s,
 		Mongo:   mongo,
 	}
 }
 
-func (umr userMongoRepository) toPersistedMongoEntity(u domain.User) *UserModel {
+func (umr UserMongoRepository) toPersistedMongoEntity(u domain.User) *UserModel {
 	var nextId = umr.getNextSequence("userId")
 	return &UserModel{
 		Id:        nextId,
@@ -116,7 +127,7 @@ func (umr userMongoRepository) toPersistedMongoEntity(u domain.User) *UserModel 
 	}
 }
 
-func (umr userMongoRepository) getNextSequence(seqName string) int {
+func (umr UserMongoRepository) getNextSequence(seqName string) int {
 
 	type sequenceDoc struct {
 		Id            string `bson:"_id"`
