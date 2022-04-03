@@ -1,0 +1,22 @@
+aws dynamodb --endpoint-url http://localhost:8042 create-table --table-name demo-customer-info --attribute-definitions AttributeName=customerId,AttributeType=S --key-schema AttributeName=customerId,KeyType=HASH --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5
+
+aws dynamodb put-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --item '{"customerId":{"S":"1111"},"email":{"S":"john@gmail.com"}}'
+aws dynamodb put-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --item '{\"customerId\":{\"S\":\"1111\"},\"email\":{\"S\":\"john@gmail.com\"}}'
+
+aws dynamodb update-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --key '{"customerId":{"S":"1111"}}' --update-expression 'SET #email= :newEmail' --expression-attribute-names '{"#email":"email"}' --expression-attribute-values '{":newEmail":{"S":"jimmy@gmail.com"}}'
+
+
+aws dynamodb delete-item --endpoint-url http://localhost:8042 --table-name demo-customer-info --key '{"customerId":{"S":"1111"}}' --return-values ALL_OLD
+
+aws dynamodb scan --endpoint-url http://localhost:8042 --table-name demo-customer-info 
+
+
+
+
+
+
+
+ 
+    
+
+

@@ -14,3 +14,44 @@
 - [x] Added tests
 - [x] Added Stripe Payment Gateway(testing)
 - [ ] Sonarqube 
+
+
+## Railyatra
+
+### Features Implemented
+
+<li>User registration for 2 roles - Admin, User Registration
+<li>REST APIs to perform CRUD operations on all two roles
+<li>Mongodb to persist data
+<li>Authorisation using JWT and password hashing
+<li>Using kafka to communicate between different microservices
+<li>Using Grpc to communicate between different microservices
+<li>Integration with Stripe Payment Gateway
+
+### Modules in the application
+
+<li>Admin Module    - PORT 6001
+<li>User Module     - PORT 6002
+<li>Auth Module     - PORT 6003
+<li>Payment Module  - PORT 6012 (This is a grpc server)
+
+<br>
+
+## Admin Service
+![Optional Text](new.svg)
+
+<br>
+
+## User Service
+![Optiona Text](new1.svg)
+
+
+<br>
+
+## Auth Service
+![Optiona Text](new2.svg)
+
+<br>
+
+## Payment Service
+![Optiona Text](new3.svg)
