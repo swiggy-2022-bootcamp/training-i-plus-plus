@@ -14,12 +14,23 @@ import (
 
 var avalidate = validator.New()
 
-const layout = "Jan 2, 2006 at 3:04pm (MST)"
+// const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
 // func init() {
 // 	go kafka.Consume_purchased_ticket()
 // }
 
+// GetAdmin godoc
+// @Summary      Fetch An Admin
+// @Description  Get Admin details by providing the adminid
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        adminid 		body	string  true  "admin unique id"
+// @Success      200  {object}  models.Admin
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /admin/:adminid [get]
 func GetAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -39,6 +50,17 @@ func GetAdmin() gin.HandlerFunc {
 	}
 }
 
+// DelAdmin godoc
+// @Summary      Delete An Admin
+// @Description  Delete an Admin by providing the adminid
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        adminid 		body	string  true  "admin unique id"
+// @Success      200  {object}  models.Admin
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /admin/:adminid [delete]
 func DeleteAdmin() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)

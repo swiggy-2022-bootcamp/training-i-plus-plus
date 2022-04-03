@@ -20,6 +20,16 @@ var registerRepo repository.AuthRepository
 var adminRepo repository.AdminRepository
 var userRepo repository.UserRepository
 
+// Signup godoc
+// @Summary      Signup
+// @Description  Register a user/admin by providing username, email, group and password
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  models.SignUp
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /register [post]
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -103,6 +113,16 @@ func SignUp() gin.HandlerFunc {
 	}
 }
 
+// Login godoc
+// @Summary      Login
+// @Description  Sign in a user/admin by providing username, email, group and password
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {string}  middlewares.GetJWT
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /login [post]
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)

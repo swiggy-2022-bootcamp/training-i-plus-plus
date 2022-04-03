@@ -1,0 +1,221 @@
+definitions:
+  models.Admin:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  models.SignUp:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      typeOf:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - typeOf
+    - username
+    type: object
+  models.User:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+    required:
+    - email
+    - name
+    type: object
+host: localhost:6000
+info:
+  contact:
+    email: swiggyb3053@datascience.manipal.edu
+    name: Aryann Dhir
+    url: http://www.swagger.io/support
+  description: Swagger Train Reservation System API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Train Reservation System API
+  version: "1.0"
+paths:
+  /admin/:adminid:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an Admin by providing the adminid
+      parameters:
+      - description: admin unique id
+        in: body
+        name: adminid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Admin'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Delete An Admin
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get Admin details by providing the adminid
+      parameters:
+      - description: admin unique id
+        in: body
+        name: adminid
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Admin'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch An Admin
+      tags:
+      - user
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Sign in a user/admin by providing username, email, group and password
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Login
+      tags:
+      - user
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Register a user/admin by providing username, email, group and password
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.SignUp'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Signup
+      tags:
+      - user
+  /user/:userId:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a User by providing the userid
+      parameters:
+      - description: user unique id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Delete A User
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get User details by providing the userid
+      parameters:
+      - description: user unique id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch A User
+      tags:
+      - user
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
