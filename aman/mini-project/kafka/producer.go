@@ -37,6 +37,6 @@ func Produce(ctx context.Context, msg string) {
 	}
 
 	// log a confirmation once the message is written
-	fmt.Println("writes:", msg)
+	fmt.Println("Writes:", msg)
 	i++
 }
