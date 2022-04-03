@@ -41,11 +41,8 @@ func main() {
 	logger1.Log("Connected to MongoDB")
 
 	trainroute := TrainRouter()
-	// router := gin.Default()
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	// routes.TrainRoute(router)
+
 	docs.SwaggerInfo.Title = "Swagger Train Reservation System API"
 
 	trainroute.Run("localhost:7000")
-	// router.Run("localhost:7000")
 }

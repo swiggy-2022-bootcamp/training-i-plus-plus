@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:6000",
+    "host": "localhost:3000",
     "paths": {
         "/admin/:adminid": {
             "get": {

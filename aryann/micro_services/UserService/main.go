@@ -15,8 +15,8 @@ var logger1 = logger.NewLoggerService("main")
 
 func UserRouter() *gin.Engine {
 	router := gin.Default()
-	routes.UserRoute(router)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	routes.UserRoute(router)
 	return router
 }
 
@@ -32,7 +32,7 @@ func UserRouter() *gin.Engine {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:6000
+// @host      localhost:3000
 
 // @securityDefinitions.basic  BasicAuth
 func main() {
@@ -40,15 +40,8 @@ func main() {
 	database.ConnectDB()
 	logger1.Log("Connected to MongoDB")
 
-	router := gin.Default()
-	routes.UserRoute(router)
-
 	docs.SwaggerInfo.Title = "Swagger Train Reservation System API"
-	// router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	url := ginSwagger.URL("http://localhost:6000/swagger/doc.json")
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
-
-	// userroute := UserRouter()
-	router.Run("localhost:6000")
+	userroute := UserRouter()
+	userroute.Run("localhost:3000")
 }

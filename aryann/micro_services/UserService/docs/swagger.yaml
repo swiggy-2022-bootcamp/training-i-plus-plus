@@ -35,7 +35,7 @@ definitions:
     - email
     - name
     type: object
-host: localhost:6000
+host: localhost:3000
 info:
   contact:
     email: swiggyb3053@datascience.manipal.edu
