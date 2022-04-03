@@ -24,7 +24,7 @@ func main() {
 		)
 	})
 
-	router.POST("/users/", controllers.CreateClient)
+	router.POST("/users/", controllers.CreateUser)
 
 	go router.Run("localhost/users_service:8081")
 	time.Sleep(100 * time.Second)

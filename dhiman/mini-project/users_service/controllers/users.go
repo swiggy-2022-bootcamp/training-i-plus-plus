@@ -13,7 +13,7 @@ import (
 
 var validate = validator.New()
 
-func CreateClient(c *gin.Context) {
+func CreateUser(c *gin.Context) {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     defer cancel()
 
@@ -40,22 +40,26 @@ func CreateClient(c *gin.Context) {
     c.JSON(http.StatusCreated, gin.H{"message": "success", "data": result})
 }
 
-// func GetClient(c *gin.Context) {
-//     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-//     defer cancel()
+func GetUser(c *gin.Context) {
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
 
-//     email := c.Param("email")
-//     if email == "" {
-//         c.JSON(http.StatusBadRequest, gin.H{"error": "id is required"})
-//         return
-//     }
+    email := c.Param("email")
+    if email == "" {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "email is required"})
+        return
+    }
 
-//     var user models.Client
-//     err := configs.UsersCollection.FindOne(ctx, models.Client{Email: email}).Decode(&user)
-//     if err != nil {
-//         c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching user", "error": err.Error()})
-//         return
-//     }
+    var user models.Client
+    err := configs.UsersCollection.FindOne(ctx, models.Client{Email: email}).Decode(&user)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"message": "Error fetching user", "error": err.Error()})
+        return
+    }
 
-//     c.JSON(http.StatusOK, gin.H{"message": "success", "data": user})
-// }
+    c.JSON(http.StatusOK, gin.H{"message": "success", "data": user})
+}
+
+func UpdateUser() {
+    
+}

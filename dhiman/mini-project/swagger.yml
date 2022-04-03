@@ -1,0 +1,41 @@
+consumes:
+- application/io.goswagger.examples.todo-list.v1+json
+info:
+  description: A Simple Healthcare app built to illustrate the concepts learnt during
+    Swigggy i++ Training.
+  title: Healthcare App
+  version: 1.0.0
+paths: {}
+produces:
+- application/io.goswagger.examples.todo-list.v1+json
+schemes:
+- http
+swagger: "2.0"
+definitions:
+  client:
+    type: object
+    required:
+      - email
+    properties:
+      email:
+        type: string
+        format: email
+        readOnly: true
+      name:
+        type: string
+        minLength: 1
+      subscriptions:
+        type: user_subscription[]
+  user_subscription:
+    type: object
+    required:
+      - description
+    properties:
+      medicine:
+        type: string
+        minLength: 1
+      next_dose:
+        type: string
+        format: string
+      rate:
+        type: string
