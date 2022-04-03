@@ -7,13 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/controller"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/db"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/producer"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/controller"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/db"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/producer"
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	_ "github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/docs"
+	_ "github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/docs"
 )
 
 // @title User Service

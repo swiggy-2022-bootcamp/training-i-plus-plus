@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/config"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/config"
 )
 
 func Connect() (*session.Session, *dynamodb.DynamoDB) {

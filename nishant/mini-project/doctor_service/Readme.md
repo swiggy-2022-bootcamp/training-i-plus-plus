@@ -4,3 +4,9 @@ Basic gin project to showcase doctor crud operations with MongoDB
 - read doctor
 - update doctor
 - delete doctor
+
+
+### Swagger
+```
+/home/neo/go/bin/swag init
+```

@@ -34,7 +34,7 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:7456
+host: localhost:7450
 info:
   contact: {}
   description: This is user crud service.

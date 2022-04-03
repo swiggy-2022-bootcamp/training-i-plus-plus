@@ -7,7 +7,7 @@ import (
 	"os"
 
 	kafka "github.com/segmentio/kafka-go"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/model"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/model"
 )
 
 const (

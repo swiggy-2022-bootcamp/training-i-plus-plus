@@ -12,8 +12,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/dynamodb/expression"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/config"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/model"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/config"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/model"
 	"golang.org/x/crypto/bcrypt"
 )
 

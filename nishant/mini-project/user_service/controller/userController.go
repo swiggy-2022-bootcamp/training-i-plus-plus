@@ -6,9 +6,9 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/model"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/producer"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_crud_dynamo/utils"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/model"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/producer"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/user_service/utils"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
