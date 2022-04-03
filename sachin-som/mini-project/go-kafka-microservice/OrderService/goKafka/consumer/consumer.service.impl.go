@@ -29,8 +29,9 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 	// 1. Get Product from ordered_products topic
 	// 2. Create Instance of Order Model
 	// 3. Store Order to database
-	// 4. Notify Inventory Owner (TODO)
-	// 5. Create Bill (TODO
+	// 4. Deduct Wallet Amount (TODO)
+	// 5. Notify Inventory Owner (TODO)
+	// 5. Create Bill (TODO)
 	for {
 		// the `ReadMessage` method blocks until we receive the next event
 		msg, err := ks.Consumer.ReadMessage(ks.Ctx)
@@ -60,12 +61,14 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 			OrderedAt:     time.Now(),
 			Bill:          _product.Price,
 			Discount:      "",
-			PaymentMethod: "COD",
+			PaymentMethod: "Wallet",
 			Status:        "initiated",
 			UserID:        _userProduct.UserID,
 		}
 		if _, err := ks.OrderCollection.InsertOne(ks.Ctx, _order); err != nil {
 			return err
 		}
+
+		// Deduct wallet amount
 	}
 }

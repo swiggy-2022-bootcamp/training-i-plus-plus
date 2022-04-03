@@ -22,5 +22,5 @@ message Response {
 // Define Service
 service AuthServices {
     rpc Authenticate(Credentials) returns (Response) {}
-	rpc Authorize(TokenRequest) returns (Response) {}
+    rpc Authorize(TokenRequest) returns (Response) {}
 }

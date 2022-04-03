@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package WalletProto;
+
+option go_package = "github.com/go-kafka-microservice/WalletProto;WalletProto";
+
+
+message UserInfo {
+    string userId = 1;
+}
+
+message AmountResponse {
+    string userId = 1;
+    string amount = 2;
+}
+
+message DeductRequest {
+    string userId = 1;
+    string bill = 2;
+}
+
+message ResponseMessage {
+    string message = 1;
+    bool success = 2;
+}
+
+service WalletService {
+    rpc CheckAmount(UserInfo) returns (AmountResponse){}
+    rpc DeductAmount(DeductRequest) returns (ResponseMessage){}
+}
