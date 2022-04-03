@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 	"userService/database"
+	"userService/gokafka"
 	helper "userService/helpers"
 	"userService/logger"
 	"userService/models"
@@ -146,6 +147,7 @@ func Signup() gin.HandlerFunc {
 			http.StatusOK,
 			gin.H{"insertedNumber": insertedNumber, "Token": user.Token},
 		)
+		go gokafka.WriteMsgToKafka("greetings", user)
 		log.WithFields(logrus.Fields{"insertedNumber": insertedNumber}).
 			Info("user successfully registered")
 	}
