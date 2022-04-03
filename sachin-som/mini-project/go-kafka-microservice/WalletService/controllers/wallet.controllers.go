@@ -1,15 +1,18 @@
 package controllers
 
 import (
+	"context"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/go-kafka-microservice/WalletProto"
 	"github.com/go-kafka-microservice/WalletService/models"
 	"github.com/go-kafka-microservice/WalletService/services"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type WalletControllers struct {
+	pb.UnimplementedWalletServiceServer
 	WalletServices services.WalletServices
 }
 
@@ -70,4 +73,36 @@ func (wc *WalletControllers) RegisterWalletRoutes(rg *gin.RouterGroup) {
 	walletRouter.POST("/create", wc.CreateWallet)
 	walletRouter.PATCH("/:walletId/add", wc.AddMoney)
 	walletRouter.GET("/:walletId", wc.GetStatus)
+}
+
+/*
+	Wallet Proto Service implementationis.
+*/
+func (wc *WalletControllers) CheckAmount(ctx context.Context, in *pb.UserInfo) (*pb.AmountResponse, error) {
+	userObjId, err := primitive.ObjectIDFromHex(in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	wallet, err := wc.WalletServices.GetStatus(userObjId)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.AmountResponse{
+		UserId: wallet.UserID.Hex(),
+		Amount: int64(wallet.Amount),
+	}, nil
+}
+
+func (wc *WalletControllers) DeductAmount(ctx context.Context, in *pb.DeductRequest) (*pb.ResponseMessage, error) {
+	userObjId, err := primitive.ObjectIDFromHex(in.UserId)
+	if err != nil {
+		return nil, err
+	}
+	if err := wc.WalletServices.DeductAmount(userObjId, int(in.Bill)); err != nil {
+		return nil, err
+	}
+	return &pb.ResponseMessage{
+		Message: "Amount Deducted From wallet succesfully.",
+		Success: true,
+	}, err
 }

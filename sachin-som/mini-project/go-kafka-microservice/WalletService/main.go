@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"log"
+	"net"
 
 	"github.com/gin-gonic/gin"
+	pb "github.com/go-kafka-microservice/WalletProto"
 	"github.com/go-kafka-microservice/WalletService/controllers"
 	"github.com/go-kafka-microservice/WalletService/database"
 	"github.com/go-kafka-microservice/WalletService/services"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -17,6 +20,8 @@ var (
 	err    error
 	ctx    context.Context
 
+	lis              net.Listener
+	grpcServer       *grpc.Server
 	mongoClient      *mongo.Client
 	walletCollection *mongo.Collection
 	walletServices   services.WalletServices
@@ -46,6 +51,12 @@ func init() {
 
 	// server
 	server = gin.Default()
+
+	// Create TCP HTTP connection
+	lis, err = net.Listen("tcp", ":8005")
+	if err != nil {
+		log.Fatal("Error in httpListening (8000): ", err.Error())
+	}
 }
 
 func main() {
@@ -54,5 +65,19 @@ func main() {
 	base := server.Group("/v1/wallet")
 	walletController.RegisterWalletRoutes(base)
 
-	log.Fatal(server.Run(":8005"))
+	// create grpc server
+	grpcServer = grpc.NewServer()
+
+	// Register gRPC Services
+	pb.RegisterWalletServiceServer(grpcServer, walletController)
+
+	// Run grpc server on a seprate goRoutine
+	go func() {
+		if err = grpcServer.Serve(lis); err != nil {
+			log.Fatal(err)
+		}
+	}()
+
+	// Running gin engine on main routine
+	log.Fatal(server.Run(":8006"))
 }
