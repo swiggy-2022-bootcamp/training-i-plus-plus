@@ -39,7 +39,7 @@
 <br>
 
 ## Product Service
-![Optional Text](diagram1.svg)
+![Optional Text](diagram1.png)
 
 <br>
 
