@@ -1,0 +1,19 @@
+syntax = "proto3";
+package heartbeat_pb;
+option go_package="/heartbeat_pb";
+message HeartBeat{
+    int32 bpm=1;
+    string username=2;
+}
+
+message HeartBeatRequest{
+    HeartBeat heartbeat=1;
+}
+
+message HeartBeatResponse{
+    string result=1;
+}
+
+service HeartBeatService{
+    rpc UserHeartBeat(HeartBeatRequest)returns (HeartBeatResponse){}
+}

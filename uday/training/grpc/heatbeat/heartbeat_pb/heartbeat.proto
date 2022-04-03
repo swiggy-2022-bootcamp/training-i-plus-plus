@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package hb_proto;
+option go_package="/heartbeat_pb";
+
+message HeartBeat {
+    int32 bpm = 1;
+    string username = 2;
+}
+
+message NormalAbnormalHeartBeat {
+    int32 bpm = 1;
+}
+
+message HeartBeatRequest {
+    HeartBeat heartbeat = 1;
+}
+
+message HeartBeatResponse {
+    string result = 1;
+}
+
+message LiveHeartBeatRequest {
+    HeartBeat heartbeat = 1;
+}
+
+message LiveHeartBeatResponse {
+    string result = 1;
+}
+
+message HeartBeatHistoryRequest {
+    string username = 1;
+}
+
+message HeartBeatHistoryResponse {
+    HeartBeat heartbeat = 1;
+}
+
+message NormalAbnormalHeartBeatRequest {
+    NormalAbnormalHeartBeat heartbeat = 1;
+}
+
+message NormalAbnormalHeatBeatResponse {
+    string result = 1;
+}
+
+service HeartBeatService {
+    rpc UserHeartBeat(HeartBeatRequest) returns (HeartBeatResponse) {};
+    rpc LiveHeartBeat(stream LiveHeartBeatRequest) returns (LiveHeartBeatResponse) {};
+    rpc HeartBeatHistory(HeartBeatHistoryRequest) returns (stream HeartBeatHistoryResponse) {};
+    rpc NormalAbnormalHeartBeat(stream NormalAbnormalHeartBeatRequest) returns(stream NormalAbnormalHeatBeatResponse) {};
+};

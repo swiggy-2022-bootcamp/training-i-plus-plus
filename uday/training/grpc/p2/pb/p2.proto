@@ -1,0 +1,28 @@
+syntax = "proto3";
+package p2;
+option go_package="/p2";
+ 
+message Name{
+    string name=1;
+}
+message NameRequest{
+    Name name=1;
+}
+message NameResponse{
+    string result=1;
+}
+
+message Number{
+    int32 number=1;
+}
+message NumberRequest{
+    Number number=1;
+}
+message NumberResponse{
+    string result=1;
+}
+
+service Service{
+    rpc NameService(NameRequest)returns (NameResponse){};
+    rpc NumberService(NumberRequest)returns (NumberResponse){};
+}
