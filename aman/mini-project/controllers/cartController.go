@@ -31,7 +31,6 @@ func GetCart() gin.HandlerFunc {
 			}
 			results = append(results, elem)
 		}
-		fmt.Println(results)
 		if err := cur.Err(); err != nil {
 			fmt.Println(err)
 		}
