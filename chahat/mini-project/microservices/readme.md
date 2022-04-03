@@ -44,7 +44,7 @@
 <br>
 
 ## Order Service
-<p><img src="./resources/diagram1.png" alt="Kafka Architecture"></p>
+<p><img src="../microservices/resources/diagram2.png" alt="Kafka Architecture"></p>
 
 <br>
 
