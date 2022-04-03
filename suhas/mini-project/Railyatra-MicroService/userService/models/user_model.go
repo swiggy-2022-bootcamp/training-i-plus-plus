@@ -10,8 +10,8 @@ import "go.mongodb.org/mongo-driver/bson/primitive"
 // }
 
 type User struct {
-	Id             primitive.ObjectID   `json:"id,omitempty"`
-	Name           string               `json:"name,omitempty" validate:"required"`
-	Email          string               `json:"email,omitempty" validate:"required"`
-	BookedTicketID []primitive.ObjectID `json:"tickets_booked,omitempty"`
+	Id             primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	Name           string             `json:"name,omitempty" validate:"required"`
+	Email          string             `json:"email,omitempty" validate:"required"`
+	BookedTicketID []string           `json:"tickets_booked,omitempty"`
 }

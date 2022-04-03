@@ -60,22 +60,23 @@ func Consume_booked_ticket_for_avail() {
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			errLog("could not read message " + err.Error())
-			panic("could not read message " + err.Error())
+			//panic("could not read message " + err.Error())
 		}
 		// after receiving the message, log its value
 		//fmt.Println("received: ", string(msg.Value))
+		infLog(msg.Key, string(msg.Key))
 		trainid, err := primitive.ObjectIDFromHex(string(msg.Key))
 
 		if err != nil {
 			errLog("incorrect train id " + err.Error())
-			panic("incorrect train id " + err.Error())
+			//panic("incorrect train id " + err.Error())
 		}
-
+		infLog(trainid)
 		availticket, err := availticketrepo.ReadTrainId(trainid)
 
 		if err != nil {
 			errLog("could not find the train " + err.Error())
-			panic("could not find the train " + err.Error())
+			//panic("could not find the train " + err.Error())
 		}
 
 		if string(msg.Value) == "increment" {
@@ -87,7 +88,7 @@ func Consume_booked_ticket_for_avail() {
 		_, err = availticketrepo.Update(availticket, availticket.Id)
 		if err != nil {
 			errLog("could not update booked ticket " + err.Error())
-			panic("could not update booked ticket " + err.Error())
+			//panic("could not update booked ticket " + err.Error())
 		}
 	}
 }
@@ -106,7 +107,7 @@ func Produce_avail_ticket(nat models.AvailTicket) {
 	})
 	if err != nil {
 		errLog("could not write message " + err.Error())
-		panic("could not write message " + err.Error())
+		//panic("could not write message " + err.Error())
 	}
 }
 
@@ -122,7 +123,7 @@ func Consume_avail_ticket() {
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			errLog("could not read message " + err.Error())
-			panic("could not read message " + err.Error())
+			//panic("could not read message " + err.Error())
 		}
 		// after receiving the message, log its value
 		natr := models.AvailTicket{}
@@ -146,7 +147,7 @@ func Produce_train(nt models.Train) {
 	})
 	if err != nil {
 		errLog("could not write message " + err.Error())
-		panic("could not write message " + err.Error())
+		//panic("could not write message " + err.Error())
 	}
 }
 
@@ -162,7 +163,7 @@ func Consume_train() {
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			errLog("could not read message " + err.Error())
-			panic("could not read message " + err.Error())
+			//panic("could not read message " + err.Error())
 		}
 		// after receiving the message, log its value
 		ntr := models.Train{}

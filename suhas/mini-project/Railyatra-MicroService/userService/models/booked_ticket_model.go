@@ -10,7 +10,7 @@ type Passengers struct {
 }
 
 type BookingTicket struct {
-	Id              primitive.ObjectID `json:"id,omitempty"`
+	Id              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Train_id        primitive.ObjectID `json:"trainid,omitempty"`
 	Amount_paid     int                `json:"amount_paid"`
 	User_id         primitive.ObjectID `json:"userid,omitempty"`
@@ -18,7 +18,7 @@ type BookingTicket struct {
 }
 
 type BookedTicket struct {
-	Id              primitive.ObjectID `json:"id,omitempty"`
+	Id              primitive.ObjectID `json:"id" bson:"_id,omitempty"`
 	Train_id        primitive.ObjectID `json:"trainid,omitempty"`
 	Departure       string             `json:"departure"`
 	Arrival         string             `json:"arrival"`

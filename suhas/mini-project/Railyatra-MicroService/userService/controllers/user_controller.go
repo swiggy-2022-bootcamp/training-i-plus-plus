@@ -27,10 +27,12 @@ var (
 	infoLog          = log.ErrorLogger.Println
 	avalidate        = validator.New()
 	address          = "localhost:6010"
+	address1         = "localhost:6011"
+	address2         = "localhost:6012"
 	userrepo         repository.UserRepository
 	bookedticketrepo repository.BookedTicketRepository
 	trainrepo        repository.TrainRepository
-	c                pb.AuthenticationServiceClient
+	c0               pb.AuthenticationServiceClient
 	c1               pb.AvailTicketServiceClient
 	c2               pb.ChargeServiceClient
 )
@@ -45,9 +47,22 @@ func init() {
 		errLog("Error while making connection, %v", err)
 		fmt.Printf("Error while making connection, %v\n", err)
 	}
+	conn1, err := grpc.Dial(address1, grpc.WithInsecure())
+	if err != nil {
+		errLog("Error while making connection, %v", err)
+		fmt.Printf("Error while making connection, %v\n", err)
+	}
+
+	conn2, err := grpc.Dial(address2, grpc.WithInsecure())
+	if err != nil {
+		errLog("Error while making connection, %v", err)
+		fmt.Printf("Error while making connection, %v\n", err)
+	}
 
 	// Create a client instance
-	c = pb.NewAuthenticationServiceClient(conn)
+	c0 = pb.NewAuthenticationServiceClient(conn)
+	c1 = pb.NewAvailTicketServiceClient(conn1)
+	c2 = pb.NewChargeServiceClient(conn2)
 }
 
 func CheckAuthorized(group string) gin.HandlerFunc {
@@ -59,7 +74,7 @@ func CheckAuthorized(group string) gin.HandlerFunc {
 			respondWithError(co, 401, "No bearer token")
 			return
 		}
-		resp, err := c.Authenticate(
+		resp, err := c0.Authenticate(
 			context.Background(),
 			&pb.AuthenticateRequest{
 				Group: group,
@@ -99,7 +114,7 @@ func CreateUser() gin.HandlerFunc {
 		newUser := models.User{
 			Name:           user.Name,
 			Email:          user.Email,
-			BookedTicketID: []primitive.ObjectID{},
+			BookedTicketID: []string{},
 		}
 
 		//result, err := userCollection.InsertOne(ctx, newUser)
@@ -214,11 +229,46 @@ func GetAllUsers() gin.HandlerFunc {
 }
 
 func checkAvailticketgrpc(train_id string, capacity int) (*pb.AvailTicketResponse, error) {
-	resp, err := c1.GetTicketConfirmation(context.Background(), &pb.AvailTicketRequest{
-		TrainId:      train_id,
-		NumOfTickets: uint32(capacity),
-	})
+	fmt.Println(strings.Split(train_id, "\""))
+	resp, err := c1.GetTicketConfirmation(
+		context.Background(),
+		&pb.AvailTicketRequest{
+			TrainId:      train_id,
+			NumOfTickets: uint32(capacity),
+		},
+	)
 	return resp, err
+}
+
+func AvailTicketCheck() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var check models.CheckAvialTrain
+		defer cancel()
+
+		//validate the request body
+		if err := c.BindJSON(&check); err != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error1", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		//use the validator library to validate required fields
+		if validationErr := avalidate.Struct(&check); validationErr != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error2", Data: map[string]interface{}{"data": validationErr.Error()}})
+			return
+		}
+
+		data, err := checkAvailticketgrpc(check.Trainid.Hex(), int(check.Capacity))
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": data}},
+		)
+	}
 }
 
 func payBookedticketgrpc(amount int, email string, trainid string) (*pb.ChargeResponse, error) {
@@ -284,7 +334,7 @@ func CreateBookedTicket() gin.HandlerFunc {
 		// 	return
 		// }
 
-		resp, err := checkAvailticketgrpc(bookedticket.Train_id.String(), len(bookedticket.Passengers_info))
+		resp, err := checkAvailticketgrpc(bookedticket.Train_id.Hex(), len(bookedticket.Passengers_info))
 
 		if err != nil || resp.Message != 0 {
 			c.JSON(http.StatusBadRequest, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
@@ -298,7 +348,7 @@ func CreateBookedTicket() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Incorrect user id", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
-		resp1, err := payBookedticketgrpc(bookedticket.Amount_paid, bookedticket.Train_id.String(), usr.Email)
+		resp1, err := payBookedticketgrpc(bookedticket.Amount_paid, bookedticket.Train_id.Hex(), usr.Email)
 
 		if err != nil {
 			c.JSON(http.StatusBadRequest, responses.BookedTicketResponse{Status: http.StatusInternalServerError, Message: "Payment Unsuccesfull", Data: map[string]interface{}{"data": err.Error()}})

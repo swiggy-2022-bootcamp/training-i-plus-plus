@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 	"time"
 	"userService/config"
 	"userService/models"
@@ -36,6 +37,7 @@ func (usr UserRepository) Read(objId primitive.ObjectID) (models.User, error) {
 	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
 	var user models.User
 	err := collectionUser.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
+	fmt.Print(objId)
 	if err != nil {
 		errLog(err)
 	}
@@ -78,6 +80,7 @@ func (usr UserRepository) ReadAll() ([]models.User, error) {
 		errLog(err)
 		return users, err
 	}
+	fmt.Println(results)
 	defer results.Close(ctx)
 	for results.Next(ctx) {
 		var singleUser models.User
@@ -85,7 +88,7 @@ func (usr UserRepository) ReadAll() ([]models.User, error) {
 			errLog(err)
 			return users, err
 		}
-
+		fmt.Println(singleUser)
 		users = append(users, singleUser)
 	}
 	return users, nil

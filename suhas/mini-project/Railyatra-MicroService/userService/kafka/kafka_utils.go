@@ -55,12 +55,12 @@ func Produce_booked_ticket_for_avail(trainid primitive.ObjectID, update bool) {
 		updatestring = "decrement"
 	}
 	err := w.WriteMessages(context.Background(), kafka.Message{
-		Key:   []byte(trainid.String()),
+		Key:   []byte(trainid.Hex()),
 		Value: []byte(updatestring),
 	})
 	if err != nil {
 		errLog("could not write message " + err.Error())
-		panic("could not write message " + err.Error())
+		//panic("could not write message " + err.Error())
 	}
 }
 
@@ -76,7 +76,7 @@ func Consume_avail_ticket() {
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			errLog("could not read message " + err.Error())
-			panic("could not read message " + err.Error())
+			//panic("could not read message " + err.Error())
 		}
 		// after receiving the message, log its value
 		natr := AvailTicket{}
@@ -98,7 +98,7 @@ func Consume_train() {
 		msg, err := r.ReadMessage(context.Background())
 		if err != nil {
 			errLog("could not read message " + err.Error())
-			panic("could not read message " + err.Error())
+			//panic("could not read message " + err.Error())
 		}
 		// after receiving the message, log its value
 		ntr := Train{}

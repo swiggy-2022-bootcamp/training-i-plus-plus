@@ -103,7 +103,7 @@ func (s *Server) Charge(ctx context.Context, in *pb.ChargeRequest) (*pb.ChargeRe
 
 func GrpcPaymentServer() error {
 	gr := grpc.NewServer()
-	lis, err := net.Listen("tcp", ":6010")
+	lis, err := net.Listen("tcp", ":6012")
 	if err != nil {
 		errLog("Failed to listen: %v", err)
 		fmt.Printf("Failed to listen: %v\n", err)

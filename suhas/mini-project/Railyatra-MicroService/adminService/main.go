@@ -3,10 +3,10 @@ package main
 import (
 	"adminService/config"
 	log "adminService/logger"
+	"adminService/routes"
 	"fmt"
 
 	"adminService/controllers"
-	"adminService/routes"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,4 +29,10 @@ func main() {
 	router := gin.Default()
 	routes.AdminRoute(router)
 	router.Run("localhost:6001")
+
+	// err := controllers.StartAdmingrpc()
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return
+	// }
 }

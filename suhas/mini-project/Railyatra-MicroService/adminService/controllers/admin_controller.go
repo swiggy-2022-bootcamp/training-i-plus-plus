@@ -489,6 +489,7 @@ func GetAllAvailTickets() gin.HandlerFunc {
 //grpc
 
 func (s *Server) GetTicketConfirmation(ctx context.Context, in *pb.AvailTicketRequest) (*pb.AvailTicketResponse, error) {
+	fmt.Println(in.TrainId)
 	objId, err := primitive.ObjectIDFromHex(in.TrainId)
 	if err != nil {
 		errLog("Incorrect format for train id")
@@ -500,6 +501,7 @@ func (s *Server) GetTicketConfirmation(ctx context.Context, in *pb.AvailTicketRe
 			Message:       1,
 		}, err
 	}
+	fmt.Println(objId)
 	avtick, err := availticketrepo.ReadTrainId(objId)
 	if err != nil {
 		errLog("Incorrect train id")

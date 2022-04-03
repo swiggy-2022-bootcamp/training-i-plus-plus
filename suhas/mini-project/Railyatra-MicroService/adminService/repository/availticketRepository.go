@@ -5,6 +5,7 @@ import (
 	log "adminService/logger"
 	"adminService/models"
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -13,7 +14,7 @@ import (
 )
 
 var (
-	collectionAvailTicketName = "availticket"
+	collectionAvailTicketName = "availtickets"
 	collectionAvailTicket     = new(mongo.Collection)
 	errLog                    = log.ErrorLogger.Println
 	warLog                    = log.WarningLogger.Println
@@ -51,6 +52,7 @@ func (avl AvailTicketRepository) ReadTrainId(objId primitive.ObjectID) (models.A
 	var user models.AvailTicket
 	err := collectionAvailTicket.FindOne(ctx, bson.M{"trainid": objId}).Decode(&user)
 	if err != nil {
+		fmt.Println(err)
 		errLog(err)
 	}
 	return user, err

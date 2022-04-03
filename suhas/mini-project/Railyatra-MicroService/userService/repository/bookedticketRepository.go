@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	collectionBookedTicketName = "availticket"
+	collectionBookedTicketName = "bookedtickets"
 	collectionBookedTicket     = new(mongo.Collection)
 	errLog                     = log.ErrorLogger.Println
 	warLog                     = log.WarningLogger.Println
