@@ -1,5 +1,19 @@
 basePath: /api/v1
 definitions:
+  app.authDTO:
+    properties:
+      role:
+        type: integer
+      user_id:
+        type: integer
+    type: object
+  app.loginDTO:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   app.userDTO:
     properties:
       email:
@@ -61,6 +75,47 @@ info:
   title: '[Panem] User Servcie API'
   version: "1.0"
 paths:
+  /auth:
+    get:
+      consumes:
+      - application/json
+      description: Creates a user upon signup
+      parameters:
+      - description: Authentication Token
+        in: header
+        name: auth-token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.authDTO'
+      tags:
+      - users
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Creates a user upon signup
+      parameters:
+      - description: User login
+        in: body
+        name: login-credentials
+        required: true
+        schema:
+          $ref: '#/definitions/app.loginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.userResponseDTO'
+      tags:
+      - users
   /signup:
     post:
       consumes:

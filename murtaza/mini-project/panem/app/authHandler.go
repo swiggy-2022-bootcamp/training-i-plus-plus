@@ -19,6 +19,19 @@ type loginDTO struct {
 	Password string `json:"password"`
 }
 
+type authDTO struct {
+	UserId int         `json:"user_id"`
+	Role   domain.Role `json:"role"`
+}
+
+// @Schemes
+// @Description Creates a user upon signup
+// @Tags users
+// @Produce json
+// @Accept json
+// @Param        login-credentials  body loginDTO true "User login"
+// @Success 200 {object} userResponseDTO
+// @Router /login [post]
 func (ah AuthHandler) handleLogin(c *gin.Context) {
 	var credentials loginDTO
 	err := json.NewDecoder(c.Request.Body).Decode(&credentials)
@@ -26,6 +39,8 @@ func (ah AuthHandler) handleLogin(c *gin.Context) {
 	if err != nil {
 		customErr := errs.NewValidationError("Invalid request paylaod")
 		c.JSON(http.StatusBadRequest, customErr)
+		c.Abort()
+		return
 	}
 	var username = credentials.Username
 	var password = credentials.Password
@@ -33,9 +48,14 @@ func (ah AuthHandler) handleLogin(c *gin.Context) {
 	jwtToken, err2 := ah.authService.AuthenticateUser(username, password)
 	if err2 != nil {
 		c.JSON(err2.Code, err2)
+		c.Abort()
+		return
 	}
 	c.SetCookie("auth-token", jwtToken, 60*1000, "/", "localhost", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "Logged in successfully !"})
+	userResponse := userResponseDTO{
+		Message: "Logged in successfully !",
+	}
+	c.JSON(http.StatusOK, userResponse)
 }
 
 func (ah AuthHandler) authMiddleware(c *gin.Context) {
@@ -73,18 +93,23 @@ func (ah AuthHandler) authMiddleware(c *gin.Context) {
 	})
 }
 
+// @Schemes
+// @Description Creates a user upon signup
+// @Tags users
+// @Produce json
+// @Accept json
+// @Param        auth-token  header string true "Authentication Token"
+// @Success 200 {object} authDTO
+// @Router /auth [get]
 func (ah AuthHandler) isTokenValid(c *gin.Context) {
-
-	type authDTO struct {
-		UserId int         `json:"user_id"`
-		Role   domain.Role `json:"role"`
-	}
-
 	cookie, err := c.Cookie("auth-token")
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
-		c.Abort()
-		return
+		cookie = c.Request.Header.Get("auth-token")
+		if cookie == "" {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
+			c.Abort()
+			return
+		}
 	}
 
 	userId, role, err2 := ah.authService.ParseAuthToken(cookie)
