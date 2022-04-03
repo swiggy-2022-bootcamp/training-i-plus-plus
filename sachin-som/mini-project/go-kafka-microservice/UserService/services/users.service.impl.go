@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc"
 )
 
@@ -29,7 +30,13 @@ func NewUserServiceImpl(userCollection *mongo.Collection, authServiceClient pb.A
 }
 
 func (us *UserServiceImpl) CreateUser(user *models.User) (string, error) {
-	user.ID = primitive.NewObjectID()
+	user.ID = primitive.NewObjectID() // Generate Unique IDs
+	// Hash the original password
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	user.Password = string(hashedPassword)
 	if _, err := us.UserCollection.InsertOne(us.Ctx, user); err != nil {
 		return "", err
 	}

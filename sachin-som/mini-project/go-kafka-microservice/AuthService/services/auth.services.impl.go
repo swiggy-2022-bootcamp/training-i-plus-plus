@@ -8,6 +8,7 @@ import (
 	"github.com/go-kafka-microservice/AuthService/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthServicesImpl struct {
@@ -34,11 +35,10 @@ func (as *AuthServicesImpl) Authenticate(credentials *models.Credentials) (strin
 		return "", nil
 	}
 	// Check for password
-	// TODO: Need to call MatchPassword for hashed password
-	if user.Password != credentials.Password {
-		return "", nil
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(credentials.Password)); err != nil {
+		// err means password not matching
+		return "", err
 	}
-
 	token, err := as.JWTUtils.GenerateToken(credentials, time.Now().Add(5*time.Hour))
 
 	return token, err
