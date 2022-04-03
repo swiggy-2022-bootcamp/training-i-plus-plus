@@ -20,12 +20,14 @@ var getProductsServiceOnce sync.Once
 
 type getProductsService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitGetProductsService(config *util.RouterConfig) GetProductsService {
+func InitGetProductsService(config *util.RouterConfig, dao mongodao.MongoDAO) GetProductsService {
 	getProductsServiceOnce.Do(func() {
 		getProductsServiceStruct = &getProductsService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
@@ -34,7 +36,7 @@ func InitGetProductsService(config *util.RouterConfig) GetProductsService {
 
 func GetGetProductsService() GetProductsService {
 	if getProductsServiceStruct == nil {
-		panic("Add product service not initialised")
+		panic("Get product service not initialised")
 	}
 
 	return getProductsServiceStruct

@@ -21,12 +21,14 @@ var addProductServiceOnce sync.Once
 
 type addProductService struct {
 	config *util.RouterConfig
+	dao    mongodao.MongoDAO
 }
 
-func InitAddProductService(config *util.RouterConfig) AddProductService {
+func InitAddProductService(config *util.RouterConfig, dao mongodao.MongoDAO) AddProductService {
 	addProductServiceOnce.Do(func() {
 		addProductServiceStruct = &addProductService{
 			config: config,
+			dao:    dao,
 		}
 	})
 
