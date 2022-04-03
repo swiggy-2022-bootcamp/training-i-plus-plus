@@ -43,7 +43,7 @@
 
 <br>
 
-## Order Service
+
 <p><img src="../microservices/resources/diagram2.png" alt="Kafka Architecture"></p>
 
 <br>
