@@ -44,15 +44,15 @@
 <br>
 
 ## User Service
-![Optional Text](diagram2.svg)
+![Optional Text](diagram2.png)
 
 
 <br>
 
 ## Payment Service
-![Optional Text](diagram3.svg)
+![Optional Text](diagram3.png)
 
 <br>
 
 ## Track-stream Service
-![Optional Text](diagram4.svg)
+![Optional Text](diagram4.png)
