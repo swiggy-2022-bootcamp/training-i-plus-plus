@@ -46,11 +46,10 @@
 ## Order Service
 <p><img src="./resources/diagram1.png" alt="Kafka Architecture"></p>
 
-
 <br>
 
 ## Payment Service
-<p><img src="./resources/diagram1.png" alt="Kafka Architecture"></p>
+<p><img src="./diagram1.png" alt="Kafka Architecture"></p>
 
 <br>
 
