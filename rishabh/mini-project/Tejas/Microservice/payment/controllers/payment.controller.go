@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"paymentService/dto"
+	"paymentService/kafka"
 	"paymentService/models"
 	"paymentService/services"
 	"paymentService/utils"
@@ -34,6 +35,7 @@ func Payment() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
+		go kafka.PaymentDetails(payment)
 		c.JSON(http.StatusOK, gin.H{"message": "Payment added successfully", "data": payment})
 	}
 }

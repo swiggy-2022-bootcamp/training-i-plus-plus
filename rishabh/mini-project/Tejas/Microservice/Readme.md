@@ -106,6 +106,8 @@ Technologies Used
 
 ## Setup
 
-Run `go run main.go` in each microservice
+1. zookeper - `bin/zookeeper-server-start.sh config/zookeeper.properties`
+2. kafka - `bin/kafka-server-start.sh config/server.properties`
+3. Run `go run main.go` in each microservice
 
 [Postman Collection](https://www.postman.com/Rishabh-Mishra/workspace/my-workspace/collection/7084055-30eb72c9-42c6-43b3-b20c-d68dbc416e11?action=share&creator=7084055)

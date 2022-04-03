@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"reservationService/configs"
 	"reservationService/dto"
+	"reservationService/kafka"
 	"reservationService/models"
 	"reservationService/services"
 	"reservationService/utils"
@@ -184,6 +185,7 @@ func ReserveSeat() gin.HandlerFunc {
 							c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 							return
 						}
+						go kafka.TicketDetails(ticket)
 						c.JSON(http.StatusOK, gin.H{"ticket": ticket})
 						return
 					}
