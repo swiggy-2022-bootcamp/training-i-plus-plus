@@ -24,15 +24,15 @@ func IdNotFoundError() *OrderError {
 }
 
 func OrderAlreadyPaidForError() *OrderError {
-	return &OrderError{http.StatusBadRequest, "Order has already been paid for. Aborting this Payment."}
+	return &OrderError{http.StatusBadRequest, "Order has already been paid for. Current action aborted."}
 }
 
 func OrderAlreadyDeliveredError() *OrderError {
-	return &OrderError{http.StatusBadRequest, "Order has already been delivered. Current delivery aborted."}
+	return &OrderError{http.StatusBadRequest, "Order has already been delivered. Current action aborted."}
 }
 
 func PaymentIncompleteError() *OrderError {
-	return &OrderError{http.StatusBadRequest, "Order payment not done. Current delivery aborted."}
+	return &OrderError{http.StatusBadRequest, "Order payment not done. Current action aborted."}
 }
 
 func InternalServerError() *OrderError {

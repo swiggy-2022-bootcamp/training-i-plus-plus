@@ -1,9 +1,11 @@
 package controller
 
 import (
+	repository "Inventory-Service/Repository"
 	errors "Inventory-Service/errors"
 	mockdata "Inventory-Service/model"
 	service "Inventory-Service/service"
+	"encoding/json"
 	"strconv"
 
 	"fmt"
@@ -11,6 +13,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+var inventoryService service.IInventoryService
+
+func init() {
+	inventoryService = service.InitInventoryService(&repository.MongoDAO{})
+}
 
 func CreateProduct(c *gin.Context) {
 	//access: Seller
@@ -21,12 +29,15 @@ func CreateProduct(c *gin.Context) {
 		return
 	}
 
-	result := service.CreateProduct(&c.Request.Body)
+	var newProduct mockdata.Product
+	json.NewDecoder(c.Request.Body).Decode(&newProduct)
+
+	result := inventoryService.CreateProduct(newProduct)
 	c.JSON(http.StatusOK, result)
 }
 
 func GetCatalog(c *gin.Context) {
-	allProducts := service.GetCatalog()
+	allProducts := inventoryService.GetCatalog()
 	c.JSON(http.StatusOK, allProducts)
 }
 
@@ -45,7 +56,7 @@ func UpdateProductQuantity(c *gin.Context) {
 		return
 	}
 
-	quantityAfterUpdation, error := service.UpdateProductQuantity(productId, updateCount)
+	quantityAfterUpdation, error := inventoryService.UpdateProductQuantity(productId, updateCount)
 
 	if error != nil {
 		productError, ok := error.(*errors.ProductError)
@@ -62,7 +73,7 @@ func UpdateProductQuantity(c *gin.Context) {
 
 func GetProductById(c *gin.Context) {
 	var productId string = c.Param("productId")
-	productRetrieved, error := service.GetProductById(productId)
+	productRetrieved, error := inventoryService.GetProductById(productId)
 
 	if error != nil {
 		productError, ok := error.(*errors.ProductError)
@@ -86,8 +97,15 @@ func UpdateProductById(c *gin.Context) {
 		return
 	}
 
+	var updatedProduct mockdata.Product
+	unmarshalErr := json.NewDecoder(c.Request.Body).Decode(&updatedProduct)
+	if unmarshalErr != nil {
+		c.JSON(errors.UnmarshallError().Status, errors.UnmarshallError().ErrorMessage)
+		return
+	}
+
 	var productId string = c.Param("productId")
-	productRetrieved, error := service.UpdateProductById(productId, &c.Request.Body)
+	productRetrieved, error := inventoryService.UpdateProductById(productId, updatedProduct)
 
 	if error != nil {
 		productError, ok := error.(*errors.ProductError)
@@ -112,7 +130,7 @@ func DeleteProductbyId(c *gin.Context) {
 	}
 
 	var productId string = c.Param("productId")
-	successMessage, error := service.DeleteProductbyId(productId)
+	successMessage, error := inventoryService.DeleteProductbyId(productId)
 
 	if error != nil {
 		productError, ok := error.(*errors.ProductError)

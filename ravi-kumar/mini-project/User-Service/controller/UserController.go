@@ -1,6 +1,7 @@
 package controller
 
 import (
+	repository "User-Service/Repository"
 	errors "User-Service/errors"
 	mockdata "User-Service/model"
 	service "User-Service/service"
@@ -13,10 +14,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var userService service.IUserService
+
+func init() {
+	userService = service.InitUserService(&repository.MongoDAO{})
+}
+
 func LogInUser(c *gin.Context) {
 	var logInDTO mockdata.LogInDTO
 	json.NewDecoder(c.Request.Body).Decode(&logInDTO)
-	jwtToken, error := service.LogInUser(logInDTO)
+	jwtToken, error := userService.LogInUser(logInDTO)
 
 	if error != nil {
 		userError, ok := error.(*errors.UserError)
@@ -32,7 +39,10 @@ func LogInUser(c *gin.Context) {
 }
 
 func CreateUser(c *gin.Context) {
-	insertedId, jwtToken, err := service.CreateUser(&c.Request.Body)
+	var newUser mockdata.User
+	json.NewDecoder(c.Request.Body).Decode(&newUser)
+
+	insertedId, jwtToken, err := userService.CreateUser(newUser)
 	if err != nil {
 		c.JSON(http.StatusFailedDependency, err)
 		return
@@ -56,7 +66,7 @@ func GetAllUsers(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
 		return
 	}
-	users := service.GetAllUsers()
+	users := userService.GetAllUsers()
 	c.JSON(http.StatusOK, users)
 }
 
@@ -71,7 +81,7 @@ func GetUserById(c *gin.Context) {
 		return
 	}
 
-	userRetrieved, error := service.GetUserById(userId)
+	userRetrieved, error := userService.GetUserById(userId)
 
 	if error != nil {
 		userError, ok := error.(*errors.UserError)
@@ -97,7 +107,14 @@ func UpdateUserById(c *gin.Context) {
 		return
 	}
 
-	userRetrieved, error := service.UpdateUserById(userId, &c.Request.Body)
+	var updatedUser mockdata.User
+	unmarshalErr := json.NewDecoder(c.Request.Body).Decode(&updatedUser)
+	if unmarshalErr != nil {
+		c.JSON(errors.UnmarshallError().Status, errors.UnmarshallError().ErrorMessage)
+		return
+	}
+
+	userRetrieved, error := userService.UpdateUserById(userId, updatedUser)
 
 	if error != nil {
 		userError, ok := error.(*errors.UserError)
@@ -124,7 +141,7 @@ func DeleteUserbyId(c *gin.Context) {
 		return
 	}
 
-	successMessage, error := service.DeleteUserbyId(userId)
+	successMessage, error := userService.DeleteUserbyId(userId)
 
 	if error != nil {
 		userError, ok := error.(*errors.UserError)

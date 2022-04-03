@@ -1,0 +1,210 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "User APIs",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5004"
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer"
+        }
+      }
+    },
+    "paths": {
+      "/users/{userId}": {
+        "delete": {
+          "tags": [
+            "General"
+          ],
+          "summary": "delete user by id",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "userId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the user to delete"
+            }
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "get": {
+          "tags": [
+            "General"
+          ],
+          "summary": "get user by id",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "userId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the user to fetch"
+            }
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "General"
+          ],
+          "summary": "update user by id",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "userId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the user to update"
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "fullName": "sarath",
+                    "userName": "sharath1011",
+                    "password": "Password",
+                    "address": "Chennai",
+                    "role": 2
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/users": {
+        "get": {
+          "tags": [
+            "General"
+          ],
+          "summary": "get all users",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "General"
+          ],
+          "summary": "create user",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "fullName": "sarath",
+                    "userName": "sharath1011",
+                    "password": "Password",
+                    "address": "Chennai",
+                    "role": 2
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/users/login": {
+        "post": {
+          "tags": [
+            "General"
+          ],
+          "summary": "user login",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "userName": "arunNayar",
+                    "password": "Password1"
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }

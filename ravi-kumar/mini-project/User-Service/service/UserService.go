@@ -1,65 +1,60 @@
 package service
 
 import (
-	"User-Service/config"
+	repository "User-Service/Repository"
 	errors "User-Service/errors"
 	"User-Service/middleware"
 	mockdata "User-Service/model"
-	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
+	"golang.org/x/crypto/bcrypt"
 )
 
-var client *mongo.Client
-var mongoURL string = config.MONGO_URL
-var userCollection *mongo.Collection
-
-func init() {
-	// Initialize a new mongo client with options
-	client, _ = mongo.NewClient(options.Client().ApplyURI(mongoURL))
-	userCollection = client.Database("swiggy_mini").Collection("users")
+type IUserService interface {
+	LogInUser(logInDTO mockdata.LogInDTO) (jwtToken string, err error)
+	CreateUser(newUser mockdata.User) (insertedId string, jwtToken string, err error)
+	GetAllUsers() (allUsers []mockdata.User)
+	GetUserById(userId string) (userRetrieved *mockdata.User, err error)
+	UpdateUserById(userId string, updatedUser mockdata.User) (userRetrieved *mockdata.User, err error)
+	DeleteUserbyId(userId string) (successMessage *string, err error)
 }
 
-func LogInUser(logInDTO mockdata.LogInDTO) (jwtToken string, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
+type UserService struct {
+	mongoDAO repository.IMongoDAO
+}
 
-	result := userCollection.FindOne(ctx, bson.M{"username": logInDTO.UserName, "password": logInDTO.Password})
+func InitUserService(initMongoDAO repository.IMongoDAO) IUserService {
+	userService := new(UserService)
+	userService.mongoDAO = initMongoDAO
+	return userService
+}
 
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		return "", errors.UnauthorizedError()
+func (userService *UserService) LogInUser(logInDTO mockdata.LogInDTO) (jwtToken string, err error) {
+	user, errr := userService.mongoDAO.MongoUserLogin(logInDTO)
+	if errr != nil {
+		return "", errr
 	}
-
-	var user mockdata.User
-	result.Decode(&user)
-
-	fmt.Println("role: ", user.Role)
 
 	jwtToken, _ = middleware.GenerateJWT(user.Id.Hex(), user.Role)
 	return
 }
 
-func CreateUser(body *io.ReadCloser) (insertedId string, jwtToken string, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
+func (userService *UserService) CreateUser(newUser mockdata.User) (insertedId string, jwtToken string, err error) {
+	userPassword, err := bcrypt.GenerateFromPassword([]byte(newUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
 
-	var newUser mockdata.User
-	json.NewDecoder(*body).Decode(&newUser)
+	newUser.Password = string(userPassword)
+	insertedId = userService.mongoDAO.MongoCreateUser(newUser)
 
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	result, _ := userCollection.InsertOne(ctx, newUser)
-
-	insertedId = result.InsertedID.(primitive.ObjectID).Hex()
+	if insertedId == "" {
+		return "", "", errors.UserNameAlreadyTaken()
+	}
 
 	jwtToken, err = middleware.GenerateJWT(insertedId, newUser.Role)
-
+	fmt.Println(jwtToken)
 	if err != nil {
 		fmt.Println(err.Error())
 		return "", "", err
@@ -68,25 +63,12 @@ func CreateUser(body *io.ReadCloser) (insertedId string, jwtToken string, err er
 	return insertedId, jwtToken, nil
 }
 
-func GetAllUsers() (allUsers []mockdata.User) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	ctx, _ = context.WithTimeout(context.Background(), 10*time.Second)
-	cursor, _ := userCollection.Find(ctx, bson.M{})
-
-	for cursor.Next(ctx) {
-		var user mockdata.User
-		cursor.Decode(&user)
-		allUsers = append(allUsers, user)
-	}
+func (userService *UserService) GetAllUsers() (allUsers []mockdata.User) {
+	allUsers = userService.mongoDAO.MongoGetAllUsers()
 	return
 }
 
-func GetUserById(userId string) (userRetrieved *mockdata.User, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
+func (userService *UserService) GetUserById(userId string) (userRetrieved *mockdata.User, err error) {
 	//convert userId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(userId)
 
@@ -94,66 +76,25 @@ func GetUserById(userId string) (userRetrieved *mockdata.User, err error) {
 		return nil, errors.MalformedIdError()
 	}
 
-	result := userCollection.FindOne(ctx, bson.M{"_id": objectId})
-
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		return nil, errors.IdNotFoundError()
-	}
-
-	result.Decode(&userRetrieved)
-	return
+	return userService.mongoDAO.MongoGetUserById(objectId)
 }
 
-func UpdateUserById(userId string, body *io.ReadCloser) (userRetrieved *mockdata.User, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
-	updatedUser := &mockdata.User{}
-	unmarshalErr := json.NewDecoder(*body).Decode(&updatedUser)
-	if unmarshalErr != nil {
-		return nil, errors.UnmarshallError()
-	}
-
+func (userService *UserService) UpdateUserById(userId string, updatedUser mockdata.User) (userRetrieved *mockdata.User, err error) {
 	//convert userId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return nil, errors.MalformedIdError()
 	}
 
-	result, error := userCollection.UpdateByID(ctx, objectId, bson.M{"$set": updatedUser})
-	if error != nil {
-		return nil, errors.InternalServerError()
-	}
-
-	if result.MatchedCount == 0 {
-		return nil, errors.IdNotFoundError()
-	}
-
-	return GetUserById(userId)
+	return userService.mongoDAO.MongoUpdateUserById(objectId, updatedUser)
 }
 
-func DeleteUserbyId(userId string) (successMessage *string, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
-	_ = client.Connect(ctx)
-
+func (userService *UserService) DeleteUserbyId(userId string) (successMessage *string, err error) {
 	//convert userId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(userId)
 	if err != nil {
 		return nil, errors.MalformedIdError()
 	}
 
-	result, error := userCollection.DeleteOne(ctx, bson.M{"_id": objectId})
-
-	if error != nil {
-		return nil, errors.InternalServerError()
-	}
-
-	if result.DeletedCount == 0 {
-		return nil, errors.IdNotFoundError()
-
-	}
-
-	str := "user deleted"
-	successMessage = &str
-	return
+	return userService.mongoDAO.MongoDeleteUserById(objectId)
 }

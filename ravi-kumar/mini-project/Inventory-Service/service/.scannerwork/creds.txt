@@ -1,0 +1,1 @@
+sonar-scanner.bat -D"sonar.projectKey=swiggy-mini-inventory-service" -D"sonar.sources=." -D"sonar.host.url=http://localhost:9000" -D"sonar.login=9cb09f4bf193e3753db8127b4b6d32816f50cc9d"

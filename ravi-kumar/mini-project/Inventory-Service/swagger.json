@@ -1,0 +1,196 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Catalog APIs",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:5002"
+      }
+    ],
+    "components": {
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer"
+        }
+      }
+    },
+    "paths": {
+      "/catalog": {
+        "get": {
+          "tags": [
+            "General"
+          ],
+          "summary": "get catalog",
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": [
+            "General"
+          ],
+          "summary": "add product",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "name": "Airtel Router Dual Band",
+                    "price": 6100,
+                    "description": "Dual Band Router Modem",
+                    "seller": "Airtel",
+                    "rating": 4.599999904632568,
+                    "review": [
+                      "Good quality and service",
+                      "Decent product"
+                    ],
+                    "quantityLeft": 22
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      },
+      "/catalog/{productId}": {
+        "get": {
+          "tags": [
+            "General"
+          ],
+          "summary": "get product by id",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "productId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the product to fetch"
+            }
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": [
+            "General"
+          ],
+          "summary": "delete product by id",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "productId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the product to delete"
+            }
+          ],
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": [
+            "General"
+          ],
+          "summary": "update product",
+          "parameters": [
+            {
+              "in": "path",
+              "name": "productId",
+              "schema": {
+                "type": "string"
+              },
+              "required": true,
+              "description": "id of the product to update"
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "name": "Puma Shoes AH8",
+                    "price": 3700,
+                    "description": "Running shoes",
+                    "seller": "Puma",
+                    "rating": 4.9,
+                    "review": [
+                      "Great product",
+                      "Worth the money"
+                    ],
+                    "QuantityLeft": 23
+                  }
+                }
+              }
+            }
+          },
+          "security": [
+            {
+              "bearerAuth": []
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successful response",
+              "content": {
+                "application/json": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  }

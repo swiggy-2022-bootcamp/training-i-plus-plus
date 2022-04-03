@@ -1,0 +1,20 @@
+mode: set
+User-Service/service/UserService.go:26.70,30.2 3 1
+User-Service/service/UserService.go:32.100,34.17 2 1
+User-Service/service/UserService.go:38.2,39.8 2 0
+User-Service/service/UserService.go:34.17,36.3 1 1
+User-Service/service/UserService.go:42.115,45.22 2 1
+User-Service/service/UserService.go:49.2,51.16 3 1
+User-Service/service/UserService.go:56.2,56.34 1 1
+User-Service/service/UserService.go:45.22,47.3 1 0
+User-Service/service/UserService.go:51.16,54.3 2 0
+User-Service/service/UserService.go:59.74,62.2 2 1
+User-Service/service/UserService.go:64.102,68.16 2 1
+User-Service/service/UserService.go:72.2,72.56 1 1
+User-Service/service/UserService.go:68.16,70.3 1 1
+User-Service/service/UserService.go:75.132,78.16 2 1
+User-Service/service/UserService.go:82.2,82.72 1 1
+User-Service/service/UserService.go:78.16,80.3 1 1
+User-Service/service/UserService.go:85.99,88.16 2 1
+User-Service/service/UserService.go:92.2,92.59 1 1
+User-Service/service/UserService.go:88.16,90.3 1 1

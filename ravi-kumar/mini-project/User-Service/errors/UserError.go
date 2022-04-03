@@ -10,6 +10,9 @@ type UserError struct {
 func (productError *UserError) Error() string {
 	return productError.ErrorMessage
 }
+func UserNameAlreadyTaken() *UserError {
+	return &UserError{http.StatusConflict, "Username already taken"}
+}
 
 func AccessDenied() *UserError {
 	return &UserError{http.StatusUnauthorized, "Access denied over this API"}

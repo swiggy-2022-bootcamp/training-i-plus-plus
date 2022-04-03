@@ -1,50 +1,55 @@
 package service
 
 import (
-	"Order-Service/config"
+	repository "Order-Service/Repository"
 	errors "Order-Service/errors"
 	"Order-Service/kafka"
-	"Order-Service/middleware"
 	mockdata "Order-Service/model"
 	"context"
 	"encoding/json"
-	"io"
-	"log"
+	"fmt"
 	"net/http"
-	"strconv"
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var client *mongo.Client
-var mongoURL string = config.MONGO_URL
-var orderCollection *mongo.Collection
-
-func init() {
-	// Initialize a new mongo client with options
-	client, _ = mongo.NewClient(options.Client().ApplyURI(mongoURL))
-	orderCollection = client.Database("swiggy_mini").Collection("orders")
+type IOrderService interface {
+	PlaceOrder(orderPlaced mockdata.Order, shouldProduceKafkaMessage ...bool) (orderId *string, err error)
+	GetOrders(userId string) (orders []mockdata.Order, err error)
+	OrderPayment(orderId string, shouldProduceKafkaMessage ...bool) (successMessage *string, err error)
+	DeliverOrder(orderId string, shouldProduceKafkaMessage ...bool) (successMessage *string, err error)
+	CancelOrder(orderId string, accessorUserId string) (successMessage *string, err error)
+	ReadCloserToString(res *http.Response) (message string)
 }
 
-func PlaceOrder(body *io.ReadCloser) (result *mongo.InsertOneResult, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
-	client.Connect(ctx)
+type OrderService struct {
+	mongoDAO repository.IMongoDAO
+	httpRepo repository.IHttpRepo
+}
 
-	var orderPlaced mockdata.Order
-	json.NewDecoder(*body).Decode(&orderPlaced)
+func InitOrderService(initMongoDAO repository.IMongoDAO, initHttpRepo repository.IHttpRepo) IOrderService {
+	orderService := new(OrderService)
+	orderService.mongoDAO = initMongoDAO
+	orderService.httpRepo = initHttpRepo
+	return orderService
+}
+
+func (orderService *OrderService) PlaceOrder(orderPlaced mockdata.Order, shouldProduceKafkaMessage ...bool) (orderId *string, err error) {
+	//if shouldProduceKafkaMessage argument is absent, canProduceKafkaMessage shall be true by default - for test util
+	canProduceKafkaMessage := true
+	if len(shouldProduceKafkaMessage) != 0 {
+		canProduceKafkaMessage = shouldProduceKafkaMessage[0]
+	}
 
 	userId := orderPlaced.UserId
-	if !IsValidUser(userId) {
+	if !orderService.httpRepo.IsValidUser(userId) {
 		return nil, errors.UserNotFoundError()
 	}
 
-	success, errorResponse, errorProductIndex := UpdateProductQuantity(userId, orderPlaced.Items, -1)
+	success, errorResponse, errorProductIndex := orderService.httpRepo.UpdateProductQuantity(userId, orderPlaced.Items, -1)
 	if !success {
-		errorMessage := ReadCloserToString(errorResponse.Body) + ". Product Id: " + orderPlaced.Items[*errorProductIndex] + " (Order rolled back)"
+		errorMessage := orderService.ReadCloserToString(errorResponse) + ". Product Id: " + orderPlaced.Items[*errorProductIndex] + " (Order rolled back)"
 		return nil, &errors.OrderError{Status: http.StatusBadRequest, ErrorMessage: errorMessage}
 	}
 
@@ -52,54 +57,43 @@ func PlaceOrder(body *io.ReadCloser) (result *mongo.InsertOneResult, err error) 
 	orderPlaced.DeliveryDate = orderPlaced.OrderDate.AddDate(0, 0, 6)
 	orderPlaced.Status = "confirmed"
 
-	ctx, _ = context.WithTimeout(context.Background(), time.Second*10)
-	result, _ = orderCollection.InsertOne(ctx, orderPlaced)
-	orderId := result.InsertedID.(primitive.ObjectID).Hex()
+	returnedOrderId := orderService.mongoDAO.MongoPlaceOrder(orderPlaced)
 
-	ctx, _ = context.WithTimeout(context.Background(), time.Minute*10)
-	kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: "+orderPlaced.Status))
+	if canProduceKafkaMessage {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("orderId: "+returnedOrderId+" --- status: "+orderPlaced.Status))
+	}
 
-	return
+	return &returnedOrderId, nil
 }
 
-func GetOrders(userId string) (orders []mockdata.Order, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
-	client.Connect(ctx)
-
+func (orderService *OrderService) GetOrders(userId string) (orders []mockdata.Order, err error) {
 	//TODO: check if user exists
-	if !IsValidUser(userId) {
+	if !orderService.httpRepo.IsValidUser(userId) {
 		return nil, errors.UserNotFoundError()
 	}
 
-	ctx, _ = context.WithTimeout(context.Background(), time.Second*10)
-	cursor, _ := orderCollection.Find(ctx, bson.M{"userid": userId})
-
-	for cursor.Next(ctx) {
-		var order mockdata.Order
-		cursor.Decode(&order)
-		orders = append(orders, order)
-	}
-	return
+	return orderService.mongoDAO.MongoGetOrderByUserId(userId)
 }
 
-func OrderPayment(orderId string) (successMessage *string, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
-	client.Connect(ctx)
+func (orderService *OrderService) OrderPayment(orderId string, shouldProduceKafkaMessage ...bool) (successMessage *string, err error) {
+	//if shouldProduceKafkaMessage argument is absent, canProduceKafkaMessage shall be true by default - for test util
+	canProduceKafkaMessage := true
+	if len(shouldProduceKafkaMessage) != 0 {
+		canProduceKafkaMessage = shouldProduceKafkaMessage[0]
+	}
 
-	//convert userId string to objectId type
+	//convert orderId string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(orderId)
 	if err != nil {
 		return nil, errors.MalformedIdError()
 	}
 
-	result := orderCollection.FindOne(ctx, bson.M{"_id": objectId})
+	order, err := orderService.mongoDAO.MongoGetOrderByOrderId(objectId)
 
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		return nil, errors.IdNotFoundError()
+	if err != nil {
+		return nil, err
 	}
-
-	var order mockdata.Order
-	result.Decode(&order)
 
 	if order.Status == "payment done" || order.Status == "delivered" {
 		return nil, errors.OrderAlreadyPaidForError()
@@ -107,38 +101,40 @@ func OrderPayment(orderId string) (successMessage *string, err error) {
 
 	order.Status = "payment done"
 
-	_, error := orderCollection.UpdateByID(ctx, objectId, bson.M{"$set": order})
+	_, error := orderService.mongoDAO.MongoUpdateOrderByOrderId(objectId, *order)
 
 	if error != nil {
 		return nil, errors.InternalServerError()
 	}
 
-	ctx, _ = context.WithTimeout(context.Background(), time.Minute*10)
-	kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: "+order.Status))
+	if canProduceKafkaMessage {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: "+order.Status))
+	}
 
 	str := "order payment successful"
 	successMessage = &str
 	return
 }
 
-func DeliverOrder(orderId string) (successMessage *string, err error) {
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
-	client.Connect(ctx)
+func (orderService *OrderService) DeliverOrder(orderId string, shouldProduceKafkaMessage ...bool) (successMessage *string, err error) {
+	//if shouldProduceKafkaMessage argument is absent, canProduceKafkaMessage shall be true by default - for test util
+	canProduceKafkaMessage := true
+	if len(shouldProduceKafkaMessage) != 0 {
+		canProduceKafkaMessage = shouldProduceKafkaMessage[0]
+	}
 
-	//convert userId string to objectId type
+	//convert order id string to objectId type
 	objectId, err := primitive.ObjectIDFromHex(orderId)
 	if err != nil {
 		return nil, errors.MalformedIdError()
 	}
 
-	result := orderCollection.FindOne(ctx, bson.M{"_id": objectId})
+	order, err := orderService.mongoDAO.MongoGetOrderByOrderId(objectId)
 
-	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
-		return nil, errors.IdNotFoundError()
+	if err != nil {
+		return nil, err
 	}
-
-	var order mockdata.Order
-	result.Decode(&order)
 
 	if order.Status == "confirmed" {
 		return nil, errors.PaymentIncompleteError()
@@ -150,79 +146,58 @@ func DeliverOrder(orderId string) (successMessage *string, err error) {
 
 	order.Status = "delivered"
 
-	_, error := orderCollection.UpdateByID(ctx, objectId, bson.M{"$set": order})
+	_, error := orderService.mongoDAO.MongoUpdateOrderByOrderId(objectId, *order)
 	if error != nil {
 		return nil, errors.InternalServerError()
 	}
 
-	ctx, _ = context.WithTimeout(context.Background(), time.Minute*10)
-	kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: "+order.Status))
+	if canProduceKafkaMessage {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: "+order.Status))
+	}
 
 	str := "order delivered"
 	successMessage = &str
 	return
 }
 
-func IsValidUser(userId string) bool {
-	jwtToken, _ := middleware.GenerateJWT(userId, mockdata.Admin)
-	url := "http://localhost:5004/users/"
+func (orderService *OrderService) CancelOrder(orderId string, accessorUserId string) (successMessage *string, err error) {
+	//only undelivered order ordered by the current accessor is allowed
 
-	// Create a Bearer string by appending string access token
-	var bearer = "Bearer " + jwtToken
-
-	// Create a new request using http
-	req, _ := http.NewRequest("GET", url, nil)
-
-	// add authorization header to the req
-	req.Header.Add("Authorization", bearer)
-
-	// Send req using http Client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-
+	//convert orderId string to objectId type
+	objectId, err := primitive.ObjectIDFromHex(orderId)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, errors.MalformedIdError()
+	}
+	order, err := orderService.mongoDAO.MongoGetOrderByOrderId(objectId)
+	if err != nil {
+		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return false
+	if order.UserId != accessorUserId {
+		return nil, errors.AccessDenied()
 	}
-	return true
+
+	if order.Status == "delivered" {
+		return nil, errors.OrderAlreadyDeliveredError()
+	}
+
+	orderService.mongoDAO.MongoDeleteOrderById(objectId)
+
+	refundStr := "Order cancelled. Refund of " + fmt.Sprint(order.Amount) + " initiated"
+	orderCancelledStr := "Order cancelled."
+	if order.Status == "payment done" {
+		return &refundStr, nil
+	} else {
+		return &orderCancelledStr, nil
+	}
 }
 
-func UpdateProductQuantity(userId string, productIds []string, quantity int) (success bool, errorResponse *http.Response, errorProductIndex *int) {
-	jwtToken, _ := middleware.GenerateJWT(userId, mockdata.Admin)
-
-	// Create a Bearer string by appending string access token
-	var bearer = "Bearer " + jwtToken
-
-	for index, productId := range productIds {
-		url := "http://localhost:5002/catalog/" + productId + "/" + strconv.Itoa(quantity)
-
-		// Create a new request using http
-		req, _ := http.NewRequest("POST", url, nil)
-
-		// add authorization header to the req
-		req.Header.Add("Authorization", bearer)
-
-		// Send req using http Client
-		client := &http.Client{}
-		resp, err := client.Do(req)
-
-		if err != nil {
-			log.Fatalln(err)
-		}
-
-		if resp.StatusCode != http.StatusOK {
-			//roll back
-			UpdateProductQuantity(userId, productIds[:index], 1)
-			return false, resp, &index
-		}
+func (orderService *OrderService) ReadCloserToString(res *http.Response) (message string) {
+	if res == nil {
+		return ""
 	}
-	return true, nil, nil
-}
-
-func ReadCloserToString(body io.ReadCloser) (message string) {
+	body := res.Body
 	json.NewDecoder(body).Decode(&message)
 	return
 }

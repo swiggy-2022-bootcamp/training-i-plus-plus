@@ -1,9 +1,11 @@
 package controller
 
 import (
+	repository "Order-Service/Repository"
 	"Order-Service/errors"
 	mockdata "Order-Service/model"
 	service "Order-Service/service"
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -11,8 +13,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var orderService service.IOrderService
+
+func init() {
+	orderService = service.InitOrderService(&repository.MongoDAO{}, &repository.HttpRepo{})
+}
+
 func PlaceOrder(c *gin.Context) {
-	result, error := service.PlaceOrder(&c.Request.Body)
+	//access: Anyone
+
+	var orderPlaced mockdata.Order
+	json.NewDecoder(c.Request.Body).Decode(&orderPlaced)
+	result, error := orderService.PlaceOrder(orderPlaced)
 
 	if error != nil {
 		orderError, ok := error.(*errors.OrderError)
@@ -38,7 +50,7 @@ func GetOrders(c *gin.Context) {
 		return
 	}
 
-	orders, error := service.GetOrders(userId)
+	orders, error := orderService.GetOrders(userId)
 
 	if error != nil {
 		orderError, ok := error.(*errors.OrderError)
@@ -62,7 +74,7 @@ func OrderPayment(c *gin.Context) {
 	}
 
 	orderId := c.Param("orderId")
-	successMessage, error := service.OrderPayment(orderId)
+	successMessage, error := orderService.OrderPayment(orderId)
 
 	if error != nil {
 		orderError, ok := error.(*errors.OrderError)
@@ -86,7 +98,7 @@ func DeliverOrder(c *gin.Context) {
 	}
 
 	orderId := c.Param("orderId")
-	successMessage, error := service.DeliverOrder(orderId)
+	successMessage, error := orderService.DeliverOrder(orderId)
 
 	if error != nil {
 		orderError, ok := error.(*errors.OrderError)
@@ -99,6 +111,27 @@ func DeliverOrder(c *gin.Context) {
 		}
 	}
 	c.JSON(http.StatusOK, *successMessage)
+}
+
+func CancelOrder(c *gin.Context) {
+	//access: a user can cancel his/her own undelivered orders
+	//acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	acessorUserId := c.Param("acessorUserId")
+	orderId := c.Param("orderId")
+
+	msg, err := orderService.CancelOrder(orderId, acessorUserId)
+	if err != nil {
+		orderError, ok := err.(*errors.OrderError)
+		if ok {
+			c.JSON(orderError.Status, orderError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("orderError casting error in CancelOrder")
+			return
+		}
+	}
+
+	c.JSON(http.StatusOK, *msg)
 }
 
 //confirmed -> payment done -> delivered

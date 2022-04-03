@@ -1,0 +1,6 @@
+projectKey=swiggy-mini-user-service
+serverUrl=http://localhost:9000
+serverVersion=9.3.0.51899
+dashboardUrl=http://localhost:9000/dashboard?id=swiggy-mini-user-service
+ceTaskId=AX_viz9fAxEXZY4DRrXA
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AX_viz9fAxEXZY4DRrXA

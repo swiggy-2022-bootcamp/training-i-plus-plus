@@ -1,0 +1,6 @@
+projectKey=swiggy-mini-inventory-service
+serverUrl=http://localhost:9000
+serverVersion=9.3.0.51899
+dashboardUrl=http://localhost:9000/dashboard?id=swiggy-mini-inventory-service
+ceTaskId=AX_vkcV1AxEXZY4DRrXO
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AX_vkcV1AxEXZY4DRrXO
