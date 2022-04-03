@@ -17,6 +17,8 @@ func IfAuthorized(endPoint func(c *gin.Context)) gin.HandlerFunc {
 		authHeader := c.GetHeader("Authorization")
 
 		if len(authHeader) == 0 {
+			ctx := context.Context(context.Background())
+			kafka.Produce(ctx, nil, []byte("Unauthorized API access averted (auth)"))
 			c.JSON(http.StatusUnauthorized, "Unauthorized API Call")
 			return
 		}
@@ -29,7 +31,7 @@ func IfAuthorized(endPoint func(c *gin.Context)) gin.HandlerFunc {
 
 		if error != nil {
 			ctx := context.Context(context.Background())
-			kafka.Produce(ctx, nil, []byte("Unauthorized API access averted"))
+			kafka.Produce(ctx, nil, []byte("Unauthorized API access averted (auth)"))
 			c.JSON(http.StatusUnauthorized, "Invalid token. "+error.Error())
 			return
 		}

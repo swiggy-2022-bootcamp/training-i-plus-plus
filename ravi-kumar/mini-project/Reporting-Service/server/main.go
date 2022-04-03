@@ -2,11 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net"
+	"strings"
 	"time"
 
+	"github.com/gookit/color"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -71,8 +72,16 @@ func consume(ctx context.Context) {
 		if err != nil {
 			panic("could not read message " + err.Error())
 		}
+
 		// after receiving the message, log its value
-		fmt.Println(string(msg.Value))
+		msgStr := string(msg.Value)
+		if strings.Contains(msgStr, "(critical --service_down_err)") {
+			color.Red.Println(msgStr)
+		} else if strings.Contains(msgStr, "(critical)") || strings.Contains(msgStr, "(auth)") {
+			color.Magenta.Println(msgStr)
+		} else {
+			color.Info.Println(string(msg.Value))
+		}
 	}
 }
 
@@ -82,19 +91,19 @@ func checkServiceHealth() {
 		timeout := time.Duration(1 * time.Second)
 		_, err := net.DialTimeout("tcp", host+":"+INVENTORY_SERVICE_SERVER_PORT, timeout)
 		if err != nil {
-			Produce(context.Background(), nil, []byte("Inventory-Service is down (critical) "+time.Now().Local().String()))
+			Produce(context.Background(), nil, []byte("Inventory-Service is down (critical --service_down_err) "+time.Now().Local().String()))
 		}
 
 		timeout = time.Duration(1 * time.Second)
 		_, err = net.DialTimeout("tcp", host+":"+ORDER_SERVICE_SERVER_PORT, timeout)
 		if err != nil {
-			Produce(context.Background(), nil, []byte("Order-Service is down (critical) "+time.Now().Local().String()))
+			Produce(context.Background(), nil, []byte("Order-Service is down (critical --service_down_err) "+time.Now().Local().String()))
 		}
 
 		timeout = time.Duration(1 * time.Second)
 		_, err = net.DialTimeout("tcp", host+":"+USER_SERVICE_SERVER_PORT, timeout)
 		if err != nil {
-			Produce(context.Background(), nil, []byte("User-Service is down (critical) "+time.Now().Local().String()))
+			Produce(context.Background(), nil, []byte("User-Service is down (critical --service_down_err) "+time.Now().Local().String()))
 		}
 
 		time.Sleep(5 * time.Second)

@@ -106,7 +106,7 @@ func (inventoryService *InventoryService) UpdateProductQuantity(productId string
 	//if quantity below threshold, notify monitoring service
 	if canProduceKafkaMessages && productRetrieved.QuantityLeft < 20 {
 		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
-		kafka.Produce(ctx, nil, []byte("productId: "+productId+" --- status: quantity below threshold ("+strconv.Itoa(productRetrieved.QuantityLeft)+")"))
+		kafka.Produce(ctx, nil, []byte("productId: "+productId+" --- status: quantity below threshold ("+strconv.Itoa(productRetrieved.QuantityLeft)+") (critical)"))
 	}
 
 	_, err = inventoryService.UpdateProductById(productId, *productRetrieved)
