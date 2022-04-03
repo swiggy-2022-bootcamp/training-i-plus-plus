@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This microservice is for doctor module in the sanitaria application.",
-        "title": "Sanitaria - Doctor Module",
+        "description": "This microservice is for general user module in the sanitaria application.",
+        "title": "Sanitaria - GeneralUser Module",
         "contact": {
             "name": "Aaditya Khetan",
             "email": "aadityakhetan123@gmail.com"
@@ -12,16 +12,16 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8083",
     "paths": {
-        "/doctor/{id}": {
+        "/generalUser/{id}": {
             "get": {
                 "security": [
                     {
                         "Bearer Token": []
                     }
                 ],
-                "description": "View all the details of a doctor.",
+                "description": "View all the details of a generalUser.",
                 "consumes": [
                     "application/json"
                 ],
@@ -29,13 +29,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "Get doctor by ID.",
+                "summary": "Get generalUser by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "GeneralUser id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -45,7 +45,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.GeneralUser"
                         }
                     },
                     "500": {
@@ -62,7 +62,7 @@
                         "Bearer Token": []
                     }
                 ],
-                "description": "Edit details of a doctor.",
+                "description": "Edit details of a generalUser.",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,32 +70,23 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "Edit doctor by ID.",
+                "summary": "Edit generalUser by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "GeneralUser id",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "description": "Doctor details",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Doctor"
-                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.GeneralUser"
                         }
                     },
                     "400": {
@@ -118,7 +109,7 @@
                         "Bearer Token": []
                     }
                 ],
-                "description": "Delete a doctor.",
+                "description": "Delete a generalUser.",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,13 +117,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "Delete doctor by ID.",
+                "summary": "Delete generalUser by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "GeneralUser id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -160,9 +151,9 @@
                 }
             }
         },
-        "/doctorLogin": {
+        "/generalUserLogin": {
             "post": {
-                "description": "This request will login a doctor.",
+                "description": "This request will login a generalUser.",
                 "consumes": [
                     "application/json"
                 ],
@@ -170,20 +161,9 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "User login for a doctor profile.",
-                "parameters": [
-                    {
-                        "description": "User eamailid and password",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    }
-                ],
+                "summary": "User login for a generalUser profile.",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -212,9 +192,9 @@
                 }
             }
         },
-        "/doctorRegistration": {
+        "/generalUserRegistration": {
             "post": {
-                "description": "This request will create a new doctor profile for a user.",
+                "description": "This request will create a new generalUser profile for a user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -222,17 +202,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "To register a new doctor in the sanitaria application",
+                "summary": "To register a new generalUser in the sanitaria application",
                 "parameters": [
                     {
-                        "description": "Doctor details",
+                        "description": "General user details",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.GeneralUser"
                         }
                     }
                 ],
@@ -240,7 +220,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.GeneralUser"
                         }
                     },
                     "400": {
@@ -258,14 +238,14 @@
                 }
             }
         },
-        "/doctors": {
+        "/generalUsers": {
             "get": {
                 "security": [
                     {
                         "Bearer Token": []
                     }
                 ],
-                "description": "Get details of all doctors.",
+                "description": "Get details of all generalUsers.",
                 "consumes": [
                     "application/json"
                 ],
@@ -273,78 +253,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "GeneralUser"
                 ],
-                "summary": "Get all doctors list.",
+                "summary": "Get all generalUsers list.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Doctor"
+                                "$ref": "#/definitions/models.GeneralUser"
                             }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
-        },
-        "/doctors/add-appointment/{doctorId}": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer Token": []
-                    }
-                ],
-                "description": "A doctor can add as many slots as required through this request.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Doctor"
-                ],
-                "summary": "Add slots for appointment.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Doctor id",
-                        "name": "doctorId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Appointment details",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Appointment"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Appointment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
                         }
                     },
                     "500": {
@@ -381,17 +300,15 @@
                 }
             }
         },
-        "models.Doctor": {
+        "models.GeneralUser": {
             "type": "object",
             "required": [
                 "address",
                 "age",
-                "category",
                 "emailId",
-                "medicalLicenseLink",
                 "name",
                 "password",
-                "yoe"
+                "previousDisease"
             ],
             "properties": {
                 "address": {
@@ -406,17 +323,14 @@
                         "$ref": "#/definitions/models.Appointment"
                     }
                 },
-                "category": {
-                    "type": "string"
-                },
                 "emailId": {
                     "type": "string"
                 },
                 "id": {
                     "type": "string"
                 },
-                "medicalLicenseLink": {
-                    "type": "string"
+                "isPatient": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -424,34 +338,7 @@
                 "password": {
                     "type": "string"
                 },
-                "yoe": {
-                    "type": "number"
-                }
-            }
-        },
-        "models.User": {
-            "type": "object",
-            "required": [
-                "address",
-                "age",
-                "emailId",
-                "name",
-                "password"
-            ],
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "age": {
-                    "type": "integer"
-                },
-                "emailId": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "password": {
+                "previousDisease": {
                     "type": "string"
                 }
             }

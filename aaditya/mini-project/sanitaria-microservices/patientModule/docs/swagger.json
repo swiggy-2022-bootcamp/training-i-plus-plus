@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This microservice is for doctor module in the sanitaria application.",
-        "title": "Sanitaria - Doctor Module",
+        "description": "This microservice is for patient module in the sanitaria application.",
+        "title": "Sanitaria - Patient Module",
         "contact": {
             "name": "Aaditya Khetan",
             "email": "aadityakhetan123@gmail.com"
@@ -12,16 +12,16 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8081",
+    "host": "localhost:8084",
     "paths": {
-        "/doctor/{id}": {
+        "/patient/{id}": {
             "get": {
                 "security": [
                     {
                         "Bearer Token": []
                     }
                 ],
-                "description": "View all the details of a doctor.",
+                "description": "View all the details of a patient.",
                 "consumes": [
                     "application/json"
                 ],
@@ -29,13 +29,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "Get doctor by ID.",
+                "summary": "Get patient by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "Patient id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -45,7 +45,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.Patient"
                         }
                     },
                     "500": {
@@ -62,7 +62,7 @@
                         "Bearer Token": []
                     }
                 ],
-                "description": "Edit details of a doctor.",
+                "description": "Edit details of a patient.",
                 "consumes": [
                     "application/json"
                 ],
@@ -70,24 +70,24 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "Edit doctor by ID.",
+                "summary": "Edit patient by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "Patient id",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Doctor details",
+                        "description": "Patient details",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.Patient"
                         }
                     }
                 ],
@@ -95,7 +95,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.Patient"
                         }
                     },
                     "400": {
@@ -118,7 +118,7 @@
                         "Bearer Token": []
                     }
                 ],
-                "description": "Delete a doctor.",
+                "description": "Delete a patient.",
                 "consumes": [
                     "application/json"
                 ],
@@ -126,13 +126,13 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "Delete doctor by ID.",
+                "summary": "Delete patient by ID.",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "Doctor id",
+                        "description": "Patient id",
                         "name": "id",
                         "in": "path",
                         "required": true
@@ -160,9 +160,9 @@
                 }
             }
         },
-        "/doctorLogin": {
+        "/patientLogin": {
             "post": {
-                "description": "This request will login a doctor.",
+                "description": "This request will login a patient.",
                 "consumes": [
                     "application/json"
                 ],
@@ -170,12 +170,12 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "User login for a doctor profile.",
+                "summary": "User login for a patient profile.",
                 "parameters": [
                     {
-                        "description": "User eamailid and password",
+                        "description": "User emailid and password",
                         "name": "req",
                         "in": "body",
                         "required": true,
@@ -212,9 +212,9 @@
                 }
             }
         },
-        "/doctorRegistration": {
+        "/patientRegistration": {
             "post": {
-                "description": "This request will create a new doctor profile for a user.",
+                "description": "This request will create a new patient profile for a user.",
                 "consumes": [
                     "application/json"
                 ],
@@ -222,17 +222,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "To register a new doctor in the sanitaria application",
+                "summary": "To register a new patient in the sanitaria application",
                 "parameters": [
                     {
-                        "description": "Doctor details",
+                        "description": "Patient details",
                         "name": "req",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.Patient"
                         }
                     }
                 ],
@@ -240,7 +240,7 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/models.Doctor"
+                            "$ref": "#/definitions/models.Patient"
                         }
                     },
                     "400": {
@@ -258,14 +258,14 @@
                 }
             }
         },
-        "/doctors": {
+        "/patients": {
             "get": {
                 "security": [
                     {
                         "Bearer Token": []
                     }
                 ],
-                "description": "Get details of all doctors.",
+                "description": "Get details of all patients.",
                 "consumes": [
                     "application/json"
                 ],
@@ -273,78 +273,17 @@
                     "application/json"
                 ],
                 "tags": [
-                    "Doctor"
+                    "Patient"
                 ],
-                "summary": "Get all doctors list.",
+                "summary": "Get all patients list.",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/models.Doctor"
+                                "$ref": "#/definitions/models.Patient"
                             }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            }
-        },
-        "/doctors/add-appointment/{doctorId}": {
-            "post": {
-                "security": [
-                    {
-                        "Bearer Token": []
-                    }
-                ],
-                "description": "A doctor can add as many slots as required through this request.",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Doctor"
-                ],
-                "summary": "Add slots for appointment.",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Doctor id",
-                        "name": "doctorId",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Appointment details",
-                        "name": "req",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Appointment"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "array",
-                            "items": {
-                                "$ref": "#/definitions/models.Appointment"
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
                         }
                     },
                     "500": {
@@ -358,40 +297,16 @@
         }
     },
     "definitions": {
-        "models.Appointment": {
-            "type": "object",
-            "properties": {
-                "doctorID": {
-                    "type": "string"
-                },
-                "fees": {
-                    "type": "integer"
-                },
-                "generalUserID": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "occupied": {
-                    "type": "boolean"
-                },
-                "slot": {
-                    "type": "string"
-                }
-            }
-        },
-        "models.Doctor": {
+        "models.Patient": {
             "type": "object",
             "required": [
                 "address",
                 "age",
-                "category",
+                "doctorAssignedId",
                 "emailId",
-                "medicalLicenseLink",
                 "name",
                 "password",
-                "yoe"
+                "roomAllocated"
             ],
             "properties": {
                 "address": {
@@ -400,13 +315,7 @@
                 "age": {
                     "type": "integer"
                 },
-                "appointments": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/models.Appointment"
-                    }
-                },
-                "category": {
+                "doctorAssignedId": {
                     "type": "string"
                 },
                 "emailId": {
@@ -415,8 +324,8 @@
                 "id": {
                     "type": "string"
                 },
-                "medicalLicenseLink": {
-                    "type": "string"
+                "isDischarged": {
+                    "type": "boolean"
                 },
                 "name": {
                     "type": "string"
@@ -424,8 +333,8 @@
                 "password": {
                     "type": "string"
                 },
-                "yoe": {
-                    "type": "number"
+                "roomAllocated": {
+                    "type": "string"
                 }
             }
         },

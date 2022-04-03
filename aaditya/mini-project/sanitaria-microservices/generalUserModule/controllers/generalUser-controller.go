@@ -8,8 +8,9 @@ import (
 	"sanitaria-microservices/generalUserModule/responses"
 	"sanitaria-microservices/generalUserModule/services"
 	"time"
-	"github.com/go-playground/validator/v10"
+
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -18,76 +19,101 @@ import (
 var generalUserCollection *mongo.Collection = configs.GetCollection(configs.DB, "generalUsers")
 var validate = validator.New()
 
+// RegisterGeneralUser godoc
+// @Summary To register a new generalUser in the sanitaria application
+// @Description This request will create a new generalUser profile for a user.
+// @Tags GeneralUser
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param req body models.GeneralUser true "General user details"
+// @Success	201  {object} 	models.GeneralUser
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /generalUserRegistration [POST]
 func RegisterGeneralUser() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        var generalUser models.GeneralUser
-        var user models.User
-        defer cancel()
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var generalUser models.GeneralUser
+		var user models.User
+		defer cancel()
 
-        //validate the request body
-        if err := c.BindJSON(&generalUser); err != nil {
-            c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-            return
-        }
-        user = generalUser.User
+		//validate the request body
+		if err := c.BindJSON(&generalUser); err != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+		user = generalUser.User
 
-        //use the validator library to validate required fields
-        if validationErr := validate.Struct(&generalUser); validationErr != nil {
-            c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-            return
-        }
-        if validationErr := validate.Struct(&user); validationErr != nil {
-            c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
-            return
-        }
+		//use the validator library to validate required fields
+		if validationErr := validate.Struct(&generalUser); validationErr != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			return
+		}
+		if validationErr := validate.Struct(&user); validationErr != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			return
+		}
 
 		hashPassword := services.HashPassword(user.Password)
 		user.Password = hashPassword
 
-        newGeneralUser := models.GeneralUser{
-            Id:       primitive.NewObjectID(),
-            PreviousDiseases:     generalUser.PreviousDiseases,
-            IsPatient: generalUser.IsPatient,
-			User:				   user,
-        }
-      
-        result, err := generalUserCollection.InsertOne(ctx, newGeneralUser)
-        if err != nil {
-            c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-            return
-        }
+		newGeneralUser := models.GeneralUser{
+			Id:               primitive.NewObjectID(),
+			PreviousDiseases: generalUser.PreviousDiseases,
+			IsPatient:        generalUser.IsPatient,
+			User:             user,
+		}
 
-        c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
-    }
+		result, err := generalUserCollection.InsertOne(ctx, newGeneralUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+	}
 }
 
+// LoginGeneralUser godoc
+// @Summary User login for a generalUser profile.
+// @Description This request will login a generalUser.
+// @Tags GeneralUser
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param req body models.User true "User emailid and password"
+// @Success	200  {string} 	token
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /generalUserLogin [POST]
 func LoginGeneralUser() gin.HandlerFunc {
-	return func (c *gin.Context)  {
+	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var generalUser models.GeneralUser
 		var foundGenerealUser models.GeneralUser
 
 		if err := c.BindJSON(&generalUser); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
-			return 
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
 		}
-		err := generalUserCollection.FindOne(ctx, bson.M{"user.emailid":generalUser.User.EmailId}).Decode(&foundGenerealUser)
+		err := generalUserCollection.FindOne(ctx, bson.M{"user.emailid": generalUser.User.EmailId}).Decode(&foundGenerealUser)
 		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"email or password is incorrect"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "email or password is incorrect"})
 			return
 		}
 
 		passwordIsValid, msg := services.VerifyPassword(generalUser.User.Password, foundGenerealUser.User.Password)
 		defer cancel()
-		if !passwordIsValid{
+		if !passwordIsValid {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
 
-		if foundGenerealUser.User.EmailId == ""{
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"user not found"})
+		if foundGenerealUser.User.EmailId == "" {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "user not found"})
 		}
 		token, err := services.CreateToken(foundGenerealUser.User.EmailId, foundGenerealUser.User.Name)
 		if err != nil {
@@ -98,31 +124,57 @@ func LoginGeneralUser() gin.HandlerFunc {
 	}
 }
 
+// GetGeneralUserByID godoc
+// @Summary Get generalUser by ID.
+// @Description View all the details of a generalUser.
+// @Tags GeneralUser
+// @Schemes
+// @Param id path string true "GeneralUser id"
+// @Accept json
+// @Produce json
+// @Success	200  {object} 	models.GeneralUser
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /generalUser/{id} [GET]
 func GetGeneralUserByID() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-        id := c.Param("id")
-        var generalUser models.GeneralUser
-        defer cancel()
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		id := c.Param("id")
+		var generalUser models.GeneralUser
+		defer cancel()
 
-        objId, _ := primitive.ObjectIDFromHex(id)
+		objId, _ := primitive.ObjectIDFromHex(id)
 
-        err := generalUserCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&generalUser)
-        if err != nil {
-            c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-            return
-        }
+		err := generalUserCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&generalUser)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
 
-        c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": generalUser}})
-    }
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": generalUser}})
+	}
 }
 
+// EditGeneralUserByID godoc
+// @Summary Edit generalUser by ID.
+// @Description Edit details of a generalUser.
+// @Tags GeneralUser
+// @Schemes
+// @Param id path string true "GeneralUser id"
+// @Accept json
+// @Produce json
+// @Param req body models.GeneralUser true "General user details"
+// @Success	200  {object} 	models.GeneralUser
+// @Failure	400  {number} 	http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /generalUser/{id} [PUT]
 func EditGeneralUserByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		id := c.Param("id")
 		var generalUser models.GeneralUser
-        var user models.User
+		var user models.User
 		defer cancel()
 
 		objId, _ := primitive.ObjectIDFromHex(id)
@@ -133,19 +185,19 @@ func EditGeneralUserByID() gin.HandlerFunc {
 			return
 		}
 
-        user = generalUser.User
+		user = generalUser.User
 		//use the validator library to validate required fields
 		if validationErr := validate.Struct(&generalUser); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-        if validationErr := validate.Struct(&user); validationErr != nil {
+		if validationErr := validate.Struct(&user); validationErr != nil {
 			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
-		update := bson.M{"user.name": generalUser.User.Name,"user.address":generalUser.User.Address, "ispatient": generalUser.IsPatient, "previousdiseases": generalUser.PreviousDiseases}
+		update := bson.M{"user.name": generalUser.User.Name, "user.address": generalUser.User.Address, "ispatient": generalUser.IsPatient, "previousdiseases": generalUser.PreviousDiseases}
 
 		result, err := generalUserCollection.UpdateOne(ctx, bson.M{"_id": objId}, bson.M{"$set": update})
 
@@ -169,6 +221,19 @@ func EditGeneralUserByID() gin.HandlerFunc {
 	}
 }
 
+// DeleteGeneralUserByID godoc
+// @Summary Delete generalUser by ID.
+// @Description Delete a generalUser.
+// @Tags GeneralUser
+// @Schemes
+// @Param id path string true "GeneralUser id"
+// @Accept json
+// @Produce json
+// @Success	200  {string} 	User successfully deleted!
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /generalUser/{id} [DELETE]
 func DeleteGeneralUserByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -197,6 +262,17 @@ func DeleteGeneralUserByID() gin.HandlerFunc {
 	}
 }
 
+// GetAllGeneralUsers godoc
+// @Summary Get all generalUsers list.
+// @Description Get details of all generalUsers.
+// @Tags GeneralUser
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {array} 	models.GeneralUser
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /generalUsers [GET]
 func GetAllGeneralUsers() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -226,42 +302,3 @@ func GetAllGeneralUsers() gin.HandlerFunc {
 		)
 	}
 }
-
-// func BookAppointment() gin.HandlerFunc{
-// 	return func (c *gin.Context)  {
-// 		ctx,cancel := context.WithTimeout(context.Background(),10 * time.Second)
-// 		id := c.Param("id")
-// 		defer cancel()
-
-// 		var generalUser models.GeneralUser
-
-// 		objId,_ := primitive.ObjectIDFromHex(id)
-
-// 		err := generalUserCollection.FindOne(ctx,bson.M{"_id":objId}).Decode(&generalUser)
-// 		if err != nil {
-//             c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-//             return
-//         }
-
-// 		scheduledAppointment,err_ := BookAppointmentForGeneralUser(id)
-// 		if err_ != nil{
-// 			c.JSON(http.StatusOK,responses.UserResponse{Status: http.StatusOK, Message: "Success", Data: map[string]interface{}{"data": err_}})
-// 		}
-// 		c.JSON(http.StatusOK,responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": scheduledAppointment}})
-// 	}
-// }
-
-// func GetAvailableAppointments() gin.HandlerFunc{
-// 	return func (c *gin.Context)  {
-// 		_, cancel := context.WithTimeout(context.Background(), time.Second * 10)
-// 		defer cancel()
-// 		appointments, err := ListAvailableAppointments()
-
-// 		if err != nil{
-// 			c.JSON(http.StatusInternalServerError,responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err}})
-// 			return
-// 		}
-
-// 		c.JSON(http.StatusOK,responses.UserResponse{Status:http.StatusOK, Message:"success",Data: map[string]interface{}{"data": appointments}})
-// 	}
-// }

@@ -14,7 +14,7 @@ definitions:
       slot:
         type: string
     type: object
-  models.Doctor:
+  models.GeneralUser:
     properties:
       address:
         type: string
@@ -24,41 +24,17 @@ definitions:
         items:
           $ref: '#/definitions/models.Appointment'
         type: array
-      category:
-        type: string
       emailId:
         type: string
       id:
         type: string
-      medicalLicenseLink:
-        type: string
+      isPatient:
+        type: boolean
       name:
         type: string
       password:
         type: string
-      yoe:
-        type: number
-    required:
-    - address
-    - age
-    - category
-    - emailId
-    - medicalLicenseLink
-    - name
-    - password
-    - yoe
-    type: object
-  models.User:
-    properties:
-      address:
-        type: string
-      age:
-        type: integer
-      emailId:
-        type: string
-      name:
-        type: string
-      password:
+      previousDisease:
         type: string
     required:
     - address
@@ -66,25 +42,26 @@ definitions:
     - emailId
     - name
     - password
+    - previousDisease
     type: object
-host: localhost:8081
+host: localhost:8083
 info:
   contact:
     email: aadityakhetan123@gmail.com
     name: Aaditya Khetan
-  description: This microservice is for doctor module in the sanitaria application.
+  description: This microservice is for general user module in the sanitaria application.
   license:
     name: Apache 2.0
-  title: Sanitaria - Doctor Module
+  title: Sanitaria - GeneralUser Module
   version: "1.0"
 paths:
-  /doctor/{id}:
+  /generalUser/{id}:
     delete:
       consumes:
       - application/json
-      description: Delete a doctor.
+      description: Delete a generalUser.
       parameters:
-      - description: Doctor id
+      - description: GeneralUser id
         in: path
         name: id
         required: true
@@ -106,15 +83,15 @@ paths:
             type: number
       security:
       - Bearer Token: []
-      summary: Delete doctor by ID.
+      summary: Delete generalUser by ID.
       tags:
-      - Doctor
+      - GeneralUser
     get:
       consumes:
       - application/json
-      description: View all the details of a doctor.
+      description: View all the details of a generalUser.
       parameters:
-      - description: Doctor id
+      - description: GeneralUser id
         in: path
         name: id
         required: true
@@ -125,39 +102,33 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Doctor'
+            $ref: '#/definitions/models.GeneralUser'
         "500":
           description: Internal Server Error
           schema:
             type: number
       security:
       - Bearer Token: []
-      summary: Get doctor by ID.
+      summary: Get generalUser by ID.
       tags:
-      - Doctor
+      - GeneralUser
     put:
       consumes:
       - application/json
-      description: Edit details of a doctor.
+      description: Edit details of a generalUser.
       parameters:
-      - description: Doctor id
+      - description: GeneralUser id
         in: path
         name: id
         required: true
         type: string
-      - description: Doctor details
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.Doctor'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Doctor'
+            $ref: '#/definitions/models.GeneralUser'
         "400":
           description: Bad Request
           schema:
@@ -168,21 +139,14 @@ paths:
             type: number
       security:
       - Bearer Token: []
-      summary: Edit doctor by ID.
+      summary: Edit generalUser by ID.
       tags:
-      - Doctor
-  /doctorLogin:
+      - GeneralUser
+  /generalUserLogin:
     post:
       consumes:
       - application/json
-      description: This request will login a doctor.
-      parameters:
-      - description: User eamailid and password
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
+      description: This request will login a generalUser.
       produces:
       - application/json
       responses:
@@ -202,28 +166,28 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: User login for a doctor profile.
+      summary: User login for a generalUser profile.
       tags:
-      - Doctor
-  /doctorRegistration:
+      - GeneralUser
+  /generalUserRegistration:
     post:
       consumes:
       - application/json
-      description: This request will create a new doctor profile for a user.
+      description: This request will create a new generalUser profile for a user.
       parameters:
-      - description: Doctor details
+      - description: General user details
         in: body
         name: req
         required: true
         schema:
-          $ref: '#/definitions/models.Doctor'
+          $ref: '#/definitions/models.GeneralUser'
       produces:
       - application/json
       responses:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/models.Doctor'
+            $ref: '#/definitions/models.GeneralUser'
         "400":
           description: Bad Request
           schema:
@@ -232,14 +196,14 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: To register a new doctor in the sanitaria application
+      summary: To register a new generalUser in the sanitaria application
       tags:
-      - Doctor
-  /doctors:
+      - GeneralUser
+  /generalUsers:
     get:
       consumes:
       - application/json
-      description: Get details of all doctors.
+      description: Get details of all generalUsers.
       produces:
       - application/json
       responses:
@@ -247,7 +211,7 @@ paths:
           description: OK
           schema:
             items:
-              $ref: '#/definitions/models.Doctor'
+              $ref: '#/definitions/models.GeneralUser'
             type: array
         "500":
           description: Internal Server Error
@@ -255,48 +219,9 @@ paths:
             type: number
       security:
       - Bearer Token: []
-      summary: Get all doctors list.
+      summary: Get all generalUsers list.
       tags:
-      - Doctor
-  /doctors/add-appointment/{doctorId}:
-    post:
-      consumes:
-      - application/json
-      description: A doctor can add as many slots as required through this request.
-      parameters:
-      - description: Doctor id
-        in: path
-        name: doctorId
-        required: true
-        type: string
-      - description: Appointment details
-        in: body
-        name: req
-        required: true
-        schema:
-          $ref: '#/definitions/models.Appointment'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            items:
-              $ref: '#/definitions/models.Appointment'
-            type: array
-        "400":
-          description: Bad Request
-          schema:
-            type: number
-        "500":
-          description: Internal Server Error
-          schema:
-            type: number
-      security:
-      - Bearer Token: []
-      summary: Add slots for appointment.
-      tags:
-      - Doctor
+      - GeneralUser
 securityDefinitions:
   Bearer Token:
     in: header

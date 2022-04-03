@@ -88,6 +88,15 @@ const docTemplate = `{
                         "name": "id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Doctor details",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Doctor"
+                        }
                     }
                 ],
                 "responses": {
@@ -117,7 +126,7 @@ const docTemplate = `{
                         "Bearer Token": []
                     }
                 ],
-                "description": "Edit details of a doctor.",
+                "description": "Delete a doctor.",
                 "consumes": [
                     "application/json"
                 ],
@@ -172,6 +181,17 @@ const docTemplate = `{
                     "Doctor"
                 ],
                 "summary": "User login for a doctor profile.",
+                "parameters": [
+                    {
+                        "description": "User eamailid and password",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -213,6 +233,17 @@ const docTemplate = `{
                     "Doctor"
                 ],
                 "summary": "To register a new doctor in the sanitaria application",
+                "parameters": [
+                    {
+                        "description": "Doctor details",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Doctor"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -297,6 +328,15 @@ const docTemplate = `{
                         "name": "doctorId",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "description": "Appointment details",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Appointment"
+                        }
                     }
                 ],
                 "responses": {
@@ -394,6 +434,33 @@ const docTemplate = `{
                 },
                 "yoe": {
                     "type": "number"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "required": [
+                "address",
+                "age",
+                "emailId",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "age": {
+                    "type": "integer"
+                },
+                "emailId": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
                 }
             }
         }
