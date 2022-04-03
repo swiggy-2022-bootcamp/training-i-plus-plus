@@ -14,6 +14,7 @@ func main() {
 	r.POST("/reservation", middleware.IfAuthorized(controller.BuyTicket))
 	r.GET("/:userId/reservations", middleware.IfAuthorized(controller.GetTickets))
 	r.POST("/reservation/:ticketId/payment", middleware.IfAuthorized(controller.TicketPayment))
+	r.POST("/reservation/:ticketId/cancel", middleware.IfAuthorized(controller.CancelTicket))
 
 	portAddress := ":" + config.ReservationServicePort
 	r.Run(portAddress)

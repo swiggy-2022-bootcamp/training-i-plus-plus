@@ -63,12 +63,35 @@ func TicketPayment(c *gin.Context) {
 	successMessage, error := service.TicketPayment(ticketId)
 
 	if error != nil {
-		orderError, ok := error.(*errors.PurchaseError)
+		purchaseError, ok := error.(*errors.PurchaseError)
 		if ok {
-			c.JSON(orderError.Status, orderError.ErrorMessage)
+			c.JSON(purchaseError.Status, purchaseError.ErrorMessage)
 			return
 		} else {
 			fmt.Println("Couldn't Finish Payment Process")
+			return
+		}
+	}
+	c.JSON(http.StatusOK, *successMessage)
+}
+
+func CancelTicket(c *gin.Context) {
+	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
+	if !(models.Role(acessorUserRole) == models.Traveller || models.Role(acessorUserRole) == models.Admin) {
+		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
+		return
+	}
+
+	ticketId := c.Param("ticketId")
+	successMessage, error := service.CancelTicket(ticketId)
+
+	if error != nil {
+		purchaseError, ok := error.(*errors.PurchaseError)
+		if ok {
+			c.JSON(purchaseError.Status, purchaseError.ErrorMessage)
+			return
+		} else {
+			fmt.Println("Couldn't Finish Cancelling Process")
 			return
 		}
 	}

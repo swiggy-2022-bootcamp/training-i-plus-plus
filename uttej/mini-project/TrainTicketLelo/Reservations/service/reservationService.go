@@ -41,9 +41,9 @@ func BuyTicket(body *io.ReadCloser) (result *mongo.InsertOneResult, err error) {
 		return nil, errors.UserNotFoundError()
 	}
 
-	success, errorResponse, errorProductIndex := UpdateTicketCount(userId, ticketBought.TrainIDs, -1)
+	success, errorResponse, errorTrainIndex := UpdateTicketCount(userId, ticketBought.TrainIDs, -1)
 	if !success {
-		errorMessage := ReadCloserToString(errorResponse.Body) + ". Ticket Id: " + ticketBought.TrainIDs[*errorProductIndex] + " (Order rolled back)"
+		errorMessage := ReadCloserToString(errorResponse.Body) + ". Ticket Id: " + ticketBought.TrainIDs[*errorTrainIndex] + " Couldn't be Reserved"
 		return nil, &errors.PurchaseError{Status: http.StatusBadRequest, ErrorMessage: errorMessage}
 	}
 
@@ -99,7 +99,7 @@ func TicketPayment(ticketId string) (successMessage *string, err error) {
 	result.Decode(&ticket)
 
 	if ticket.Status == "Payment Done" {
-		return nil, errors.OrderAlreadyPaidForError()
+		return nil, errors.PaymentAlreadyDoneError()
 	}
 
 	ticket.Status = "Payment Done"
@@ -114,6 +114,57 @@ func TicketPayment(ticketId string) (successMessage *string, err error) {
 	kafka.Produce(ctx, nil, []byte("ticketId: "+ticketId+" --- status: "+ticket.Status))
 
 	str := "Successfully Paid For The Ticket"
+	successMessage = &str
+	return
+}
+
+func CancelTicket(ticketId string) (successMessage *string, err error) {
+	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	client.Connect(ctx)
+
+	objectId, err := primitive.ObjectIDFromHex(ticketId)
+	if err != nil {
+		return nil, errors.MalformedIdError()
+	}
+
+	result := ticketCollection.FindOne(ctx, bson.M{"_id": objectId})
+
+	if result.Err() != nil && result.Err() == mongo.ErrNoDocuments {
+		return nil, errors.IdNotFoundError()
+	}
+
+	var ticket model.Reservation
+	result.Decode(&ticket)
+
+	userId := ticket.UserId
+	if !IsValidUser(userId) {
+		return nil, errors.UserNotFoundError()
+	}
+
+	TrainIDs := ticket.TrainIDs
+
+	success, errorResponse, errorTrainIndex := UpdateTicketCount(userId, TrainIDs, +1)
+	if !success {
+		errorMessage := ReadCloserToString(errorResponse.Body) + ". Ticket Id: " + ticket.TrainIDs[*errorTrainIndex] + " Couldn't be cancelled"
+		return nil, &errors.PurchaseError{Status: http.StatusBadRequest, ErrorMessage: errorMessage}
+	}
+
+	if ticket.Status == "Cancelled" {
+		return nil, errors.TicketAlreadyCancelledError()
+	}
+
+	ticket.Status = "Cancelled"
+
+	_, error := ticketCollection.UpdateByID(ctx, objectId, bson.M{"$set": ticket})
+
+	if error != nil {
+		return nil, errors.InternalServerError()
+	}
+
+	ctx, _ = context.WithTimeout(context.Background(), time.Minute*10)
+	kafka.Produce(ctx, nil, []byte("ticketId: "+ticketId+" --- status: "+ticket.Status))
+
+	str := "Successfully Cancelled The Ticket"
 	successMessage = &str
 	return
 }

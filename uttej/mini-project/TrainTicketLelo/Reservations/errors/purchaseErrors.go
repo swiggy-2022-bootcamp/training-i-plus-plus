@@ -23,8 +23,11 @@ func IdNotFoundError() *PurchaseError {
 	return &PurchaseError{http.StatusNotFound, "Ticket ID not Found"}
 }
 
-func OrderAlreadyPaidForError() *PurchaseError {
+func PaymentAlreadyDoneError() *PurchaseError {
 	return &PurchaseError{http.StatusBadRequest, "Payment for the Ticket is already done, current payment will not proceed"}
+}
+func TicketAlreadyCancelledError() *PurchaseError {
+	return &PurchaseError{http.StatusBadRequest, "Ticket Already Cancelled"}
 }
 
 func InternalServerError() *PurchaseError {
