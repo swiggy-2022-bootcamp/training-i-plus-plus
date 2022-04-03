@@ -1,6 +1,6 @@
 package main
 
-import ( pb "expertserver/pb"
+import ( pb "expertserver/gRPC"
 		"context"
 		"fmt"
 		grpc "google.golang.org/grpc"

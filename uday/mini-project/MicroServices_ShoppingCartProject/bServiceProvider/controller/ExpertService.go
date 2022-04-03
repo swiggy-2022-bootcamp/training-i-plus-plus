@@ -1,9 +1,10 @@
-import ( pb "expertserver/pb"
+package controller
+import ( 
 		"context"
 		"fmt"
 		grpc "google.golang.org/grpc"
         "expertserver/database"
-        "expertserver/entity"
+        "expertserver/model"
         "expertserver/config"
         "go.mongodb.org/mongo-driver/bson"
         "go.mongodb.org/mongo-driver/mongo"
