@@ -39,19 +39,20 @@
 <br>
 
 ## Product Service
-![Optional Text](diagram1.png)
+![Optional Text](diaagram1.svg)
 
 <br>
 
+## User Service
+![Optional Text](diagram2.svg)
 
-<p><img src="../microservices/resources/diagram2.png" alt="Kafka Architecture"></p>
 
 <br>
 
 ## Payment Service
-<p><img src="./diagram1.png" alt="Kafka Architecture"></p>
+![Optional Text](diagram3.svg)
 
 <br>
 
 ## Track-stream Service
-<p><img src="./resources/diagram1.png" alt="Kafka Architecture"></p>
+![Optional Text](diagram4.svg)
