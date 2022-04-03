@@ -30,6 +30,16 @@ func init() {
 
 const layout = "Jan 2, 2006 at 3:04pm (MST)"
 
+// CreateTicket godoc
+// @Summary      Create A Ticket
+// @Description  Create Ticket by providing ticket details
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  models.Ticket
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /ticket [post]
 func CreateTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -74,6 +84,17 @@ func CreateTicket() gin.HandlerFunc {
 	}
 }
 
+// GetTicket godoc
+// @Summary      Fetch a Ticket
+// @Description  Get Ticket by providing ticket id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        ticketid 		body	string  true  "ticket unique id"
+// @Success      200  {object}  models.Ticket
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /ticket/:ticketid [get]
 func GetTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -94,6 +115,17 @@ func GetTicket() gin.HandlerFunc {
 	}
 }
 
+// DeleteTrain godoc
+// @Summary      Delete a Ticket
+// @Description  Delete Ticket by providing ticket id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        ticketid 		body	string  true  "ticket unique id"
+// @Success      200  {object}  models.Ticket
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /ticket/:ticketid [delete]
 func DeleteTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)

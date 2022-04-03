@@ -26,6 +26,41 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/train": {
+            "post": {
+                "description": "Create Train journey by providing source and destination",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user"
+                ],
+                "summary": "Create A Train journey",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Train"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "/train/:trainid": {
             "get": {
                 "description": "Get Train journey by providing train id",
                 "consumes": [
@@ -37,7 +72,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Fetch a Train journy",
+                "summary": "Fetch a Train journey",
                 "parameters": [
                     {
                         "description": "train unique id",
@@ -81,7 +116,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Edit a Train journy",
+                "summary": "Edit a Train journey",
                 "parameters": [
                     {
                         "description": "train unique id",
@@ -114,39 +149,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "description": "Create Train journey by providing source and destination",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Create A Train journy",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Train"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            },
             "delete": {
                 "description": "Delete Train journey by providing train id",
                 "consumes": [
@@ -158,7 +160,7 @@ const docTemplate = `{
                 "tags": [
                     "user"
                 ],
-                "summary": "Delete a Train journy",
+                "summary": "Delete a Train journey",
                 "parameters": [
                     {
                         "description": "train unique id",
@@ -211,8 +213,10 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "BasicAuth": {
-            "type": "basic"
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

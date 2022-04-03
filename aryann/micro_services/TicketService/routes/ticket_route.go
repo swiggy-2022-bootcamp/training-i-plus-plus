@@ -8,7 +8,7 @@ import (
 
 func TicketRoute(router *gin.Engine) {
 	router.Use(controllers.IsAuthorized("user"))
-	router.POST("/ticket/", controllers.CreateTicket())
+	router.POST("/ticket", controllers.CreateTicket())
 	router.GET("/ticket/:ticketid", controllers.GetTicket())
 	router.DELETE("/ticket/:ticketid", controllers.DeleteTicket())
 }

@@ -1,15 +1,20 @@
 definitions:
-  models.Train:
+  models.Ticket:
     properties:
-      destination:
+      arrival_time:
         type: string
-      source:
+      capacity:
+        type: integer
+      cost:
+        type: integer
+      departure_time:
         type: string
-    required:
-    - destination
-    - source
+      id:
+        type: string
+      trainid:
+        type: string
     type: object
-host: localhost:7000
+host: localhost:8000
 info:
   contact:
     email: swiggyb3053@datascience.manipal.edu
@@ -23,18 +28,18 @@ info:
   title: Swagger Train Reservation System API
   version: "1.0"
 paths:
-  /train:
+  /ticket:
     post:
       consumes:
       - application/json
-      description: Create Train journey by providing source and destination
+      description: Create Ticket by providing ticket details
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Train'
+            $ref: '#/definitions/models.Ticket'
         "400":
           description: Bad Request
           schema:
@@ -43,18 +48,18 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: Create A Train journey
+      summary: Create A Ticket
       tags:
       - user
-  /train/:trainid:
+  /ticket/:ticketid:
     delete:
       consumes:
       - application/json
-      description: Delete Train journey by providing train id
+      description: Delete Ticket by providing ticket id
       parameters:
-      - description: train unique id
+      - description: ticket unique id
         in: body
-        name: trainid
+        name: ticketid
         required: true
         schema:
           type: string
@@ -64,7 +69,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Train'
+            $ref: '#/definitions/models.Ticket'
         "400":
           description: Bad Request
           schema:
@@ -73,17 +78,17 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: Delete a Train journey
+      summary: Delete a Ticket
       tags:
       - user
     get:
       consumes:
       - application/json
-      description: Get Train journey by providing train id
+      description: Get Ticket by providing ticket id
       parameters:
-      - description: train unique id
+      - description: ticket unique id
         in: body
-        name: trainid
+        name: ticketid
         required: true
         schema:
           type: string
@@ -93,7 +98,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Train'
+            $ref: '#/definitions/models.Ticket'
         "400":
           description: Bad Request
           schema:
@@ -102,36 +107,7 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: Fetch a Train journey
-      tags:
-      - user
-    put:
-      consumes:
-      - application/json
-      description: Update Train journey by providing train id
-      parameters:
-      - description: train unique id
-        in: body
-        name: trainid
-        required: true
-        schema:
-          type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/models.Train'
-        "400":
-          description: Bad Request
-          schema:
-            type: number
-        "500":
-          description: Internal Server Error
-          schema:
-            type: number
-      summary: Edit a Train journey
+      summary: Fetch a Ticket
       tags:
       - user
 securityDefinitions:

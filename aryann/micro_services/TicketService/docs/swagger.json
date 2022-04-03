@@ -15,11 +15,11 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:7000",
+    "host": "localhost:8000",
     "paths": {
-        "/train": {
+        "/ticket": {
             "post": {
-                "description": "Create Train journey by providing source and destination",
+                "description": "Create Ticket by providing ticket details",
                 "consumes": [
                     "application/json"
                 ],
@@ -29,12 +29,12 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Create A Train journey",
+                "summary": "Create A Ticket",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Train"
+                            "$ref": "#/definitions/models.Ticket"
                         }
                     },
                     "400": {
@@ -52,9 +52,9 @@
                 }
             }
         },
-        "/train/:trainid": {
+        "/ticket/:ticketid": {
             "get": {
-                "description": "Get Train journey by providing train id",
+                "description": "Get Ticket by providing ticket id",
                 "consumes": [
                     "application/json"
                 ],
@@ -64,11 +64,11 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Fetch a Train journey",
+                "summary": "Fetch a Ticket",
                 "parameters": [
                     {
-                        "description": "train unique id",
-                        "name": "trainid",
+                        "description": "ticket unique id",
+                        "name": "ticketid",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -80,51 +80,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Train"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "type": "number"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "type": "number"
-                        }
-                    }
-                }
-            },
-            "put": {
-                "description": "Update Train journey by providing train id",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "Edit a Train journey",
-                "parameters": [
-                    {
-                        "description": "train unique id",
-                        "name": "trainid",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/models.Train"
+                            "$ref": "#/definitions/models.Ticket"
                         }
                     },
                     "400": {
@@ -142,7 +98,7 @@
                 }
             },
             "delete": {
-                "description": "Delete Train journey by providing train id",
+                "description": "Delete Ticket by providing ticket id",
                 "consumes": [
                     "application/json"
                 ],
@@ -152,11 +108,11 @@
                 "tags": [
                     "user"
                 ],
-                "summary": "Delete a Train journey",
+                "summary": "Delete a Ticket",
                 "parameters": [
                     {
-                        "description": "train unique id",
-                        "name": "trainid",
+                        "description": "ticket unique id",
+                        "name": "ticketid",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -168,7 +124,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Train"
+                            "$ref": "#/definitions/models.Ticket"
                         }
                     },
                     "400": {
@@ -188,17 +144,25 @@
         }
     },
     "definitions": {
-        "models.Train": {
+        "models.Ticket": {
             "type": "object",
-            "required": [
-                "destination",
-                "source"
-            ],
             "properties": {
-                "destination": {
+                "arrival_time": {
                     "type": "string"
                 },
-                "source": {
+                "capacity": {
+                    "type": "integer"
+                },
+                "cost": {
+                    "type": "integer"
+                },
+                "departure_time": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "trainid": {
                     "type": "string"
                 }
             }

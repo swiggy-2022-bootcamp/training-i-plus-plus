@@ -34,7 +34,10 @@ func UserRouter() *gin.Engine {
 
 // @host      localhost:3000
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apiKey ApiKeyAuth
+// @type apiKey
+// @in header
+// @name Authorization
 func main() {
 
 	database.ConnectDB()

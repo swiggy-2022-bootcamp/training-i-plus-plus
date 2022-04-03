@@ -34,7 +34,10 @@ func TrainRouter() *gin.Engine {
 
 // @host      localhost:7000
 
-// @securityDefinitions.basic  BasicAuth
+// @securityDefinitions.apiKey ApiKeyAuth
+// @type apiKey
+// @in header
+// @name Authorization
 func main() {
 
 	database.ConnectDB()
