@@ -3,18 +3,17 @@ package configs
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func ConnectDb() *mongo.Client {
 
-	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().
-		ApplyURI(EnvMongoURI()).
-		SetServerAPIOptions(serverAPIOptions)
+		ApplyURI(EnvMongoURI())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -30,6 +29,6 @@ func ConnectDb() *mongo.Client {
 var DB *mongo.Client = ConnectDb()
 
 func GetCollection(client *mongo.Client, collectionName string) *mongo.Collection {
-	collection := client.Database("golangAPI").Collection(collectionName)
+	collection := client.Database("irctc").Collection(collectionName)
 	return collection
 }

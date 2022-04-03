@@ -18,8 +18,8 @@ func main() {
 
 	configs.ConnectDb()
 
-	routes.UserRoutes(router)
+	routes.TicketRoutes(router)
 
-	router.Run("localhost:8001")
+	router.Run("localhost:8003")
 
 }
