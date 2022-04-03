@@ -6,3 +6,5 @@
 2022-04-03 00:33:53 [main] Connected to MongoDB
 2022-04-03 00:33:56 [purchased_repository] Created a new purchase:  ObjectID("62489e1cfde39faeff221534")
 2022-04-03 00:33:56 [Kafka Producer] Produce_purchased_ticket
+2022-04-03 16:43:27 [main] Connected to MongoDB
+2022-04-03 16:44:26 [main] Connected to MongoDB

@@ -22,6 +22,16 @@ import (
 var validate = validator.New()
 var purchasedRepo repository.PurchasedRepository
 
+// PurchaseTicket godoc
+// @Summary      Purchase A Ticket
+// @Description  Purchase Ticket by providing ticket details
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Success      200  {object}  models.Purchased
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /purchase [post]
 func PurchaseTicket() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -38,35 +48,6 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		// var ticket models.Ticket
-
-		// ticket, err := ticketRepo.ReadTrainId(purchased.Train_id)
-		// if err != nil {
-		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
-		// 	return
-		// }
-
-		// if ticket.Capacity == 0 {
-		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "No tickets available", Data: map[string]interface{}{"data": err.Error()}})
-		// 	return
-		// }
-
-		// ticket.Capacity = ticket.Capacity - 1
-		// _, err = ticketRepo.Update(ticket, ticket.ID)
-
-		// if err != nil {
-		// 	c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
-		// 	return
-		// }
-
-		// var trainbooked models.Train
-		// trainbooked, err = trainRepo.Read(purchased.Train_id)
-
-		// if err != nil {
-		// 	c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
-		// 	return
-		// }
-
 		newpurchased := models.Purchased{
 			Train_id:       purchased.Train_id,
 			User_id:        purchased.User_id,
@@ -76,8 +57,6 @@ func PurchaseTicket() gin.HandlerFunc {
 			Arrival_time:   purchased.Arrival_time,
 			Cost:           purchased.Cost,
 		}
-
-		// go kafka.Produce_purchased_ticket(newpurchased)
 
 		result, err := purchasedRepo.Create(newpurchased)
 
@@ -92,6 +71,17 @@ func PurchaseTicket() gin.HandlerFunc {
 	}
 }
 
+// GetPurchase godoc
+// @Summary      Fetch a Purchased Ticket
+// @Description  Get Purchased Ticket by providing ticket id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        purchasedid 		body	string  true  "purchase unique id"
+// @Success      200  {object}  models.Purchased
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /purchase/:purchasedid [get]
 func GetPurchased() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -112,6 +102,17 @@ func GetPurchased() gin.HandlerFunc {
 	}
 }
 
+// DeletePurchase godoc
+// @Summary      Delete a Purchased Ticket
+// @Description  Delete Purchased Ticket by providing ticket id
+// @Tags         user
+// @Accept       json
+// @Produce      json
+// @Param        purchasedid 		body	string  true  "purchase unique id"
+// @Success      200  {object}  models.Purchased
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /purchase/:purchasedid [delete]
 func DeletePurchased() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		_, cancel := context.WithTimeout(context.Background(), 10*time.Second)
