@@ -50,7 +50,7 @@ func TestShouldReturnErrOnGetEnumByIndexForInvalidIndex(t *testing.T) {
 	var expected Role = -1
 	actual, err := GetEnumByIndex(1000)
 
-	assert.Error(t, err)
+	assert.Error(t, err.Error())
 	assert.Equal(t, expected, actual)
 }
 
@@ -64,12 +64,12 @@ func TestShouldReturnNewUser(t *testing.T) {
 	role := Admin
 
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
-	assert.Equal(t, firstName, user.FirstName())
-	assert.Equal(t, lastName, user.LastName())
-	assert.Equal(t, username, user.Username())
-	assert.Equal(t, phone, user.Phone())
-	assert.Equal(t, email, user.Email())
-	assert.Equal(t, password, user.Password())
+	assert.Equal(t, firstName, user.FirstName)
+	assert.Equal(t, lastName, user.LastName)
+	assert.Equal(t, username, user.Username)
+	assert.Equal(t, phone, user.Phone)
+	assert.Equal(t, email, user.Email)
+	assert.Equal(t, password, user.Password)
 }
 
 func TestShouldUpdateEmail(t *testing.T) {
@@ -84,9 +84,9 @@ func TestShouldUpdateEmail(t *testing.T) {
 	newEmail := "msadriwala.1198@gmail.com"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetEmail(newEmail)
+	user.Email = newEmail
 
-	assert.Equal(t, newEmail, user.Email())
+	assert.Equal(t, newEmail, user.Email)
 }
 
 func TestShouldUpdatePhone(t *testing.T) {
@@ -101,9 +101,9 @@ func TestShouldUpdatePhone(t *testing.T) {
 	newPhone := "9999955555"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetPhone(newPhone)
+	user.Phone = newPhone
 
-	assert.Equal(t, newPhone, user.Phone())
+	assert.Equal(t, newPhone, user.Phone)
 }
 
 func TestShouldUpdateUsername(t *testing.T) {
@@ -118,9 +118,9 @@ func TestShouldUpdateUsername(t *testing.T) {
 	newUsername := "newUsername"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetUsername(newUsername)
+	user.Username = newUsername
 
-	assert.Equal(t, newUsername, user.Username())
+	assert.Equal(t, newUsername, user.Username)
 }
 
 func TestShouldUpdatePassword(t *testing.T) {
@@ -135,9 +135,9 @@ func TestShouldUpdatePassword(t *testing.T) {
 	newPassword := "newPass"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetPassword(newPassword)
+	user.Password = newPassword
 
-	assert.Equal(t, newPassword, user.Password())
+	assert.Equal(t, newPassword, user.Password)
 }
 
 func TestShouldUpdateFirstName(t *testing.T) {
@@ -152,9 +152,9 @@ func TestShouldUpdateFirstName(t *testing.T) {
 	newFirstName := "MurtazaNew"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetFirstName(newFirstName)
+	user.FirstName = newFirstName
 
-	assert.Equal(t, newFirstName, user.FirstName())
+	assert.Equal(t, newFirstName, user.FirstName)
 }
 
 func TestShouldUpdateLastName(t *testing.T) {
@@ -169,9 +169,9 @@ func TestShouldUpdateLastName(t *testing.T) {
 	newLastName := "newLastName"
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetLastName(newLastName)
+	user.LastName = newLastName
 
-	assert.Equal(t, newLastName, user.LastName())
+	assert.Equal(t, newLastName, user.LastName)
 }
 
 func TestShouldUpdateRole(t *testing.T) {
@@ -186,7 +186,26 @@ func TestShouldUpdateRole(t *testing.T) {
 	newRole := Seller
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	user.SetRole(newRole)
+	user.Role = newRole
 
-	assert.Equal(t, newRole, user.Role())
+	assert.Equal(t, newRole, user.Role)
+}
+
+func TestShouldMarshallJson(t *testing.T) {
+	firstName := "Murtaza"
+	lastName := "Sadriwala"
+	phone := "9900887766"
+	email := "murtaza896@gmail.com"
+	username := "murtaza896"
+	password := "Pass!23"
+	role := Admin
+
+	user := NewUser(firstName, lastName, username, phone, email, password, role)
+
+	expectedJson := "{\"email\":\"murtaza896@gmail.com\",\"firstName\":\"Murtaza\",\"id\":0,\"lastName\":\"Sadriwala\",\"password\":\"Pass!23\",\"phone\":\"9900887766\",\"purchase_history\":[],\"role\":0,\"username\":\"murtaza896\"}"
+
+	actualJson, _ := user.MarshalJSON()
+
+	assert.Equal(t, expectedJson, string(actualJson))
+
 }

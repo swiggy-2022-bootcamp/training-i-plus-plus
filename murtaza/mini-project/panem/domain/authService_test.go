@@ -18,8 +18,8 @@ func TestShouldGenereateJWTToken(t *testing.T) {
 	role := domain.Admin
 
 	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-	user.SetId(1)
-	mockUserRepo.On("FindByUsername", username).Return(user, nil)
+	user.Id = 1
+	mockUserRepo.On("FindUserByUsername", username).Return(user, nil)
 	res, _ := authService.AuthenticateUser(username, password)
 	assert.NotNil(t, res)
 }
@@ -34,8 +34,8 @@ func TestShouldParseAuthToken(t *testing.T) {
 	role := domain.Admin
 
 	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-	user.SetId(1)
-	mockUserRepo.On("FindByUsername", username).Return(user, nil)
+	user.Id = 1
+	mockUserRepo.On("FindUserByUsername", username).Return(user, nil)
 	authToken, _ := authService.AuthenticateUser(username, password)
 	actualId, actualRole, _ := authService.ParseAuthToken(authToken)
 	assert.Equal(t, 1, actualId)

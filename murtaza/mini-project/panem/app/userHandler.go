@@ -44,7 +44,7 @@ func (h UserHandler) getUserByUserId(c *gin.Context) {
 	}
 	user, err2 := h.userService.GetMongoUserByUserId(int(userId))
 	if err2 != nil {
-		c.JSON(http.StatusNotFound, err2)
+		c.JSON(err2.Code, err2)
 		c.Abort()
 		return
 	} else {
@@ -92,7 +92,7 @@ func (h UserHandler) deleteUser(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			logger.Error("User with userId deleted successfully", zap.Int("userId", userId))
-			c.JSON(http.StatusAccepted, gin.H{"message": fmt.Sprintf("userId: %d deleted successfully", userId)})
+			c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("userId: %d deleted successfully", userId)})
 		}
 	}
 }

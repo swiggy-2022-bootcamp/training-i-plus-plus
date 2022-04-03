@@ -1,10 +1,17 @@
 package errs
 
-import "net/http"
+import (
+	"github.com/pkg/errors"
+	"net/http"
+)
 
 type AppError struct {
 	Code    int    `json:",omitempty"`
 	Message string `json:"message"`
+}
+
+func (e AppError) Error() error {
+	return errors.New(e.Message)
 }
 
 func (e AppError) AsMessage() *AppError {

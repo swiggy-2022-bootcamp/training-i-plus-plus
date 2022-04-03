@@ -1,15 +1,15 @@
 package domain_test
 
 import (
-	"errors"
 	"panem/domain"
 	"panem/mocks"
+	"panem/utils/errs"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-var mockUserRepo = mocks.UserRepository{}
+var mockUserRepo = mocks.UserMongoRepository{}
 var userService = domain.NewUserService(&mockUserRepo)
 
 func TestShouldReturnNewUserService(t *testing.T) {
@@ -27,27 +27,24 @@ func TestShouldCreateNewUser(t *testing.T) {
 	role := domain.Admin
 
 	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-	mockUserRepo.On("Save", *user).Return(*user, nil)
-	userService.CreateUser(firstName, lastName, username, phone, email, password, role)
-	mockUserRepo.AssertNumberOfCalls(t, "Save", 1)
+	mockUserRepo.On("InsertUser", *user).Return(*user, nil)
+	userService.CreateUserInMongo(firstName, lastName, username, phone, email, password, role)
+	mockUserRepo.AssertNumberOfCalls(t, "InsertUser", 1)
 }
 
-func TestShouldDeleteUserByUsername(t *testing.T) {
-	username := "testUsername"
-	mockUserRepo.On("DeleteUserByUsername", username).Return(true, nil)
-	mockUserRepo.On("FindByUsername", username).Return(nil, nil)
+func TestShouldDeleteUserByUserId(t *testing.T) {
+	userId := 1
+	mockUserRepo.On("DeleteUserByUserId", userId).Return(nil)
 
-	res, _ := userService.DeleteUserByUsername(username)
-	assert.Equal(t, true, res)
+	var err = userService.DeleteUserByUserId(userId)
+	assert.Nil(t, err)
 }
 
-func TestShouldNotDeleteUserByUsernameUponInvalidUsername(t *testing.T) {
-	username := "invalidUsername"
+func TestShouldNotDeleteUserByUserIdUponInvalidUserId(t *testing.T) {
+	userId := -99
 	errMessage := "some error"
-	mockUserRepo.On("DeleteUserByUsername", username).Return(false, nil)
-	mockUserRepo.On("FindByUsername", username).Return(nil, errors.New(errMessage))
+	mockUserRepo.On("DeleteUserByUserId", userId).Return(errs.NewUnexpectedError(errMessage))
 
-	res, err := userService.DeleteUserByUsername(username)
-	assert.Error(t, err, errMessage)
-	assert.Equal(t, false, res)
+	err := userService.DeleteUserByUserId(userId)
+	assert.Error(t, err.Error(), errMessage)
 }
