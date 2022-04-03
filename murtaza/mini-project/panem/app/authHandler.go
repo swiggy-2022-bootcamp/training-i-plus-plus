@@ -41,10 +41,14 @@ func (ah AuthHandler) handleLogin(c *gin.Context) {
 func (ah AuthHandler) authMiddleware(c *gin.Context) {
 
 	cookie, err := c.Cookie("auth-token")
+
 	if err != nil {
-		c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
-		c.Abort()
-		return
+		cookie = c.Request.Header.Get("auth-token")
+		if cookie == "" {
+			c.JSON(http.StatusForbidden, gin.H{"message": "Invalid / missing Auth token"})
+			c.Abort()
+			return
+		}
 	}
 
 	userId, _, err2 := ah.authService.ParseAuthToken(cookie)

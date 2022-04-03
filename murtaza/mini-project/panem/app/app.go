@@ -2,6 +2,9 @@ package app
 
 import (
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"panem/docs"
 	"panem/domain"
 	"panem/infra"
 	"panem/utils/logger"
@@ -27,7 +30,11 @@ func Start() {
 		router: gin.Default(),
 	}
 
-	v1 := r.router.Group("/v1")
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	r.router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	api := r.router.Group("/api")
+	v1 := api.Group("/v1")
 
 	users := v1.Group("/users")
 

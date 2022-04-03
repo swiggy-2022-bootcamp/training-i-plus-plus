@@ -1,0 +1,170 @@
+basePath: /api/v1
+definitions:
+  app.userDTO:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      role:
+        type: integer
+      username:
+        type: string
+    type: object
+  app.userResponseDTO:
+    properties:
+      message:
+        type: string
+    type: object
+  domain.User:
+    properties:
+      email:
+        type: string
+      first_name:
+        type: string
+      id:
+        type: integer
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      purchase_history:
+        items:
+          type: integer
+        type: array
+      role:
+        type: integer
+      username:
+        type: string
+    type: object
+  errs.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: murtaza896@gmail.com
+    name: Murtaza Sadriwala
+  description: Swagger API for Golang Project.
+  termsOfService: http://swagger.io/terms/
+  title: '[Panem] User Servcie API'
+  version: "1.0"
+paths:
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Creates a user upon signup
+      parameters:
+      - description: user signup
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/app.userDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+      tags:
+      - users
+  /users/{userId}:
+    delete:
+      description: Deletes user by userId
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Authentication token
+        in: header
+        name: auth-token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.userResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    get:
+      description: Fetches user details by userId
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Authentication token
+        in: header
+        name: auth-token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    put:
+      description: Updates user by userId
+      parameters:
+      - description: User ID
+        in: path
+        name: userId
+        required: true
+        type: integer
+      - description: Authentication token
+        in: header
+        name: auth-token
+        required: true
+        type: string
+      - description: User details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/app.userDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+swagger: "2.0"

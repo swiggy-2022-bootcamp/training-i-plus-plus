@@ -1,12 +1,14 @@
 package domain
 
-import "panem/utils/errs"
+import (
+	"panem/utils/errs"
+)
 
 type UserService interface {
 	CreateUserInMongo(string, string, string, string, string, string, Role) (User, *errs.AppError)
 	GetMongoUserByUserId(int) (*User, *errs.AppError)
 	DeleteUserByUserId(int) *errs.AppError
-	UpdateUser(User, int) (*User, *errs.AppError)
+	UpdateUser(User) (*User, *errs.AppError)
 }
 
 type service struct {
@@ -38,8 +40,7 @@ func (s service) DeleteUserByUserId(userId int) *errs.AppError {
 	return nil
 }
 
-func (s service) UpdateUser(user User, userId int) (*User, *errs.AppError) {
-	user.Id = userId
+func (s service) UpdateUser(user User) (*User, *errs.AppError) {
 	res, err := s.userMongoRepository.UpdateUser(user)
 	if err != nil {
 		return nil, err

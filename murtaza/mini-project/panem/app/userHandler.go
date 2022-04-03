@@ -28,10 +28,23 @@ type userDTO struct {
 	Role      int    `json:"role"`
 }
 
+type userResponseDTO struct {
+	Message string `json:"message"`
+}
+
 func (h UserHandler) getAllUsers(c *gin.Context) {
 
 }
 
+// @Schemes
+// @Description Fetches user details by userId
+// @Tags users
+// @Param        userId   path      int  true  "User ID"
+// @Param        auth-token   header      string  true  "Authentication token"
+// @Produce json
+// @Success 200 {object} domain.User
+// @Failure      403  {object} errs.AppError
+// @Router /users/{userId} [get]
 func (h UserHandler) getUserByUserId(c *gin.Context) {
 	params := c.Params
 	param, _ := params.Get("userId")
@@ -54,6 +67,14 @@ func (h UserHandler) getUserByUserId(c *gin.Context) {
 	}
 }
 
+// @Schemes
+// @Description Creates a user upon signup
+// @Tags users
+// @Produce json
+// @Accept json
+// @Param        user  body      userDTO  true  "user signup"
+// @Success 200 {object} domain.User
+// @Router /signup [post]
 func (h UserHandler) createUser(c *gin.Context) {
 	var newUser userDTO
 	err := json.NewDecoder(c.Request.Body).Decode(&newUser)
@@ -78,6 +99,15 @@ func (h UserHandler) createUser(c *gin.Context) {
 	}
 }
 
+// @Schemes
+// @Description Deletes user by userId
+// @Tags users
+// @Param        userId   path      int  true  "User ID"
+// @Param        auth-token   header      string  true  "Authentication token"
+// @Produce json
+// @Success 200 {object} userResponseDTO
+// @Failure      500  {object} errs.AppError
+// @Router /users/{userId} [delete]
 func (h UserHandler) deleteUser(c *gin.Context) {
 	params := c.Params
 	val, err := params.Get("userId")
@@ -92,11 +122,24 @@ func (h UserHandler) deleteUser(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
 			logger.Error("User with userId deleted successfully", zap.Int("userId", userId))
-			c.JSON(http.StatusOK, gin.H{"message": fmt.Sprintf("userId: %d deleted successfully", userId)})
+			userResponse := userResponseDTO{
+				Message: fmt.Sprintf("userId: %d deleted successfully", userId),
+			}
+			c.JSON(http.StatusOK, userResponse)
 		}
 	}
 }
 
+// @Schemes
+// @Description Updates user by userId
+// @Tags users
+// @Param        userId   path      int  true  "User ID"
+// @Param        auth-token   header      string  true  "Authentication token"
+// @Param        user details   body      userDTO true  "User details"
+// @Produce json
+// @Success 200 {object} domain.User
+// @Failure      500  {object} errs.AppError
+// @Router /users/{userId} [put]
 func (h UserHandler) updateUser(c *gin.Context) {
 	params := c.Params
 	userId, err := params.Get("userId")
@@ -106,7 +149,7 @@ func (h UserHandler) updateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "userId missing in request")
 	}
 
-	var newUser domain.User
+	var newUser userDTO
 	err2 := json.NewDecoder(c.Request.Body).Decode(&newUser)
 	if err2 != nil {
 		c.JSON(http.StatusInternalServerError, err2)
@@ -116,12 +159,14 @@ func (h UserHandler) updateUser(c *gin.Context) {
 		}
 
 		userId, _ := strconv.ParseInt(userId, 10, 0)
-		user, err := h.userService.UpdateUser(newUser, int(userId))
+		user := domain.NewUser(newUser.FirstName, newUser.LastName, newUser.Username, newUser.Phone, newUser.Email, newUser.Password, domain.Role(newUser.Role))
+		user.Id = int(userId)
+		user, err := h.userService.UpdateUser(*user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err2)
 		} else {
 			data, _ := user.MarshalJSON()
-			c.Data(http.StatusNoContent, "application/json", data)
+			c.Data(http.StatusOK, "application/json", data)
 		}
 	}
 }
