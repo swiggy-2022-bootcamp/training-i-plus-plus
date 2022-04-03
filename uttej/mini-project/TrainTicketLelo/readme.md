@@ -15,7 +15,7 @@
 - Access resources using JWT token
 - Role Based Access is implemented. Admin has access to all the APIs while the Traveller has limited Access.
 - Allows Admin to add, update, delete Trains
-- Allows Traveller to check available train, Book a ticket & Cancel the booked Ticket
+- Allows Traveller to check for all the trains, Book a ticket & Cancel the booked Ticket
 - Logging support
 - Kafka to produce and consume events
 - Error Handling using Custom Errors Package
