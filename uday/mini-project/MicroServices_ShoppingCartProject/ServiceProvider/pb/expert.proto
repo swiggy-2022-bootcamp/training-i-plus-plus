@@ -1,0 +1,34 @@
+syntax = "proto3";
+package p2;
+option go_package="/pb";
+message Ratingstruct{
+    int32 rating=1;
+    string review=2;
+}
+message Expert{
+    string id=1;
+    string username=2;
+    string skill=3;
+    string email=4;
+    bool isavailable=5;
+    int32 served=6;
+    float rating=7;
+    int64 location=8;
+    repeated Ratingstruct ratingstruct=9;
+ //   string reviews=9;
+}
+message ExpertId{
+    string id=1;
+}
+
+message ExpertRequest{
+    ExpertId expertid=1;
+}
+
+message ExpertResponse{
+    Expert expert=1;
+}
+
+service Service{
+    rpc ExpertService(ExpertRequest)returns (ExpertResponse){};
+}
