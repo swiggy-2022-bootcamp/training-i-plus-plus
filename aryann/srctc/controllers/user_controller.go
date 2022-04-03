@@ -36,7 +36,6 @@ func GetUser() gin.HandlerFunc {
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
 		user, err := userRepo.Read(objId)
-		// err := userCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&user)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -55,7 +54,6 @@ func DeleteUser() gin.HandlerFunc {
 		objId, _ := primitive.ObjectIDFromHex(userId)
 
 		result, err := userRepo.Delete(objId)
-		// result, err := userCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -68,13 +66,6 @@ func DeleteUser() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
-
-		// if result.(int) < 1 {
-		// 	c.JSON(http.StatusNotFound,
-		// 		responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
-		// 	)
-		// 	return
-		// }
 
 		c.JSON(http.StatusOK,
 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!", "result": result, "signup": signup}},
@@ -101,7 +92,7 @@ func PurchaseTicket() gin.HandlerFunc {
 		var ticket models.Ticket
 
 		ticket, err := ticketRepo.ReadTrainId(purchased.Train_id)
-		// err := ticketCollection.FindOne(ctx, bson.M{"train_id": purchased.Train_id}).Decode(&ticket)
+
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "Incorrect train id", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -112,10 +103,8 @@ func PurchaseTicket() gin.HandlerFunc {
 			return
 		}
 
-		// update := bson.M{"capacity": ticket.Capacity - 1}
 		ticket.Capacity = ticket.Capacity - 1
 		_, err = ticketRepo.Update(ticket, ticket.ID)
-		// _, err = ticketCollection.UpdateOne(ctx, bson.M{"trainid": purchased.Train_id}, bson.M{"$set": update})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error in updating capacity", Data: map[string]interface{}{"data": err.Error()}})
@@ -124,7 +113,6 @@ func PurchaseTicket() gin.HandlerFunc {
 
 		var trainbooked models.Train
 		trainbooked, err = trainRepo.Read(purchased.Train_id)
-		// err = trainCollection.FindOne(ctx, bson.M{"_id": purchased.Train_id}).Decode(&trainbooked)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error in train find", Data: map[string]interface{}{"data": err.Error()}})
@@ -142,8 +130,6 @@ func PurchaseTicket() gin.HandlerFunc {
 		}
 
 		go kafka.Produce_purchased_ticket(newpurchased)
-
-		// result, err := purchasedRepo.Create(newpurchased)
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.AdminResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -164,7 +150,6 @@ func GetPurchased() gin.HandlerFunc {
 		objId, _ := primitive.ObjectIDFromHex(purchasedId)
 
 		purchased, err := purchasedRepo.Read(objId)
-		// err := purchasedCollection.FindOne(ctx, bson.M{"_id": objId}).Decode(&purchased)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
@@ -183,7 +168,6 @@ func DeletePurchased() gin.HandlerFunc {
 		objId, _ := primitive.ObjectIDFromHex(purchasedId)
 
 		purchased, err := purchasedRepo.Read(objId)
-		// result, err := purchasedCollection.DeleteOne(ctx, bson.M{"_id": objId})
 
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
@@ -196,13 +180,6 @@ func DeletePurchased() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, responses.PurchasedResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
-
-		// if result.(int) < 1 {
-		// 	c.JSON(http.StatusNotFound,
-		// 		responses.PurchasedResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "Purchased with specified ID not found!"}},
-		// 	)
-		// 	return
-		// }
 
 		c.JSON(http.StatusOK,
 			responses.PurchasedResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Purchased successfully deleted!", "result": result, "purchased": purchased}},
