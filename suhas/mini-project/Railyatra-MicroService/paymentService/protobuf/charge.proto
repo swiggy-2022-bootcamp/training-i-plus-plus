@@ -1,0 +1,18 @@
+syntax = "proto3";
+package protobuf;
+option go_package = "./protobuf";
+
+message ChargeRequest {
+    uint32   amount       = 1;
+    string   receiptemail = 2;
+    string   ticketid     = 3; 
+}
+
+message ChargeResponse {
+    bool     confirmation = 1;
+    string   message      = 2;
+}
+
+service ChargeService {
+    rpc Charge(ChargeRequest) returns (ChargeResponse) {}
+}

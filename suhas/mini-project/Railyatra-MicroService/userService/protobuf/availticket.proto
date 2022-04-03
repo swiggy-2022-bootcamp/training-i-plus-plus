@@ -1,0 +1,25 @@
+syntax = "proto3";
+package protobuf;
+option go_package = "./protobuf";
+
+message AvailTicketRequest {
+    string   trainId      = 1;
+    uint32   numOfTickets = 2; 
+}
+
+message AvailTicketResponse {
+    enum MessageType {
+        SUCESS     =  0;
+        INVALID    =  1;
+        NOCAPACITY =  2;
+    }
+    string       station1       = 1;
+    string       station2       = 2;
+    string       arrivalTime    = 3;
+    string       departureTime  = 4;
+    MessageType  message        = 5;
+}
+
+service AvailTicketService {
+    rpc GetTicketConfirmation(AvailTicketRequest) returns (AvailTicketResponse) {}
+}

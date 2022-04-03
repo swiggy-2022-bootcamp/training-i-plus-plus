@@ -7,3 +7,9 @@
 - [x] Allows Admin to add available ticket
 - [x] Allows User to check available train
 - [x] Allows User to Book a ticket
+- [x] Logging support
+- [x] Use Kafka to produce and consume events
+- [x] Created 4 Mictoservices - Admin,User,Auth and Payment
+- [x] Use grpc for remote procdure call
+- [x] Added tests
+- [] Sonarqube 

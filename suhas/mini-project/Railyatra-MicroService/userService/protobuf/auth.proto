@@ -1,0 +1,17 @@
+syntax = "proto3";
+package protobuf;
+option go_package = "./protobuf";
+
+message AuthenticateRequest {
+    string   group = 1;
+    string   token = 2; 
+}
+
+message AuthenticateResponse {
+    bool     confirmation = 1;
+    string   message      = 2;
+}
+
+service AuthenticationService {
+    rpc Authenticate(AuthenticateRequest) returns (AuthenticateResponse) {}
+}
