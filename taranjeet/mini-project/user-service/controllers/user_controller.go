@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/taran1515/crud/configs"
@@ -9,15 +10,17 @@ import (
 	"github.com/taran1515/crud/responses"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"time"
 )
 
+var secretkey string = "secretkeyjwt"
+
 var userCollection = configs.GetCollection(configs.DB, "users")
 var validate *validator.Validate = validator.New()
 
-func CreateUser() gin.HandlerFunc {
+func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
 		var user models.User
@@ -35,11 +38,13 @@ func CreateUser() gin.HandlerFunc {
 			return
 		}
 
+		encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
+
 		newUser := models.User{
 			Id:       primitive.NewObjectID(),
-			Name:     user.Name,
-			Location: user.Location,
-			Title:    user.Title,
+			UserName: user.UserName,
+			Email:    user.Email,
+			Password: string(encryptedPassword),
 		}
 
 		result, err := userCollection.InsertOne(ctx, newUser)
@@ -50,6 +55,57 @@ func CreateUser() gin.HandlerFunc {
 
 		c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
+}
+
+func Login() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
+		var authentication models.Authentication
+		var user models.User
+		defer cancel()
+
+		//validate the request body
+		if err := c.BindJSON(&authentication); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"status": http.StatusBadRequest, "error": err.Error()})
+			return
+		}
+		if err := userCollection.FindOne(ctx, bson.M{"username": authentication.UserName}).Decode(&user); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"status": "user not registered", "error": err.Error()})
+			return
+		}
+
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(authentication.Password)); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid Credentials"})
+			return
+		}
+
+		validToken, err := GenerateJWT(user.Email, user.Role)
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"token": validToken})
+	}
+}
+
+func GenerateJWT(email, role string) (string, error) {
+	var mySigningKey = []byte(secretkey)
+
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+
+	claims["authorized"] = true
+	claims["email"] = email
+	claims["role"] = role
+	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+
+	tokenString, err := token.SignedString(mySigningKey)
+
+	if err != nil {
+		return "", err
+	}
+	return tokenString, nil
 }
 
 func GetAUser() gin.HandlerFunc {
@@ -91,7 +147,9 @@ func EditAUser() gin.HandlerFunc {
 			return
 		}
 
-		update := bson.M{"name": user.Name, "location": user.Location, "title": user.Title}
+		encryptedPassword, _ := bcrypt.GenerateFromPassword([]byte(user.Password), 12)
+
+		update := bson.M{"Name": user.UserName, "Password": encryptedPassword, "Email": user.Email}
 		result, err := userCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
