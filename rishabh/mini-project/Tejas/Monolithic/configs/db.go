@@ -18,7 +18,8 @@ func ConnectDB() *mongo.Client {
 	}
 
 	//Connect to database
-	ctx, _ := context.WithTimeout(context.Background(), time.Second*10)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
 	err = client.Connect(ctx)
 	if err != nil {
 		log.Fatal(err)
