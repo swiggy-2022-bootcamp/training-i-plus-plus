@@ -272,3 +272,43 @@ func GetUserDetails() gin.HandlerFunc {
 		log.WithFields(logrus.Fields{"user_id": body.UserID}).Info("user found in DB")
 	}
 }
+
+// ShowAccount 	 godoc
+// @Summary      Delete user details on ID
+// @Description  delete user details using ID
+// @Tags         User
+// @Accept       json
+// @Produce      json
+// @Param        User_ID 	body	string  true  "unique user id"
+// @Param        Token  	header	string  true  "user token"
+// @Success      200  {object} 	models.User
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /user/getUserDetails [post]
+func DeleteUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), time.Millisecond*100)
+		defer cancel()
+
+		var body struct {
+			UserID string
+		}
+
+		if err := c.BindJSON(&body); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error()}).Error("gin JSON bind error")
+			return
+		}
+
+		_, err := userCollection.DeleteOne(ctx, bson.M{"user_id": body.UserID})
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			log.WithFields(logrus.Fields{"error": err.Error(), "user_id": body.UserID}).
+				Error("user id not found")
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"msg": "user deleted from DB", "userID": body.UserID})
+		log.WithFields(logrus.Fields{"user_id": body.UserID}).Info("user deleted from DB")
+	}
+}

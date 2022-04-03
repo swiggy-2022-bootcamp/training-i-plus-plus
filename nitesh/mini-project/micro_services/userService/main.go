@@ -19,6 +19,15 @@ import (
 
 var log logrus.Logger = *logger.GetLogger()
 
+func setupRouter() *gin.Engine {
+	router := gin.New()
+	router.Use(middleware.Logging(), gin.Recovery())
+
+	routes.UserRouter(router)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	return router
+}
+
 // @title           Swagger Train-Ticket Booking System API
 // @version         1.0
 // @description     Swagger Train-Ticket Booking System API.
@@ -43,13 +52,8 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Train-Ticket Booking System API"
 
 	PORT := os.Getenv("PORT")
-	router := gin.New()
-	router.Use(middleware.Logging(), gin.Recovery())
-
-	routes.UserRouter(router)
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
 	log.WithFields(logrus.Fields{"Port": PORT}).Info("server listening on this port")
 
+	router := setupRouter()
 	router.Run(":" + PORT)
 }
