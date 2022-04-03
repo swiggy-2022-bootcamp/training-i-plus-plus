@@ -1,0 +1,60 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This microservice is for payment module in the online shopping application.",
+        "title": "Online Shopping Application - Payment Module",
+        "contact": {
+            "name": "Chahat Bhatia",
+            "email": "chahatbhatia2014@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8083",
+    "paths": {
+        "/payment/:orderId": {
+            "post": {
+                "description": "This request will adds a new product.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Product"
+                ],
+                "summary": "To add a new product in the application",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer Token": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

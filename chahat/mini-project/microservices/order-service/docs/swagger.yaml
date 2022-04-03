@@ -1,0 +1,91 @@
+definitions:
+  model.Order:
+    properties:
+      id:
+        type: string
+      order_cart:
+        items:
+          $ref: '#/definitions/model.ProductUser'
+        type: array
+      ordered_at:
+        description: "Category\t\tstring\t\t\t\t\t`json:\"category\" validate:\"required\"`\n\tPrice\t\t
+          \   uint\t\t\t        `json:\"price\" bson:\"price\"`\nSeller\t\t\tstring\t\t\t\t\t`json:\"seller\"
+          validate:\"required\"`"
+        type: string
+      payment:
+        description: "Ratings         uint                    `json:\"ratings\"      bson:\"ratings\"`\n\tImageUrl
+          \       string                  `json:\"image_url\"    bson:\"image_url\"`\n\tProducts
+          \       Products[]"
+        type: string
+      user_id:
+        description: "Updated_at\t\ttime.Time\t\t\t\t`json:\"updated_at\"`"
+        type: string
+    type: object
+  model.ProductUser:
+    properties:
+      category:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: integer
+      product_id:
+        type: string
+      ratings:
+        type: integer
+      seller:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - category
+    - price
+    - seller
+    - title
+    type: object
+host: localhost:8082
+info:
+  contact:
+    email: chahatbhatia2014@gmail.com
+    name: Chahat Bhatia
+  description: This microservice is for orders module in the online shopping application.
+  license:
+    name: Apache 2.0
+  title: Online Shopping Application - Orders Module
+  version: "1.0"
+paths:
+  /orders/place_order/:user_id:
+    post:
+      consumes:
+      - application/json
+      description: This request will adds a new product.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.Order'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To add a new product in the application
+      tags:
+      - Product
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

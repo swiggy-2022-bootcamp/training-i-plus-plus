@@ -1,0 +1,198 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This microservice is for user module in the online shopping application.",
+        "title": "Online Shopping Application - User Module",
+        "contact": {
+            "name": "Chahat Bhatia",
+            "email": "chahatbhatia2014@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8081",
+    "paths": {
+        "/user/signup": {
+            "post": {
+                "description": "This request will register a new user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "To register a new user in the online shopping application",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/login": {
+            "post": {
+                "description": "This request will login a user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User gets logged in.",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "model.ProductUser": {
+            "type": "object",
+            "required": [
+                "category",
+                "price",
+                "seller",
+                "title"
+            ],
+            "properties": {
+                "category": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "image_url": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
+                },
+                "product_id": {
+                    "type": "string"
+                },
+                "ratings": {
+                    "type": "integer"
+                },
+                "seller": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.User": {
+            "type": "object",
+            "required": [
+                "first_name",
+                "last_name",
+                "password",
+                "phone",
+                "usertype"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                },
+                "last_name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "token": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "user_cart": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ProductUser"
+                    }
+                },
+                "user_id": {
+                    "type": "string"
+                },
+                "usertype": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "Bearer Token": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

@@ -1,0 +1,133 @@
+definitions:
+  model.ProductUser:
+    properties:
+      category:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: integer
+      product_id:
+        type: string
+      ratings:
+        type: integer
+      seller:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - category
+    - price
+    - seller
+    - title
+    type: object
+  model.User:
+    properties:
+      _id:
+        type: string
+      created_at:
+        type: string
+      email:
+        type: string
+      first_name:
+        type: string
+      last_name:
+        type: string
+      password:
+        type: string
+      phone:
+        type: string
+      refresh_token:
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+      user_cart:
+        items:
+          $ref: '#/definitions/model.ProductUser'
+        type: array
+      user_id:
+        type: string
+      usertype:
+        type: string
+    required:
+    - first_name
+    - last_name
+    - password
+    - phone
+    - usertype
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: chahatbhatia2014@gmail.com
+    name: Chahat Bhatia
+  description: This microservice is for user module in the online shopping application.
+  license:
+    name: Apache 2.0
+  title: Online Shopping Application - User Module
+  version: "1.0"
+paths:
+  /user/signup:
+    post:
+      consumes:
+      - application/json
+      description: This request will register a new user.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To register a new user in the online shopping application
+      tags:
+      - User
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: This request will login a user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "404":
+          description: Not Found
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: User gets logged in.
+      tags:
+      - User
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

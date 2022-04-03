@@ -1,0 +1,178 @@
+definitions:
+  productModel.Product:
+    properties:
+      category:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      image_url:
+        type: string
+      price:
+        type: integer
+      product_id:
+        type: string
+      ratings:
+        type: integer
+      seller:
+        type: string
+      title:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - category
+    - price
+    - seller
+    - title
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: chahatbhatia2014@gmail.com
+    name: Chahat Bhatia
+  description: This microservice is for doctor module in the online shopping application.
+  license:
+    name: Apache 2.0
+  title: Online Shopping Application - Products Module
+  version: "1.0"
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get all products.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/productModel.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get all products.
+      tags:
+      - Product
+    post:
+      consumes:
+      - application/json
+      description: This request will adds a new product.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/productModel.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To add a new product in the application
+      tags:
+      - Product
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product.
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "404":
+          description: Not Found
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Delete product by ID.
+      tags:
+      - Product
+    get:
+      consumes:
+      - application/json
+      description: View of a particular product.
+      parameters:
+      - description: Product id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productModel.Product'
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Get Product by ID.
+      tags:
+      - Product
+    put:
+      consumes:
+      - application/json
+      description: Update details of a product.
+      parameters:
+      - description: product id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/productModel.Product'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      security:
+      - Bearer Token: []
+      summary: Update product by ID.
+      tags:
+      - Product
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

@@ -1,0 +1,40 @@
+host: localhost:8083
+info:
+  contact:
+    email: chahatbhatia2014@gmail.com
+    name: Chahat Bhatia
+  description: This microservice is for payment module in the online shopping application.
+  license:
+    name: Apache 2.0
+  title: Online Shopping Application - Payment Module
+  version: "1.0"
+paths:
+  /payment/:orderId:
+    post:
+      consumes:
+      - application/json
+      description: This request will adds a new product.
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: To add a new product in the application
+      tags:
+      - Product
+securityDefinitions:
+  Bearer Token:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
