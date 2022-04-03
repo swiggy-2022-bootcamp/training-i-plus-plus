@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net"
 
@@ -55,7 +56,7 @@ func init() {
 	// Create TCP HTTP connection
 	lis, err = net.Listen("tcp", ":8005")
 	if err != nil {
-		log.Fatal("Error in httpListening (8000): ", err.Error())
+		log.Fatal("[GRPC-debug] Error in httpListening (8000): ", err.Error())
 	}
 }
 
@@ -73,6 +74,7 @@ func main() {
 
 	// Run grpc server on a seprate goRoutine
 	go func() {
+		fmt.Println("[GRPC-debug] Listing and serving HTTP on :8005")
 		if err = grpcServer.Serve(lis); err != nil {
 			log.Fatal(err)
 		}
