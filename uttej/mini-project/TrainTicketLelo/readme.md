@@ -19,7 +19,7 @@
 - Logging support
 - Kafka to produce and consume events
 - Error Handling using Custom Errors Package
-- Service's are health checked every 5 seconds
+- Services are health checked every 5 seconds
 
 ## Core Technologies Used
 1. Golang
