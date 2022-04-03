@@ -1,0 +1,122 @@
+2022/04/03 01:33:58 logger.go:20: This my log message
+INFO: 2022/04/03 01:33:58 logger.go:24: Logger Initiated......
+2022/04/03 01:47:20 logger.go:20: This my log message
+INFO: 2022/04/03 01:47:20 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 01:48:01 expert-controller.go:178: Get Expert details by Id:  6236f99b560ddef145f35d32
+INFO: 2022/04/03 01:48:34 expert-controller.go:52: Get All Experts
+2022/04/03 01:59:56 logger.go:20: This my log message
+INFO: 2022/04/03 01:59:56 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 02:00:13 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTMxNjY3fQ.LdtgfSGqW9GKW7IRmXAwG18ABvPjqtDqBvIJqzoqVNo
+INFO: 2022/04/03 02:00:13 expert-controller.go:52: Get All Experts
+2022/04/03 02:06:02 logger.go:20: This my log message
+INFO: 2022/04/03 02:06:02 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 02:06:09 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTMxNjY3fQ.LdtgfSGqW9GKW7IRmXAwG18ABvPjqtDqBvIJqzoqVNo
+2022/04/03 02:07:24 logger.go:20: This my log message
+INFO: 2022/04/03 02:07:24 logger.go:24: Logger Initiated......
+2022/04/03 02:08:49 logger.go:20: This my log message
+INFO: 2022/04/03 02:08:49 logger.go:24: Logger Initiated......
+2022/04/03 02:16:46 logger.go:20: This my log message
+INFO: 2022/04/03 02:16:46 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 02:18:22 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTM0MjcxfQ.O4jKUSSjD3dax_KgAAQ4yaylQnhJ0-oy9q2IF6brMFo
+INFO: 2022/04/03 02:18:22 expert-controller.go:52: Get All Experts
+INFO: 2022/04/03 02:18:36 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTM0MjcxfQ.O4jKUSSjD3dax_KgAAQ4yaylQnhJ0-oy9q2IF6brMFo
+INFO: 2022/04/03 02:18:36 expert-controller.go:133: Get Experts with Skills:  carpenter
+INFO: 2022/04/03 02:18:46 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTM0MjcxfQ.O4jKUSSjD3dax_KgAAQ4yaylQnhJ0-oy9q2IF6brMFo
+INFO: 2022/04/03 02:18:46 expert-controller.go:133: Get Experts with Skills:  plumber
+2022/04/03 13:30:54 logger.go:20: This my log message
+INFO: 2022/04/03 13:30:54 logger.go:24: Logger Initiated......
+2022/04/03 13:49:10 logger.go:20: This my log message
+INFO: 2022/04/03 13:49:10 logger.go:24: Logger Initiated......
+2022/04/03 13:51:03 logger.go:20: This my log message
+INFO: 2022/04/03 13:51:03 logger.go:24: Logger Initiated......
+2022/04/03 13:53:04 logger.go:20: This my log message
+INFO: 2022/04/03 13:53:04 logger.go:24: Logger Initiated......
+2022/04/03 14:53:36 logger.go:20: This my log message
+INFO: 2022/04/03 14:53:36 logger.go:24: Logger Initiated......
+2022/04/03 14:55:34 logger.go:20: This my log message
+INFO: 2022/04/03 14:55:34 logger.go:24: Logger Initiated......
+2022/04/03 14:59:00 logger.go:20: This my log message
+INFO: 2022/04/03 14:59:00 logger.go:24: Logger Initiated......
+2022/04/03 15:01:56 logger.go:20: This my log message
+INFO: 2022/04/03 15:01:56 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:03:38 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:03:38 expert-controller.go:133: Get Experts with Skills:  carpenter
+INFO: 2022/04/03 15:04:16 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:04:16 expert-controller.go:133: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:05:03 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:05:03 expert-controller.go:52: Get All Experts
+INFO: 2022/04/03 15:05:23 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:05:23 expert-controller.go:133: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:05:40 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:05:40 expert-controller.go:133: Get Experts with Skills:  plumber
+2022/04/03 15:07:34 logger.go:20: This my log message
+INFO: 2022/04/03 15:07:34 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:07:38 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:07:38 expert-controller.go:133: Get Experts with Skills:  plumber
+2022/04/03 15:09:17 logger.go:20: This my log message
+INFO: 2022/04/03 15:09:17 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:09:32 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:09:32 expert-controller.go:133: Get Experts with Skills:  plumber
+2022/04/03 15:13:30 logger.go:20: This my log message
+INFO: 2022/04/03 15:13:30 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:13:57 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:13:57 expert-controller.go:136: Get Experts with Skills:  plumber
+2022/04/03 15:17:59 logger.go:20: This my log message
+INFO: 2022/04/03 15:17:59 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:18:08 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:18:08 expert-controller.go:139: Get Experts with Skills:  plumber
+2022/04/03 15:19:53 logger.go:20: This my log message
+INFO: 2022/04/03 15:19:53 logger.go:24: Logger Initiated......
+2022/04/03 15:23:05 logger.go:20: This my log message
+INFO: 2022/04/03 15:23:05 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 15:24:01 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:24:01 expert-controller.go:52: Get All Experts
+INFO: 2022/04/03 15:24:10 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:24:10 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:41:07 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgwMTU2fQ.UMpSroABFEBf9fvtEJ0CNN2kAgpWOGLW1ktKncxRROI
+INFO: 2022/04/03 15:41:34 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:41:34 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:44:16 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:44:16 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:44:51 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:44:51 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:46:52 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:46:52 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:47:37 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:47:37 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:49:57 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:49:57 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 15:54:54 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTgyNDc0fQ.VlLS7Afm2oIv5RZkfD5tGli2zDGB2_e4tg8IW9ZqUgo
+INFO: 2022/04/03 15:54:54 expert-controller.go:139: Get Experts with Skills:  plumber
+INFO: 2022/04/03 16:20:25 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTg0Nzg5fQ.iBq0QnbjX8qZITXnMkdYldnP5NODNhr34HCuMkrX-Bk
+INFO: 2022/04/03 16:20:25 expert-controller.go:139: Get Experts with Skills:  carpenter
+INFO: 2022/04/03 16:21:03 expert-controller.go:187: Get Expert details by Id:  6236fb47560ddef145f35d38
+INFO: 2022/04/03 16:24:15 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTg0Nzg5fQ.iBq0QnbjX8qZITXnMkdYldnP5NODNhr34HCuMkrX-Bk
+INFO: 2022/04/03 16:24:15 expert-controller.go:93: Booking Employee Userid:  6236fb47560ddef145f35d38 Skill:  carpenter
+INFO: 2022/04/03 16:25:45 expert-controller.go:222: Filter Experts based on Skill:  carpenter Rating:  4
+INFO: 2022/04/03 16:26:02 expert-controller.go:240: Get Waiting Requests of Expert:  6236fb33560ddef145f35d37
+INFO: 2022/04/03 16:26:21 expert-controller.go:277: Accept Waiting Request of Expert:  6236fb33560ddef145f35d37
+Error: 2022/04/03 16:26:50 user-exper-service.go:61: RemoveRelation Error: Record does not exists
+INFO: 2022/04/03 16:28:17 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTg0Nzg5fQ.iBq0QnbjX8qZITXnMkdYldnP5NODNhr34HCuMkrX-Bk
+INFO: 2022/04/03 16:28:17 expert-controller.go:117: Adding Rating Expertid:  6236fb33560ddef145f35d37 Review:  {1 Rude Behaviour}
+INFO: 2022/04/03 16:29:58 expert-controller.go:32: Delete request of Expert Id 62497e13752e92d3902cf618
+INFO: 2022/04/03 16:31:00 JWT-auth.go:57: token eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNvbnUiLCJwYXNzd29yZCI6InBhc3N3b3JkIiwiZXhwIjoxNjQ4OTg0Nzg5fQ.iBq0QnbjX8qZITXnMkdYldnP5NODNhr34HCuMkrX-Bk
+INFO: 2022/04/03 16:31:00 expert-controller.go:93: Booking Employee Userid:  6236fb47560ddef145f35d38 Skill:  carpenter
+INFO: 2022/04/03 16:31:32 expert-controller.go:259: Reject Waiting Request with ExpertId:  62497e13752e92d3902cf618
+Error: 2022/04/03 16:31:33 user-exper-service.go:47: RemoveRelation Error: Record does not exists
+Error: 2022/04/03 16:31:33 user-exper-service.go:61: RemoveRelation Error: Record does not exists
+INFO: 2022/04/03 16:32:11 expert-controller.go:259: Reject Waiting Request with ExpertId:  623e287b9e9e56fd4c34b90f
+Error: 2022/04/03 16:32:12 user-exper-service.go:61: RemoveRelation Error: Record does not exists
+INFO: 2022/04/03 16:33:08 expert-controller.go:167: Direct SignUp with Details:  {Mahesh barber udayhhh@gmail.com 400302}
+2022/04/03 16:37:26 logger.go:20: This my log message
+INFO: 2022/04/03 16:37:26 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 16:38:01 JWT-auth.go:57: token 
+2022/04/03 16:41:12 logger.go:20: This my log message
+INFO: 2022/04/03 16:41:12 logger.go:24: Logger Initiated......
+2022/04/03 16:51:35 logger.go:20: This my log message
+INFO: 2022/04/03 16:51:35 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 16:52:41 expert-controller.go:275: Accept Waiting Request of Expert:  123r4
+INFO: 2022/04/03 16:56:42 expert-controller.go:275: Accept Waiting Request of Expert:  10
+2022/04/03 16:58:19 logger.go:20: This my log message
+INFO: 2022/04/03 16:58:19 logger.go:24: Logger Initiated......
+INFO: 2022/04/03 16:59:03 expert-controller.go:275: Accept Waiting Request of Expert:  10
