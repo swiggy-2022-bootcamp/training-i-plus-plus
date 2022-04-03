@@ -53,6 +53,9 @@ func main() {
 	router.PATCH("/doctor/:_id", controller.Update)
 	router.DELETE("/doctor/:_id", controller.Delete)
 
+	router.POST("/appointment", controller.CreateAppointment)
+	router.GET("/appointment/user/:userid", controller.GetAppointmentByUser)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start listening

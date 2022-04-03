@@ -63,10 +63,10 @@ func (e *Emailer) sendEmail(email Email) {
 	log.Printf("Sending email %v", email)
 
 	// Sending email.
-	err := smtp.SendMail(smtpHost+":"+smtpPort, e.auth, from, []string{email.To}, []byte(email.Msg))
-	if err != nil {
-		log.Println("error while ending email :" + err.Error())
-		return
-	}
-	log.Println("Email Sent Successfully!")
+	// err := smtp.SendMail(smtpHost+":"+smtpPort, e.auth, from, []string{email.To}, []byte(email.Msg))
+	// if err != nil {
+	// 	log.Println("error while ending email :" + err.Error())
+	// 	return
+	// }
+	// log.Println("Email Sent Successfully!")
 }

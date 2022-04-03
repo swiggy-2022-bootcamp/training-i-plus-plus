@@ -14,4 +14,5 @@ type Doctor struct {
 	Name          string        `json:"name" form:"name" binding:"required" bson:"name"`
 	Qualification string        `json:"qualification" form:"qualification" binding:"required" bson:"qualification"`
 	UpdatedOn     int64         `json:"updated_on" bson:"updated_on"`
+	Appointments  []Appointment `json:"appointments" bson:"appointments"`
 }

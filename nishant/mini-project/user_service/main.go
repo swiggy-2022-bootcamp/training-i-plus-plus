@@ -59,6 +59,8 @@ func main() {
 
 	router.POST("/login", cont.Login, cont.CreateToken)
 
+	router.GET("/appointments", cont.VerifyToken, cont.GetMyAppointments)
+
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start listening

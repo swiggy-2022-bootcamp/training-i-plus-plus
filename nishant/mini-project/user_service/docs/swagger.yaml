@@ -41,6 +41,18 @@ info:
   title: User Service
   version: "1.0"
 paths:
+  /appointments:
+    get:
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      security:
+      - ApiKeyAuth: []
+      summary: get Appointments of logged in user
+      tags:
+      - Appointment
   /login:
     post:
       consumes:

@@ -1,5 +1,28 @@
 basePath: /
 definitions:
+  api_entities.AppointmentRequest:
+    description: Appointment Request
+    properties:
+      doctor:
+        type: string
+      from:
+        example: 02 Jan 22 15:00 IST
+        type: string
+      patient:
+        $ref: '#/definitions/api_entities.User'
+      to:
+        example: 02 Jan 22 16:00 IST
+        type: string
+    type: object
+  api_entities.User:
+    properties:
+      email:
+        type: string
+      userId:
+        type: string
+      username:
+        type: string
+    type: object
   controller.DoctorRequest:
     description: Doctor Request
     properties:
@@ -7,15 +30,40 @@ definitions:
         type: string
       qualification:
         type: string
+    type: object
+  controller.UserAppResponse:
+    properties:
+      doctor:
+        type: string
+      from:
+        example: 02 Jan 22 15:00 IST
+        type: string
+      to:
+        example: 02 Jan 22 16:00 IST
+        type: string
+    type: object
+  models.Appointment:
+    description: Appointment
+    properties:
+      from:
+        type: integer
+      patient:
+        type: string
+      to:
+        type: integer
     required:
-    - name
-    - qualification
+    - from
+    - patient
     type: object
   models.Doctor:
     description: Doctor
     properties:
       _id:
         type: string
+      appointments:
+        items:
+          $ref: '#/definitions/models.Appointment'
+        type: array
       name:
         type: string
       qualification:
@@ -33,6 +81,51 @@ info:
   title: Doctor Service
   version: "1.0"
 paths:
+  /appointment:
+    post:
+      consumes:
+      - application/json
+      description: create Appointment
+      parameters:
+      - description: appointment info
+        in: body
+        name: appointment
+        required: true
+        schema:
+          $ref: '#/definitions/api_entities.AppointmentRequest'
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      summary: create Appointment
+      tags:
+      - Appointment
+  /appointment/user/{userid}:
+    get:
+      consumes:
+      - application/json
+      description: Get Appointment By  User
+      parameters:
+      - description: userid
+        in: path
+        name: userid
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controller.UserAppResponse'
+            type: array
+        "400":
+          description: ""
+        "500":
+          description: ""
+      summary: Get Appointment By User
+      tags:
+      - Appointment
   /doctor:
     get:
       consumes:

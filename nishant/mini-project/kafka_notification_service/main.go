@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"io"
 	"log"
 	"os"
 	"strings"
@@ -11,6 +12,13 @@ import (
 )
 
 func main() {
+	f, err := os.OpenFile("notification_service.log", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	if err != nil {
+		log.Fatalf("error opening file: %v", err)
+	}
+	defer f.Close()
+	log.SetOutput(io.MultiWriter(os.Stdout, f))
+	log.Println("Logger setup!")
 
 	con := consumer.NewConsumer("test_topic")
 	con.Start()
