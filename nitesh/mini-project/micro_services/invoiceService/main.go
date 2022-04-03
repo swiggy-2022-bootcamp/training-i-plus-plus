@@ -1,38 +1,40 @@
 package main
 
 import (
-	"context"
-	"invoiceService/controllers"
-	consumer "invoiceService/kafkaconsumer"
+	"invoiceService/docs"
 	"invoiceService/logger"
-	"time"
+	"invoiceService/middleware"
+	"invoiceService/routes"
+	"os"
 
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 )
 
 var log logrus.Logger = *logger.GetLogger()
 
+func setupRouter() *gin.Engine {
+	router := gin.New()
+	router.Use(middleware.Logging(), gin.Recovery())
+
+	routes.InvoiceRoutes(router)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	return router
+}
+
 func main() {
-	for {
-		ctx := context.Background()
-
-		// the `ReadMessage` method blocks until we receive the next event
-		reader := consumer.GetKafkaReader()
-		msg, err := reader.ReadMessage(ctx)
-		invoice := controllers.Invoice{
-			msg.ID, msg.UserID, msg.BookingID, msg.TransactionID, time.Now().Local(),
-		}
-
-		if err != nil {
-			panic("could not read message " + err.Error())
-		}
-
-		log.WithFields(logrus.Fields{
-			"inv": invoice,
-		}).Info("invoice fetched")
-
-		go invoice.SendEmailInvoice()
-		go invoice.SendSMSInvoice()
-		log.Info("invoice sent both via email and sms.")
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
 	}
+	docs.SwaggerInfo.Title = "Swagger Train-Ticket Booking System API"
+
+	PORT := os.Getenv("PORT")
+	log.WithFields(logrus.Fields{"Port": PORT}).Info("server listening on this port")
+
+	router := setupRouter()
+	router.Run(":" + PORT)
 }
