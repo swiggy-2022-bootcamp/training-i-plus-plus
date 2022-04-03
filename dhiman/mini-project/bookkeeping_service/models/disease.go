@@ -1,5 +1,6 @@
 package models
 
+// Disease Data Model
 type Disease struct {
 	modelImpl
 	Name      string   `json:"name"`      // Name of this disease
@@ -7,6 +8,7 @@ type Disease struct {
 	Symptoms  []string `json:"symptoms"`  // Symptoms of this disease
 }
 
+// Generate data for a new Disease.
 func NewDisease(name string, medicines []string, symptoms []string) *Disease {
 	d := &Disease{
 		Name:      name,
@@ -17,6 +19,7 @@ func NewDisease(name string, medicines []string, symptoms []string) *Disease {
 	return d
 }
 
+// Get ID of a Disease, equivalent to its name.
 func (d *Disease) GetId() string {
 	return d.Name
 }

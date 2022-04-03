@@ -2,15 +2,17 @@ package models
 
 import "fmt"
 
-type UserSubscription struct {
+// Data model for an Client's Subscription to a medicine.
+type ClientSubscription struct {
 	modelImpl
 	Medicine string `json:"title"`
 	Rate     string `json:"rate"`
 	NextDose string `json:"next_dose"`
 }
 
-func NewUserSubscription(id uint, medicine string, nextDose string, rate string) *UserSubscription {
-	us := &UserSubscription{
+// Generate a new Client Subscription with the given data.
+func NewClientSubscription(id uint, medicine string, nextDose string, rate string) *ClientSubscription {
+	us := &ClientSubscription{
 		Medicine: medicine,
 		NextDose: nextDose,
 		Rate: rate,
@@ -19,6 +21,7 @@ func NewUserSubscription(id uint, medicine string, nextDose string, rate string)
 	return us
 }
 
-func (us *UserSubscription) GetId() string {
+// Get the ID of this Subscription.
+func (us *ClientSubscription) GetId() string {
 	return us.id
 }

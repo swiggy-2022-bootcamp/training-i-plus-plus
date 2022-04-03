@@ -2,10 +2,9 @@ package configs
 
 import (
 	"context"
-	"fmt"
-	"log"
 	"time"
 
+	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -36,7 +35,7 @@ func ConnectDB() *mongo.Client {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("Connected to MongoDB")
+	log.Info("Connected to MongoDB")
 	return client
 }
 
@@ -49,5 +48,5 @@ func getCollection(client *mongo.Client, collectionName string) *mongo.Collectio
 	return collection
 }
 
-var UsersCollection *mongo.Collection = getCollection(db, UsersCollectionName())
-var MedicinesCollection *mongo.Collection = getCollection(db, MedicinesCollectionName())
+var ClientsCollection *mongo.Collection = getCollection(db, ClientsCollectionName())
+var ExpertsCollection *mongo.Collection = getCollection(db, ExpertsCollectionName())

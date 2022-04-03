@@ -1,31 +1,63 @@
 package main
 
 import (
-	"net/http"
 	"time"
 
-	"github.com/dhi13man/healthcare-app/users_service/controllers"
-	// users_models "github.com/dhi13man/healthcare-app/users_service/models"
-	bookkeeping_models "github.com/dhi13man/healthcare-app/bookkeeping_service/models"
+	bookkeeping_routes "github.com/dhi13man/healthcare-app/bookkeeping_service/routes"
+	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
+	// Set up routes for both microsevices
+	// General
 	router := gin.Default()
+	generateBaseRoute(router)
+	// Users Microservice
+	usersRouter := gin.Default()
+	user_routes.GenerateUsersServiceRoutes(usersRouter)
+	// Bookkeeping Microservice
+	bookkeepingRouter := gin.Default()
+	bookkeeping_routes.GenerateBookKeepingServiceRoutes(bookkeepingRouter)
 
-	router.GET("/", func(context *gin.Context) {
-		context.JSON(
-			http.StatusOK,
-			bookkeeping_models.NewDisease(
-				"Covid-19",
-				[]string{},
-				[]string{"Fever", "Cough", "Shortness of breath"},
-			),
-		)
+	// Make channels to get error
+	errChanUsers := make(chan error)
+	errChanBookKeeping := make(chan error)
+	
+	// Run Microservices
+	go func() {
+		router.Run("localhost:8080")
+	}()
+	go func() {
+		errChanUsers <- usersRouter.Run("localhost:8081")
+	}()
+	go func() {
+		errChanBookKeeping <- bookkeepingRouter.Run("localhost:8082")
+	}()
+
+	// Listen to errors.
+	select {
+		case err := <-errChanUsers: // Received in Channel 1
+			log.Fatal("users Microservice failed", err)
+		case err := <-errChanBookKeeping: // Received in channel 2
+			log.Fatal("bookkeeping Microservice failed", err)
+		default:
+			// Block main thread for this time so goroutines can run with their seperate microservices.
+			time.Sleep(100 * time.Second)
+
+	}
+}
+
+// Base route response telling the user about available microservices and their paths.
+func generateBaseRoute(router *gin.Engine) {
+	router.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(200, gin.H{
+			"message": "Welcome to Healthcare App. Below are the two Microservices developed.",
+			"routes": []string{
+				"/bookkeeping/",
+				"/users/",
+			},
+		})
 	})
-
-	router.POST("/users/", controllers.CreateUser)
-
-	go router.Run("localhost/users_service:8081")
-	time.Sleep(100 * time.Second)
 }

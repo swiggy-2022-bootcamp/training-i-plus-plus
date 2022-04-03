@@ -12,22 +12,18 @@ func TestEnvMongoURI(t *testing.T) {
 	}
 }
 
-func TestUsersCollectionName(t *testing.T) {
+func TestUsersCollectionNames(t *testing.T) {
 	// Act
-	got := UsersCollectionName()
+	got := ClientsCollectionName()
+	got2 := ExpertsCollectionName()
 
 	// Assert 
 	if got == "" {
 		t.Errorf("Expected a valid string, got %s", got)
 	}
-}
-
-func TestMedicinesCollectionName(t *testing.T) {
-	// Act
-	got := MedicinesCollectionName()
 
 	// Assert 
-	if got == "" {
+	if got2 == "" {
 		t.Errorf("Expected a valid string, got %s", got)
 	}
 }

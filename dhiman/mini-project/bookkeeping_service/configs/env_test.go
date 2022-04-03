@@ -12,9 +12,9 @@ func TestEnvMongoURI(t *testing.T) {
 	}
 }
 
-func TestUsersCollectionName(t *testing.T) {
+func TestDiseasesCollectionName(t *testing.T) {
 	// Act
-	got := UsersCollectionName()
+	got := DiseasesCollectionName()
 
 	// Assert 
 	if got == "" {

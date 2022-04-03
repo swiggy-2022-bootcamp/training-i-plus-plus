@@ -6,25 +6,27 @@ import (
     "github.com/joho/godotenv"
 )
 
+// Path where the environment variable is located.
 var envPath string = "/Users/dhimanseal/projects/training-i-plus-plus/dhiman/mini-project/.env"
 
+// Get the URi of the Mongo Database.
 func EnvMongoURI() string {
     err := godotenv.Load(envPath)
     if err != nil {
-        log.Fatal("Error loading .env file")
+        log.Fatal("Error loading .env file.")
     }
   
     return os.Getenv("MONGOURI")
 }
 
 // Get the name of the Users Collection in MongoDB
-func UsersCollectionName() string {
+func DiseasesCollectionName() string {
     err := godotenv.Load(envPath)
     if err != nil {
         log.Fatal("Error loading .env file")
     }
   
-    return os.Getenv("USERS_COLLECTION")
+    return os.Getenv("DISEASES_COLLECTION")
 }
 
 // Get the name of the Medicines Collection in MongoDB
