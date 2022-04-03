@@ -2,6 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"golang.org/x/crypto/bcrypt"
 	"net/http"
 	"sample.akash.com/db"
 	"sample.akash.com/log"
@@ -26,7 +27,7 @@ func Login(c *gin.Context) {
 	log.Info(loginData)
 
 	user := repo.FindOneWithUsername(loginData.Username)
-	if user != nil && loginData.Password == user.Password {
+	if user != nil && arePasswordsEqual(user.Password, loginData.Password) == true {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"login successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"invalid credentials"}`))
@@ -44,6 +45,7 @@ func Register(c *gin.Context) {
 
 	user := repo.FindOneWithUsername(userData.Username)
 	if user == nil {
+		userData.Password = hashPassword(userData.Password)
 		repo.SaveUser(userData)
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
 	} else {
@@ -96,4 +98,22 @@ func Update(c *gin.Context) {
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"update failed"}`))
 	}
+}
+
+func hashPassword(userPassword string) string {
+
+	password := []byte(userPassword)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	if err != nil {
+		log.Error(err)
+	}
+	log.Info(string(hashedPassword))
+
+	return string(hashedPassword[:])
+}
+
+func arePasswordsEqual(hashedPassword, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
 }
