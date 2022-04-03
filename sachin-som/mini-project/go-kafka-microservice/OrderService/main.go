@@ -10,9 +10,11 @@ import (
 	gokafkaConsumer "github.com/go-kafka-microservice/OrderService/goKafka/consumer"
 	"github.com/go-kafka-microservice/OrderService/routes"
 	"github.com/go-kafka-microservice/OrderService/services"
+	pb "github.com/go-kafka-microservice/WalletProto"
 	"github.com/joho/godotenv"
 	"github.com/segmentio/kafka-go"
 	"go.mongodb.org/mongo-driver/mongo"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -22,10 +24,12 @@ var (
 	mongoClient          *mongo.Client
 	kafkaConsumer        *kafka.Reader
 	orderCollection      *mongo.Collection
+	clientConnInt        *grpc.ClientConn
 	orderRoutes          *routes.OrderRoutes
 	orderService         services.OrderServices
 	orderControllers     *controllers.OrderControllers
 	kafkaConsumerService gokafkaConsumer.GoKafkaServices
+	walletProtoClient    pb.WalletServiceClient
 )
 
 func init() {
@@ -43,9 +47,19 @@ func init() {
 	// Create User Collection in MongoDB
 	orderCollection = mongoClient.Database("OrderDB").Collection("orders")
 
+	// gRPC client
+	var opts []grpc.DialOption
+	opts = append(opts, grpc.WithInsecure())
+	opts = append(opts, grpc.WithBlock())
+	clientConnInt, err = grpc.Dial("localhost:8005", opts...)
+	if err != nil {
+		log.Fatal(err)
+	}
+	walletProtoClient = pb.NewWalletServiceClient(clientConnInt)
+
 	// Initialize kafkaConsumerServices
 	kafkaConsumer = gokafkaConsumer.CreateKafkaConsumer(gokafkaConsumer.ConsumerConfig())
-	kafkaConsumerService = gokafkaConsumer.NewGokafkaServiceImpl(kafkaConsumer, orderCollection, ctx)
+	kafkaConsumerService = gokafkaConsumer.NewGokafkaServiceImpl(kafkaConsumer, orderCollection, walletProtoClient, ctx)
 
 	// Initialize Order Service
 	orderService = services.NewOrderServiceImpl(orderCollection, ctx)

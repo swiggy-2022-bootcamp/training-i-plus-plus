@@ -3,25 +3,30 @@ package goKafka
 import (
 	"context"
 	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/go-kafka-microservice/OrderService/models"
+	pb "github.com/go-kafka-microservice/WalletProto"
 	"github.com/segmentio/kafka-go"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type GoKafkaServicesImpl struct {
-	Consumer        *kafka.Reader
-	OrderCollection *mongo.Collection
-	Ctx             context.Context
+	Consumer          *kafka.Reader
+	OrderCollection   *mongo.Collection
+	WalletProtoClient pb.WalletServiceClient
+	Ctx               context.Context
 }
 
-func NewGokafkaServiceImpl(consumer *kafka.Reader, orderCollection *mongo.Collection, ctx context.Context) *GoKafkaServicesImpl {
+func NewGokafkaServiceImpl(consumer *kafka.Reader, orderCollection *mongo.Collection, walletProtoClient pb.WalletServiceClient, ctx context.Context) *GoKafkaServicesImpl {
 	return &GoKafkaServicesImpl{
-		Consumer:        consumer,
-		OrderCollection: orderCollection,
-		Ctx:             ctx,
+		Consumer:          consumer,
+		OrderCollection:   orderCollection,
+		WalletProtoClient: walletProtoClient,
+		Ctx:               ctx,
 	}
 }
 func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
@@ -69,6 +74,36 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 			return err
 		}
 
+		// Check available wallet amount
+		userInfo := &pb.UserInfo{
+			UserId: _userProduct.UserID.Hex(),
+		}
+		res, err := ks.WalletProtoClient.CheckAmount(ks.Ctx, userInfo)
+		if err != nil {
+			return err
+		}
+		amount := res.Amount
+		bill, _ := strconv.Atoi(_order.Bill)
+		if amount < int64(bill) {
+			filter := bson.D{bson.E{Key: "_id", Value: _order.OrderID}}
+			update := bson.D{bson.E{Key: "status", Value: "failed"}}
+			ks.OrderCollection.UpdateOne(ks.Ctx, filter, update)
+			// TODO: Need to notify client (buyer) through Email service for order failure.
+		}
+
 		// Deduct wallet amount
+		deductReq := &pb.DeductRequest{
+			UserId: _userProduct.UserID.Hex(),
+			Bill:   int64(bill),
+		}
+		_, err = ks.WalletProtoClient.DeductAmount(ks.Ctx, deductReq)
+		if err != nil {
+			return err
+		}
+		// Change order status
+		filter := bson.D{bson.E{Key: "_id", Value: _order.OrderID}}
+		update := bson.D{bson.E{Key: "status", Value: "paid"}}
+		ks.OrderCollection.UpdateOne(ks.Ctx, filter, update)
+		// TODO: Need to notify client (buyer) for successfull order
 	}
 }
