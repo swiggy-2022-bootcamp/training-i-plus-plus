@@ -7,7 +7,8 @@ const (
 	DoctorCollectionName = "doctors"
 )
 
-// Article model
+// Doctor
+// @Description Doctor
 type Doctor struct {
 	Id            bson.ObjectId `json:"_id,omitempty" bson:"_id,omitempty"`
 	Name          string        `json:"name" form:"name" binding:"required" bson:"name"`

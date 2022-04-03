@@ -20,7 +20,7 @@ import (
 // @version 1.0
 // @description This is user crud service.
 
-// @host localhost:7456
+// @host localhost:7450
 // @BasePath /
 
 // @securityDefinitions.basic BasicAuth
@@ -62,5 +62,5 @@ func main() {
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start listening
-	router.Run(":7456")
+	router.Run(":7450")
 }

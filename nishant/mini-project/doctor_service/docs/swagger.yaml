@@ -1,0 +1,120 @@
+basePath: /
+definitions:
+  controller.DoctorRequest:
+    description: Doctor Request
+    properties:
+      name:
+        type: string
+      qualification:
+        type: string
+    required:
+    - name
+    - qualification
+    type: object
+  models.Doctor:
+    description: Doctor
+    properties:
+      _id:
+        type: string
+      name:
+        type: string
+      qualification:
+        type: string
+      updated_on:
+        type: integer
+    required:
+    - name
+    - qualification
+    type: object
+host: localhost:7451
+info:
+  contact: {}
+  description: This is doctor crud service.
+  title: Doctor Service
+  version: "1.0"
+paths:
+  /doctor:
+    get:
+      consumes:
+      - application/json
+      description: fetch all doctor
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Doctor'
+            type: array
+        "500":
+          description: ""
+      summary: fetch all  doctor
+      tags:
+      - Doctor
+    post:
+      consumes:
+      - application/json
+      description: create doctor
+      parameters:
+      - description: doctor info
+        in: body
+        name: doctor
+        required: true
+        schema:
+          $ref: '#/definitions/controller.DoctorRequest'
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      summary: create doctor
+      tags:
+      - Doctor
+  /doctor/{_id}:
+    patch:
+      consumes:
+      - application/json
+      description: Update doctor
+      parameters:
+      - description: id
+        in: path
+        name: _id
+        required: true
+        type: string
+      - description: doctor info
+        in: body
+        name: doctor
+        required: true
+        schema:
+          $ref: '#/definitions/controller.DoctorRequest'
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      summary: Update doctor
+      tags:
+      - Doctor
+  /user/{_id}:
+    delete:
+      parameters:
+      - description: id
+        in: path
+        name: _id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      summary: Delete doctor by id
+      tags:
+      - Doctor
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

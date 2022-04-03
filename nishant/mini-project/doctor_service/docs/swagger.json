@@ -1,0 +1,181 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is doctor crud service.",
+        "title": "Doctor Service",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:7451",
+    "basePath": "/",
+    "paths": {
+        "/doctor": {
+            "get": {
+                "description": "fetch all doctor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Doctor"
+                ],
+                "summary": "fetch all  doctor",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/models.Doctor"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            },
+            "post": {
+                "description": "create doctor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Doctor"
+                ],
+                "summary": "create doctor",
+                "parameters": [
+                    {
+                        "description": "doctor info",
+                        "name": "doctor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.DoctorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/doctor/{_id}": {
+            "patch": {
+                "description": "Update doctor",
+                "consumes": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Doctor"
+                ],
+                "summary": "Update doctor",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "doctor info",
+                        "name": "doctor",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.DoctorRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/user/{_id}": {
+            "delete": {
+                "tags": [
+                    "Doctor"
+                ],
+                "summary": "Delete doctor by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id",
+                        "name": "_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "500": {
+                        "description": ""
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controller.DoctorRequest": {
+            "description": "Doctor Request",
+            "type": "object",
+            "required": [
+                "name",
+                "qualification"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "qualification": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.Doctor": {
+            "description": "Doctor",
+            "type": "object",
+            "required": [
+                "name",
+                "qualification"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "qualification": {
+                    "type": "string"
+                },
+                "updated_on": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        },
+        "BasicAuth": {
+            "type": "basic"
+        }
+    }
+}
