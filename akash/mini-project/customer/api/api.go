@@ -8,6 +8,15 @@ import (
 	"sample.akash.com/model"
 )
 
+var (
+	repo db.CustomerRepository
+)
+
+func InitCustomerAPI(repository db.CustomerRepository) {
+	repo = repository
+	repository.Connect()
+}
+
 func Login(c *gin.Context) {
 
 	loginData := model.LoginData{}
@@ -16,7 +25,7 @@ func Login(c *gin.Context) {
 	}
 	log.Info(loginData)
 
-	user := db.FindOneWithUsername(loginData.Username)
+	user := repo.FindOneWithUsername(loginData.Username)
 	if user != nil && loginData.Password == user.Password {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"login successful"}`))
 	} else {
@@ -33,9 +42,9 @@ func Register(c *gin.Context) {
 
 	log.Info("Register request for user : ", userData)
 
-	user := db.FindOneWithUsername(userData.Username)
+	user := repo.FindOneWithUsername(userData.Username)
 	if user == nil {
-		db.SaveUser(userData)
+		repo.SaveUser(userData)
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"register successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"user already exist with this username"}`))
@@ -47,7 +56,7 @@ func QueryOne(c *gin.Context) {
 	username := c.Param("username")
 	log.Info("Find user with username : ", username)
 
-	user := db.FindOneWithUsername(username)
+	user := repo.FindOneWithUsername(username)
 	if user != nil {
 		c.JSON(http.StatusOK, user)
 	} else {
@@ -56,7 +65,7 @@ func QueryOne(c *gin.Context) {
 }
 
 func QueryAll(c *gin.Context) {
-	users := db.FindAll()
+	users := repo.FindAll()
 	c.JSON(http.StatusOK, users)
 }
 
@@ -65,7 +74,7 @@ func Delete(c *gin.Context) {
 	username := c.Param("username")
 	log.Info("Delete user with username : ", username)
 
-	if db.DeleteUser(username) == true {
+	if repo.DeleteUser(username) == true {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"user delete successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"delete failed"}`))
@@ -82,7 +91,7 @@ func Update(c *gin.Context) {
 
 	log.Info("Update request for user : ", userData)
 
-	if db.FindAndUpdate(userData) == true {
+	if repo.FindAndUpdate(userData) == true {
 		c.Data(http.StatusOK, "application/json", []byte(`{"message":"update successful"}`))
 	} else {
 		c.Data(http.StatusUnauthorized, "application/json", []byte(`{"message":"update failed"}`))

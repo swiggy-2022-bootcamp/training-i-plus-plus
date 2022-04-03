@@ -13,4 +13,5 @@ type BuyRequest struct {
 	Username  string `json:"username"`
 	ProductId string `json:"product-id"`
 	Quantity  string `json:"quantity"`
+	Time      string `json:"time"`
 }

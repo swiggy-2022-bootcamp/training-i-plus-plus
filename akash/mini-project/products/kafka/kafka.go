@@ -8,11 +8,11 @@ import (
 	"log"
 	"os"
 	"products.akash.com/model"
-	"time"
+	//"time"
 )
 
 const (
-	topic         = "test-topic"
+	topic         = "buy-request"
 	brokerAddress = "localhost:9092"
 )
 
@@ -38,8 +38,4 @@ func CreateComment(buyRequest *model.BuyRequest) {
 	if err != nil {
 		panic("could not write message " + err.Error())
 	}
-
-	// sleep for a second
-	time.Sleep(time.Second)
-
 }

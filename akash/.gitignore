@@ -22,3 +22,6 @@
 
 # Local MongoDB file for Docker images
 **/db/mongo-files/**
+
+# Local logs file
+logs.txt

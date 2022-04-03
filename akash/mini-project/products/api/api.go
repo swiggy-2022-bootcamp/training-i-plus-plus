@@ -7,6 +7,7 @@ import (
 	"products.akash.com/kafka"
 	"products.akash.com/log"
 	"products.akash.com/model"
+	"time"
 )
 
 func AddProduct(c *gin.Context) {
@@ -63,10 +64,11 @@ func Buy(c *gin.Context) {
 	if err := c.BindJSON(&buyRequest); err != nil {
 		panic(err)
 	}
+	buyRequest.Time = time.Now().String()
 
 	log.Info("Buy request received: ", buyRequest)
 
-	kafka.CreateComment(&buyRequest)
+	go kafka.CreateComment(&buyRequest)
 
 	c.JSON(http.StatusOK, buyRequest)
 }

@@ -42,3 +42,10 @@ services:
     volumes:
       - /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/products/db/mongo-files:/data/db
 
+  order-db:
+    image: mongo:latest
+    container_name: order-db
+    ports:
+      - "2719:27017"
+    volumes:
+      - /Users/aky/Dev/swiggy/training-i-plus-plus/akash/mini-project/order/db/mongo-files:/data/db
