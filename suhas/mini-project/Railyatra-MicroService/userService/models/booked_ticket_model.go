@@ -14,6 +14,7 @@ type BookingTicket struct {
 	Train_id        primitive.ObjectID `json:"trainid,omitempty"`
 	Amount_paid     int                `json:"amount_paid"`
 	User_id         primitive.ObjectID `json:"userid,omitempty"`
+	Card_Number     string             `json:"cardnumber"`
 	Passengers_info []Passengers       `json:"passenger"`
 }
 
