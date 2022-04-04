@@ -1,5 +1,4 @@
-### Project
-Train Reservation System
+# Train Reservation System
 
 ### Implemented
 - GoLang
@@ -24,10 +23,8 @@ UserService is responsible to do authorisation and CRUD operations related to us
 **Routes**
 - POST /register
 - POST /login
-
 - GET /user/:userId
 - DELETE /user/:userId
-
 - GET /admin/:adminid
 - DELETE /admin/:adminid
 
