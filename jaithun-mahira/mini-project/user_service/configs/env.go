@@ -1,8 +1,9 @@
 package configs
 
 import (
-	"log"
 	"os"
+
+	"go.uber.org/zap"
 
 	"github.com/joho/godotenv"
 )
@@ -10,7 +11,7 @@ import (
 func EnvMongoURI() string {
     err := godotenv.Load()
     if err != nil {
-        log.Fatal("Error loading .env file")
+        zap.L().Error("Error loading .env file")
     }
   
     return os.Getenv("MONGOURI")
