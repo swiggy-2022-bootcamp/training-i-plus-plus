@@ -2,7 +2,10 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 	"github.com/taran1515/crud/configs"
+	"github.com/taran1515/crud/docs"
 	"github.com/taran1515/crud/routes"
 	"io"
 	"log"
@@ -26,6 +29,9 @@ func main() {
 		})
 
 	})
+
+	docs.SwaggerInfo.Title = "Train Reservation System - Booking Service"
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	configs.ConnectDb()
 
