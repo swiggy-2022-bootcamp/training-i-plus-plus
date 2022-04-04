@@ -17,6 +17,7 @@
 - Logstash
 - Mongodb
 - Kafka
+- Swagger
 
 ## Auth Service
 
@@ -67,6 +68,46 @@ This service allows user of type `BUYER` to add a product to his/her cart, delet
 - Set the project in SonarQube and provide the same name in `sonar.projectKey` field and running address of SonarQube in `sonar.host.url` field of `sonar-project.properties`.
 - Provide the generated authentication token by SonarQube in `sonar.login` field of `sonar-project.properties`.
 - Run the `sonar-scanner` command to run sonar scanner and visit to dashboard for the analysis of the codebase.
+
+## Setup Instructions
+
+1. Create a folder `etc` inside every microservice and create a `config.localhost.env` file that will contain all the required keys, ports and variables.
+2. `config.localhost.env` files
+
+- For Auth Service
+
+  > AUTH_PORT=<br>
+  > AUTH_DB_COLLECTION=<br>
+  > AUTH_DB=<br>
+  > AUTH_MONGO_URL=<br>
+
+- For Product Service
+
+  > PRODUCT_PORT=<br>
+  > PRODUCT_DB_COLLECTION=<br>
+  > PRODUCT_DB=<br>
+  > PRODUCT_MONGO_URL=<br>
+
+- For Search Service
+
+  > SEARCH_PORT=<br>
+  > SEARCH_ELASTIC_SEARCH_URL=<br>
+  > SEARCH_PRODUCT_SERVICE_URL=<br>
+
+- For Cart Service
+
+  > CART_PORT = <br>
+  > CART_DB_COLLECTION = <br>
+  > CART_DB = <br>
+  > CART_MONGO_URL = <br>
+
+- For Order Service
+
+  > ORDER_PORT = <br>
+  > ORDER_DB_COLLECTION = <br>
+  > ORDER_DB = <br>
+  > ORDER_MONGO_URL = <br>
+  > ORDER_PRODUCT_BASE_URL = <br>
 
 ## References
 
