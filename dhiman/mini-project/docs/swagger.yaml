@@ -1,0 +1,275 @@
+definitions:
+  dtos.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      details:
+        example:
+        - invalid email
+        items:
+          type: string
+        type: array
+      message:
+        example: status bad request
+        type: string
+    type: object
+  models.Client:
+    properties:
+      email:
+        description: Email of this client
+        type: string
+      name:
+        description: Name of this client
+        type: string
+      subscriptions:
+        description: Subscriptions that this client has
+        items:
+          $ref: '#/definitions/models.ClientSubscription'
+        type: array
+    type: object
+  models.ClientSubscription:
+    properties:
+      next_dose:
+        type: string
+      rate:
+        type: string
+      title:
+        type: string
+    type: object
+  models.Medicine:
+    properties:
+      diseases:
+        description: Diseases that this medicine can cure
+        items:
+          type: string
+        type: array
+      name:
+        description: Name of this medicine
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /bookkeeping/medicines/:
+    get:
+      consumes:
+      - application/json
+      description: Fetches all Medicines in database from repository and return an
+        unfiltered JSON array of them.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Medicine'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Return all Medicines in database from repository.
+      tags:
+      - accounts
+  /bookkeeping/medicines/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get a Medicine from the database by its name.
+      parameters:
+      - description: ID of the Medicine (currently its name)
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Medicine'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Get a Medicine by its name.
+      tags:
+      - accounts
+  /bookkeeping/medicines/disease/{diseaseName}:
+    get:
+      consumes:
+      - application/json
+      description: Find all medicines for a Disease identified by the disease name
+        from the two databases..
+      parameters:
+      - description: ID of the Disease (currently its name)
+        in: path
+        name: diseaseName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Medicine'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Find all medicines for a Disease identified by its name.
+      tags:
+      - accounts
+  /users/clients:
+    post:
+      consumes:
+      - application/json
+      description: Create a Client in the Database using the data sent by them (REGISTER)
+      parameters:
+      - description: User Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: User Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Create a Client
+      tags:
+      - accounts
+  /users/clients/{email}:
+    get:
+      consumes:
+      - application/json
+      description: Get a Client from the Database using their email.
+      parameters:
+      - description: User Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Client'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Get a Client from Database.
+      tags:
+      - accounts
+    put:
+      consumes:
+      - application/json
+      description: Updates the Client in the Database using their email.
+      parameters:
+      - description: User Email
+        in: body
+        name: email
+        required: true
+        schema:
+          type: string
+      - description: User Name
+        in: body
+        name: name
+        required: true
+        schema:
+          type: string
+      - description: User Password
+        in: body
+        name: password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Client'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Updates Clients in the Database.
+      tags:
+      - accounts
+swagger: "2.0"
