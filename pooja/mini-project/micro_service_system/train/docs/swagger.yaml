@@ -1,0 +1,73 @@
+basePath: /api/v1
+definitions:
+  model.SearchTrainResponse:
+    properties:
+      available_seat_count:
+        type: integer
+      fare:
+        type: number
+      train_name:
+        type: string
+      train_number:
+        type: string
+    type: object
+host: localhost:6002
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /search_trains:
+    get:
+      consumes:
+      - application/json
+      description: Finding trains running between departure station and arrival station
+      parameters:
+      - description: station name from where train starts
+        in: body
+        name: DepartureStation
+        required: true
+        schema:
+          type: string
+      - description: station name where train journey ends
+        in: body
+        name: ArrivalStation
+        required: true
+        schema:
+          type: string
+      - description: data of departure
+        in: body
+        name: DepartureDate
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SearchTrainResponse'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Search trains
+      tags:
+      - search
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

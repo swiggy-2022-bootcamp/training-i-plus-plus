@@ -211,6 +211,19 @@ func CheckSeatAvailablity() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Search trains
+// @Description  Finding trains running between departure station and arrival station
+// @Tags         search
+// @Accept       json
+// @Produce      json
+// @Param        DepartureStation  			body 	string  true  "station name from where train starts"
+// @Param        ArrivalStation 		body	string   	true  "station name where train journey ends"
+// @Param        DepartureDate 		body	string  true  "data of departure"
+// @Success      200  {object}  model.SearchTrainResponse
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /search_trains [get]
 func SearchTrains() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

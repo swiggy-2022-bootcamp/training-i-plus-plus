@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"reservation/database"
+	kafka "reservation/kafka"
 	"reservation/model"
 	"strconv"
 	"time"
@@ -19,6 +20,19 @@ import (
 
 var bookingCollection *mongo.Collection = database.GetCollection(database.DB, "bookings")
 
+// ShowAccount godoc
+// @Summary      make reservation
+// @Description  book tickets for a user
+// @Tags         search
+// @Accept       json
+// @Produce      json
+// @Param        TrainNumber  			body 	string  true  "train number of a train, unique to each train"
+// @Param        NumberOfSeats 		body	int   	true  "number of seats which a user want to book"
+// @Param        DepartureDate 		body	string  true  "date of departure"
+// @Param        UserName 		body	string  true  "username of the user trying to book tickets"
+// @Success      200  {object}  model.Booking
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Router       /reservation/reserve_ticket [post]
 func BookTickets() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -52,9 +66,26 @@ func BookTickets() gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "tickets booked", "data": result})
+		paymentInfo := model.PaymentInfo{
+			PNR:    model.GlobalPNR,
+			Amount: 100,
+		}
+		go kafka.WriteMsgToKafka("booking", paymentInfo)
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Cancel reservation
+// @Description  cancel an already reserved seat/seats
+// @Tags         search
+// @Accept       json
+// @Produce      json
+// @Param        PNR  			body 	string  true  "PNR number of the ticket, autogeneration, unique for each booking"
+// @Param        UserName 		body	string  true  "username of the user trying to cencel reservation"// @Success
+// @Success      201  {number}  model.StatusOK
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /reservation/cancel_reservation [put]
 func CancelBooking() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -112,6 +143,17 @@ func CancelBooking() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      View bookings
+// @Description  View booking history of a user
+// @Tags         reservations
+// @Accept       json
+// @Produce      json
+// @Param        UserName 		body	string  true  "username of the user trying to cencel reservation"// @Success      201  {number}  model.StatusOK
+// @Success      200  {object}  model.Booking
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /reservation/allreservations [get]
 func ViewBookings() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -153,6 +195,19 @@ func ViewBookings() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      View reservations
+// @Description  View all reservations made
+// @Tags         search
+// @Accept       json
+// @Produce      json
+// @Param        DepartureStation  			body 	string  true  "station name from where train starts"
+// @Param        ArrivalStation 		body	string   	true  "station name where train journey ends"
+// @Param        DepartureDate 		body	string  true  "data of departure"
+// @Success      200  {object}  model.Booking
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /search_trains [get]
 func GetAllBookings() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -176,11 +231,6 @@ func GetAllBookings() gin.HandlerFunc {
 		}
 		c.JSON(http.StatusOK, gin.H{"status": http.StatusOK, "message": "success", "data": bookings})
 	}
-}
-
-type respAvailability struct {
-	status  string         `json:"status"`
-	errResp *http.Response `json:"error"`
 }
 
 func CheckAndUpdateSeatAvailabilty(username string, train_number string, number_of_seats int, incrementCount bool) (sucess bool, err error) {
@@ -210,7 +260,6 @@ func CheckAndUpdateSeatAvailabilty(username string, train_number string, number_
 		log.Fatalln(err)
 	}
 	defer resp.Body.Close()
-	fmt.Println("resp", resp.StatusCode)
 	if resp.StatusCode != http.StatusOK {
 		return false, errors.New("cannot update train availablity")
 	}

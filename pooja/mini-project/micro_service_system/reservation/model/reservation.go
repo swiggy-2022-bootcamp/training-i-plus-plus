@@ -1,6 +1,10 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"net/http"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 var GlobalPNR = int64(1)
 
@@ -30,4 +34,14 @@ type CancelBookingRequest struct {
 
 type BookingsByUserRequest struct {
 	UserName string `json:"username"`
+}
+
+type respAvailability struct {
+	status  string         `json:"status"`
+	errResp *http.Response `json:"error"`
+}
+
+type PaymentInfo struct {
+	PNR    int64   `json:"pnr"`
+	Amount float64 `json:"amount"`
 }

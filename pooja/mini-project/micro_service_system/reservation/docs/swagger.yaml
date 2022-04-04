@@ -1,0 +1,201 @@
+basePath: /api/v1
+definitions:
+  model.BookTicketsRequest:
+    properties:
+      departure_date:
+        type: string
+      seat_count:
+        type: integer
+      train_number:
+        type: string
+      username:
+        type: string
+    type: object
+  model.Booking:
+    properties:
+      booking_status:
+        type: string
+      departure_date:
+        type: string
+      id:
+        type: string
+      pnr:
+        description: add list of seats
+        type: integer
+      seat_count:
+        type: integer
+      train_number:
+        type: string
+      username:
+        type: string
+    type: object
+host: localhost:6003
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /reservation/allreservations:
+    get:
+      consumes:
+      - application/json
+      description: View booking history of a user
+      parameters:
+      - description: username of the user trying to cencel reservation
+        in: body
+        name: UserName
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Booking'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: View bookings
+      tags:
+      - reservations
+  /reservation/cancel_reservation:
+    put:
+      consumes:
+      - application/json
+      description: cancel an already reserved seat/seats
+      parameters:
+      - description: PNR number of the ticket, autogeneration, unique for each booking
+        in: body
+        name: PNR
+        required: true
+        schema:
+          type: string
+      - description: username of the user trying to cencel reservation
+        in: body
+        name: UserName
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: number
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Cancel reservation
+      tags:
+      - search
+  /reservation/reserve_ticket:
+    post:
+      consumes:
+      - application/json
+      description: book tickets for a user
+      parameters:
+      - description: train number of a train, unique to each train
+        in: body
+        name: TrainNumber
+        required: true
+        schema:
+          type: string
+      - description: number of seats which a user want to book
+        in: body
+        name: NumberOfSeats
+        required: true
+        schema:
+          type: integer
+      - description: date of departure
+        in: body
+        name: DepartureDate
+        required: true
+        schema:
+          type: string
+      - description: username of the user trying to book tickets
+        in: body
+        name: UserName
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.BookTicketsRequest'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+      summary: make reservation
+      tags:
+      - search
+  /search_trains:
+    get:
+      consumes:
+      - application/json
+      description: View all reservations made
+      parameters:
+      - description: station name from where train starts
+        in: body
+        name: DepartureStation
+        required: true
+        schema:
+          type: string
+      - description: station name where train journey ends
+        in: body
+        name: ArrivalStation
+        required: true
+        schema:
+          type: string
+      - description: data of departure
+        in: body
+        name: DepartureDate
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.Booking'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: View reservations
+      tags:
+      - search
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

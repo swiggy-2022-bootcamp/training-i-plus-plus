@@ -1,0 +1,103 @@
+basePath: /api/v1
+host: localhost:6001
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server celler server.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: User login API
+      parameters:
+      - description: unique username for each user, provided by the user itself
+        in: body
+        name: UserName
+        required: true
+        schema:
+          type: string
+      - description: user's account password for the system
+        in: body
+        name: Password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Login user
+      tags:
+      - login
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: User regisration API
+      parameters:
+      - description: unique id for every user, auto-generated
+        in: body
+        name: ID
+        required: true
+        schema:
+          type: string
+      - description: unique username for each user, provided by the user itself
+        in: body
+        name: UserName
+        required: true
+        schema:
+          type: string
+      - description: user's email address
+        in: body
+        name: EmailId
+        required: true
+        schema:
+          type: string
+      - description: user's account password for the system
+        in: body
+        name: Password
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: number
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Regsiter user
+      tags:
+      - signup
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"

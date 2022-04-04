@@ -20,6 +20,20 @@ import (
 var userCollection *mongo.Collection = database.GetCollection(database.DB, "users")
 var validate *validator.Validate = validator.New()
 
+// ShowAccount godoc
+// @Summary      Regsiter user
+// @Description  User regisration API
+// @Tags         signup
+// @Accept       json
+// @Produce      json
+// @Param        ID  			body 	primitive.ObjectID  true  "unique id for every user, auto-generated"
+// @Param        UserName 		body	string   	true  "unique username for each user, provided by the user itself"
+// @Param        EmailId 		body	string  true  "user's email address"
+// @Param        Password  			body 	string  true  "user's account password for the system"
+// @Success      201  {number}  http.StatusCreated
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /signup [post]
 func Signup() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
@@ -75,6 +89,18 @@ func Signup() gin.HandlerFunc {
 	}
 }
 
+// ShowAccount godoc
+// @Summary      Login user
+// @Description  User login API
+// @Tags         login
+// @Accept       json
+// @Produce      json
+// @Param        UserName 		body	string   	true  "unique username for each user, provided by the user itself"
+// @Param        Password  			body 	string  true  "user's account password for the system"
+// @Success      200  {string}  jwt.token
+// @Failure      400  {number} 	http.StatusBadRequest
+// @Failure      500  {number} 	http.StatusInternalServerError
+// @Router       /login [post]
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

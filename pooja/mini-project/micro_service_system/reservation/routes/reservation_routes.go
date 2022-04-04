@@ -12,6 +12,6 @@ func ReservationRoutes(router *gin.Engine) {
 	reservationRouter.Use(middleware.AuthenticateJWT())
 	reservationRouter.POST("/reserve_ticket", service.BookTickets())
 	reservationRouter.PUT("/cancel_reservation", service.CancelBooking())
-	reservationRouter.GET("/bookings", service.ViewBookings())
+	reservationRouter.GET("/allreservations", service.ViewBookings())
 
 }
