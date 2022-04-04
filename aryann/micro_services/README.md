@@ -9,6 +9,7 @@
 - [x] SonarQube
 - [x] Logging
 - [x] Session Key Management / JWT Tokens
+- [x] Error Handling
 - [x] Encrypting Passwords
 
 ### Microservices
