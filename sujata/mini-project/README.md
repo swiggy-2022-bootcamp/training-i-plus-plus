@@ -1,9 +1,5 @@
 # Mini Project - ShopKart - Online Shopping Store
 
-[In Progress] ShopKart Diagram
-
-![In Progress Architecture](./static/images/Shop_kart%402x.png)
-
 ## Services
 
 - **Auth**
@@ -11,7 +7,6 @@
 - **Search**
 - **Cart**
 - **Order**
-- **User**
 
 ## Tech Stack
 
@@ -50,6 +45,15 @@ Elastic search and `Search` service working is documented inside the `elasticsea
 ## Cart Service
 
 This service allows user of type `BUYER` to add a product to his/her cart, delete a product from the cart and then, can fetch all the products of the cart using GetCart API.
+
+## Order Service
+
+- It allows user to create order. The cart details for the user is converted to order and stored with Order Status `ORDER_PLACED`. It publishes the details to Kafka Topic `OrderStatus`. <br>
+  Cart service has subscribed to Kafka Topic `OrderStatus` and delete the cart for that user once the order is in status `ORDER_PLACED`.
+- Allows to change the Order status.
+- Endpoint to get all the details of the cart (Get Cart endpoint)
+
+![Order Service Diagram](./static/images/CreateOrder.png)
 
 ## Steps to run Sonarqube
 
