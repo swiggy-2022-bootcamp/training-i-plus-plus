@@ -23,3 +23,7 @@
 
 
 [DynamoDb Schema for user = users.json](../misc/data_models/dynamodb/users.json)
+
+
+### Swagger
+![user_swagger_ui](docs/user_service_swagger.png)

@@ -22,6 +22,8 @@
 - Swagger http://localhost:7451/swagger/index.html#/
 
 
+### Swagger
+![user_swagger_ui](docs/doctor_service_swagger.png)
 
 ### Generate Swagger Docs
 ```
