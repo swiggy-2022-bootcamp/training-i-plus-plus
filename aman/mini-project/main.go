@@ -8,12 +8,15 @@ import (
 	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
 	fmt.Println("Starting Project")
 	r := gin.New()
 	r.Use(gin.Logger())
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	routes.UserRoutes(r)
 	routes.SellerRoutes(r)
 	routes.ProductRoutes(r)
