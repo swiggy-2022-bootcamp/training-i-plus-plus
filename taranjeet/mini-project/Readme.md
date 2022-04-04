@@ -34,7 +34,10 @@
 - [x] Kafka implementation for sending notification
 - [x] Logs File
 - [x] Exception Handling
-- [ ] User Management
+- [x] User Management
+- [x] Mongodb usage
+- [x] Swagger UI
+- [] Sonarcube
 
 # Notification Service
 
