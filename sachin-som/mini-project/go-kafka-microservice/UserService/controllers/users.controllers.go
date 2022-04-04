@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -62,7 +61,6 @@ func (uc *UserControllers) CreateUser(gctx *gin.Context) {
 func (uc *UserControllers) GetUser(gctx *gin.Context) {
 	var userId primitive.ObjectID
 	var err error
-	fmt.Println(gctx.Params)
 	if userId, err = primitive.ObjectIDFromHex(gctx.Param("userId")); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
@@ -131,7 +129,7 @@ func (uc *UserControllers) UpdateUser(g *gin.Context) {
 		return
 	}
 	if err = uc.UserService.UpdateUser(userId, &updatedUser); err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		g.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 	}
 	g.JSON(http.StatusOK, gin.H{"message": "User Updated Succesfully."})
 }
@@ -156,7 +154,7 @@ func (uc *UserControllers) DeleteUser(g *gin.Context) {
 		return
 	}
 	if err = uc.UserService.DeleteUser(userId); err != nil {
-		g.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		g.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 	}
 	g.JSON(http.StatusOK, gin.H{"message": "User Deleted Succesfully."})
 }

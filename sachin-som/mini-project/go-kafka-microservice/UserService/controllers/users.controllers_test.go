@@ -230,3 +230,370 @@ func TestWrongCredLogin(t *testing.T) {
 		t.Error("Wrong credentials should not return JWT token in response body.")
 	}
 }
+
+func TestGetUser(t *testing.T) {
+
+	user := &models.User{
+		Fullname: "sachin som",
+		Email:    "sachinsom@gmail.com",
+		Phone:    "1234456677",
+		Password: "test123",
+	}
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodGet, "/get/", nil)
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().GetUser(_userId).Return(user, nil)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.GetUser(context)
+
+	if response.Code != http.StatusOK {
+		t.Error("Successfull Get User should return 201 status code.")
+	}
+}
+
+func TestEmpyUserIdGetUser(t *testing.T) {
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodGet, "/get/", nil)
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.GetUser(context)
+
+	if response.Code != http.StatusBadRequest {
+		t.Error("Empty userId for GetUser should return 400 status Code.")
+	}
+}
+
+func TestWrongUserIdGetUser(t *testing.T) {
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodGet, "/get/", nil)
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().GetUser(_userId).Return(nil, errors.New("Invalid UserId."))
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.GetUser(context)
+
+	if response.Code != http.StatusBadGateway {
+		t.Error("Wrong user id in GettUserr should return 502 status code.")
+	}
+}
+
+func TestUpdateUser(t *testing.T) {
+
+	_user := &models.User{
+		Fullname: "sachin som",
+		Email:    "sachinsom@gmail.com",
+		Phone:    "1234456677",
+		Password: "test123",
+	}
+
+	_userStr, err := json.Marshal(_user)
+	require.Nil(t, err)
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodPatch, "/update/", bytes.NewBuffer(_userStr))
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().UpdateUser(_userId, _user).Return(nil)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.UpdateUser(context)
+
+	if response.Code != http.StatusOK {
+		t.Error("Successfull Update User should return 201 status code.")
+	}
+}
+
+func TestEmptyUserUpdateUser(t *testing.T) {
+
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodPatch, "/update/", nil)
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.UpdateUser(context)
+
+	if response.Code != http.StatusBadRequest {
+		t.Error("Empty User Body should return 400 status code.")
+	}
+}
+
+func TestEmptyUserIdUpdateUser(t *testing.T) {
+
+	_user := &models.User{
+		Fullname: "sachin som",
+		Email:    "sachinsom@gmail.com",
+		Phone:    "1234456677",
+		Password: "test123",
+	}
+
+	_userStr, err := json.Marshal(_user)
+	require.Nil(t, err)
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodPatch, "/update/", bytes.NewBuffer(_userStr))
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.UpdateUser(context)
+
+	if response.Code != http.StatusBadRequest {
+		t.Error("Empty User Id should return 400 status code.")
+	}
+}
+
+func TestWrongUserIdUpdateUser(t *testing.T) {
+
+	_user := &models.User{
+		Fullname: "sachin som",
+		Email:    "sachinsom@gmail.com",
+		Phone:    "1234456677",
+		Password: "test123",
+	}
+
+	_userStr, err := json.Marshal(_user)
+	require.Nil(t, err)
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodPatch, "/update/", bytes.NewBuffer(_userStr))
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().UpdateUser(_userId, _user).Return(errors.New("Wrong User Id."))
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.UpdateUser(context)
+
+	if response.Code != http.StatusBadGateway {
+		t.Error("Wrong User Id in Update User should return 500 status code.")
+	}
+}
+
+func TestDeleteUser(t *testing.T) {
+
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodDelete, "/delete/", nil)
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().DeleteUser(_userId).Return(nil)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.DeleteUser(context)
+
+	if response.Code != http.StatusOK {
+		t.Error("Successfull Delete User should return 201 status code.")
+	}
+}
+
+func TestEmptyUserIdDeleteUser(t *testing.T) {
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodDelete, "/delete/", nil)
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.DeleteUser(context)
+
+	if response.Code != http.StatusBadRequest {
+		t.Error("Empty User Id in  Delete User should return 400 status code.")
+	}
+}
+
+func TestWrongUserIdDeleteUser(t *testing.T) {
+
+	_userId := primitive.NewObjectID()
+
+	// Create test context
+	gin.SetMode(gin.TestMode)
+	response := httptest.NewRecorder()
+	context, _ := gin.CreateTestContext(response)
+	context.Request = httptest.NewRequest(http.MethodDelete, "/delete/", nil)
+	context.Params = []gin.Param{
+		{
+			Key:   "userId",
+			Value: _userId.Hex(),
+		},
+	}
+
+	// Create mockcontroller for user
+	userMockCtrl := gomock.NewController(t)
+	defer userMockCtrl.Finish()
+
+	// Create mock user service
+	userMockService := mocks.NewMockUserService(userMockCtrl)
+
+	// _userId := primitive.NewObjectID().Hex()
+	userMockService.EXPECT().DeleteUser(_userId).Return(errors.New("Wrong User id."))
+
+	// Craete userController instance
+	userMockController := NewUserControllers(userMockService)
+
+	// Call CreateUser using test context
+	userMockController.DeleteUser(context)
+
+	if response.Code != http.StatusBadGateway {
+		t.Error("Wrong UserID in Delete User should return 502 status code.")
+	}
+}
