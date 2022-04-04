@@ -37,81 +37,10 @@ info:
     name: Ayan Dutta
   description: Swagger API for Golang Project.
   termsOfService: http://swagger.io/terms/
-  title: User Service APIs
+  title: Product Service APIs
   version: "1.0"
 paths:
-  /products/{productEmail}:
-    get:
-      description: Fetches product details by id
-      parameters:
-      - description: Id
-        in: path
-        name: productId
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Product'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/errs.AppError'
-      tags:
-      - products
-  /products/{productId}:
-    delete:
-      description: Deletes product by email
-      parameters:
-      - description: Product Email
-        in: path
-        name: productEmail
-        required: true
-        type: integer
-      - description: Auth Token
-        in: header
-        name: token
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/app.ProductDTO'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errs.AppError'
-      tags:
-      - products
-    put:
-      description: Updates product by productId
-      parameters:
-      - description: Product details
-        in: body
-        name: details
-        required: true
-        schema:
-          $ref: '#/definitions/app.ProductDTO'
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/domain.Product'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/errs.AppError'
-      tags:
-      - products
-  /products/register:
+  /products/:
     post:
       consumes:
       - application/json
@@ -130,6 +59,76 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/domain.Product'
+      tags:
+      - products
+  /products/{productId}:
+    delete:
+      description: Deletes product by id
+      parameters:
+      - description: Product Id
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.ProductDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - products
+    get:
+      description: Fetches product details by id
+      parameters:
+      - description: Id
+        in: path
+        name: productId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - products
+    put:
+      description: Updates product by productId
+      parameters:
+      - description: Id
+        in: path
+        name: productId
+        required: true
+        type: string
+      - description: Product details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/app.ProductDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
       tags:
       - products
 swagger: "2.0"

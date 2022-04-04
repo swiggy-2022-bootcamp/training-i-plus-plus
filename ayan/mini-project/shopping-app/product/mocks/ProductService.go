@@ -3,8 +3,8 @@
 package mocks
 
 import (
-	domain "product/domain"
-	errs "product/utils/errs"
+	domain "github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/domain"
+	errs "github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/utils/errs"
 
 	mock "github.com/stretchr/testify/mock"
 )

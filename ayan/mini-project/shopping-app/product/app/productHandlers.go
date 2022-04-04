@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/domain"
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/utils/errs"
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/utils/logger"
@@ -29,11 +30,11 @@ type ProductResponseDTO struct {
 // @Schemes
 // @Description Fetches product details by id
 // @Tags products
-// @Param        productId   path      int  true  "Id"
+// @Param        productId   path      string  true  "Id"
 // @Produce json
 // @Success 200 {object} domain.Product
 // @Failure      403  {object} errs.AppError
-// @Router /products/{productEmail} [get]
+// @Router /products/{productId} [get]
 func (uh *ProductHandlers) GetProductById(c *gin.Context) {
 
 	productId, ok := c.Params.Get("productId")
@@ -66,7 +67,7 @@ func (uh *ProductHandlers) GetProductById(c *gin.Context) {
 // @Accept json
 // @Param        product  body      ProductDTO  true  "Product Creation"
 // @Success 201 {object} domain.Product
-// @Router /products/register [post]
+// @Router /products/ [post]
 func (uh *ProductHandlers) Register(c *gin.Context) {
 
 	var newProduct domain.Product
@@ -97,6 +98,7 @@ func (uh *ProductHandlers) Register(c *gin.Context) {
 // @Schemes
 // @Description Updates product by productId
 // @Tags products
+// @Param        productId   path      string  true  "Id"
 // @Param        product details   body      ProductDTO true  "Product details"
 // @Produce json
 // @Success 200 {object} domain.Product
@@ -137,10 +139,9 @@ func (uh *ProductHandlers) UpdateProduct(c *gin.Context) {
 }
 
 // @Schemes
-// @Description Deletes product by email
+// @Description Deletes product by id
 // @Tags products
-// @Param        productEmail   path      int  true  "Product Email"
-// @Param        token   header      string  true  "Auth Token"
+// @Param        productId   path      string  true  "Product Id"
 // @Produce json
 // @Success 200 {object} ProductDTO
 // @Failure      500  {object} errs.AppError

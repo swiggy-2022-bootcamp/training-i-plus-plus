@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/db"
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/docs"
 	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/domain"
@@ -30,8 +31,9 @@ func Start() {
 	productRoutesGroup := apiRouter.Group("/products")
 
 	productRoutesGroup.GET("/", productHandlers.HelloWorldHandler)
+	productRoutesGroup.POST("/", productHandlers.Register)
 	productRoutesGroup.GET("/:productId", productHandlers.GetProductById)
-	productRoutesGroup.PUT("/update", productHandlers.UpdateProduct)
+	productRoutesGroup.PUT("/:productId", productHandlers.UpdateProduct)
 	productRoutesGroup.DELETE("/:productId", productHandlers.DeleteProduct)
 
 	productRouter.Run(":8081")

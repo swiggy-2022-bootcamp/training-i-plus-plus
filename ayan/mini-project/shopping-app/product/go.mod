@@ -4,14 +4,12 @@ go 1.17
 
 require (
 	github.com/gin-gonic/gin v1.7.7
-	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/stretchr/testify v1.7.1
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2
 	github.com/swaggo/gin-swagger v1.4.1
 	github.com/swaggo/swag v1.8.1
 	go.mongodb.org/mongo-driver v1.8.4
 	go.uber.org/zap v1.21.0
-	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29
 )
 
 require (
@@ -48,6 +46,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20181117223130-1be2e3e5546d // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
+	golang.org/x/crypto v0.0.0-20220331220935-ae2d96664a29 // indirect
 	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect

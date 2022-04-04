@@ -20,7 +20,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/products/register": {
+        "/products/": {
             "post": {
                 "description": "Creates a product",
                 "consumes": [
@@ -53,7 +53,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/products/{productEmail}": {
+        "/products/{productId}": {
             "get": {
                 "description": "Fetches product details by id",
                 "produces": [
@@ -64,7 +64,7 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "description": "Id",
                         "name": "productId",
                         "in": "path",
@@ -85,9 +85,7 @@ const docTemplate = `{
                         }
                     }
                 }
-            }
-        },
-        "/products/{productId}": {
+            },
             "put": {
                 "description": "Updates product by productId",
                 "produces": [
@@ -97,6 +95,13 @@ const docTemplate = `{
                     "products"
                 ],
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Id",
+                        "name": "productId",
+                        "in": "path",
+                        "required": true
+                    },
                     {
                         "description": "Product details",
                         "name": "details",
@@ -123,7 +128,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes product by email",
+                "description": "Deletes product by id",
                 "produces": [
                     "application/json"
                 ],
@@ -132,17 +137,10 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "Product Email",
-                        "name": "productEmail",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
                         "type": "string",
-                        "description": "Auth Token",
-                        "name": "token",
-                        "in": "header",
+                        "description": "Product Id",
+                        "name": "productId",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -221,7 +219,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "",
 	BasePath:         "/api",
 	Schemes:          []string{},
-	Title:            "User Service APIs",
+	Title:            "Product Service APIs",
 	Description:      "Swagger API for Golang Project.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
