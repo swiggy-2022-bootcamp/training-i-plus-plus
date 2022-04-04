@@ -30,6 +30,9 @@ func NewUserServiceImpl(userCollection *mongo.Collection, authServiceClient pb.A
 }
 
 func (us *UserServiceImpl) CreateUser(user *models.User) (string, error) {
+	if user == nil || user.Email == "" || user.Fullname == "" || user.Phone == "" || user.Password == "" {
+		return "", errors.New("Provide valid user details.")
+	}
 	user.ID = primitive.NewObjectID() // Generate Unique IDs
 	// Hash the original password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)

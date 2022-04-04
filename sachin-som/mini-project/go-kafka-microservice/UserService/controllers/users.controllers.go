@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -61,6 +62,7 @@ func (uc *UserControllers) CreateUser(gctx *gin.Context) {
 func (uc *UserControllers) GetUser(gctx *gin.Context) {
 	var userId primitive.ObjectID
 	var err error
+	fmt.Println(gctx.Params)
 	if userId, err = primitive.ObjectIDFromHex(gctx.Param("userId")); err != nil {
 		gctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
