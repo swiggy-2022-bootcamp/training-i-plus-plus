@@ -9,6 +9,8 @@
 <li>MVC architecture/ folder structure</li>
 <li>Authorisation using JWT and password hashing</li>
 <li>Using kafka to communicate between different microservices.</li>
+<li>Logger service to generate server logs</li>
+<li>Swagger to document APIs</li>
 </ul>
 
 
@@ -29,7 +31,7 @@
 <li>GET request(/appointments) fetches from appointmentDB and displays available appointments.</li>
 <li>POST request(/book-appointment/userId) to appointment module to book an appointment slot.</li>
 <li>Booked appointment details is produced to "booked-appointment" topic.</li>
-<li> Booked appointment details are consumed by both generalUser module and doctorModule and corresponding DB updates are performed.</li>
+<li>Booked appointment details are consumed by both generalUser module and doctorModule and corresponding DB updates are performed.</li>
 </ul>
 
 <h1>Kafka Workflow</h1>

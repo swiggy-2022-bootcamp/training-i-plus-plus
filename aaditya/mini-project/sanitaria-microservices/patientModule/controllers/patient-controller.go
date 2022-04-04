@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sanitaria-microservices/patientModule/configs"
 	"sanitaria-microservices/patientModule/models"
+	"sanitaria-microservices/patientModule/repository"
 	"sanitaria-microservices/patientModule/responses"
 	"sanitaria-microservices/patientModule/services"
 	"time"
@@ -18,6 +19,9 @@ import (
 
 var patientCollection *mongo.Collection = configs.GetCollection(configs.DB, "patients")
 var validate = validator.New()
+var pr = repository.PatientRepository{
+	MongoCollection: configs.GetCollection(configs.DB, "patients"),
+}
 
 // RegisterPatient godoc
 // @Summary To register a new patient in the sanitaria application
@@ -66,7 +70,7 @@ func RegisterPatient() gin.HandlerFunc {
 			User:             user,
 		}
 
-		result, err := patientCollection.InsertOne(ctx, newPatient)
+		result, err := pr.InsertPatient(ctx, newPatient)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
