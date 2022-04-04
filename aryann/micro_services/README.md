@@ -8,7 +8,7 @@
 - Swagger UI
 - SonarQube
 - Logging
-- Session Key Management/JWT Tokens
+- Session Key Management / JWT Tokens
 - Encrypting Passwords
 
 ### Microservices
