@@ -9,8 +9,8 @@ type Disease struct {
 }
 
 // Generate data for a new Disease.
-func NewDisease(name string, medicines []string, symptoms []string) *Disease {
-	d := &Disease{
+func NewDisease(name string, medicines []string, symptoms []string) Disease {
+	d := Disease{
 		Name:      name,
 		Medicines: medicines,
 		Symptoms: symptoms,

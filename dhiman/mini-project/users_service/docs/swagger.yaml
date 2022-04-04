@@ -22,6 +22,9 @@ definitions:
       name:
         description: Name of this client
         type: string
+      password:
+        description: Password of this client
+        type: string
       subscriptions:
         description: Subscriptions that this client has
         items:
@@ -46,24 +49,12 @@ paths:
       - application/json
       description: Create a Client in the Database using the data sent by them (REGISTER)
       parameters:
-      - description: User Email
+      - description: User DTO
         in: body
-        name: email
+        name: clientDTO
         required: true
         schema:
-          type: string
-      - description: User Name
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-      - description: User Password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Client'
       produces:
       - application/json
       responses:
@@ -93,23 +84,10 @@ paths:
       description: Deletes the Clients in the Database using their email.
       parameters:
       - description: User Email
-        in: body
+        in: path
         name: email
         required: true
-        schema:
-          type: string
-      - description: User Name
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-      - description: User Password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+        type: string
       produces:
       - application/json
       responses:
@@ -169,24 +147,12 @@ paths:
       - application/json
       description: Updates the Client in the Database using their email.
       parameters:
-      - description: User Email
+      - description: User DTO
         in: body
-        name: email
+        name: clientDTO
         required: true
         schema:
-          type: string
-      - description: User Name
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-      - description: User Password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Client'
       produces:
       - application/json
       responses:

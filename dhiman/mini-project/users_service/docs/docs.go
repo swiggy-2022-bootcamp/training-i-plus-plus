@@ -31,30 +31,12 @@ const docTemplate = `{
                 "summary": "Create a Client",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
+                        "description": "User DTO",
+                        "name": "clientDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Client"
                         }
                     }
                 ],
@@ -149,30 +131,12 @@ const docTemplate = `{
                 "summary": "Updates Clients in the Database.",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
+                        "description": "User DTO",
+                        "name": "clientDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Client"
                         }
                     }
                 ],
@@ -217,31 +181,11 @@ const docTemplate = `{
                 "summary": "Deletes Clients in the Database.",
                 "parameters": [
                     {
+                        "type": "string",
                         "description": "User Email",
                         "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -305,6 +249,10 @@ const docTemplate = `{
                 },
                 "name": {
                     "description": "Name of this client",
+                    "type": "string"
+                },
+                "password": {
+                    "description": "Password of this client",
                     "type": "string"
                 },
                 "subscriptions": {

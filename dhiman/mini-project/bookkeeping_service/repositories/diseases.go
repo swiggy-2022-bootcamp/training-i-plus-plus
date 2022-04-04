@@ -15,7 +15,11 @@ import (
 // @return  (interface{}, error) ID of the created Disease if created, and Error if any occurs.
 func CreateDisease(newDisease models.Disease, ctx context.Context) (interface{}, error) {
 	res, err := configs.DiseasesCollection.InsertOne(ctx, newDisease)
-	return res.InsertedID, err
+	if res == nil {
+		return nil, err
+	} else {
+		return res.InsertedID, err
+	}
 }
 
 // Get all Diseases in database where fields match medicineTemplate filter.
@@ -53,7 +57,11 @@ func GetDisease(medicineTemplate models.Disease, ctx context.Context) (models.Di
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateDisease(updatedDisease models.Disease, ctx context.Context) (interface{}, error) {
 	res, err := configs.DiseasesCollection.UpdateOne(ctx, models.Disease{Name: updatedDisease.Name}, updatedDisease)
-	return res.UpsertedID, err
+	if res == nil {
+		return nil, err
+	} else {
+		return res.UpsertedID, err
+	}
 }
 
 // Delete Diseases in database where fields match medicineTemplate filter.
@@ -64,5 +72,9 @@ func UpdateDisease(updatedDisease models.Disease, ctx context.Context) (interfac
 // @return  (int64, err) The numer of deleted entries, and Error if any occurs.
 func DeleteDisease(medicineTemplate models.Disease, ctx context.Context) (int64, error) {
 	res, err := configs.DiseasesCollection.DeleteOne(ctx, medicineTemplate)
-	return res.DeletedCount, err
+	if res == nil {
+		return 0, err
+	} else {
+		return res.DeletedCount, err
+	}
 }

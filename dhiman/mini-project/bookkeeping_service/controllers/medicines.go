@@ -21,13 +21,11 @@ var validate = validator.New()
 // @Tags         accounts
 // @Accept       json
 // @Produce      json
-// @Param        email     body      string  true  "User Email"
-// @Param        name      body      string  true  "User Name"
-// @Param        password  body      string  true  "User Password"
-// @Success      200       {object}  interface{}
-// @Failure      400       {object}  dtos.HTTPError
-// @Failure      404       {object}  dtos.HTTPError
-// @Failure      500       {object}  dtos.HTTPError
+// @Param        medicineDTO  body      models.Medicine  true  "Medicine details to be created"
+// @Success      200          {object}  interface{}
+// @Failure      400          {object}  dtos.HTTPError
+// @Failure      404          {object}  dtos.HTTPError
+// @Failure      500          {object}  dtos.HTTPError
 // @Router       /users/medicines [post]
 func CreateMedicine(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -42,8 +40,8 @@ func CreateMedicine(c *gin.Context) {
 		log.Error("Validating Request Body Failed: ", validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
-		newUser := models.NewMedicine(requestBody.Name, requestBody.Diseases)
-		out, err := repositories.CreateMedicine(*newUser, ctx)
+		newMedicine := models.NewMedicine(requestBody.Name, requestBody.Diseases)
+		out, err := repositories.CreateMedicine(newMedicine, ctx)
 		if err != nil {
 			const errMsg string = "Error inserting user."
 			log.Error(errMsg, err)
@@ -153,20 +151,18 @@ func FindMedicineByName(c *gin.Context) {
 	c.JSON(http.StatusOK, medicines)
  }
 
- // @Summary      Updates Medicines in the Database.
- // @Description  Updates the Medicine in the Database using their email.
- // @Tags         accounts
- // @Accept       json
- // @Produce      json
- // @Param        email     body      string  true  "User Email"
- // @Param        name      body      string  true  "User Name"
- // @Param        password  body      string  true  "User Password"
- // @Success      200       {object}  models.Medicine
- // @Failure      400       {object}  dtos.HTTPError
- // @Failure      404       {object}  dtos.HTTPError
- // @Failure      500       {object}  dtos.HTTPError
- // @Router       /users/medicines/{name} [put]
- func UpdateMedicines(c *gin.Context) {
+// @Summary      Updates Medicines in the Database.
+// @Description  Updates the Medicine in the Database using their email.
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        medicineDTO  body      models.Medicine  true  "Medicine details to be created"
+// @Success      200          {object}  models.Medicine
+// @Failure      400          {object}  dtos.HTTPError
+// @Failure      404          {object}  dtos.HTTPError
+// @Failure      500          {object}  dtos.HTTPError
+// @Router       /users/medicines/{name} [put]
+func UpdateMedicines(c *gin.Context) {
 	 ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	 defer cancel()
  
@@ -180,7 +176,7 @@ func FindMedicineByName(c *gin.Context) {
 		 c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	 } else {
 		 medicine := models.NewMedicine(requestBody.Name, requestBody.Diseases)
-		 out, err := repositories.UpdateMedicine(*medicine, ctx)
+		 out, err := repositories.UpdateMedicine(medicine, ctx)
 		 if err != nil {
 			 const errMsg string = "Error updating user."
 			 log.Error(errMsg, err)
@@ -191,20 +187,18 @@ func FindMedicineByName(c *gin.Context) {
 	 }
  }
 
- // @Summary      Deletes Medicines in the Database.
- // @Description  Deletes the Medicine in the Database using their email.
- // @Tags         accounts
- // @Accept       json
- // @Produce      json
- // @Param        email     body      string  true  "User Email"
- // @Param        name      body      string  true  "User Name"
- // @Param        password  body      string  true  "User Password"
- // @Success      200       {object}  models.Medicine
- // @Failure      400       {object}  dtos.HTTPError
- // @Failure      404       {object}  dtos.HTTPError
- // @Failure      500       {object}  dtos.HTTPError
- // @Router       /users/medicines/{name} [delete]
- func DeleteMedicines(c *gin.Context) {
+// @Summary      Deletes Medicines in the Database.
+// @Description  Deletes the Medicine in the Database using their email.
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        diseaseName  path      string  true  "ID of the Disease (currently its name)"
+// @Success      200          {object}  models.Medicine
+// @Failure      400          {object}  dtos.HTTPError
+// @Failure      404          {object}  dtos.HTTPError
+// @Failure      500          {object}  dtos.HTTPError
+// @Router       /users/medicines/{name} [delete]
+func DeleteMedicines(c *gin.Context) {
 	 ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	 defer cancel()
  

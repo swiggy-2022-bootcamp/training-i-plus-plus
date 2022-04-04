@@ -15,7 +15,11 @@ import (
 // @return  (interface{}, error) ID of the created Medicine if created, and Error if any occurs.
 func CreateMedicine(newMedicine models.Medicine, ctx context.Context) (interface{}, error) {
 	res, err := configs.MedicinesCollection.InsertOne(ctx, newMedicine)
-	return res.InsertedID, err
+	if res == nil {
+		return nil, err
+	} else {
+		return res.InsertedID, err
+	}
 }
 
 // Get all Medicines in database where fields match medicineTemplate filter.
@@ -53,7 +57,11 @@ func GetMedicine(medicineTemplate models.Medicine, ctx context.Context) (models.
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateMedicine(updatedMedicine models.Medicine, ctx context.Context) (interface{}, error) {
 	res, err := configs.MedicinesCollection.UpdateOne(ctx, models.Medicine{Name: updatedMedicine.Name}, updatedMedicine)
-	return res.UpsertedID, err
+	if res == nil {
+		return nil, err
+	} else {
+		return res.UpsertedID, err
+	}
 }
 
 // Delete Medicines in database where fields match medicineTemplate filter.
@@ -64,5 +72,9 @@ func UpdateMedicine(updatedMedicine models.Medicine, ctx context.Context) (inter
 // @return  (int64, err) The numer of deleted entries, and Error if any occurs.
 func DeleteMedicine(medicineTemplate models.Medicine, ctx context.Context) (int64, error) {
 	res, err := configs.MedicinesCollection.DeleteOne(ctx, medicineTemplate)
-	return res.DeletedCount, err
+	if res == nil {
+		return 0, err
+	} else {
+		return res.DeletedCount, err
+	}
 }

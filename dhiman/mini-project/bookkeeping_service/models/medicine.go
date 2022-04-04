@@ -8,13 +8,13 @@ type Medicine struct {
 }
 
 // Generate data for a new Medicine.
-func NewMedicine(name string, diseases []string) *Medicine {
-	d := &Medicine{
+func NewMedicine(name string, diseases []string) Medicine {
+	m := Medicine{
 		Name:      name,
 		Diseases: diseases,
 	}
-	d.SetId(name)
-	return d
+	m.SetId(name)
+	return m
 }
 
 // Get ID of a Medicine, equivalent to its name.

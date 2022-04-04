@@ -11,8 +11,8 @@ type ClientSubscription struct {
 }
 
 // Generate a new Client Subscription with the given data.
-func NewClientSubscription(id uint, medicine string, nextDose string, rate string) *ClientSubscription {
-	us := &ClientSubscription{
+func NewClientSubscription(id uint, medicine string, nextDose string, rate string) ClientSubscription {
+	us := ClientSubscription{
 		Medicine: medicine,
 		NextDose: nextDose,
 		Rate: rate,

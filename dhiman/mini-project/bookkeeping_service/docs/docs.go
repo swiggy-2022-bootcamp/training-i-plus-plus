@@ -175,30 +175,12 @@ const docTemplate = `{
                 "summary": "Create a Medicine",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
+                        "description": "Medicine details to be created",
+                        "name": "medicineDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Medicine"
                         }
                     }
                 ],
@@ -245,30 +227,12 @@ const docTemplate = `{
                 "summary": "Updates Medicines in the Database.",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
+                        "description": "Medicine details to be created",
+                        "name": "medicineDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Medicine"
                         }
                     }
                 ],
@@ -313,31 +277,11 @@ const docTemplate = `{
                 "summary": "Deletes Medicines in the Database.",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
+                        "type": "string",
+                        "description": "ID of the Disease (currently its name)",
+                        "name": "diseaseName",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {

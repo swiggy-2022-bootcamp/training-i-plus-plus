@@ -20,19 +20,17 @@ var validate = validator.New()
 // @Tags         accounts
 // @Accept       json
 // @Produce      json
-// @Param        email     body      string  true  "User Email"
-// @Param        name      body      string  true  "User Name"
-// @Param        password  body      string  true  "User Password"
-// @Success      200       {object}  interface{}
-// @Failure      400       {object}  dtos.HTTPError
-// @Failure      404       {object}  dtos.HTTPError
-// @Failure      500       {object}  dtos.HTTPError
+// @Param        clientDTO  body      models.Client  true  "User DTO"
+// @Success      200        {object}  interface{}
+// @Failure      400        {object}  dtos.HTTPError
+// @Failure      404        {object}  dtos.HTTPError
+// @Failure      500        {object}  dtos.HTTPError
 // @Router       /users/clients [post]
 func CreateClient(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var requestBody models.Client
+	var requestBody models.User
 	err := c.BindJSON(&requestBody)
 	if err != nil {
 		log.Error("Binding Request Body Failed: ", err)
@@ -41,8 +39,8 @@ func CreateClient(c *gin.Context) {
 		log.Error("Validating Request Body Failed: ", validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
-		newUser := models.NewClient(requestBody.Email, requestBody.Name)
-		out, err := repositories.CreateClient(*newUser, ctx)
+		newUser := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
+		out, err := repositories.CreateClient( newUser, ctx)
 		if err != nil {
 			const errMsg string = "Error inserting user."
 			log.Error(errMsg, err)
@@ -90,13 +88,11 @@ func GetClient(c *gin.Context) {
 // @Tags         accounts
 // @Accept       json
 // @Produce      json
-// @Param        email     body      string  true  "User Email"
-// @Param        name      body      string  true  "User Name"
-// @Param        password  body      string  true  "User Password"
-// @Success      200       {object}  models.Client
-// @Failure      400       {object}  dtos.HTTPError
-// @Failure      404       {object}  dtos.HTTPError
-// @Failure      500       {object}  dtos.HTTPError
+// @Param        clientDTO  body      models.Client  true  "User DTO"
+// @Success      200        {object}  models.Client
+// @Failure      400        {object}  dtos.HTTPError
+// @Failure      404        {object}  dtos.HTTPError
+// @Failure      500        {object}  dtos.HTTPError
 // @Router       /users/clients/{email} [put]
 func UpdateClients(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -111,8 +107,8 @@ func UpdateClients(c *gin.Context) {
 		log.Error("Validating Request Body Failed: ", validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
-		user := models.NewClient(requestBody.Email, requestBody.Name)
-		out, err := repositories.UpdateClient(*user, ctx)
+		user := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
+		out, err := repositories.UpdateClient(user, ctx)
 		if err != nil {
 			const errMsg string = "Error updating user."
 			log.Error(errMsg, err)
@@ -123,20 +119,18 @@ func UpdateClients(c *gin.Context) {
 	}
 }
 
- // @Summary      Deletes Clients in the Database.
- // @Description  Deletes the Clients in the Database using their email.
- // @Tags         accounts
- // @Accept       json
- // @Produce      json
- // @Param        email     body      string  true  "User Email"
- // @Param        name      body      string  true  "User Name"
- // @Param        password  body      string  true  "User Password"
- // @Success      200       {object}  models.Client
- // @Failure      400       {object}  dtos.HTTPError
- // @Failure      404       {object}  dtos.HTTPError
- // @Failure      500       {object}  dtos.HTTPError
- // @Router       /users/clients/{email} [delete]
- func DeleteClients(c *gin.Context) {
+// @Summary      Deletes Clients in the Database.
+// @Description  Deletes the Clients in the Database using their email.
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        email  path      string  true  "User Email"
+// @Success      200    {object}  models.Client
+// @Failure      400    {object}  dtos.HTTPError
+// @Failure      404    {object}  dtos.HTTPError
+// @Failure      500    {object}  dtos.HTTPError
+// @Router       /users/clients/{email} [delete]
+func DeleteClients(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 

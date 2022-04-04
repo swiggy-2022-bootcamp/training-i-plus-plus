@@ -5,6 +5,7 @@ type User struct {
 	modelImpl
 	Email string `json:"email"` // Email of this client
 	Name  string `json:"name"`  // Name of this client
+	Password string `json:"password"` // Password of this client
 }
 
 // Data Model for a Client.
@@ -14,11 +15,12 @@ type Client struct {
 }
 
 // Generate a new Client with the given data and no subscriptions.
-func NewClient(name string, email string) *Client {
-	c := &Client{
+func NewClient(name string, email string, password string) Client {
+	c := Client{
 		User: User{
 			Email: email,
 			Name:  name,
+			Password: password,
 		},
 		Subscriptions: []ClientSubscription{},
 	}
@@ -38,11 +40,12 @@ type Expert struct {
 }
 
 // Generate a new  Expert with the given data.
-func NewExpert(name string, email string, specialities []string) *Expert {
-	c := &Expert{
+func NewExpert(name string, email string, password string, specialities []string) Expert {
+	c := Expert{
 		User: User{
 			Email: email,
 			Name:  name,
+			Password: password,
 		},
 		Specialities: specialities,
 	}

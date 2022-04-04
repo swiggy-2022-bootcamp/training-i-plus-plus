@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	docs.SwaggerInfo.BasePath = user_routes.BaseURL
+	docs.SwaggerInfo.BasePath = "/"
 	// Set up routes for both microsevices
 	// Users Microservice
 	usersRouter := gin.Default()
