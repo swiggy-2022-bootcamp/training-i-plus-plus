@@ -3,13 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	pb "github.com/go-kafka-microservice/WalletProto"
 	"github.com/go-kafka-microservice/WalletService/controllers"
 	"github.com/go-kafka-microservice/WalletService/database"
+	"github.com/go-kafka-microservice/WalletService/middleware"
 	"github.com/go-kafka-microservice/WalletService/services"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -58,6 +61,20 @@ func init() {
 	if err != nil {
 		log.Fatal("[GRPC-debug] Error in httpListening (8000): ", err.Error())
 	}
+
+	// Don't need color console for logging to a file
+	gin.DisableConsoleColor()
+
+	// Logging to a file.
+	f, _ := os.Create("logger.log")
+	gin.DefaultWriter = io.MultiWriter(f)
+
+	// Initialize server
+	server = gin.Default()
+
+	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
+	// gin.DefaultWriter = file writer and os.Stdout
+	server.Use(gin.LoggerWithFormatter(middleware.FormatLogger))
 }
 
 func main() {

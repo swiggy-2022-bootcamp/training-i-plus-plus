@@ -1,0 +1,15 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /v1/users/create          --> github.com/go-kafka-microservice/UserService/controllers.(*UserControllers).CreateUser-fm (4 handlers)
+[GIN-debug] GET    /v1/users/get/:userId     --> github.com/go-kafka-microservice/UserService/controllers.(*UserControllers).GetUser-fm (4 handlers)
+[GIN-debug] PATCH  /v1/users/update/:userId  --> github.com/go-kafka-microservice/UserService/controllers.(*UserControllers).UpdateUser-fm (4 handlers)
+[GIN-debug] DELETE /v1/users/delete/:userId  --> github.com/go-kafka-microservice/UserService/controllers.(*UserControllers).DeleteUser-fm (4 handlers)
+[GIN-debug] POST   /v1/users/login           --> github.com/go-kafka-microservice/UserService/controllers.(*UserControllers).Login-fm (4 handlers)
+[GIN-debug] GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8001

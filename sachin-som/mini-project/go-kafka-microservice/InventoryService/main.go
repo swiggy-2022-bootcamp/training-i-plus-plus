@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"io"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	pb "github.com/go-kafka-microservice/AuthProto"
@@ -68,6 +70,20 @@ func init() {
 
 	// Initialize gin server
 	server = gin.Default()
+
+	// Don't need color console for logging to a file
+	gin.DisableConsoleColor()
+
+	// Logging to a file.
+	f, _ := os.Create("logger.log")
+	gin.DefaultWriter = io.MultiWriter(f)
+
+	// Initialize server
+	server = gin.Default()
+
+	// LoggerWithFormatter middleware will write the logs to gin.DefaultWriter
+	// gin.DefaultWriter = file writer and os.Stdout
+	server.Use(gin.LoggerWithFormatter(middleware.FormatLogger))
 
 }
 
