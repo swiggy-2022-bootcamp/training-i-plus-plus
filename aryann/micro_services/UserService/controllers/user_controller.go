@@ -11,13 +11,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// var validate = validator.New()
-
-// func init() {
-// 	go kafka.Consume_ticket()
-// 	go kafka.Consume_train()
-// }
-
 // GetUser godoc
 // @Summary      Fetch A User
 // @Description  Get User details by providing the userid

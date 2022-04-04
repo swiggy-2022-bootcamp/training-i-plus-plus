@@ -14,12 +14,6 @@ import (
 
 var avalidate = validator.New()
 
-// const layout = "Jan 2, 2006 at 3:04pm (MST)"
-
-// func init() {
-// 	go kafka.Consume_purchased_ticket()
-// }
-
 // GetAdmin godoc
 // @Summary      Fetch An Admin
 // @Description  Get Admin details by providing the adminid

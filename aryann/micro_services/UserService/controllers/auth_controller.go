@@ -51,7 +51,6 @@ func SignUp() gin.HandlerFunc {
 
 		if err != nil {
 			log.Panic(err)
-			// panic(err)
 		}
 
 		register.Password = string(hashedPassword)
@@ -84,9 +83,6 @@ func SignUp() gin.HandlerFunc {
 					return
 				}
 
-				// c.JSON(http.StatusOK, responses.LoginResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result}})
-				// return
-
 			} else {
 
 				_, err := userRepo.Create(models.User{
@@ -98,9 +94,6 @@ func SignUp() gin.HandlerFunc {
 					c.JSON(http.StatusBadRequest, responses.LoginResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 					return
 				}
-
-				// c.JSON(http.StatusOK, responses.LoginResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": result}})
-				// return
 			}
 
 			c.JSON(http.StatusCreated, responses.LoginResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
