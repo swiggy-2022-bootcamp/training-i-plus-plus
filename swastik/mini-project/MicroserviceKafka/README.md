@@ -25,3 +25,8 @@ Features
 - Swagger UI for all the modules
 - Unit Testing and Mocks for all the modules
 
+
+# Microservices
+1. UserService (:8000)
+1. TrainService (:8001)
+2. TicketService (:8002)
