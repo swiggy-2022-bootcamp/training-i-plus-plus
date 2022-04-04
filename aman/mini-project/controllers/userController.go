@@ -136,6 +136,29 @@ func Login() gin.HandlerFunc {
 	}
 }
 
+func Logout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		userId := c.Request.Header.Get("id")
+
+		result, insertErr := userCollection.UpdateOne(ctx, bson.M{"user_id": userId}, bson.D{{"$set",
+			bson.D{
+				{"token", ""}, {"refresh_token", ""},
+			},
+		}})
+
+		if insertErr != nil {
+			msg := fmt.Sprintf("order item was not updated")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+		logger.Log.Println("User logged out")
+		defer cancel()
+		c.JSON(http.StatusOK, result)
+
+	}
+}
+
 func HashPassword(password string) string {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
 	if err != nil {

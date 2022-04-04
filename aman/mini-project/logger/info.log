@@ -1,2 +1,5 @@
-2022/04/04 16:18:52 logger.go:21: Log File : logger/info.log
-2022/04/04 16:18:55 cartItemController.go:95: Item was updated
+2022/04/04 16:34:28 logger.go:21: Log File : logger/info.log
+2022/04/04 16:34:32 userController.go:155: User logged out
+2022/04/04 16:34:46 userController.go:134: User login successful
+2022/04/04 16:34:59 userController.go:134: User login successful
+2022/04/04 16:35:10 cartController.go:53: Cart accessed
