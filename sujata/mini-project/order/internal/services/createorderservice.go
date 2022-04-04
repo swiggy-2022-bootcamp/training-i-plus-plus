@@ -9,7 +9,10 @@ import (
 	model "order/internal/dao/models"
 	"order/internal/errors"
 	"order/util"
+	"os"
 	"sync"
+
+	l "log"
 
 	"github.com/segmentio/kafka-go"
 	log "github.com/sirupsen/logrus"
@@ -132,9 +135,11 @@ func (service *createOrderService) callCartService(token string) ([]byte, *error
 
 // publishToKafka will publish the user email and order status to kafka
 func (service *createOrderService) publishToKafka(ctx context.Context, order model.Order) *errors.ServerError {
+	logger := l.New(os.Stdout, "kafka writer: ", 0)
 	writer := kafka.NewWriter(kafka.WriterConfig{
 		Brokers: []string{"localhost:9092"},
 		Topic:   "OrderStatus",
+		Logger:  logger,
 	})
 
 	// Published message will be cosumed by CART Service which allows only one cart per user.

@@ -1,7 +1,6 @@
 package util
 
 import (
-	"fmt"
 	"net/http"
 	"order/config"
 
@@ -20,7 +19,6 @@ func ExtractDetailsFromToken(req *http.Request) (string, string) {
 	claims := token.Claims.(jwt.MapClaims)
 	userInfo := claims["CustomUserInfo"].(map[string]interface{})
 
-	fmt.Println("Userinfoo", userInfo)
 	role := userInfo["Role"].(string)
 	email := userInfo["Email"].(string)
 
