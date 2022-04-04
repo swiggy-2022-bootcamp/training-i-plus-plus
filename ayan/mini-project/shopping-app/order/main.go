@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/app"
+	"order/app"
 )
 
 // @title Order Service APIs

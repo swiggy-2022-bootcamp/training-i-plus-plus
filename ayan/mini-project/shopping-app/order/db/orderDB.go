@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/domain"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/errs"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/logger"
+	"order/domain"
+	"order/utils/errs"
+	"order/utils/logger"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -26,6 +26,7 @@ func NewOrderRepositoryDB(dbClient *mongo.Client) domain.OrderRepositoryDB {
 func (pdb orderRepositoryDB) Save(u domain.Order) (*domain.Order, *errs.AppError) {
 
 	newOrder := NewOrder(
+		u.UserEmail,
 		u.ItemList,
 		u.Amount,
 	)
@@ -62,7 +63,7 @@ func (pdb orderRepositoryDB) FetchOrderById(id string) (*domain.Order, *errs.App
 		return nil, errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
-	domainOrder := domain.NewOrder(dbOrder.ItemList, dbOrder.Amount)
+	domainOrder := domain.NewOrder(dbOrder.UserEmail, dbOrder.ItemList, dbOrder.Amount)
 	domainOrder.Id = dbOrder.Id
 
 	return domainOrder, nil

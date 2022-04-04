@@ -5,15 +5,18 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/domain"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/errs"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/logger"
+	"order/domain"
+	kfka "order/kafka"
+	"order/utils/errs"
+	"order/utils/logger"
 
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
 )
 
 type OrderHandlers struct {
-	service domain.OrderService
+	Service       domain.OrderService
+	KafkaProducer *kafka.Producer
 }
 
 type OrderItemDTO struct {
@@ -22,9 +25,10 @@ type OrderItemDTO struct {
 }
 
 type OrderDTO struct {
-	Id       string         `json:"name,omitempty"`
-	ItemList []OrderItemDTO `json:"item_list"`
-	Amount   int            `json:"amount,omitempty"`
+	Id        string         `json:"id,omitempty"`
+	ItemList  []OrderItemDTO `json:"item_list"`
+	Amount    int            `json:"amount,omitempty"`
+	UserEmail string         `json:"user_email"`
 }
 
 type OrderResponseDTO struct {
@@ -49,7 +53,7 @@ func (uh *OrderHandlers) GetOrderById(c *gin.Context) {
 		c.JSON(err.Code, err.AsMessage())
 
 	} else {
-		order, err := uh.service.FindById(orderId)
+		order, err := uh.Service.FindById(orderId)
 		if err != nil {
 			c.JSON(err.Code, err.AsMessage())
 		} else {
@@ -84,7 +88,7 @@ func (uh *OrderHandlers) PlaceOrder(c *gin.Context) {
 		c.JSON(err.Code, err.AsMessage())
 
 	} else {
-		regOrder, err := uh.service.Register(newOrder)
+		regOrder, err := uh.Service.CreateOrder(newOrder)
 		if err != nil {
 			c.JSON(err.Code, err.AsMessage())
 		} else {
@@ -94,6 +98,7 @@ func (uh *OrderHandlers) PlaceOrder(c *gin.Context) {
 				err1 := errs.NewUnexpectedError("Unexpected error")
 				c.JSON(err1.Code, err1.AsMessage())
 			}
+			go kfka.Produce(uh.KafkaProducer, string(data), "orders")
 			c.Data(http.StatusCreated, "application/json", data)
 		}
 	}

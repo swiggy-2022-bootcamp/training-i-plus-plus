@@ -1,0 +1,102 @@
+basePath: /api
+definitions:
+  app.OrderDTO:
+    properties:
+      amount:
+        type: integer
+      id:
+        type: string
+      item_list:
+        items:
+          $ref: '#/definitions/app.OrderItemDTO'
+        type: array
+      user_email:
+        type: string
+    type: object
+  app.OrderItemDTO:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  domain.Order:
+    properties:
+      amount:
+        type: integer
+      id:
+        type: string
+      item_list:
+        items:
+          $ref: '#/definitions/domain.OrderItem'
+        type: array
+      user_email:
+        type: string
+    type: object
+  domain.OrderItem:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  errs.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: ayan59dutta@gmail.com
+    name: Ayan Dutta
+  description: Swagger API for Golang Project.
+  termsOfService: http://swagger.io/terms/
+  title: Order Service APIs
+  version: "1.0"
+paths:
+  /orders/:
+    post:
+      consumes:
+      - application/json
+      description: Creates a order
+      parameters:
+      - description: Order Creation
+        in: body
+        name: order
+        required: true
+        schema:
+          $ref: '#/definitions/app.OrderDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Order'
+      tags:
+      - orders
+  /orders/{orderId}:
+    get:
+      description: Fetches order details by id
+      parameters:
+      - description: Id
+        in: path
+        name: orderId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Order'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - orders
+swagger: "2.0"

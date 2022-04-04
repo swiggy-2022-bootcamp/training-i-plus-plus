@@ -3,10 +3,11 @@ package app
 import (
 	"fmt"
 
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/db"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/docs"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/domain"
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/logger"
+	"order/db"
+	"order/docs"
+	"order/domain"
+	"order/kafka"
+	"order/utils/logger"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -15,11 +16,18 @@ import (
 
 func Start() {
 
+	kafkaProducer := kafka.KafkaProducer()
+
+	defer func() {
+		kafkaProducer.Flush(15 * 1000)
+		kafkaProducer.Close()
+	}()
+
 	dbClient := db.NewDbClient()
 
 	orderRepo := db.NewOrderRepositoryDB(dbClient)
 	orderService := domain.NewOrderService(orderRepo)
-	orderHandlers := OrderHandlers{service: orderService}
+	orderHandlers := OrderHandlers{Service: orderService, KafkaProducer: kafkaProducer}
 
 	orderRouter := gin.Default()
 

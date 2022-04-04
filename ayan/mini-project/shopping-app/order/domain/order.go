@@ -1,13 +1,14 @@
 package domain
 
 import (
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/order/utils/errs"
+	"order/utils/errs"
 )
 
 type Order struct {
-	Id       string      `json:"name,omitempty"`
-	ItemList []OrderItem `json:"item_list"`
-	Amount   int         `json:"amount,omitempty"`
+	Id        string      `json:"id,omitempty"`
+	UserEmail string      `json:"user_email"`
+	ItemList  []OrderItem `json:"item_list"`
+	Amount    int         `json:"amount,omitempty"`
 }
 
 type OrderItem struct {
@@ -15,10 +16,11 @@ type OrderItem struct {
 	Quantity  int    `json:"quantity"`
 }
 
-func NewOrder(itemList []OrderItem, amount int) *Order {
+func NewOrder(userEmail string, itemList []OrderItem, amount int) *Order {
 	return &Order{
-		ItemList: itemList,
-		Amount:   amount,
+		UserEmail: userEmail,
+		ItemList:  itemList,
+		Amount:    amount,
 	}
 }
 

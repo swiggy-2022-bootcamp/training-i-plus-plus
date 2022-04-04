@@ -1,7 +1,7 @@
 package domain
 
 import (
-	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/ayan/mini-project/shopping-app/product/utils/errs"
+	"product/utils/errs"
 )
 
 type ProductService interface {

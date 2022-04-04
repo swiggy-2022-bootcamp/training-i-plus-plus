@@ -3,26 +3,22 @@ package db
 import (
 	"time"
 
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"order/domain"
 )
 
 type Order struct {
-	mongoId   primitive.ObjectID `bson:"_id,omitempty"`
 	Id        string             `bson:"id"`
-	ItemList  []OrderItem        `bson:"item_list"`
+	UserEmail string             `bson:"user_email"`
+	ItemList  []domain.OrderItem `bson:"item_list"`
 	Amount    int                `bson:"amount"`
 	CreatedAt time.Time          `bson:"created_at"`
 	UpdatedAt time.Time          `bson:"updated_at"`
 }
 
-type OrderItem struct {
-	ProductId string `bson:"product_id"`
-	Quantity  int    `bson:"quantity"`
-}
-
-func NewOrder(itemList []OrderItem, amount int) *Order {
+func NewOrder(userEmail string, itemList []domain.OrderItem, amount int) *Order {
 	return &Order{
-		ItemList: itemList,
-		Amount:   amount,
+		UserEmail: userEmail,
+		ItemList:  itemList,
+		Amount:    amount,
 	}
 }
