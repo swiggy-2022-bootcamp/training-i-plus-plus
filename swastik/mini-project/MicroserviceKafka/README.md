@@ -33,6 +33,7 @@
 
 ### User Microservice
 
+```
 **Routes**
 GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
 POST   /userRegistration         --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).RegisterUser-fm (3 handlers)
@@ -41,3 +42,4 @@ GET    /user/get/:username       --> github.com/swastiksahoo153/train-reservatio
 GET    /user/getall              --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).GetAll-fm (4 handlers)
 PATCH  /user/update              --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).UpdateUser-fm (4 handlers)
 [GIN-debug] DELETE /user/delete/:username    --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).DeleteUser-fm (4 handlers)
+```
