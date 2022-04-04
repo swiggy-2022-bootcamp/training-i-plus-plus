@@ -1,6 +1,6 @@
 # Train Reservation System
 
-### Implemented
+## Implemented
 - [x] GoLang
 - [x] Gin Gonic
 - [x] MongoDB
@@ -12,13 +12,13 @@
 - [x] Error Handling
 - [x] Password Encryption
 
-### Microservices
+## Microservices
 1. UserService (:3000)
 2. TrainService (:5000)
 3. TicketService (:7000)
 4. PurchaseService (:8000)
 
-#### UserService
+### UserService
 UserService is responsible to do authorisation and CRUD operations related to user/admin entry
 
 **Routes**
