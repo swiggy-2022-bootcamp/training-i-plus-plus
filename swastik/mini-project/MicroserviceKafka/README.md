@@ -26,17 +26,13 @@
 - Unit Testing and Mocks for all the modules
 ```
 
-![user](https://user-images.githubusercontent.com/53436195/161572838-538e502b-7560-4efa-a260-cd9a5b08cf51.png)
-
-![ticket](https://user-images.githubusercontent.com/53436195/161572884-2c18675f-db03-4389-98a0-0f3dd30a7112.png)
-
-![train](https://user-images.githubusercontent.com/53436195/161572908-da0e45b6-eb25-48e5-a3fb-0aac3b585c90.png)
-
-
 ### Microservices
 1. UserService (:8000)
-1. TrainService (:8001)
-2. TicketService (:8002)
+![user](https://user-images.githubusercontent.com/53436195/161572838-538e502b-7560-4efa-a260-cd9a5b08cf51.png)
+2. TrainService (:8001)
+![train](https://user-images.githubusercontent.com/53436195/161572908-da0e45b6-eb25-48e5-a3fb-0aac3b585c90.png)
+3. TicketService (:8002)
+![ticket](https://user-images.githubusercontent.com/53436195/161572884-2c18675f-db03-4389-98a0-0f3dd30a7112.png)
 
 ### User Microservice
 
