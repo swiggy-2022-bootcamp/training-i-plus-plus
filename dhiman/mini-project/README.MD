@@ -8,9 +8,9 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 2. [X] REST API: Basic method of communication across and between microservices.
 3. [X] JSON: Medium for transferring data across the project
 4. [X] Database (Mongo): The Key-Value database used as the backend database.
-5. [ ] Sonarqube
-6. [X] Kafka
-7. [X] Swagger UI: Implemented using gin-swagger and swag. Config stored in ./docs/swagger.json and ./docs/swagger.yaml
+5. [X] Kafka: To send messages from users microservice to bookkeeping microservice.
+6. [X] Swagger UI: Implemented using gin-swagger and swag. Config stored in ./docs/swagger.json and ./docs/swagger.yaml
+7. [X] Sonarqube: For Code coverage and code quality.
 
 ## Screenshots
 
@@ -32,4 +32,9 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 ### Swagger UI
 
 | [![Bookkeeping Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Users Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png) |
+| --- | --- |
+
+### Sonarqube and Unit Tests
+
+| [![Sonarqube Projects Dashboard](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png) | [![Unit Testing Examples](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png) |
 | --- | --- |

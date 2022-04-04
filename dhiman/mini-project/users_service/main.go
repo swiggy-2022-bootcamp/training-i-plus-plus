@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dhi13man/healthcare-app/users_service/configs"
 	docs "github.com/dhi13man/healthcare-app/users_service/docs"
 	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
 	"github.com/gin-gonic/gin"
@@ -17,5 +18,5 @@ func main() {
 	usersRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Run Microservice
-	usersRouter.Run("localhost:8081")
+	usersRouter.Run(configs.UsersServiceAddress())
 }

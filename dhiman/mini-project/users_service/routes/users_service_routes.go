@@ -8,14 +8,16 @@ import (
 const BaseURL string = "/users";
 
 func GenerateUsersServiceRoutes(router *gin.Engine) {
-	userRouter := router.Group(BaseURL)
+	usersRouter := router.Group(BaseURL)
+	clientsUsersRouter := usersRouter.Group("/clients")
+
 	// Create
-	userRouter.POST("clients", controllers.CreateClient)
-	userRouter.POST("experts/diagnose", controllers.DiagnoseDisease)
+	clientsUsersRouter.POST("/", controllers.CreateClient)
+	usersRouter.POST("experts/diagnose", controllers.DiagnoseDisease)
 	// Read
-	userRouter.GET("clients/:email", controllers.GetClient)
+	clientsUsersRouter.GET("/:email", controllers.GetClient)
 	// Update
-	userRouter.PUT("clients/:email", controllers.UpdateClients)
+	clientsUsersRouter.PUT("/:email", controllers.UpdateClients)
 	// Delete
-	userRouter.DELETE("clients/:email", controllers.DeleteClients)
+	clientsUsersRouter.DELETE("/:email", controllers.DeleteClients)
 }

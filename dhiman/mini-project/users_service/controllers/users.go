@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/dhi13man/healthcare-app/users_service/configs"
 	"github.com/dhi13man/healthcare-app/users_service/models"
 	"github.com/dhi13man/healthcare-app/users_service/models/dtos"
 	"github.com/dhi13man/healthcare-app/users_service/repositories"
@@ -15,7 +16,14 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// Used for validating request data
 var validate = validator.New()
+
+// Constant Error message when data binding fails
+const bindingRequestBodyFailedMessage string = "Binding Request Body Failed: "
+
+// Constant Error message when data validation fails
+const validatingRequestBodyFailedMessage string = "Validating Request Body Failed: "
 
 // @Summary      Create a Client
 // @Description  Create a Client in the Database using the data sent by them (REGISTER)
@@ -35,10 +43,10 @@ func CreateClient(c *gin.Context) {
 	var requestBody models.User
 	err := c.BindJSON(&requestBody)
 	if err != nil {
-		log.Error("Binding Request Body Failed: ", err)
+		log.Error(bindingRequestBodyFailedMessage, err)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err))
 	} else if validationErr := validate.Struct(&requestBody); validationErr != nil { // Validation of required fields
-		log.Error("Validating Request Body Failed: ", validationErr)
+		log.Error(validatingRequestBodyFailedMessage, validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
 		newUser := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
@@ -103,10 +111,10 @@ func UpdateClients(c *gin.Context) {
 	var requestBody models.Client
 	err := c.BindJSON(&requestBody)
 	if err != nil {
-		log.Error("Binding Request Body Failed: ", err)
+		log.Error(bindingRequestBodyFailedMessage, err)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err))
 	} else if validationErr := validate.Struct(&requestBody); validationErr != nil { // Validation of required fields
-		log.Error("Validating Request Body Failed: ", validationErr)
+		log.Error(validatingRequestBodyFailedMessage, validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
 		user := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
@@ -172,10 +180,10 @@ func DiagnoseDisease(c *gin.Context) {
 	var requestBody models.Disease
 	err := c.BindJSON(&requestBody)
 	if err != nil {
-		log.Error("Binding Request Body Failed: ", err)
+		log.Error(bindingRequestBodyFailedMessage, err)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err))
 	} else if validationErr := validate.Struct(&requestBody); validationErr != nil { // Validation of required fields
-		log.Error("Validating Request Body Failed: ", validationErr)
+		log.Error(validatingRequestBodyFailedMessage, validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
 		// Serialize the request body
@@ -187,7 +195,7 @@ func DiagnoseDisease(c *gin.Context) {
 			return
 		}
 		// Send the disease diagnosis to the bookkeeping service
-		err := services.Produce(string(requestBodyBytes), "diagnosis", ctx)
+		err := services.Produce(string(requestBodyBytes), configs.KafkaDiagnosisTopic(), ctx)
 		if err != nil {
 			const errMsg string = "Error sending disease diagnosis to bookkeeping."
 			log.Error(errMsg, err)

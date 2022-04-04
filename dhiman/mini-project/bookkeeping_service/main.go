@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"github.com/dhi13man/healthcare-app/bookkeeping_service/configs"
 	docs "github.com/dhi13man/healthcare-app/bookkeeping_service/docs"
 	bookkeeping_routes "github.com/dhi13man/healthcare-app/bookkeeping_service/routes"
 	"github.com/dhi13man/healthcare-app/bookkeeping_service/services"
@@ -20,8 +21,8 @@ func main() {
 
 	// Set up Kafka listener
 	ctx := context.Background()
-	go services.Consume("diagnosis", services.DeserializeAndSaveDiseaseDiagnosis, ctx)
+	go services.Consume(configs.KafkaDiagnosisTopic(), services.DeserializeAndSaveDiseaseDiagnosis, ctx)
 	
 	// Run Microservice
-	bookkeepingRouter.Run("localhost:8082")
+	bookkeepingRouter.Run(configs.BookkeepingServiceAddress())
 }

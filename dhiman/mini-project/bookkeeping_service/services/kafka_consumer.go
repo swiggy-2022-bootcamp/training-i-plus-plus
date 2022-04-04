@@ -3,11 +3,12 @@ package services
 import (
 	"context"
 
+	"github.com/dhi13man/healthcare-app/bookkeeping_service/configs"
 	"github.com/segmentio/kafka-go"
 	log "github.com/sirupsen/logrus"
 )
 
-const brokerAddress = "localhost:9092"
+var brokerAddress string = configs.KafkaBrokerAddress()
 
 func Consume(topic string, callback func(string, context.Context), ctx context.Context) {
 	l := log.New()

@@ -7,12 +7,26 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var envPath string = "/Users/dhimanseal/projects/training-i-plus-plus/dhiman/mini-project/.env"
+// Path where .env is located.
+const envPath string = "/Users/dhimanseal/projects/training-i-plus-plus/dhiman/mini-project/.env"
+
+// Error Loading .env file message constant
+const errLoadingEnv string = "Error loading .env file."
+
+// Get the Address where the Users Microservice is to be ran.
+func UsersServiceAddress() string {
+    err := godotenv.Load(envPath)
+    if err != nil {
+        log.Fatal(errLoadingEnv)
+    }
+  
+    return os.Getenv("USERS_SERVICE_ADDRESS")
+}
 
 func EnvMongoURI() string {
     err := godotenv.Load(envPath)
     if err != nil {
-        log.Fatal("Error loading .env file")
+        log.Fatal(errLoadingEnv)
     }
   
     return os.Getenv("MONGOURI")
@@ -22,7 +36,7 @@ func EnvMongoURI() string {
 func ClientsCollectionName() string {
     err := godotenv.Load(envPath)
     if err != nil {
-        log.Fatal("Error loading .env file")
+        log.Fatal(errLoadingEnv)
     }
   
     return os.Getenv("CLIENTS_COLLECTION")
@@ -32,8 +46,28 @@ func ClientsCollectionName() string {
 func ExpertsCollectionName() string {
     err := godotenv.Load(envPath)
     if err != nil {
-        log.Fatal("Error loading .env file")
+        log.Fatal(errLoadingEnv)
     }
   
     return os.Getenv("EXPERTS_COLLECTION")
+}
+
+// Get the Address of the Kafka Broker
+func KafkaBrokerAddress() string {
+    err := godotenv.Load(envPath)
+    if err != nil {
+        log.Fatal(errLoadingEnv)
+    }
+  
+    return os.Getenv("KAFKA_BROKER_ADDRESS")
+}
+
+// Get the name of the Kafka Diagnosis Topic
+func KafkaDiagnosisTopic() string {
+    err := godotenv.Load(envPath)
+    if err != nil {
+        log.Fatal(errLoadingEnv)
+    }
+  
+    return os.Getenv("KAFKA_DIAGNOSIS_TOPIC")
 }

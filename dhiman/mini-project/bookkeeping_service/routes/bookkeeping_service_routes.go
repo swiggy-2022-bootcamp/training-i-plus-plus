@@ -9,14 +9,16 @@ const BaseURL string = "/bookkeeping";
 
 func GenerateBookKeepingServiceRoutes(router *gin.Engine) {
 	bookKeepingRouter := router.Group(BaseURL)
+	medicinebookKeepingRouter := bookKeepingRouter.Group("/medicine")
+	
 	// Create
-	bookKeepingRouter.POST("medicines", controllers.CreateMedicine)
+	medicinebookKeepingRouter.POST("/", controllers.CreateMedicine)
 	// Read
-	bookKeepingRouter.GET("medicines", controllers.FindAllMedicines)
-	bookKeepingRouter.GET("medicines/:id", controllers.FindMedicineByName)
-	bookKeepingRouter.GET("medicines/disease/:diseaseName", controllers.FindMedicinesByDiseaseName)
+	medicinebookKeepingRouter.GET("/", controllers.FindAllMedicines)
+	medicinebookKeepingRouter.GET("/:id", controllers.FindMedicineByName)
+	medicinebookKeepingRouter.GET("/disease/:diseaseName", controllers.FindMedicinesByDiseaseName)
 	// Update
-	bookKeepingRouter.PUT("medicines/:id", controllers.UpdateMedicines)
+	medicinebookKeepingRouter.PUT("/:id", controllers.UpdateMedicines)
 	// Delete
-	bookKeepingRouter.DELETE("medicines/:id", controllers.DeleteMedicines)
+	medicinebookKeepingRouter.DELETE("/:id", controllers.DeleteMedicines)
 }

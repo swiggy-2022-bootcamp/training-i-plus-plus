@@ -228,7 +228,7 @@ const docTemplate = `{
                 "tags": [
                     "/users/experts/diagnose"
                 ],
-                "summary": "Make Disease Diagnosis in the Database by expert.",
+                "summary": "Make Disease Diagnosis by expert to the bookkeeping_service.",
                 "parameters": [
                     {
                         "description": "The Diagnosed Disease",
