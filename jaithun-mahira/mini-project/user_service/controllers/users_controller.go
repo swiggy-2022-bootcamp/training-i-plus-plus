@@ -21,6 +21,17 @@ import (
 var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users")
 var validate = validator.New()
 
+// GetAllUsers godoc
+// @Summary Get All Users
+// @Description Fetched all the users from the system(Admin Only)
+// @Tags User Service
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {array} models.User
+// @Failure	500  {object} int
+// @Security Bearer Token
+// @Router /users [GET]
 func GetAllUsers() gin.HandlerFunc {
 	return func(c *gin.Context) {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -53,6 +64,18 @@ func GetAllUsers() gin.HandlerFunc {
 	}
 }
 
+// SignUp godoc
+// @Summary To add new user in the train reservation system application
+// @Description This request will create a new user in the system.
+// @Tags User Service
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param req body models.User true "User details"
+// @Success	201  {object} 	models.User
+// @Failure	400  {number} 	int
+// @Failure	500  {number} 	int
+// @Router /signup [POST]
 func SignUp() gin.HandlerFunc {
 	return func(c *gin.Context) {
 			zap.L().Info("Inside Sign Up Controller")
@@ -107,6 +130,18 @@ func SignUp() gin.HandlerFunc {
 	}
 }
 
+// GetUserById godoc
+// @Summary Get user details by ID.
+// @Description Get all the details of the user.
+// @Tags User Service
+// @Schemes
+// @Param userId path string true "User Id"
+// @Accept json
+// @Produce json
+// @Success	200  {object} 	models.User
+// @Failure	500  {object} 	int
+// @Security Bearer Token
+// @Router /users/{userId} [GET]
 func GetUserById() gin.HandlerFunc {
 	return func(c *gin.Context) {
 			zap.L().Info("Inside GetUserByID controller")
@@ -129,6 +164,20 @@ func GetUserById() gin.HandlerFunc {
 	}
 }
 
+// UpdateUser godoc
+// @Summary Update user by ID.
+// @Description Update details of User.
+// @Tags User Service
+// @Schemes
+// @Param userId path string true "User id"
+// @Accept json
+// @Produce json
+// @Param req body models.User true "User details"
+// @Success	200  {object} 	models.User
+// @Failure	400  {number} 	int
+// @Failure	500  {number} 	int
+// @Security Bearer Token
+// @Router /users/{userId} [PUT]
 func UpdateUser() gin.HandlerFunc {
     return func(c *gin.Context) {
 			  zap.L().Info("Inside UpdateUser controller")
@@ -184,6 +233,19 @@ func UpdateUser() gin.HandlerFunc {
     }
 }
 
+// DeleteUser godoc
+// @Summary Delete user by ID.
+// @Description Delete user.
+// @Tags User Service
+// @Schemes
+// @Param userId path string true "User id"
+// @Accept json
+// @Produce json
+// @Success	200  {string} 	User successfully deleted!
+// @Failure	404  {number} 	int
+// @Failure	500  {number} 	int
+// @Security Bearer Token
+// @Router /users/{userId} [DELETE]
 func DeleteUser() gin.HandlerFunc {
     return func(c *gin.Context) {
 			  zap.L().Info("Inside DeleteUser controller")
@@ -217,7 +279,19 @@ func DeleteUser() gin.HandlerFunc {
     }
 }
 
-
+// Login godoc
+// @Summary User login
+// @Description This request will help users to login and generate token.
+// @Tags User Service
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param req body models.User true "User Name and password"
+// @Success	200  {object} 	responses.UserResponse
+// @Failure	400  {number} 	int
+// @Failure	404  {number} 	int
+// @Failure	500  {number} 	int
+// @Router /login [POST]
 func Login() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		zap.L().Info("Inside Login controller")
