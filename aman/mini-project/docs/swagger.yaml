@@ -1,0 +1,73 @@
+basePath: /
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+    url: http://github.com/justamangupta
+  description: Swagger APIs available for Shopping App.
+  termsOfService: http://github.com/justamangupta
+  title: Swagger service APIs for Shopping App
+  version: "1.0"
+paths:
+  /account/create:
+    get:
+      consumes:
+      - application/json
+      description: Gets a user's info using user_id
+      parameters:
+      - description: user_id
+        in: path
+        name: User_ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+        "400":
+          description: error
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Get User by ID
+      tags:
+      - Accounts
+  /products:
+    get:
+      description: Gets all the available products on the portal
+      responses:
+        "200":
+          description: success
+          schema:
+            type: string
+        "400":
+          description: error
+          schema:
+            type: string
+        "404":
+          description: error
+          schema:
+            type: string
+        "500":
+          description: error
+          schema:
+            type: string
+      summary: Get All Products
+      tags:
+      - Portal
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: token
+    type: apiKey
+  BasicAuth:
+    type: basic
+swagger: "2.0"

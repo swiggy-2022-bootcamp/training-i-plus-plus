@@ -18,6 +18,17 @@ import (
 
 var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
 
+// CreateResource godoc
+// @Summary Get User by ID
+// @Description Gets a user's info using user_id
+// @Tags Accounts
+// @Param User_ID path string true "user_id"
+// @Accept  json
+// @Success 200  {object} string "success"
+// @Failure 400  {string} string "error"
+// @Failure 404  {string} string "error"
+// @Failure 500  {string} string "error"
+// @Router /account/create [get]
 func GetUser() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)

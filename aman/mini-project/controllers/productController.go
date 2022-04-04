@@ -22,6 +22,15 @@ import (
 var productCollection *mongo.Collection = database.OpenCollection(database.Client, "product")
 var validate = validator.New()
 
+// CreateResource godoc
+// @Summary Get All Products
+// @Description Gets all the available products on the portal
+// @Tags Portal
+// @Success 200  {object} string "success"
+// @Failure 400  {string} string "error"
+// @Failure 404  {string} string "error"
+// @Failure 500  {string} string "error"
+// @Router /products [get]
 func GetProducts() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
