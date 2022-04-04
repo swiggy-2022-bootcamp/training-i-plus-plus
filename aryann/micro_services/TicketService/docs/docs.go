@@ -188,7 +188,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8000",
+	Host:             "localhost:7000",
 	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Swagger Train Reservation System API",

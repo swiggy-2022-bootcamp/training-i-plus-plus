@@ -15,7 +15,7 @@
         },
         "version": "1.0"
     },
-    "host": "localhost:8000",
+    "host": "localhost:7000",
     "paths": {
         "/ticket": {
             "post": {

@@ -16,7 +16,7 @@ definitions:
       userid:
         type: string
     type: object
-host: localhost:9000
+host: localhost:8000
 info:
   contact:
     email: swiggyb3053@datascience.manipal.edu

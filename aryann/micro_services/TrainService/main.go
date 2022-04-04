@@ -32,7 +32,7 @@ func TrainRouter() *gin.Engine {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:7000
+// @host      localhost:5000
 
 // @securityDefinitions.apiKey ApiKeyAuth
 // @type apiKey
@@ -47,5 +47,5 @@ func main() {
 
 	docs.SwaggerInfo.Title = "Swagger Train Reservation System API"
 
-	trainroute.Run("localhost:7000")
+	trainroute.Run("localhost:5000")
 }

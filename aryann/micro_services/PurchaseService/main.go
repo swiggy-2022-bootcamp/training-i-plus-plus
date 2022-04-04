@@ -32,7 +32,7 @@ func PurchaseRouter() *gin.Engine {
 // @license.name  Apache 2.0
 // @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
 
-// @host      localhost:9000
+// @host      localhost:8000
 
 // @securityDefinitions.apiKey ApiKeyAuth
 // @type apiKey
@@ -46,6 +46,6 @@ func main() {
 	docs.SwaggerInfo.Title = "Swagger Train Reservation System API"
 
 	userroute := PurchaseRouter()
-	userroute.Run("localhost:9000")
+	userroute.Run("localhost:8000")
 
 }

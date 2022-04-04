@@ -14,7 +14,7 @@ definitions:
       trainid:
         type: string
     type: object
-host: localhost:8000
+host: localhost:7000
 info:
   contact:
     email: swiggyb3053@datascience.manipal.edu
