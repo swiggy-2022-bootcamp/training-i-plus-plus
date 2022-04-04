@@ -9,7 +9,7 @@ import (
 
 const brokerAddress = "localhost:9092"
 
-func Produce(message string, topic string, ctx context.Context) {
+func Produce(message string, topic string, ctx context.Context) error {
 	l := log.New()
 
 	// Intialize the writer with the broker addresses, and the topic
@@ -23,8 +23,5 @@ func Produce(message string, topic string, ctx context.Context) {
 		Key:   []byte("data"),
 		Value: []byte(message),
 	})
-
-	if err != nil {
-		log.Error("could not write message " + err.Error())
-	}
+	return err
 }

@@ -20,8 +20,7 @@ func main() {
 
 	// Set up Kafka listener
 	ctx := context.Background()
-	go services.Consume("comms", ctx)
-
+	go services.Consume("diagnosis", services.DeserializeAndSaveDiseaseDiagnosis, ctx)
 	
 	// Run Microservice
 	bookkeepingRouter.Run("localhost:8082")

@@ -16,6 +16,58 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/bookkeeping/medicines": {
+            "post": {
+                "description": "Create a Medicine in the Database using the data sent by them (REGISTER)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/bookkeeping/medicines"
+                ],
+                "summary": "Create a Medicine",
+                "parameters": [
+                    {
+                        "description": "Medicine details to be created",
+                        "name": "medicineDTO",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Medicine"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/bookkeeping/medicines/": {
             "get": {
                 "description": "Fetches all Medicines in database from repository and return an unfiltered JSON array of them.",
@@ -26,7 +78,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Return all Medicines in database from repository.",
                 "responses": {
@@ -70,7 +122,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Find all medicines for a Disease identified by its name.",
                 "parameters": [
@@ -120,7 +172,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Get a Medicine by its name.",
                 "parameters": [
@@ -160,59 +212,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/users/medicines": {
-            "post": {
-                "description": "Create a Medicine in the Database using the data sent by them (REGISTER)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "accounts"
-                ],
-                "summary": "Create a Medicine",
-                "parameters": [
-                    {
-                        "description": "Medicine details to be created",
-                        "name": "medicineDTO",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/models.Medicine"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "type": "object"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
-                        }
-                    }
-                }
-            }
-        },
-        "/users/medicines/{name}": {
+        "/bookkeeping/medicines/{name}": {
             "put": {
                 "description": "Updates the Medicine in the Database using their email.",
                 "consumes": [
@@ -222,7 +222,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Updates Medicines in the Database.",
                 "parameters": [
@@ -272,7 +272,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Deletes Medicines in the Database.",
                 "parameters": [

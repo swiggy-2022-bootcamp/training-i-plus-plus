@@ -9,7 +9,7 @@ import (
 
 const brokerAddress = "localhost:9092"
 
-func Consume(topic string, ctx context.Context) {
+func Consume(topic string, callback func(string, context.Context), ctx context.Context) {
 	l := log.New()
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers: []string{brokerAddress},
@@ -19,12 +19,14 @@ func Consume(topic string, ctx context.Context) {
 	})
 
 	for {
-		// the `ReadMessage` method blocks until we receive the next event
+		// The `ReadMessage` method blocks until we receive the next event
 		msg, err := r.ReadMessage(ctx)
 		if err != nil {
 			log.Error("Could not read Kafka Message: " + err.Error())
 		}
-		// after receiving the message, log its value
+
+		// After receiving the message, log its value and apply the callback
 		log.Info(string(msg.Key) + ": " + string(msg.Value))
+		callback(string(msg.Value), ctx)
 	}
 }

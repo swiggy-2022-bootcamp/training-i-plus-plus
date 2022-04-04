@@ -11,6 +11,7 @@ func GenerateUsersServiceRoutes(router *gin.Engine) {
 	userRouter := router.Group(BaseURL)
 	// Create
 	userRouter.POST("clients", controllers.CreateClient)
+	userRouter.POST("experts/diagnose", controllers.DiagnoseDisease)
 	// Read
 	userRouter.GET("clients/:email", controllers.GetClient)
 	// Update

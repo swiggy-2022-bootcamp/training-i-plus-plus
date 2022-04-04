@@ -26,7 +26,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Create a Client",
                 "parameters": [
@@ -78,7 +78,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Get a Client from Database.",
                 "parameters": [
@@ -126,7 +126,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Updates Clients in the Database.",
                 "parameters": [
@@ -144,7 +144,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Client"
+                            "type": "object"
                         }
                     },
                     "400": {
@@ -176,7 +176,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Deletes Clients in the Database.",
                 "parameters": [
@@ -186,6 +186,58 @@ const docTemplate = `{
                         "name": "email",
                         "in": "path",
                         "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dtos.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/experts/diagnose": {
+            "post": {
+                "description": "Sends a Disease Diagnosis using Kafka to the bookkeeping_service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/users/experts/diagnose"
+                ],
+                "summary": "Make Disease Diagnosis in the Database by expert.",
+                "parameters": [
+                    {
+                        "description": "The Diagnosed Disease",
+                        "name": "disease",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Disease"
+                        }
                     }
                 ],
                 "responses": {
@@ -275,6 +327,29 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Disease": {
+            "type": "object",
+            "properties": {
+                "medicines": {
+                    "description": "Medicines that can cure this disease",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "description": "Name of this disease",
+                    "type": "string"
+                },
+                "symptoms": {
+                    "description": "Symptoms of this disease",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         }

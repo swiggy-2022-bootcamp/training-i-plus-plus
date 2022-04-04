@@ -8,7 +8,7 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 2. [X] REST API: Basic method of communication across and between microservices.
 3. [X] JSON: Medium for transferring data across the project
 4. [X] Database (Mongo): The Key-Value database used as the backend database.
-5. [X] Sonarqube
+5. [ ] Sonarqube
 6. [X] Kafka
 7. [X] Swagger UI: Implemented using gin-swagger and swag. Config stored in ./docs/swagger.json and ./docs/swagger.yaml
 
@@ -22,6 +22,12 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 ### Mongo DB
 
 | ![Mongo DB Collection](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/mongo_collection.png) |
+| --- |
+
+### Kafka
+
+| [![Users Microservice Kafka Producer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png) | [![Bookkeeping Microservice Kafka Consumer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png) |
+| --- | --- |
 
 ### Swagger UI
 

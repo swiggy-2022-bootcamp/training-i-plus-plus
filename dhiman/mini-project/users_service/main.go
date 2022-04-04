@@ -1,11 +1,8 @@
 package main
 
 import (
-	"context"
-
 	docs "github.com/dhi13man/healthcare-app/users_service/docs"
 	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
-	"github.com/dhi13man/healthcare-app/users_service/services"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware

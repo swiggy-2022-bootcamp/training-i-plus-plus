@@ -2,12 +2,14 @@ package controllers
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"time"
 
 	"github.com/dhi13man/healthcare-app/users_service/models"
 	"github.com/dhi13man/healthcare-app/users_service/models/dtos"
 	"github.com/dhi13man/healthcare-app/users_service/repositories"
+	"github.com/dhi13man/healthcare-app/users_service/services"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +19,7 @@ var validate = validator.New()
 
 // @Summary      Create a Client
 // @Description  Create a Client in the Database using the data sent by them (REGISTER)
-// @Tags         accounts
+// @Tags         /users/clients
 // @Accept       json
 // @Produce      json
 // @Param        clientDTO  body      models.Client  true  "User DTO"
@@ -53,14 +55,14 @@ func CreateClient(c *gin.Context) {
 
 // @Summary      Get a Client from Database.
 // @Description  Get a Client from the Database using their email.
-// @Tags         accounts
+// @Tags         /users/clients
 // @Accept       json
 // @Produce      json
 // @Param        email  path      string  true  "User Email"
-// @Success      200    {object}  models.Client
-// @Failure      400    {object}  dtos.HTTPError
-// @Failure      404    {object}  dtos.HTTPError
-// @Failure      500    {object}  dtos.HTTPError
+// @Success      200      {object}  models.Client
+// @Failure      400      {object}  dtos.HTTPError
+// @Failure      404      {object}  dtos.HTTPError
+// @Failure      500      {object}  dtos.HTTPError
 // @Router       /users/clients/{email} [get]
 func GetClient(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -85,11 +87,11 @@ func GetClient(c *gin.Context) {
 
 // @Summary      Updates Clients in the Database.
 // @Description  Updates the Client in the Database using their email.
-// @Tags         accounts
+// @Tags         /users/clients
 // @Accept       json
 // @Produce      json
 // @Param        clientDTO  body      models.Client  true  "User DTO"
-// @Success      200        {object}  models.Client
+// @Success      200        {object}  interface{}
 // @Failure      400        {object}  dtos.HTTPError
 // @Failure      404        {object}  dtos.HTTPError
 // @Failure      500        {object}  dtos.HTTPError
@@ -121,11 +123,11 @@ func UpdateClients(c *gin.Context) {
 
 // @Summary      Deletes Clients in the Database.
 // @Description  Deletes the Clients in the Database using their email.
-// @Tags         accounts
+// @Tags         /users/clients
 // @Accept       json
 // @Produce      json
 // @Param        email  path      string  true  "User Email"
-// @Success      200    {object}  models.Client
+// @Success      200    {object}  int64
 // @Failure      400    {object}  dtos.HTTPError
 // @Failure      404    {object}  dtos.HTTPError
 // @Failure      500    {object}  dtos.HTTPError
@@ -149,5 +151,49 @@ func DeleteClients(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
 	} else {
 		c.JSON(http.StatusOK, out)
+	}
+}
+
+// @Summary      Make Disease Diagnosis by expert to the bookkeeping_service.
+// @Description  Sends a Disease Diagnosis using Kafka to the bookkeeping_service
+// @Tags         /users/experts/diagnose
+// @Accept       json
+// @Produce      json
+// @Param        disease  body      models.Disease  true  "The Diagnosed Disease"
+// @Success      200    {object}  models.Client
+// @Failure      400    {object}  dtos.HTTPError
+// @Failure      404    {object}  dtos.HTTPError
+// @Failure      500    {object}  dtos.HTTPError
+// @Router       /users/experts/diagnose [post]
+func DiagnoseDisease(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	var requestBody models.Disease
+	err := c.BindJSON(&requestBody)
+	if err != nil {
+		log.Error("Binding Request Body Failed: ", err)
+		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err))
+	} else if validationErr := validate.Struct(&requestBody); validationErr != nil { // Validation of required fields
+		log.Error("Validating Request Body Failed: ", validationErr)
+		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
+	} else {
+		// Serialize the request body
+		requestBodyBytes, serialErr := json.Marshal(requestBody)
+		if serialErr != nil {
+			const errMsg string = "Error marshalling request body."
+			log.Error(errMsg, serialErr)
+			c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, serialErr, errMsg))
+			return
+		}
+		// Send the disease diagnosis to the bookkeeping service
+		err := services.Produce(string(requestBodyBytes), "diagnosis", ctx)
+		if err != nil {
+			const errMsg string = "Error sending disease diagnosis to bookkeeping."
+			log.Error(errMsg, err)
+			c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
+		} else {
+			c.JSON(http.StatusOK, gin.H{"message": "Disease Diagnosis Sent"})
+		}
 	}
 }

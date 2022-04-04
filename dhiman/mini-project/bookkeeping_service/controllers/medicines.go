@@ -18,7 +18,7 @@ var validate = validator.New()
 
 // @Summary      Create a Medicine
 // @Description  Create a Medicine in the Database using the data sent by them (REGISTER)
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Param        medicineDTO  body      models.Medicine  true  "Medicine details to be created"
@@ -26,7 +26,7 @@ var validate = validator.New()
 // @Failure      400          {object}  dtos.HTTPError
 // @Failure      404          {object}  dtos.HTTPError
 // @Failure      500          {object}  dtos.HTTPError
-// @Router       /users/medicines [post]
+// @Router       /bookkeeping/medicines [post]
 func CreateMedicine(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -54,7 +54,7 @@ func CreateMedicine(c *gin.Context) {
 
 // @Summary      Return all Medicines in database from repository.
 // @Description  Fetches all Medicines in database from repository and return an unfiltered JSON array of them.
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Success      200  {array}   models.Medicine
@@ -79,7 +79,7 @@ func FindAllMedicines(c *gin.Context) {
 
 // @Summary      Get a Medicine by its name.
 // @Description  Get a Medicine from the database by its name.
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Param        id   path      string  true  "ID of the Medicine (currently its name)"
@@ -111,7 +111,7 @@ func FindMedicineByName(c *gin.Context) {
 
 // @Summary      Find all medicines for a Disease identified by its name.
 // @Description  Find all medicines for a Disease identified by the disease name from the two databases.
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Param        diseaseName  path      string  true  "ID of the Disease (currently its name)"
@@ -153,7 +153,7 @@ func FindMedicineByName(c *gin.Context) {
 
 // @Summary      Updates Medicines in the Database.
 // @Description  Updates the Medicine in the Database using their email.
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Param        medicineDTO  body      models.Medicine  true  "Medicine details to be created"
@@ -161,7 +161,7 @@ func FindMedicineByName(c *gin.Context) {
 // @Failure      400          {object}  dtos.HTTPError
 // @Failure      404          {object}  dtos.HTTPError
 // @Failure      500          {object}  dtos.HTTPError
-// @Router       /users/medicines/{name} [put]
+// @Router       /bookkeeping/medicines/{name} [put]
 func UpdateMedicines(c *gin.Context) {
 	 ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	 defer cancel()
@@ -189,7 +189,7 @@ func UpdateMedicines(c *gin.Context) {
 
 // @Summary      Deletes Medicines in the Database.
 // @Description  Deletes the Medicine in the Database using their email.
-// @Tags         accounts
+// @Tags         /bookkeeping/medicines
 // @Accept       json
 // @Produce      json
 // @Param        diseaseName  path      string  true  "ID of the Disease (currently its name)"
@@ -197,7 +197,7 @@ func UpdateMedicines(c *gin.Context) {
 // @Failure      400          {object}  dtos.HTTPError
 // @Failure      404          {object}  dtos.HTTPError
 // @Failure      500          {object}  dtos.HTTPError
-// @Router       /users/medicines/{name} [delete]
+// @Router       /bookkeeping/medicines/{name} [delete]
 func DeleteMedicines(c *gin.Context) {
 	 ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	 defer cancel()

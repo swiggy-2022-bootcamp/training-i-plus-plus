@@ -40,6 +40,22 @@ definitions:
       title:
         type: string
     type: object
+  models.Disease:
+    properties:
+      medicines:
+        description: Medicines that can cure this disease
+        items:
+          type: string
+        type: array
+      name:
+        description: Name of this disease
+        type: string
+      symptoms:
+        description: Symptoms of this disease
+        items:
+          type: string
+        type: array
+    type: object
 info:
   contact: {}
 paths:
@@ -76,7 +92,7 @@ paths:
             $ref: '#/definitions/dtos.HTTPError'
       summary: Create a Client
       tags:
-      - accounts
+      - /users/clients
   /users/clients/{email}:
     delete:
       consumes:
@@ -94,7 +110,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Client'
+            type: integer
         "400":
           description: Bad Request
           schema:
@@ -109,7 +125,7 @@ paths:
             $ref: '#/definitions/dtos.HTTPError'
       summary: Deletes Clients in the Database.
       tags:
-      - accounts
+      - /users/clients
     get:
       consumes:
       - application/json
@@ -141,7 +157,7 @@ paths:
             $ref: '#/definitions/dtos.HTTPError'
       summary: Get a Client from Database.
       tags:
-      - accounts
+      - /users/clients
     put:
       consumes:
       - application/json
@@ -153,6 +169,40 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dtos.HTTPError'
+      summary: Updates Clients in the Database.
+      tags:
+      - /users/clients
+  /users/experts/diagnose:
+    post:
+      consumes:
+      - application/json
+      description: Sends a Disease Diagnosis using Kafka to the bookkeeping_service
+      parameters:
+      - description: The Diagnosed Disease
+        in: body
+        name: disease
+        required: true
+        schema:
+          $ref: '#/definitions/models.Disease'
       produces:
       - application/json
       responses:
@@ -172,7 +222,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/dtos.HTTPError'
-      summary: Updates Clients in the Database.
+      summary: Make Disease Diagnosis in the Database by expert.
       tags:
-      - accounts
+      - /users/experts/diagnose
 swagger: "2.0"
