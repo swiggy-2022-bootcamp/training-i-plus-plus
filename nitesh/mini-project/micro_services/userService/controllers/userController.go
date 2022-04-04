@@ -88,8 +88,6 @@ func Signup() gin.HandlerFunc {
 		log.Info("user validation done")
 
 		count, err := userCollection.CountDocuments(ctx, bson.M{"email": user.Email})
-		log.WithFields(logrus.Fields{"count": count, "error": err.Error(), "email": user.Email}).
-			Debug("response of count document of current user")
 
 		defer cancel()
 		if err != nil {
@@ -157,7 +155,7 @@ func Signup() gin.HandlerFunc {
 			http.StatusOK,
 			gin.H{"insertedNumber": insertedNumber, "Token": user.Token},
 		)
-		go gokafka.WriteMsgToKafka("greetings", user)
+		go gokafka.WriteMsgToKafka("email", user)
 		log.WithFields(logrus.Fields{"insertedNumber": insertedNumber}).
 			Info("user successfully registered")
 	}

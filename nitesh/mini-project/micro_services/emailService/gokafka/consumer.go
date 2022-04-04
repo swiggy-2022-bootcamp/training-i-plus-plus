@@ -62,13 +62,12 @@ func EmailConsumer() {
 			log.WithFields(logrus.Fields{
 				"error": err.Error(),
 			}).Info("not able to read message")
-			return
+		} else {
+			log.WithFields(logrus.Fields{
+				"user": user,
+			}).Info("User details fetched")
+
+			go controllers.SendEmail(user.Email, user.Name)
 		}
-
-		log.WithFields(logrus.Fields{
-			"user": user,
-		}).Info("User details fetched")
-
-		go controllers.SendEmail(user.Email, user.Name)
 	}
 }

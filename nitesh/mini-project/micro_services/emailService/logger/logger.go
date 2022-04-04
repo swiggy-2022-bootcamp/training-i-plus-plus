@@ -29,7 +29,7 @@ func GetLogger() *logrus.Logger {
 				src, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 				if err != nil {
 					fmt.Print(err.Error())
-					fmt.Print("unable to create user.log file")
+					fmt.Printf("unable to create %s file", LOG_FILE)
 				}
 
 				multiWriter := io.MultiWriter(os.Stdout, src)

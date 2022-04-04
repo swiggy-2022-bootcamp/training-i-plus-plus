@@ -2,6 +2,7 @@ package main
 
 import (
 	"invoiceService/docs"
+	"invoiceService/gokafka"
 	"invoiceService/logger"
 	"invoiceService/middleware"
 	"invoiceService/routes"
@@ -36,5 +37,8 @@ func main() {
 	log.WithFields(logrus.Fields{"Port": PORT}).Info("server listening on this port")
 
 	router := setupRouter()
+
+	go gokafka.InvoiceConsumer()
+
 	router.Run(":" + PORT)
 }

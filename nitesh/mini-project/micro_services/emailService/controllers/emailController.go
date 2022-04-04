@@ -38,7 +38,7 @@ func SendEmail(receiverEmail, userName string) {
 
 	err := smtp.SendMail(HOST+":"+SMTP_DEFAULT_PORT, auth, FROM, toList, body)
 	if err != nil {
-		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Not able to send email")
 	}
 
 	log.WithFields(logrus.Fields{"userName": userName, "email": receiverEmail}).Info("Mail sent!")

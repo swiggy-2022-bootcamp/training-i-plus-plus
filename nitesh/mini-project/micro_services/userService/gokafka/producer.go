@@ -12,7 +12,7 @@ import (
 )
 
 var brokers = []string{
-	"localhost:9092",
+	"localhost:9091",
 }
 var log logrus.Logger = *logger.GetLogger()
 
@@ -47,7 +47,8 @@ func WriteMsgToKafka(topic string, msg interface{}) (bool, error) {
 	})
 
 	if err != nil {
-		log.WithFields(logrus.Fields{"msg": msg}).Error("could not write message ")
+		log.WithFields(logrus.Fields{"error": err.Error(), "msg": msg}).
+			Error("could not write message ")
 		return false, err
 	}
 
