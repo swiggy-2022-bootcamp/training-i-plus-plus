@@ -37,7 +37,7 @@
 - [x] User Management
 - [x] Mongodb usage
 - [x] Swagger UI
-- [] Sonarcube
+- [ ] Sonarcube
 
 # Notification Service
 
