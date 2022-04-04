@@ -13,7 +13,7 @@
 - [x] Use grpc for remote procdure call
 - [x] Added tests
 - [x] Added Stripe Payment Gateway(testing)
-- [ ] Sonarqube 
+- [x] Sonarqube 
 
 
 ## Railyatra
@@ -43,15 +43,97 @@
 <br>
 
 ## User Service
-![Optiona Text](new1.svg)
+![Optional Text](new1.svg)
 
 
 <br>
 
 ## Auth Service
-![Optiona Text](new2.svg)
+![Optional Text](new2.svg)
 
 <br>
 
 ## Payment Service
-![Optiona Text](new3.svg)
+![Optional Text](new3.svg)
+
+
+# User Service
+User Service is responsible to do CRUD operations on "user" entity. It is also responsible for reciveing ticket booking input from "clients".
+
+### Routes
+| Method | Route                           |   Description                                |
+|  ---   | ---                             | ---                                          |
+| POST   |   /user                         |   Create a new user                          |
+| GET    |   /user/:userid                 |   Read user info given userid                |
+| PUT    |   /user/:userid                 |   Update user info given userid              |
+| DELETE |   /user/:userid                 |   Delete user info given userid              |  
+| GET    |   /users                        |   Get All Users                              |
+| GET    |   /user/viewtrains              |   Get info about trains                      |
+| GET    |   /user/checktrain              |   Check availibility of train given train id |
+| POST   |   /bookedticket                 |   Book Ticket                                |
+| GET    |   /bookedticket/:bookedticketid |   Get Booked Ticket                          |
+| DELETE |   /bookedticket/:bookedticketid |   Cancel Booked Ticket                       |
+
+
+# Admin Service
+Admin Service is responsible to do CRUD operations on "admin" entity. It is also responsible for adding train entity and avaliable ticket entity
+
+### Routes
+| Method | Route                              |   Description                                 |
+|  ---   | ---                                |  ---                                          |
+| POST   |   /admin                           |   Create a new admin                          |
+| GET    |   /admin/:adminid                  |   Read admin info given adminid               |
+| PUT    |   /admin/:adminid                  |   Update admin info given adminid             |
+| DELETE |   /admin/:adminid                  |   Delete admin info given adminid             |  
+| GET    |   /admins                          |    Get All admins                             |
+| POST   |   /train                           |   Create a new train                          |
+| GET    |   /train/:trainid                  |   Read train info given trainid               |
+| PUT    |   /train/:trainid                  |   Update train info given trainid             |
+| DELETE |   /train/:trainid                  |   Delete train info given trainid             |  
+| GET    |   /admin/trains                    |   Get All trains                              |
+| POST   |   /availticket                     |   Create a new availticket                    |
+| GET    |   /availticket/:availticketid      |   Read availticket info given availticketid   |
+| PUT    |   /availticket/:availticketid      |   Update availticket info given availticketid |
+| DELETE |   /availticket/:availticketid      |   Delete availticket info given availticketid |  
+| GET    |   /availtickets                    |   Get All availtickets                        |
+
+### Grpc
+| Method               |   Description                                                                               |
+| ---                  |   ---                                                                                       | 
+| ChecKAvailticket     |   Recieve train id and checks whether corresponding avail ticket entity exist and checks whether requested number of seats exists  |
+
+
+
+# Auth Service
+Auth service is responsible fo login, registration and jwt authenticaton(grpc)
+
+### Routes
+| Method | Route                           |   Description                                |
+|  ---   | ---                             | ---                                          |
+| POST   |   /user                         |   Create a new user                          |
+| GET    |   /user/:userid                 |   Read user info given userid                |
+| PUT    |   /user/:userid                 |   Update user info given userid              |
+| DELETE |   /user/:userid                 |   Delete user info given userid              |  
+| GET    |   /users                        |   Get All Users                              |
+| GET    |   /user/viewtrains              |   Get info about trains                      |
+| GET    |   /user/checktrain              |   Check availibility of train given train id |
+| POST   |   /bookedticket                 |   Book Ticket                                |
+| GET    |   /bookedticket/:bookedticketid |   Get Booked Ticket                          |
+| DELETE |   /bookedticket/:bookedticketid |   Cancel Booked Ticket                       |
+
+
+### Grpc
+| Method       |   Description                                                         |
+| ---          |   ---                                                                 |
+| Authenticate |   Receives auth token, verifies it and return confirmation            |
+
+
+# Payment Service
+Payment Service Responsible for Recieving payment request from other service(mainly user service)
+
+### Grpc
+| Method       |   Description                                                                               |
+| ---          |   ---                                                                                       | 
+| Charge       |   Recives amount,card num and communicate with stripe payment gateway and returns response  |
+
+
