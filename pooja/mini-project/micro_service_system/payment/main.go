@@ -14,5 +14,5 @@ func main() {
 	database.DatabaseConn()
 	log.Info("Connected to Payment db")
 	routes.PaymentRoutes(router)
-	router.Run(":6005")
+	router.Run(":6004")
 }

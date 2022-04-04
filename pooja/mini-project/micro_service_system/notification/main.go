@@ -16,5 +16,5 @@ func main() {
 
 	go kafka.PaymentDetails()
 	go kafka.TicketDetails()
-	router.Run("localhost:6006")
+	router.Run("localhost:6005")
 }
