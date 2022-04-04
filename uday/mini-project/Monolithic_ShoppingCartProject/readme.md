@@ -9,7 +9,7 @@ But, In this project User buys services provided by employees like Plumber, Pain
 Architecture Diagram
 ====================
 </br>
- <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/ServiceProvider/diagram.PNG" width="800" height="500">
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aserviceProvider/diagram.PNG" width="800" height="500">
  </br>
 
 Definitions:
