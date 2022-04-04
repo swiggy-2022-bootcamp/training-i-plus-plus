@@ -16,10 +16,14 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 
 ### Gin and Logs
 
-| ![Gin Logs of different Levels](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/logs.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/logs.png) |
+| ![Gin Logs of different Levels](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/logs.png) |
 | --- |
 
-### Swagger
+### Mongo DB
+
+| ![Mongo DB Collection](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/mongo_collection.png) |
+
+### Swagger UI
 
 | [![Bookkeeping Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Users Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png) |
 | --- | --- |
