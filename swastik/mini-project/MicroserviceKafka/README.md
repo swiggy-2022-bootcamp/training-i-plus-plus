@@ -1,6 +1,6 @@
-# Train Reservation System
+### Train Reservation System
 
-Features
+# Features
 
 - Register new User
 - Login User
