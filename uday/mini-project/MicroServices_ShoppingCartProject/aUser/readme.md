@@ -12,27 +12,34 @@ User   : Customer who buys a service
 Expert : Person who sells his service (like Carpentry, plumber, painter)  to the User
 
 -------------------------------------------------------
-
-Features included in this Project:
-
-1) Authentication and Authorisation
-2) Book Expert to get services
-3) Rating and Reviewing Expert
-4) Signin and Signup
-5) System : Automatic Expert Suggestion to the User
-6) System : An algorithm is implemented based on which it favours the Expert with good rating to get more work
-7) Payment after work is completed  //  Since there is no GUI it might be impossible but will try
+Technologies/tools Used:
+=================
+    Golang
+    gRPC
+    SwaggerUI
+    Microservices
+    smtp.mail
+    MongoDB
+    Gin
+    JWT
 
 -------------------------------------------------------
+Features included in this Project:
+=================================
+1) Authentication and Authorisation
+2) Book Service
+3) Rating and Reviewing Service
+4) SignUp
+5) SignIn through JWT
+6) MongoDB for storing Data
+7) System : Automatic Expert Suggestion to the User
+8) System : Sending Mail to User on Service confirmation
+9) Request cancellation and Request Waiting functionalities
+10) Payment after work is completed  //  Since there is no GUI it might be impossible but will try
+11) Filter Service Providers based on their rating
+12) CRUD of Service Providers in DB
+-------------------------------------------------------
 
-Technologies Used:
-
-1) GoLang for Backend server
-2) Gin for routing
-3) MongoDB for Database
-
-
---------------------------------------------------------
 
 API Requests:
 =============
