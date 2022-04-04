@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Swagger TrainTicketLelo Trains API",
-        "title": "Swagger TrainTicketLelo Trains API",
+        "description": "Swagger TrainTicketLelo Trains Service",
+        "title": "Swagger TrainTicketLelo Trains Service",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Uttej Immadi",

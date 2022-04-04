@@ -340,8 +340,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8003",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Swagger TrainTicketLelo Trains API",
-	Description:      "Swagger TrainTicketLelo Trains API",
+	Title:            "Swagger TrainTicketLelo Trains Service",
+	Description:      "Swagger TrainTicketLelo Trains Service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

@@ -22,12 +22,12 @@ info:
     email: immadiuttej@gmail.com
     name: Uttej Immadi
     url: http://www.swagger.io/support
-  description: Swagger TrainTicketLelo Trains API
+  description: Swagger TrainTicketLelo Trains Service
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger TrainTicketLelo Trains API
+  title: Swagger TrainTicketLelo Trains Service
   version: "1.0"
 paths:
   /trains:
