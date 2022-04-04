@@ -1,0 +1,217 @@
+definitions:
+  model.Login:
+    properties:
+      password:
+        type: string
+      userName:
+        type: string
+    type: object
+  model.User:
+    properties:
+      address:
+        type: string
+      fullname:
+        type: string
+      id:
+        type: string
+      password:
+        type: string
+      role:
+        type: integer
+      userName:
+        type: string
+    type: object
+host: localhost:8001
+info:
+  contact:
+    email: immadiuttej@gmail.com
+    name: Uttej Immadi
+    url: http://www.swagger.io/support
+  description: Swagger TrainTicketLelo Users API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger TrainTicketLelo Users API
+  version: "1.0"
+paths:
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Register a user/admin by providing fullname, username, email, password
+        and role
+      parameters:
+      - description: Add All The Details
+        in: body
+        name: Signup
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Signup
+      tags:
+      - User
+  /user/:userId:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a User by providing the userid
+      parameters:
+      - description: unique user id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Delete A User
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: Get User details by providing the userid
+      parameters:
+      - description: unique user id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch A User
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Update a User's details by providing the userid
+      parameters:
+      - description: unique user id
+        in: body
+        name: UserId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Update A User
+      tags:
+      - user
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get All Users details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/model.User'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch All Users
+      tags:
+      - User
+  /users/login:
+    post:
+      consumes:
+      - application/json
+      description: Sign in a user/admin by providing username, password
+      parameters:
+      - description: username and password
+        in: body
+        name: Login
+        required: true
+        schema:
+          $ref: '#/definitions/model.Login'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Login
+      tags:
+      - User
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

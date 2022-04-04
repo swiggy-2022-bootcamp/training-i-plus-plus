@@ -1,0 +1,217 @@
+definitions:
+  models.Train:
+    properties:
+      availableTickets:
+        type: integer
+      destination:
+        type: string
+      id:
+        type: string
+      price:
+        type: integer
+      source:
+        type: string
+      trainName:
+        type: string
+      trainNumber:
+        type: string
+    type: object
+host: localhost:8003
+info:
+  contact:
+    email: immadiuttej@gmail.com
+    name: Uttej Immadi
+    url: http://www.swagger.io/support
+  description: Swagger TrainTicketLelo Trains API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger TrainTicketLelo Trains API
+  version: "1.0"
+paths:
+  /trains:
+    get:
+      consumes:
+      - application/json
+      description: Get All Trains & the details
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Train'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch All Trains
+      tags:
+      - Train
+    post:
+      consumes:
+      - application/json
+      description: Create a train by providing the necessary details.
+      parameters:
+      - description: id will be populated Automatically
+        in: body
+        name: Train
+        required: true
+        schema:
+          $ref: '#/definitions/models.Train'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Create a Train
+      tags:
+      - Train
+  /trains/:trainId:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a Train by providing the trainid
+      parameters:
+      - description: unique train id
+        in: body
+        name: TrainId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Delete A Train
+      tags:
+      - Train
+    get:
+      consumes:
+      - application/json
+      description: Get Train details by providing the trainid
+      parameters:
+      - description: unique train id
+        in: body
+        name: TrainId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch A Train
+      tags:
+      - Train
+    put:
+      consumes:
+      - application/json
+      description: Update Train details by providing the trainid
+      parameters:
+      - description: unique train id
+        in: body
+        name: TrainId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Train'
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Update A Train
+      tags:
+      - Train
+  /trains/:trainId/:updateCount:
+    post:
+      consumes:
+      - application/json
+      description: Update the tickets for a train by providing train id and ticket
+        count. Count can be a positive or negative integer
+      parameters:
+      - description: unique train id
+        in: body
+        name: TrainId
+        required: true
+        schema:
+          type: string
+      - description: count of tickets
+        in: body
+        name: TicketCount
+        required: true
+        schema:
+          type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Update the count of tickets for a train
+      tags:
+      - Train
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

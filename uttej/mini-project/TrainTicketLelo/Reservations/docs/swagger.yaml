@@ -1,0 +1,155 @@
+definitions:
+  models.Reservation:
+    properties:
+      amount:
+        type: number
+      departureDate:
+        type: string
+      id:
+        type: string
+      purchaseDate:
+        type: string
+      status:
+        type: string
+      trainIDs:
+        items:
+          type: string
+        type: array
+      userId:
+        type: string
+    type: object
+host: localhost:8002
+info:
+  contact:
+    email: immadiuttej@gmail.com
+    name: Uttej Immadi
+    url: http://www.swagger.io/support
+  description: Swagger TrainTicketLelo Reservations Service
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Swagger TrainTicketLelo Reservations Service
+  version: "1.0"
+paths:
+  /:userId/reservations:
+    get:
+      consumes:
+      - application/json
+      description: Get All Tickets for a user by providing the id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Reservation'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Fetch All Tickets
+      tags:
+      - Reservation
+  /reservation:
+    post:
+      consumes:
+      - application/json
+      description: Buy a Ticket by providing the details
+      parameters:
+      - description: user unique id
+        in: body
+        name: Ticket
+        required: true
+        schema:
+          $ref: '#/definitions/models.Reservation'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Buy a Ticket
+      tags:
+      - Reservation
+  /reservation/:ticketId/cancel:
+    post:
+      consumes:
+      - application/json
+      description: Cancel a Ticket that you've reserved
+      parameters:
+      - description: unique ticket id
+        in: body
+        name: TicketId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Cancel a Ticket
+      tags:
+      - Reservation
+  /reservation/:ticketId/payment:
+    post:
+      consumes:
+      - application/json
+      description: Pay For a ticket that you've reserved
+      parameters:
+      - description: unique ticket id
+        in: body
+        name: TicketId
+        required: true
+        schema:
+          type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            type: number
+        "500":
+          description: Internal Server Error
+          schema:
+            type: number
+      summary: Pay For a Ticket
+      tags:
+      - Reservation
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
