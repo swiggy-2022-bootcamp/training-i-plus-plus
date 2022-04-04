@@ -68,7 +68,7 @@ func ReserveSeat(c *gin.Context) {
 	if !ok {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": fmt.Sprintf("can not convert to oid %v", err)})
 	}
-	if err := reservationService.MakeReservation(oid, objID, -1); err != nil {
+	if err := reservationService.UpdateSeatMatrix(oid, objID, -1); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}
@@ -129,7 +129,7 @@ func CancelReservation(c *gin.Context) {
 		return
 	}
 
-	if err := reservationService.MakeReservation(ReservationID, objID, 1); err != nil {
+	if err := reservationService.UpdateSeatMatrix(ReservationID, objID, 1); err != nil {
 		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		return
 	}

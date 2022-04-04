@@ -1,0 +1,4 @@
+2022/04/04 16:03:14 writer.go:1094: writing 1 messages to reservations (partition: 0)
+2022/04/04 16:04:09 writer.go:1094: writing 1 messages to reservations (partition: 0)
+2022/04/04 16:11:49 writer.go:1094: writing 1 messages to reservations (partition: 0)
+2022/04/04 16:12:20 writer.go:1094: writing 1 messages to reservations (partition: 0)

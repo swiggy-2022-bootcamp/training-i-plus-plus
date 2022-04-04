@@ -36,7 +36,7 @@ func Consume(ctx context.Context) {
 		}
 		// after receiving the message, log its value
 		//fmt.Println("received: ", string(msg.Value))
-
+		// Update seat Matrix
 		t := trainservice.TrainData{}
 		json.Unmarshal(msg.Value, &t)
 

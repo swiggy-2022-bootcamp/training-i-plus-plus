@@ -14,7 +14,7 @@ func main() {
 
 	ctx := context.Background()
 
-	kf.Consume(ctx)
+	go kf.Consume(ctx)
 
 	router.ApplyRoutes().Run("localhost:8081")
 }

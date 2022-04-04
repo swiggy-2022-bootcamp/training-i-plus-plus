@@ -15,6 +15,10 @@ func NewJWTManager(secretKey string, tokenDuration time.Duration) {
 	Manager = &JWTManager{secretKey, tokenDuration}
 }
 
+func init() {
+	NewJWTManager("Ishan", time.Hour*50)
+}
+
 func (manager *JWTManager) Generate(user *user.User) (string, error) {
 	claims := UserClaims{
 		StandardClaims: jwt.StandardClaims{
