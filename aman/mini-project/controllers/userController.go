@@ -148,7 +148,7 @@ func Logout() gin.HandlerFunc {
 		}})
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order item was not updated")
+			msg := fmt.Sprintf("Couldn't log out")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
