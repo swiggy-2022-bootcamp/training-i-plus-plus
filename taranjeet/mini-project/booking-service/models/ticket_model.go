@@ -24,9 +24,14 @@ type Ticket struct {
 	Source        string             `json:"source,omitempty"`
 	Destination   string             `json:"destination,omitempty"`
 	Amount        int                `json:"amount,omitempty"`
-	SeatNumbers   []int              `json:"seatNumbers,omitempty"`
-	Distance      int                `json:"distance,omitempty"`
-	Quota         Quota              `json:"quota,omitempty"`
+	NumberOfSeats int                `json:"number_of_seats,omitempty"`
 	TrainNumber   int                `json:"trainId,omitempty"`
 	TicketStatus  TicketStatus       `json:"ticketStatus,omitempty"`
+}
+
+type TicketRequest struct {
+	PassengerName []string `json:"passengerName,omitempty"`
+	Source        string   `json:"source,omitempty"`
+	Destination   string   `json:"destination,omitempty"`
+	TrainNumber   int      `json:"trainId,omitempty"`
 }

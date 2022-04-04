@@ -2,8 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/taran1515/crud/configs"
-	"github.com/taran1515/crud/routes"
+	"github.com/taran1515/crud/kafka"
 )
 
 func main() {
@@ -16,10 +15,8 @@ func main() {
 
 	})
 
-	configs.ConnectDb()
+	router.Run("localhost:8004")
 
-	routes.TrainRoutes(router)
-
-	router.Run("localhost:8001")
+	kafka.Consume()
 
 }

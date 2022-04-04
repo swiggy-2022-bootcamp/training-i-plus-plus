@@ -39,14 +39,15 @@ func CreateTrain() gin.HandlerFunc {
 		//var availableSeat int[] = []
 
 		newTrain := models.Train{
-			TrainId:        primitive.NewObjectID(),
-			Name:           train.Name,
-			Source:         train.Source,
-			Destination:    train.Destination,
-			ArrivalTime:    train.ArrivalTime,
-			DepartureTime:  train.DepartureTime,
-			AvailableSeats: train.AvailableSeats,
-			ReservedSeats:  train.ReservedSeats,
+			TrainId:       primitive.NewObjectID(),
+			Name:          train.Name,
+			Source:        train.Source,
+			Destination:   train.Destination,
+			ArrivalTime:   train.ArrivalTime,
+			DepartureTime: train.DepartureTime,
+			NumberOfSeats: train.NumberOfSeats,
+			ReservedSeats: train.ReservedSeats,
+			TrainNumber:   train.TrainNumber,
 		}
 
 		fmt.Println("train", newTrain)
@@ -176,5 +177,34 @@ func GetAllTrains() gin.HandlerFunc {
 		c.JSON(http.StatusOK,
 			responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": trains}},
 		)
+	}
+}
+
+func SearchTrain() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var searchTrain models.SearchTrain
+		var train models.Train
+		defer cancel()
+
+		//validate the request body
+		if err := c.BindJSON(&searchTrain); err != nil {
+			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		//use the validator library to validate required fields
+		if validationErr := validate.Struct(&searchTrain); validationErr != nil {
+			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			return
+		}
+
+		err := trainCollection.FindOne(ctx, bson.M{"source": searchTrain.Source, "destination": searchTrain.Destination}).Decode(&train)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		c.JSON(http.StatusOK, responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": train}})
 	}
 }

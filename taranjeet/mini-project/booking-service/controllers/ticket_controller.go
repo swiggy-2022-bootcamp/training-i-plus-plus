@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/taran1515/crud/configs"
+	"github.com/taran1515/crud/kafka"
 	"github.com/taran1515/crud/models"
 	"github.com/taran1515/crud/responses"
 	"go.mongodb.org/mongo-driver/bson"
@@ -25,13 +26,13 @@ func BookTicket() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&ticket); err != nil {
-			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := validate.Struct(&ticket); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -43,21 +44,22 @@ func BookTicket() gin.HandlerFunc {
 			PassengerName: ticket.PassengerName,
 			Source:        ticket.Source,
 			Destination:   ticket.Destination,
-			Amount:        ticket.Amount,
-			SeatNumbers:   ticket.SeatNumbers,
-			Distance:      ticket.Distance,
-			Quota:         ticket.Quota,
+			Amount:        1000,
+			NumberOfSeats: len(ticket.PassengerName),
 			TrainNumber:   ticket.TrainNumber,
 			TicketStatus:  ticketStatus,
 		}
 
 		result, err := ticketCollection.InsertOne(ctx, newTicket)
+
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusCreated, responses.TrainResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
+		go kafka.Produce("test")
+
+		c.JSON(http.StatusCreated, responses.TicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
 }
 
@@ -72,11 +74,11 @@ func GetATicket() gin.HandlerFunc {
 
 		err := ticketCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&ticket)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
-		c.JSON(http.StatusOK, responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": ticket}})
+		c.JSON(http.StatusOK, responses.TicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": ticket}})
 	}
 }
 
@@ -90,13 +92,13 @@ func CancelBooking() gin.HandlerFunc {
 
 		//validate the request body
 		if err := c.BindJSON(&ticket); err != nil {
-			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
 		//use the validator library to validate required fields
 		if validationErr := validate.Struct(&ticket); validationErr != nil {
-			c.JSON(http.StatusBadRequest, responses.TrainResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
+			c.JSON(http.StatusBadRequest, responses.TicketResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data": validationErr.Error()}})
 			return
 		}
 
@@ -106,7 +108,7 @@ func CancelBooking() gin.HandlerFunc {
 		update := bson.M{"TicketStatus": ticketStatus}
 		result, err := ticketCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 			return
 		}
 
@@ -115,12 +117,12 @@ func CancelBooking() gin.HandlerFunc {
 		if result.MatchedCount == 1 {
 			err := ticketCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedTrain)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				c.JSON(http.StatusInternalServerError, responses.TicketResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 		}
 
-		c.JSON(http.StatusOK, responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTrain}})
+		c.JSON(http.StatusOK, responses.TicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTrain}})
 	}
 
 }
