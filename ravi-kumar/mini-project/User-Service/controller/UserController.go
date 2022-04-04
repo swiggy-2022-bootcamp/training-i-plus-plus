@@ -21,6 +21,7 @@ func init() {
 }
 
 func LogInUser(c *gin.Context) {
+	service.InfoLogger.Println("User login attempted. Client IP: ", c.ClientIP())
 	var logInDTO mockdata.LogInDTO
 	json.NewDecoder(c.Request.Body).Decode(&logInDTO)
 	jwtToken, error := userService.LogInUser(logInDTO)
@@ -28,22 +29,26 @@ func LogInUser(c *gin.Context) {
 	if error != nil {
 		userError, ok := error.(*errors.UserError)
 		if ok {
+			service.ErrorLogger.Println(userError.ErrorMessage+" Client IP: ", c.ClientIP())
 			c.JSON(userError.Status, userError.ErrorMessage)
 			return
 		} else {
-			fmt.Println("userError casting error in GetUserById")
+			service.ErrorLogger.Println("userError casting error in GetUserById")
 			return
 		}
 	}
+	service.InfoLogger.Println("Sucessful login. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, jwtToken)
 }
 
 func CreateUser(c *gin.Context) {
+	service.InfoLogger.Println("User registration attempted. Client IP: ", c.ClientIP())
 	var newUser mockdata.User
 	json.NewDecoder(c.Request.Body).Decode(&newUser)
 
 	insertedId, jwtToken, err := userService.CreateUser(newUser)
 	if err != nil {
+		service.ErrorLogger.Println(err.Error()+" Client IP: ", c.ClientIP())
 		c.JSON(http.StatusFailedDependency, err)
 		return
 	}
@@ -55,28 +60,33 @@ func CreateUser(c *gin.Context) {
 	}
 
 	var responseBody ResponseBody = ResponseBody{insertedId, jwtToken}
-
+	service.InfoLogger.Println("Sucessful registration. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, responseBody)
 }
 
 func GetAllUsers(c *gin.Context) {
+	service.InfoLogger.Println("Get all users attempted. Client IP: ", c.ClientIP())
 	//access: only admin
 	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
 	if mockdata.Role(acessorUserRole) != mockdata.Admin {
+		service.ErrorLogger.Println(errors.AccessDenied().ErrorMessage+" Client IP: ", c.ClientIP())
 		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
 		return
 	}
 	users := userService.GetAllUsers()
+	service.InfoLogger.Println("Sucessful Get all users. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, users)
 }
 
 func GetUserById(c *gin.Context) {
+	service.InfoLogger.Println("Get User By Id attempted. Client IP: ", c.ClientIP())
 	//access: admin or the user itself
 	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
 	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
 
 	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		service.ErrorLogger.Println(errors.AccessDenied().ErrorMessage+" Client IP: ", c.ClientIP())
 		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
 		return
 	}
@@ -93,16 +103,19 @@ func GetUserById(c *gin.Context) {
 			return
 		}
 	}
+	service.InfoLogger.Println("Sucessful Get User By Id. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, userRetrieved)
 }
 
 func UpdateUserById(c *gin.Context) {
+	service.InfoLogger.Println("Update User By Id attempted. Client IP: ", c.ClientIP())
 	//access: admin or the user itself
 	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
 	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
 
 	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		service.ErrorLogger.Println(errors.AccessDenied().ErrorMessage+" Client IP: ", c.ClientIP())
 		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
 		return
 	}
@@ -126,17 +139,21 @@ func UpdateUserById(c *gin.Context) {
 			return
 		}
 	}
+	service.InfoLogger.Println("Sucessful Update User By Id. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, userRetrieved)
 
 }
 
 func DeleteUserbyId(c *gin.Context) {
+	service.InfoLogger.Println("Delete User By Id attempted. Client IP: ", c.ClientIP())
+
 	//access: admin or the user itself
 	acessorUserRole, _ := strconv.Atoi(c.Param("acessorUserRole"))
 	acessorUserId := c.Param("acessorUserId")
 	userId := c.Param("userId")
 
 	if !(mockdata.Role(acessorUserRole) == mockdata.Admin || acessorUserId == userId) {
+		service.ErrorLogger.Println(errors.AccessDenied().ErrorMessage+" Client IP: ", c.ClientIP())
 		c.JSON(http.StatusUnauthorized, errors.AccessDenied())
 		return
 	}
@@ -153,6 +170,7 @@ func DeleteUserbyId(c *gin.Context) {
 			return
 		}
 	}
+	service.InfoLogger.Println("Sucessful Delete User By Id attempted. Client IP: ", c.ClientIP())
 	c.JSON(http.StatusOK, successMessage)
 }
 

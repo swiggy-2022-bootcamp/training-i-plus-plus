@@ -1,0 +1,42 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /users                    --> User-Service/controller.CreateUser (4 handlers)
+[GIN-debug] POST   /users/login              --> User-Service/controller.LogInUser (4 handlers)
+[GIN-debug] GET    /users                    --> User-Service/controller.GetAllUsers (4 handlers)
+[GIN-debug] GET    /users/:userId            --> User-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] PUT    /users/:userId            --> User-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] DELETE /users/:userId            --> User-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] GET    /swaggerui/*filepath      --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (4 handlers)
+[GIN-debug] HEAD   /swaggerui/*filepath      --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :5004
+INFO: 2022/04/04 18:48:17 UserController.go:45: User registration attempted. Client IP:  ::1
+INFO: 2022/04/04 18:48:19 UserController.go:63: Sucessful registration. Client IP:  ::1
+[GIN] 2022/04/04 - 18:48:19 | 200 |    1.6656816s |             ::1 | POST     "/users"
+INFO: 2022/04/04 18:48:40 UserController.go:111: Update User By Id attempted. Client IP:  ::1
+INFO: 2022/04/04 18:48:40 UserController.go:142: Sucessful Update User By Id. Client IP:  ::1
+[GIN] 2022/04/04 - 18:48:40 | 200 |     135.309ms |             ::1 | PUT      "/users/624af01b98271165d7861271"
+INFO: 2022/04/04 18:48:51 UserController.go:82: Get User By Id attempted. Client IP:  ::1
+INFO: 2022/04/04 18:48:51 UserController.go:106: Sucessful Get User By Id. Client IP:  ::1
+[GIN] 2022/04/04 - 18:48:51 | 200 |     65.5703ms |             ::1 | GET      "/users/624af01b98271165d7861271"
+INFO: 2022/04/04 18:48:55 UserController.go:68: Get all users attempted. Client IP:  ::1
+INFO: 2022/04/04 18:48:55 UserController.go:77: Sucessful Get all users. Client IP:  ::1
+[GIN] 2022/04/04 - 18:48:55 | 200 |     33.5376ms |             ::1 | GET      "/users"
+INFO: 2022/04/04 18:50:32 UserController.go:82: Get User By Id attempted. Client IP:  127.0.0.1
+INFO: 2022/04/04 18:50:32 UserController.go:106: Sucessful Get User By Id. Client IP:  127.0.0.1
+[GIN] 2022/04/04 - 18:50:32 | 200 |     56.6834ms |       127.0.0.1 | GET      "/users/6231fc50c7a454ef0f24276a"
+[GIN-debug] redirecting request 301: /users --> /users
+INFO: 2022/04/04 18:52:00 UserController.go:68: Get all users attempted. Client IP:  127.0.0.1
+INFO: 2022/04/04 18:52:00 UserController.go:77: Sucessful Get all users. Client IP:  127.0.0.1
+[GIN] 2022/04/04 - 18:52:00 | 200 |     27.4665ms |       127.0.0.1 | GET      "/users"
+INFO: 2022/04/04 18:52:38 UserController.go:24: User login attempted. Client IP:  ::1
+INFO: 2022/04/04 18:52:38 UserController.go:40: Sucessful login. Client IP:  ::1
+[GIN] 2022/04/04 - 18:52:38 | 200 |     85.6255ms |             ::1 | POST     "/users/login"
+INFO: 2022/04/04 18:52:49 UserController.go:82: Get User By Id attempted. Client IP:  127.0.0.1
+INFO: 2022/04/04 18:52:49 UserController.go:106: Sucessful Get User By Id. Client IP:  127.0.0.1
+[GIN] 2022/04/04 - 18:52:49 | 200 |      68.666ms |       127.0.0.1 | GET      "/users/6231fc50c7a454ef0f24276a"

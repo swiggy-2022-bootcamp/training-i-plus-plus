@@ -1,0 +1,33 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] POST   /catalog                  --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] GET    /catalog                  --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] GET    /catalog/:productId       --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] PUT    /catalog/:productId       --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] DELETE /catalog/:productId       --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] POST   /catalog/:productId/:updateCount --> Inventory-Service/middleware.IfAuthorized.func1 (4 handlers)
+[GIN-debug] GET    /swaggerui/*filepath      --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (4 handlers)
+[GIN-debug] HEAD   /swaggerui/*filepath      --> github.com/gin-gonic/gin.(*RouterGroup).createStaticHandler.func1 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :5002
+[GIN] 2022/04/04 - 18:33:16 | 404 |    2.9031229s |       127.0.0.1 | POST     "/catalog/6243296ad6aed7d832e866c1/-1"
+[GIN] 2022/04/04 - 18:34:36 | 200 |    147.6733ms |       127.0.0.1 | POST     "/catalog/62432980d6aed7d832e866c2/-1"
+[GIN] 2022/04/04 - 18:34:37 | 200 |    151.0885ms |       127.0.0.1 | POST     "/catalog/62432992d6aed7d832e866c3/-1"
+[GIN] 2022/04/04 - 18:34:44 | 200 |    140.0031ms |       127.0.0.1 | POST     "/catalog/62432980d6aed7d832e866c2/-1"
+[GIN] 2022/04/04 - 18:34:45 | 200 |     1.188953s |       127.0.0.1 | POST     "/catalog/62432992d6aed7d832e866c3/-1"
+[GIN] 2022/04/04 - 18:36:44 | 200 |    1.1302359s |       127.0.0.1 | POST     "/catalog/62432992d6aed7d832e866c3/-1"
+[GIN] 2022/04/04 - 18:36:47 | 200 |     1.201752s |       127.0.0.1 | POST     "/catalog/62432992d6aed7d832e866c3/-1"
+[GIN] 2022/04/04 - 18:42:02 | 400 |    1.0516403s |       127.0.0.1 | POST     "/catalog/624329b8d6aed7d832e866c4/-1"
+[GIN] 2022/04/04 - 18:42:10 | 400 |    1.0435478s |       127.0.0.1 | POST     "/catalog/624329b8d6aed7d832e866c4/-1"
+[GIN] 2022/04/04 - 18:42:12 | 400 |     1.085007s |       127.0.0.1 | POST     "/catalog/624329b8d6aed7d832e866c4/-1"
+[GIN] 2022/04/04 - 18:49:06 | 200 |     77.8705ms |             ::1 | GET      "/catalog"
+[GIN] 2022/04/04 - 18:49:13 | 404 |       25.88ms |             ::1 | GET      "/catalog/6243296ad6aed7d832e866cf"
+[GIN] 2022/04/04 - 18:49:22 | 200 |     28.6789ms |             ::1 | GET      "/catalog/62432980d6aed7d832e866c2"
+[GIN] 2022/04/04 - 18:49:30 | 200 |     39.1449ms |             ::1 | POST     "/catalog"
+[GIN] 2022/04/04 - 18:50:08 | 200 |     85.3331ms |             ::1 | PUT      "/catalog/624af06288d2742e3048b28d"
+[GIN] 2022/04/04 - 18:50:33 | 400 |    1.0695517s |       127.0.0.1 | POST     "/catalog/624329b8d6aed7d832e866c4/-1"

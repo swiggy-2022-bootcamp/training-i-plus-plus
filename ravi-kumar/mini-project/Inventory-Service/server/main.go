@@ -4,6 +4,9 @@ import (
 	"Inventory-Service/config"
 	"Inventory-Service/controller"
 	"Inventory-Service/middleware"
+	"Inventory-Service/service"
+	"io"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -11,6 +14,12 @@ import (
 )
 
 func main() {
+	//logs
+	inventorySerivceLogFile, _ := os.Create("inventoryService.log")
+	gin.DefaultWriter = io.MultiWriter(os.Stdout, inventorySerivceLogFile)
+	service.GetDefaultWriter = &gin.DefaultWriter
+	service.InitLoggerService()
+
 	r := gin.Default()
 
 	r.Use(cors.AllowAll())
@@ -21,6 +30,7 @@ func main() {
 	r.PUT("/catalog/:productId", middleware.IfAuthorized(controller.UpdateProductById))
 	r.DELETE("/catalog/:productId", middleware.IfAuthorized(controller.DeleteProductbyId))
 	r.POST("/catalog/:productId/:updateCount", middleware.IfAuthorized(controller.UpdateProductQuantity))
+	r.Static("/swaggerui", config.SWAGGER_PATH)
 
 	portAddress := ":" + strconv.Itoa(config.INVENTORY_SERVICE_SERVER_PORT)
 	r.Run(portAddress)

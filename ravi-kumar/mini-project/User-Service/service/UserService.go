@@ -86,6 +86,12 @@ func (userService *UserService) UpdateUserById(userId string, updatedUser mockda
 		return nil, errors.MalformedIdError()
 	}
 
+	userPassword, err := bcrypt.GenerateFromPassword([]byte(updatedUser.Password), bcrypt.DefaultCost)
+	if err != nil {
+		panic(err)
+	}
+
+	updatedUser.Password = string(userPassword)
 	return userService.mongoDAO.MongoUpdateUserById(objectId, updatedUser)
 }
 

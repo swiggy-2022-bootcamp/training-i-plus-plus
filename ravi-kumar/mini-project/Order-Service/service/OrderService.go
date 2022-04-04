@@ -187,8 +187,13 @@ func (orderService *OrderService) CancelOrder(orderId string, accessorUserId str
 	refundStr := "Order cancelled. Refund of " + fmt.Sprint(order.Amount) + " initiated"
 	orderCancelledStr := "Order cancelled."
 	if order.Status == "payment done" {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: cancelled"+" --Refund of "+fmt.Sprint(order.Amount)+" initiated"))
+
 		return &refundStr, nil
 	} else {
+		ctx, _ := context.WithTimeout(context.Background(), time.Minute*10)
+		kafka.Produce(ctx, nil, []byte("orderId: "+orderId+" --- status: cancelled"))
 		return &orderCancelledStr, nil
 	}
 }
