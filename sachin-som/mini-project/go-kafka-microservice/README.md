@@ -94,3 +94,20 @@ This microservice also implements the interface generate by `wallet proto` file.
 - GET /v1/wallet/get/:walletId
 - PATCH /v1/wallet/:walletId/add
 
+### Project Setup
+1. Start the zookeeper and Kafka servers.
+
+2. Create a `.env` file in each service and 
+Add the following variables in that -
+```
+MONGO_USERNAME=<Your MongoDB Username>
+MONGO_PASSWORD=<Your MongoDB Password>
+MONGO_URI=<Your MongoDB URI>
+```
+
+3. Run the following command in each server 
+for starting the server.
+
+```
+go run main.go
+```
