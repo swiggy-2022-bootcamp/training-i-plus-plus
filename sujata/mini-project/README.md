@@ -16,6 +16,7 @@
 - ElasticSearch
 - Logstash
 - Mongodb
+- Kafka
 
 ## Auth Service
 
