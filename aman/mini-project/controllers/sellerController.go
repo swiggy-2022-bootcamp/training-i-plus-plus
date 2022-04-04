@@ -123,3 +123,26 @@ func SellerLogin() gin.HandlerFunc {
 		c.JSON(http.StatusOK, foundUser)
 	}
 }
+
+func SellerLogout() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		sellerId := c.Request.Header.Get("id")
+
+		result, insertErr := sellerCollection.UpdateOne(ctx, bson.M{"user_id": sellerId}, bson.D{{"$set",
+			bson.D{
+				{"token", ""}, {"refresh_token", ""},
+			},
+		}})
+
+		if insertErr != nil {
+			msg := fmt.Sprintf("Couldn't log out")
+			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
+			return
+		}
+		logger.Log.Println("Sellers logged out")
+		defer cancel()
+		c.JSON(http.StatusOK, result)
+
+	}
+}
