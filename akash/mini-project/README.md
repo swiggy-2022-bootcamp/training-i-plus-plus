@@ -41,19 +41,17 @@ Design and develop an online shopping cart web application that enables a buyer 
 ## Sub Modules:
 
 - Customer
-- Vendor
+- Product
 - Order
-- Review
-- Payment
-- Notification
-
 ---
 
 ## Things Done:
  - [x] Requirements narrow down
- - [x] User Data Model 
- - [x] Login Data Model
- - [x] User REST API - Gin + JSON data
- - [x] Mongo DB database
+ - [x] Customer Microservice REST API - Gin + JSON + MongoDB 
+ - [x] Order Microservice REST API - Gin + JSON + MongoDB
+ - [x] Delivery Microservice API - Fibre + JSON + MongoDB
  - [x] Custom Logger
+ - [x] Kafka Exchange: Product & Order Service
+ - [x] Docker Compose for Infra (Kafka, DBs)
+ - [x] Hashed Password
  
