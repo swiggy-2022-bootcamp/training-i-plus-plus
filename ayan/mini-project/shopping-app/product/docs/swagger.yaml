@@ -1,0 +1,135 @@
+basePath: /api
+definitions:
+  app.ProductDTO:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  domain.Product:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: integer
+      quantity:
+        type: integer
+    type: object
+  errs.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: ayan59dutta@gmail.com
+    name: Ayan Dutta
+  description: Swagger API for Golang Project.
+  termsOfService: http://swagger.io/terms/
+  title: User Service APIs
+  version: "1.0"
+paths:
+  /products/{productEmail}:
+    get:
+      description: Fetches product details by id
+      parameters:
+      - description: Id
+        in: path
+        name: productId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - products
+  /products/{productId}:
+    delete:
+      description: Deletes product by email
+      parameters:
+      - description: Product Email
+        in: path
+        name: productEmail
+        required: true
+        type: integer
+      - description: Auth Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.ProductDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - products
+    put:
+      description: Updates product by productId
+      parameters:
+      - description: Product details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/app.ProductDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Product'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - products
+  /products/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a product
+      parameters:
+      - description: Product Creation
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/app.ProductDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/domain.Product'
+      tags:
+      - products
+swagger: "2.0"
