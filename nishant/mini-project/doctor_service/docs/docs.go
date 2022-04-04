@@ -216,25 +216,12 @@ const docTemplate = `{
                     "type": "string",
                     "example": "02 Jan 22 15:00 IST"
                 },
-                "patient": {
-                    "$ref": "#/definitions/api_entities.User"
-                },
                 "to": {
                     "type": "string",
                     "example": "02 Jan 22 16:00 IST"
-                }
-            }
-        },
-        "api_entities.User": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
                 },
                 "userId": {
-                    "type": "string"
-                },
-                "username": {
+                    "description": "Patient User",
                     "type": "string"
                 }
             }

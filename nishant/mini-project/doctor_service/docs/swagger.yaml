@@ -8,19 +8,11 @@ definitions:
       from:
         example: 02 Jan 22 15:00 IST
         type: string
-      patient:
-        $ref: '#/definitions/api_entities.User'
       to:
         example: 02 Jan 22 16:00 IST
         type: string
-    type: object
-  api_entities.User:
-    properties:
-      email:
-        type: string
       userId:
-        type: string
-      username:
+        description: Patient User
         type: string
     type: object
   controller.DoctorRequest:

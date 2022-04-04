@@ -1,7 +1,10 @@
 package controller
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"log"
+	"net/http"
 	"time"
 
 	entity "github.com/swiggy-2022-bootcamp/training-i-plus-plus/nishant/mini-project/doctor_service/api_entities"
@@ -33,8 +36,18 @@ func CreateAppointment(c *gin.Context) {
 		return
 	}
 
+	user, err := getUser(apreq.UserId)
+
+	if err != nil || user.Email == "" {
+		log.Println("error while fetching user " + err.Error())
+		c.AbortWithStatusJSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
 	toAdd := models.Appointment{
-		Patient: apreq.Patient.UserId,
+		Patient: apreq.UserId,
 		From:    toTimeStamp(apreq.From),
 		To:      toTimeStamp(apreq.To),
 	}
@@ -52,7 +65,7 @@ func CreateAppointment(c *gin.Context) {
 		return
 	}
 
-	producer.Notifier.SendAppointmentEmail(apreq)
+	producer.Notifier.SendAppointmentEmail(apreq, user)
 	c.Status(200)
 }
 
@@ -119,4 +132,26 @@ func toTimeStamp(d string) int64 {
 	}
 	log.Println(t.Unix())
 	return t.Unix()
+}
+
+func getUser(userId string) (entity.User, error) {
+
+	var usr = entity.User{}
+
+	response, err := http.Get("http://localhost:7450/user/" + userId)
+
+	if err != nil {
+		return usr, err
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return usr, err
+	}
+
+	if err = json.Unmarshal(responseData, &usr); err != nil {
+		return usr, err
+	}
+
+	return usr, nil
 }

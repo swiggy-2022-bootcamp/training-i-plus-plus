@@ -52,13 +52,13 @@ func NewProducer(topic string) *Producer {
 	}
 }
 
-func (p *Producer) SendAppointmentEmail(app entity.AppointmentRequest) {
+func (p *Producer) SendAppointmentEmail(app entity.AppointmentRequest, user entity.User) {
 
 	msg := fmt.Sprintf(" Doctor = %s, Patient = %s, From = %s, To = %s",
-		app.Doctor, app.Patient.Name, app.From, app.To)
+		app.Doctor, user.Name, app.From, app.To)
 
 	toSend := Email{
-		app.Patient.Email,
+		user.Email,
 		"Appointment created",
 		msg,
 	}
@@ -70,7 +70,7 @@ func (p *Producer) SendAppointmentEmail(app entity.AppointmentRequest) {
 		return
 	}
 
-	p.send([]byte(app.Patient.UserId), marshelled)
+	p.send([]byte(user.UserId), marshelled)
 }
 
 func (p *Producer) send(key, value []byte) {

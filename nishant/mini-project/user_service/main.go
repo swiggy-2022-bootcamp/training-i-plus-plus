@@ -52,7 +52,7 @@ func main() {
 
 	router.POST("/user", cont.CreateUser, cont.CreateToken)
 
-	router.GET("/user/:_id", cont.VerifyToken, cont.ReadUser)
+	router.GET("/user/:_id", cont.ReadUser)
 	router.PATCH("/user/:_id", cont.VerifyToken, cont.UpdateUser)
 	router.DELETE("/user/:_id", cont.VerifyToken, cont.DeleteUser)
 	router.GET("/user", cont.VerifyToken, cont.ListUser)
