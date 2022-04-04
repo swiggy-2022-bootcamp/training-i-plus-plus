@@ -8,6 +8,7 @@ type ItemService interface {
 	GetItemByName(string) (*Item, *errs.AppError)
 	DeleteItemById(int) *errs.AppError
 	UpdateItem(Item) (*Item, *errs.AppError)
+	UpdateItemQuantity(int, int) *errs.AppError
 	IsItemOutOfStock(int) bool
 }
 
@@ -54,6 +55,14 @@ func (s service) UpdateItem(item Item) (*Item, *errs.AppError) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func (s service) UpdateItemQuantity(itemId int, quantity int) *errs.AppError {
+	err := s.itemRepository.UpdateItemQuantity(itemId, quantity)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s service) IsItemOutOfStock(itemId int) bool {

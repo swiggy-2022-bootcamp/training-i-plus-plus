@@ -23,18 +23,22 @@ type itemDTO struct {
 	Quantity    int    `json:"quantity"`
 }
 
+type itemQuantity struct {
+	Quantity int `json:"quantity"`
+}
+
 type itemResponseDTO struct {
 	Message string `json:"message"`
 }
 
-func (h ItemHandler) getAllUsers(c *gin.Context) {
+func (h ItemHandler) getAllitems(c *gin.Context) {
 
 }
 
 // @Schemes
 // @Description Fetches item details by itemId
-// @Tags users
-// @Param        itemId   path      int  true  "User Id"
+// @Tags items
+// @Param        itemId   path      int  true  "item Id"
 // @Produce json
 // @Success 200 {object} domain.Item
 // @Failure      404  {object} errs.AppError
@@ -63,7 +67,7 @@ func (h ItemHandler) getItemByItemId(c *gin.Context) {
 
 // @Schemes
 // @Description Fetches item details by item name
-// @Tags users
+// @Tags items
 // @Param        name   query      string  true  "name"
 // @Produce json
 // @Success 200 {object} domain.Item
@@ -92,7 +96,7 @@ func (h ItemHandler) getItemByItemName(c *gin.Context) {
 
 // @Schemes
 // @Description Creates a new item
-// @Tags users
+// @Tags items
 // @Produce json
 // @Accept json
 // @Param        item  body      itemDTO  true  "create item"
@@ -102,7 +106,7 @@ func (h ItemHandler) createItem(c *gin.Context) {
 	var newItem itemDTO
 	err := json.NewDecoder(c.Request.Body).Decode(&newItem)
 	if err != nil {
-		customErr := errs.NewUnexpectedError("Unable to decode user payload")
+		customErr := errs.NewUnexpectedError("Unable to decode item payload")
 		logger.Error(customErr.Message, zap.Error(err))
 		c.JSON(http.StatusInternalServerError, customErr)
 	} else {
@@ -118,7 +122,7 @@ func (h ItemHandler) createItem(c *gin.Context) {
 
 // @Schemes
 // @Description Deletes item by itemId
-// @Tags users
+// @Tags items
 // @Param        itemId   path      int  true  "item ID"
 // @Produce json
 // @Success 200 {object} itemResponseDTO
@@ -147,8 +151,8 @@ func (h ItemHandler) deleteItem(c *gin.Context) {
 }
 
 // @Schemes
-// @Description Updates user by userId
-// @Tags users
+// @Description Updates item by itemId
+// @Tags items
 // @Param        itemId   path      int  true  "Item ID"
 // @Param        item details   body      itemDTO true  "Item details"
 // @Produce json
@@ -181,6 +185,47 @@ func (h ItemHandler) updateItem(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, err2)
 		} else {
 			c.JSON(http.StatusOK, updatedItem)
+		}
+	}
+}
+
+// @Schemes
+// @Description Updates item quantity by itemId
+// @Tags items
+// @Param        itemId   path      int  true  "Item ID"
+// @Param        quantity   body      itemQuantity true  "Item Quantity"
+// @Produce json
+// @Success 200 {object} domain.Item
+// @Failure      500  {object} errs.AppError
+// @Router /items/{itemId} [put]
+func (h ItemHandler) updateQuantity(c *gin.Context) {
+	params := c.Params
+	itemId, err := params.Get("itemId")
+
+	if err == false {
+		logger.Error("Mandatory field itemId missing in request")
+		c.JSON(http.StatusBadRequest, "itemId missing in request")
+	}
+
+	var newItem itemQuantity
+	err2 := json.NewDecoder(c.Request.Body).Decode(&newItem)
+	if err2 != nil {
+		c.JSON(http.StatusInternalServerError, err2)
+	} else {
+		if err2 != nil {
+			c.JSON(http.StatusInternalServerError, err2)
+		}
+
+		itemId, _ := strconv.ParseInt(itemId, 10, 0)
+
+		err := h.itemService.UpdateItemQuantity(int(itemId), newItem.Quantity)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, err2)
+		} else {
+			response := itemResponseDTO{
+				Message: "Item quantity updated successfully",
+			}
+			c.JSON(http.StatusOK, response)
 		}
 	}
 }

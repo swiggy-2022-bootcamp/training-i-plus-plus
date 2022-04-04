@@ -83,7 +83,7 @@ func (imr itemMongoRepository) UpdateItem(item domain.Item) (*domain.Item, *errs
 				"name":        item.Name,
 				"description": item.Description,
 				"quantity":    item.Quantity,
-				"updatedAt":   time.Now(),
+				"updated_at":  time.Now(),
 			},
 		},
 	}
@@ -97,6 +97,29 @@ func (imr itemMongoRepository) UpdateItem(item domain.Item) (*domain.Item, *errs
 		return nil, errs.NewUnexpectedError(err.Error())
 	}
 	return &item, nil
+}
+
+func (imr itemMongoRepository) UpdateItemQuantity(itemId int, quantity int) *errs.AppError {
+	items := imr.Session.DB(imr.Mongo.Database).C(ItemCollectionName)
+
+	change := mgo.Change{
+		Update: bson.M{
+			"$set": bson.M{
+				"quantity":   quantity,
+				"updated_at": time.Now(),
+			},
+		},
+	}
+
+	var updatedItem domain.Item
+	_, err := items.Find(bson.M{"id": itemId}).Apply(change, &updatedItem)
+
+	if err != nil {
+		errMessage := fmt.Sprintf("Cannot update item with itemId: %d", itemId)
+		logger.Error(errMessage, zap.Int("itemId", itemId), zap.Error(err))
+		return errs.NewUnexpectedError(err.Error())
+	}
+	return nil
 }
 
 func NewItemMongoRepository() domain.ItemRepository {

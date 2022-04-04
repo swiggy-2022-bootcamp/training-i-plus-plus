@@ -23,4 +23,5 @@ type ItemRepository interface {
 	FindItemByName(string) (*Item, *errs.AppError)
 	DeleteItemById(int) *errs.AppError
 	UpdateItem(Item) (*Item, *errs.AppError)
+	UpdateItemQuantity(int, int) *errs.AppError
 }

@@ -39,6 +39,7 @@ func Start() {
 	items.GET("/", itemHandler.getItemByItemName)
 	items.DELETE("/:itemId", itemHandler.deleteItem)
 	items.PUT("/:itemId", itemHandler.updateItem)
+	items.PATCH("/:itemId", itemHandler.updateQuantity)
 	items.POST("/", itemHandler.createItem)
 	err := r.router.Run(":8090")
 	if err != nil {
