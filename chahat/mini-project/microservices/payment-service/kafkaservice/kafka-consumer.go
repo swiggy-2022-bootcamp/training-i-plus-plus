@@ -40,33 +40,7 @@ func createConsumer() (*kafka.Consumer, error){
 	return consumer, nil
 }
 
-// func AddDatainDB(order model.Order){
 
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10 * time.Second)
-// 	defer cancel()
-// 	var trackstreamobj model.TrackStream
-
-
-// 		//product.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-// 	trackstreamobj.ID = primitive.NewObjectID()
-//     trackstreamobj.PaymentType =order.Payment_Method
-// 	//	product.Product_id = product.ID.Hex()
-	
-
-// 		_, insertErr := trackstreamCollection.InsertOne(ctx,trackstreamobj)
-// 		if insertErr !=nil {
-		
-// 			fmt.Println( insertErr.Error())
-// 			return
-// 		}
-// 		defer cancel()
-// 	//	c.JSON(http.StatusOK, product)
-// 	// _, err :=  productCollection.InsertOne(ctx, product)
-//     // if err != nil {
-//     //     fmt.Println(err.Error())
-//     // }
-// 	fmt.Printf("Saved to MongoDB : %s\n", trackstreamobj)
-// }
 
 func consumeOrder(consumer *kafka.Consumer, topic string){
 	consumer.SubscribeTopics([]string{topic}, nil)
@@ -91,10 +65,7 @@ func consumeOrder(consumer *kafka.Consumer, topic string){
 			fmt.Printf("\n%s",  time.Now())
 			fmt.Println("Payment successfull and Email sent to the user with order details.")
 
-			// fmt.Println("\n",order.Payment_Method)
-			// AddDatainDB(order)
-		
-			// AddOrderToDB(user)
+			
 		} 
 	}
 
