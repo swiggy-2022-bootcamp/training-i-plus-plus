@@ -34,12 +34,31 @@
 ### User Microservice
 
 ```
-**Routes**
 GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
 POST   /userRegistration         --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).RegisterUser-fm (3 handlers)
 POST   /userLogin                --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).LoginUser-fm (3 handlers)
 GET    /user/get/:username       --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).GetUser-fm (4 handlers)
 GET    /user/getall              --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).GetAll-fm (4 handlers)
 PATCH  /user/update              --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).UpdateUser-fm (4 handlers)
-[GIN-debug] DELETE /user/delete/:username    --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).DeleteUser-fm (4 handlers)
+DELETE /user/delete/:username    --> github.com/swastiksahoo153/train-reservation-system/controllers.(*UserController).DeleteUser-fm (4 handlers)
+```
+
+### Train Microservice
+```
+GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
+POST   /train/register           --> github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers.(*TrainController).CreateTrain-fm (4 handlers)
+GET    /train/get/:train_number  --> github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers.(*TrainController).GetTrain-fm (4 handlers)
+GET    /train/getall             --> github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers.(*TrainController).GetAll-fm (4 handlers)
+PATCH  /train/update             --> github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers.(*TrainController).UpdateTrain-fm (4 handlers)
+DELETE /train/delete/:train_number --> github.com/swastiksahoo153/MicroserviceKafka/TrainModule/controllers.(*TrainController).DeleteTrain-fm (4 handlers)
+```
+
+### Ticket Microservice
+```
+GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
+POST   /ticket/book              --> github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers.(*TicketController).CreateTicket-fm (3 handlers)
+GET    /ticket/get/:pnr_number   --> github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers.(*TicketController).GetTicket-fm (3 handlers)
+GET    /ticket/getall            --> github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers.(*TicketController).GetAll-fm (3 handlers)
+PATCH  /ticket/update            --> github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers.(*TicketController).UpdateTicket-fm (3 handlers)
+DELETE /ticket/delete/:pnr_number --> github.com/swastiksahoo153/MicroserviceKafka/TicketModule/controllers.(*TicketController).DeleteTicket-fm (3 handlers)
 ```
