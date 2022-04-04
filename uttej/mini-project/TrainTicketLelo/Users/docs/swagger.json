@@ -1,8 +1,8 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "Swagger TrainTicketLelo Users API",
-        "title": "Swagger TrainTicketLelo Users API",
+        "description": "Swagger TrainTicketLelo Users Service",
+        "title": "Swagger TrainTicketLelo Users Service",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {
             "name": "Uttej Immadi",
@@ -32,7 +32,7 @@
                 "summary": "Signup",
                 "parameters": [
                     {
-                        "description": "Add All The Details",
+                        "description": "id will be populated automatically",
                         "name": "Signup",
                         "in": "body",
                         "required": true,

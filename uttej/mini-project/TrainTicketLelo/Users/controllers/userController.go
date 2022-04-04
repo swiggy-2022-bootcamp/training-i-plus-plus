@@ -51,7 +51,7 @@ func LogInUser(c *gin.Context) {
 // @Tags         User
 // @Accept       json
 // @Produce      json
-// @Param		Signup	body	models.User	true	"Add All The Details"
+// @Param		Signup	body	models.User	true	"id will be populated automatically"
 // @Success      200  {string}  responseBody
 // @Failure      400  {number} 	http.StatusBadRequest
 // @Failure      500  {number} 	http.StatusInternalServerError

@@ -40,7 +40,7 @@ const docTemplate = `{
                 "summary": "Signup",
                 "parameters": [
                     {
-                        "description": "Add All The Details",
+                        "description": "id will be populated automatically",
                         "name": "Signup",
                         "in": "body",
                         "required": true,
@@ -341,8 +341,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8001",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Swagger TrainTicketLelo Users API",
-	Description:      "Swagger TrainTicketLelo Users API",
+	Title:            "Swagger TrainTicketLelo Users Service",
+	Description:      "Swagger TrainTicketLelo Users Service",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

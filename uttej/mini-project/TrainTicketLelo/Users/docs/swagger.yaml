@@ -27,12 +27,12 @@ info:
     email: immadiuttej@gmail.com
     name: Uttej Immadi
     url: http://www.swagger.io/support
-  description: Swagger TrainTicketLelo Users API
+  description: Swagger TrainTicketLelo Users Service
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   termsOfService: http://swagger.io/terms/
-  title: Swagger TrainTicketLelo Users API
+  title: Swagger TrainTicketLelo Users Service
   version: "1.0"
 paths:
   /signup:
@@ -42,7 +42,7 @@ paths:
       description: Register a user/admin by providing fullname, username, email, password
         and role
       parameters:
-      - description: Add All The Details
+      - description: id will be populated automatically
         in: body
         name: Signup
         required: true
