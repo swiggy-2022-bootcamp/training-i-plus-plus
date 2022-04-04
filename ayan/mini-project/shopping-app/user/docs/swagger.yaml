@@ -1,0 +1,190 @@
+basePath: /users
+definitions:
+  app.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  app.UserDTO:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      mobile_no:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      zipcode:
+        type: integer
+    type: object
+  app.UserResponseDTO:
+    properties:
+      message:
+        type: string
+      token:
+        type: string
+    type: object
+  domain.User:
+    properties:
+      address:
+        type: string
+      email:
+        type: string
+      mobileNo:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+      role:
+        type: string
+      zipcode:
+        type: integer
+    type: object
+  errs.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: ayan59dutta@gmail.com
+    name: Ayan Dutta
+  description: Swagger API for Golang Project.
+  termsOfService: http://swagger.io/terms/
+  title: User Service APIs
+  version: "1.0"
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Logs in a user
+      parameters:
+      - description: User login
+        in: body
+        name: LoginDTO
+        required: true
+        schema:
+          $ref: '#/definitions/app.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.UserResponseDTO'
+      tags:
+      - users
+  /users/{userEmail}:
+    get:
+      description: Fetches user details by email
+      parameters:
+      - description: Email
+        in: path
+        name: userEmail
+        required: true
+        type: integer
+      - description: Auth Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+  /users/{userId}:
+    delete:
+      description: Deletes user by email
+      parameters:
+      - description: User Email
+        in: path
+        name: userEmail
+        required: true
+        type: integer
+      - description: Auth Token
+        in: header
+        name: token
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.UserDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    put:
+      description: Updates user by userEmail
+      parameters:
+      - description: Auth token
+        in: header
+        name: token
+        required: true
+        type: string
+      - description: User details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/app.UserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+  /users/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a user on registration
+      parameters:
+      - description: User Registration
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/app.UserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+      tags:
+      - users
+swagger: "2.0"

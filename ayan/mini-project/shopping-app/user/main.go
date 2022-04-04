@@ -4,16 +4,16 @@ import (
 	"user/app"
 )
 
+// @title User Service APIs
+// @version 1.0
+// @description Swagger API for Golang Project.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name Ayan Dutta
+// @contact.email ayan59dutta@gmail.com
+
+// @BasePath /api
 func main() {
 
-	// userDb := db.NewUserRepositoryDB([]db.User{})
-
-	// userSvc := domain.NewUserService(userDb)
-
-	// user := domain.NewUser("abc@xyz.com", "aBc&@=+", "Ab Cd", "1, Pqr St.", 951478, "9874563210", "buyer")
-
-	// userSvc.Register(*user)
-
 	app.Start()
-
 }

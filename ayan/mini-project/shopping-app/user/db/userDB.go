@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 	"user/domain"
+	"user/utils/errs"
+	"user/utils/logger"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -21,7 +23,7 @@ func NewUserRepositoryDB(dbClient *mongo.Client) domain.UserRepositoryDB {
 	}
 }
 
-func (udb userRepositoryDB) Save(u domain.User) (*domain.User, error) {
+func (udb userRepositoryDB) Save(u domain.User) (*domain.User, *errs.AppError) {
 
 	newUser := NewUser(
 		u.Email,
@@ -45,13 +47,14 @@ func (udb userRepositoryDB) Save(u domain.User) (*domain.User, error) {
 	_, err := userCollection.InsertOne(ctx, newUser)
 
 	if err != nil {
-		return nil, err
+		logger.Error("Error while inserting User into DB : " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
 	return &u, nil
 }
 
-func (udb userRepositoryDB) FindUserByEmail(email string) (*domain.User, error) {
+func (udb userRepositoryDB) FetchUserByEmail(email string) (*domain.User, *errs.AppError) {
 
 	dbUser := User{}
 
@@ -62,10 +65,9 @@ func (udb userRepositoryDB) FindUserByEmail(email string) (*domain.User, error) 
 
 	err := userCollection.FindOne(ctx, bson.M{"email": email}).Decode(&dbUser)
 
-	fmt.Println("(udb userRepositoryDB) FindUserByEmail : ", dbUser, err)
-
 	if err != nil {
-		return nil, err
+		logger.Error("Error while fetching User from DB : " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
 	domainUser := domain.NewUser(dbUser.Email, dbUser.Password, dbUser.Name, dbUser.Address, dbUser.Zipcode, dbUser.MobileNo, dbUser.Role)
@@ -73,7 +75,7 @@ func (udb userRepositoryDB) FindUserByEmail(email string) (*domain.User, error) 
 	return domainUser, nil
 }
 
-func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, error) {
+func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, *errs.AppError) {
 
 	ctx, cxl := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cxl()
@@ -83,7 +85,8 @@ func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, error) {
 	currDbUser := User{}
 	err := userCollection.FindOne(ctx, bson.M{"email": u.Email}).Decode(&currDbUser)
 	if err != nil {
-		return nil, err
+		logger.Error("Error while fetching User from DB : " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
 	newUser := NewUser(
@@ -103,7 +106,8 @@ func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, error) {
 	err = userCollection.FindOneAndReplace(ctx, bson.M{"email": newUser.Email}, newUser).Decode(&dbUser)
 
 	if err != nil {
-		return nil, err
+		logger.Error("Error while updating User in DB : " + err.Error())
+		return nil, errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
 	domainUser := domain.NewUser(dbUser.Email, dbUser.Password, dbUser.Name, dbUser.Address, dbUser.Zipcode, dbUser.MobileNo, dbUser.Role)
@@ -111,7 +115,7 @@ func (udb userRepositoryDB) UpdateUser(u domain.User) (*domain.User, error) {
 	return domainUser, nil
 }
 
-func (udb userRepositoryDB) DeleteUserByEmail(email string) error {
+func (udb userRepositoryDB) DeleteUserByEmail(email string) *errs.AppError {
 
 	ctx, cxl := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cxl()
@@ -120,10 +124,9 @@ func (udb userRepositoryDB) DeleteUserByEmail(email string) error {
 
 	_, err := userCollection.DeleteOne(ctx, bson.M{"email": email})
 
-	fmt.Println("(udb userRepositoryDB) DeleteUserByEmail : ", err)
-
 	if err != nil {
-		return err
+		logger.Error("Error while deleting User from DB : " + err.Error())
+		return errs.NewUnexpectedError("Unexpected error from DB")
 	}
 
 	return nil

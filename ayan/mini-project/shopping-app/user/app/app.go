@@ -1,10 +1,15 @@
 package app
 
 import (
+	"fmt"
 	"user/db"
+	"user/docs"
 	"user/domain"
+	"user/utils/logger"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func Start() {
@@ -18,15 +23,21 @@ func Start() {
 
 	userRouter := gin.Default()
 
-	userRoutesGroup := userRouter.Group("/users")
+	apiRouter := userRouter.Group("/api")
 
-	// swagger:operation GET /users
+	docs.SwaggerInfo.BasePath = "/api"
+	apiRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	userRoutesGroup := apiRouter.Group("/users")
+
 	userRoutesGroup.GET("/", userHandlers.HelloWorldHandler)
 	userRoutesGroup.GET("/:userEmail", userHandlers.GetUserByEmail)
 	userRoutesGroup.POST("/register", userHandlers.Register)
 	userRoutesGroup.POST("/login", userHandlers.Login)
 	userRoutesGroup.PUT("/update", userHandlers.UpdateUser)
 	userRoutesGroup.DELETE("/:userEmail", userHandlers.DeleteUserByEmail)
+	userRoutesGroup.POST("/verifyToken", userHandlers.VerifyUserToken)
 
 	userRouter.Run(":8080")
+	logger.Info(fmt.Sprintf("Starting server on %s:%s ...", "127.0.0.1", "8080"))
 }

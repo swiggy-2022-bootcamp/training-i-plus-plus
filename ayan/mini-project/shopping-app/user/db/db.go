@@ -2,8 +2,8 @@ package db
 
 import (
 	"context"
-	"fmt"
 	"time"
+	"user/utils/logger"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -16,9 +16,10 @@ func NewDbClient() *mongo.Client {
 	defer cancel()
 	client, err := mongo.Connect(ctx, clientOptions)
 	if err != nil {
+		logger.Fatal("Error while connecting to DB : " + err.Error())
 		panic(err)
 	} else {
-		fmt.Println("Database Connected Successfully......")
+		logger.Info("Database Connected Successfully......")
 
 	}
 	return client

@@ -1,98 +1,96 @@
 package domain
 
 import (
-	"errors"
-	"fmt"
-
 	"user/utils"
+	"user/utils/errs"
 )
 
-//go:generate D:/Users/ayandut/go/bin/mockgen.exe -destination=../mocks/domain/mockUserService.go -package=domain users/domain UserService
 type UserService interface {
-	Register(User) (*User, error)
-	Login(string, string) (string, error)
-	FindUserByEmail(string) (*User, error)
-	VerifyCredentials(string, string) (bool, error)
-	VerifyToken(string, string) (bool, error)
-	UpdateUser(User) (*User, error)
-	DeleteUserByEmail(string) (*User, error)
+	Register(User) (*User, *errs.AppError)
+	Login(string, string) (string, *errs.AppError)
+	FindByEmail(string) (*User, *errs.AppError)
+	VerifyCredentials(string, string) (bool, *errs.AppError)
+	VerifyToken(string, string, string) (bool, *errs.AppError)
+	Update(User) (*User, *errs.AppError)
+	DeleteByEmail(string) (*User, *errs.AppError)
 }
 
 type DefaultUserService struct {
-	userDB UserRepositoryDB
+	UserDB UserRepositoryDB
 }
 
 func NewUserService(userDB UserRepositoryDB) UserService {
 	return &DefaultUserService{
-		userDB: userDB,
+		UserDB: userDB,
 	}
 }
 
-func (usvc *DefaultUserService) Register(user User) (*User, error) {
+func (usvc DefaultUserService) Register(user User) (*User, *errs.AppError) {
 
-	_, err := usvc.FindUserByEmail(user.Email)
-	fmt.Println("(usvc *DefaultUserService) Register : ", err)
+	_, err := usvc.FindByEmail(user.Email)
 	if err == nil {
-		fmt.Println("(usvc *DefaultUserService) Register : err is nil")
-		return nil, errors.New("user already exists")
+		return nil, errs.NewValidationError("user already exists")
 	}
 	hash, err := utils.HashPassword(user.Password)
 	if err != nil {
 		return nil, err
 	}
 	user.Password = hash
-	u, err := usvc.userDB.Save(user)
+	u, err := usvc.UserDB.Save(user)
 	return u, err
 }
 
-func (usvc *DefaultUserService) Login(email string, password string) (string, error) {
+func (usvc DefaultUserService) Login(email string, password string) (string, *errs.AppError) {
 
 	isValid, err := usvc.VerifyCredentials(email, password)
 	if err != nil {
 		return "", err
 	}
 	if isValid {
-		hash, _ := utils.HashPassword(password)
-		token := "$" + email + "$" + hash + "$"
-		return token, nil
+		user, err := usvc.FindByEmail(email)
+		if err != nil {
+			return "", err
+		}
+		token, err := utils.GenerateJWT(email, user.Role)
+		return token, err
 	}
-	return "", errors.New("invalid user credentials")
+	return "", errs.NewAuthenticationError("invalid credentials")
 }
 
-func (usvc *DefaultUserService) VerifyCredentials(email string, password string) (bool, error) {
-	user, err := usvc.FindUserByEmail(email)
+func (usvc DefaultUserService) VerifyCredentials(email string, password string) (bool, *errs.AppError) {
+	user, err := usvc.FindByEmail(email)
 	if err != nil {
 		return false, err
 	}
 	if utils.CheckPasswordHash(password, user.Password) {
 		return true, nil
 	}
-	return false, errors.New("invalid credentials")
+	return false, errs.NewAuthenticationError("invalid credentials")
 }
 
-func (usvc *DefaultUserService) FindUserByEmail(email string) (*User, error) {
+func (usvc *DefaultUserService) FindByEmail(email string) (*User, *errs.AppError) {
 
-	user, err := usvc.userDB.FindUserByEmail(email)
-	fmt.Println("(usvc *DefaultUserService) FindUserByEmail : ", user, err)
+	user, err := usvc.UserDB.FetchUserByEmail(email)
 	return user, err
 }
 
-func (usvc *DefaultUserService) VerifyToken(email string, token string) (bool, error) {
+func (usvc DefaultUserService) VerifyToken(email string, role string, token string) (bool, *errs.AppError) {
 
-	user, err := usvc.FindUserByEmail(email)
+	_, err := usvc.FindByEmail(email)
 	if err != nil {
 		return false, err
 	}
-	actualToken, err := usvc.Login(email, user.Password)
+
+	tokenEmail, tokenRole, err := utils.ParseAuthToken(token)
 	if err != nil {
 		return false, err
 	}
-	return actualToken == token, nil
+	return tokenEmail == email && tokenRole == role, nil
 }
 
-func (usvc *DefaultUserService) UpdateUser(user User) (*User, error) {
+func (usvc DefaultUserService) Update(user User) (*User, *errs.AppError) {
 
-	_, err := usvc.FindUserByEmail(user.Email)
+	_, err := usvc.FindByEmail(user.Email)
 	if err != nil {
 		return nil, err
 	}
@@ -101,17 +99,17 @@ func (usvc *DefaultUserService) UpdateUser(user User) (*User, error) {
 		return nil, err
 	}
 	user.Password = hash
-	u, err := usvc.userDB.UpdateUser(user)
+	u, err := usvc.UserDB.UpdateUser(user)
 	return u, err
 }
 
-func (usvc *DefaultUserService) DeleteUserByEmail(email string) (*User, error) {
+func (usvc DefaultUserService) DeleteByEmail(email string) (*User, *errs.AppError) {
 
-	u, err := usvc.FindUserByEmail(email)
+	u, err := usvc.FindByEmail(email)
 	if err != nil {
 		return nil, err
 	}
-	err = usvc.userDB.DeleteUserByEmail(email)
+	err = usvc.UserDB.DeleteUserByEmail(email)
 	if err != nil {
 		return nil, err
 	}
