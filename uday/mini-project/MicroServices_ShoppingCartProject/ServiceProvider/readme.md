@@ -5,6 +5,9 @@ Generally in Shopping Cart User buys different products like Mobile,Bags, etc
 But, In this project User buys services provided by employees like Plumber, Painter, Carpenter, Daily Labour, Field Worker
 
 -------------------------------------------------------
+</br>
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/uday/mini-project/MicroServices_ShoppingCartProject/ServiceProvider/diagram.PNG" width="1000" height="1000">
+ </br>
 
 Definitions:
 
@@ -22,7 +25,7 @@ Technologies/tools Used:
     MongoDB
     Gin
     JWT
-
+    SonarQube
 -------------------------------------------------------
 Features included in this Project:
 =================================
