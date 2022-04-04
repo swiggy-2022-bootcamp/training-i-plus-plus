@@ -18,9 +18,10 @@ type ItemHandler struct {
 }
 
 type itemDTO struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Quantity    int    `json:"quantity"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Quantity    int     `json:"quantity"`
+	Price       float64 `json:"price"`
 }
 
 type itemQuantity struct {
@@ -110,7 +111,7 @@ func (h ItemHandler) createItem(c *gin.Context) {
 		logger.Error(customErr.Message, zap.Error(err))
 		c.JSON(http.StatusInternalServerError, customErr)
 	} else {
-		item, err := h.itemService.CreateItem(newItem.Name, newItem.Description, newItem.Quantity)
+		item, err := h.itemService.CreateItem(newItem.Name, newItem.Description, newItem.Quantity, newItem.Price)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, err)
 		} else {
@@ -178,7 +179,7 @@ func (h ItemHandler) updateItem(c *gin.Context) {
 		}
 
 		itemId, _ := strconv.ParseInt(itemId, 10, 0)
-		item := domain.NewItem(newItem.Name, newItem.Description, newItem.Quantity)
+		item := domain.NewItem(newItem.Name, newItem.Description, newItem.Quantity, newItem.Price)
 		item.Id = int(itemId)
 		updatedItem, err := h.itemService.UpdateItem(*item)
 		if err != nil {

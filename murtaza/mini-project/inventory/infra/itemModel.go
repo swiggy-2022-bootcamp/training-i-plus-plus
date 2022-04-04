@@ -18,12 +18,13 @@ type ItemModel struct {
 	Name        string        `bson:"name"`
 	Description string        `bson:"description"`
 	Quantity    int           `bson:"quantity"`
+	Price       float64       `bson:"price"`
 	CreatedAt   time.Time     `bson:"created_at"`
 	UpdatedAt   time.Time     `bson:"updated_at"`
 }
 
 func (u ItemModel) toDomainEntity() *domain.Item {
-	domainItem := domain.NewItem(u.Name, u.Description, u.Quantity)
+	domainItem := domain.NewItem(u.Name, u.Description, u.Quantity, u.Price)
 	domainItem.Id = u.Id
 	return domainItem
 }

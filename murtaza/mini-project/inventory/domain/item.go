@@ -3,17 +3,19 @@ package domain
 import "github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/errs"
 
 type Item struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Quantity    int    `json:"quantity"`
+	Id          int     `json:"id"`
+	Name        string  `json:"name"`
+	Description string  `json:"description"`
+	Quantity    int     `json:"quantity"`
+	Price       float64 `json:"price"`
 }
 
-func NewItem(name, description string, quantity int) *Item {
+func NewItem(name, description string, quantity int, price float64) *Item {
 	return &Item{
 		Name:        name,
 		Description: description,
 		Quantity:    quantity,
+		Price:       price,
 	}
 }
 

@@ -3,7 +3,7 @@ package domain
 import "github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/errs"
 
 type ItemService interface {
-	CreateItem(string, string, int) (Item, *errs.AppError)
+	CreateItem(string, string, int, float64) (Item, *errs.AppError)
 	GetItemById(int) (*Item, *errs.AppError)
 	GetItemByName(string) (*Item, *errs.AppError)
 	DeleteItemById(int) *errs.AppError
@@ -16,8 +16,8 @@ type service struct {
 	itemRepository ItemRepository
 }
 
-func (s service) CreateItem(name, description string, quantity int) (Item, *errs.AppError) {
-	item := NewItem(name, description, quantity)
+func (s service) CreateItem(name, description string, quantity int, price float64) (Item, *errs.AppError) {
+	item := NewItem(name, description, quantity, price)
 	persistedItem, err := s.itemRepository.InsertItem(*item)
 	if err != nil {
 		return Item{}, err

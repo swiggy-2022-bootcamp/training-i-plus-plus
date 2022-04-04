@@ -147,6 +147,7 @@ func (imr itemMongoRepository) toPersistedMongoEntity(u domain.Item) *ItemModel 
 		Name:        u.Name,
 		Quantity:    u.Quantity,
 		Description: u.Description,
+		Price:       u.Price,
 		CreatedAt:   time.Now(),
 		UpdatedAt:   time.Now(),
 	}
