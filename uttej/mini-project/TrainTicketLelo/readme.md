@@ -26,6 +26,7 @@
 2. Gin-Gonic
 3. Kafka
 4. MongoDB
+5. Swagger
 
 ## Project Setup
 
@@ -36,3 +37,4 @@
 ## Testing
 
 - All the APIs have been tested on Postman and the collection can be found here: [TrainTicketLelo](https://go.postman.co/workspace/My-Workspace~56369b0b-244a-448f-814c-762e325c0447/collection/20338061-18f32a4d-991b-44ed-8e11-0b586e319bbc?action=share&creator=20338061)
+- Swagger UI has been added to the Users, Trains, Reservations Services and can be viewed on the service port at `/swagger/index.html`
