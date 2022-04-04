@@ -1,0 +1,164 @@
+basePath: /api/v1
+definitions:
+  app.itemDTO:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  app.itemResponseDTO:
+    properties:
+      message:
+        type: string
+    type: object
+  domain.Item:
+    properties:
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      quantity:
+        type: integer
+    type: object
+  errs.AppError:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+    type: object
+info:
+  contact:
+    email: murtaza896@gmail.com
+    name: Murtaza Sadriwala
+  description: Swagger API for Golang Project.
+  termsOfService: http://swagger.io/terms/
+  title: '[Panem] User Servcie API'
+  version: "1.0"
+paths:
+  /items:
+    get:
+      description: Fetches item details by item name
+      parameters:
+      - description: name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Item'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Creates a new item
+      parameters:
+      - description: create item
+        in: body
+        name: item
+        required: true
+        schema:
+          $ref: '#/definitions/app.itemDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Item'
+      tags:
+      - users
+  /items/{itemId}:
+    delete:
+      description: Deletes item by itemId
+      parameters:
+      - description: item ID
+        in: path
+        name: itemId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/app.itemResponseDTO'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    get:
+      description: Fetches item details by itemId
+      parameters:
+      - description: User Id
+        in: path
+        name: itemId
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Item'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/errs.AppError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+    put:
+      description: Updates user by userId
+      parameters:
+      - description: Item ID
+        in: path
+        name: itemId
+        required: true
+        type: integer
+      - description: Item details
+        in: body
+        name: details
+        required: true
+        schema:
+          $ref: '#/definitions/app.itemDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Item'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/errs.AppError'
+      tags:
+      - users
+swagger: "2.0"
