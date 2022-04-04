@@ -30,11 +30,11 @@
 
 ### API's
    #### Product Module (8080)
-   <li> GET("/products", controller.GetAllProducts())
-   <li> POST("/products", controller.AddProduct())
-   <li> DELETE("/products/:product_id", controller.DeleteProduct())
-    <li> GET("/products/:product_id", controller.GetProduct())
-	<li> PUT("/products/:product_id", controller.UpdateProduct())
+   <li> GET("/products")
+   <li> POST("/products")
+   <li> DELETE("/products/:product_id")
+    <li> GET("/products/:product_id")
+	<li> PUT("/products/:product_id")
 	
 
    #### User Module (8081)
