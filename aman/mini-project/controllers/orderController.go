@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"aman-swiggy-mini-project/database"
+	"aman-swiggy-mini-project/logger"
 	"aman-swiggy-mini-project/models"
 	"context"
 	"fmt"
@@ -41,18 +42,18 @@ func CreateOrder() gin.HandlerFunc {
 		var results []models.CartItem
 		cur, err := cartItemCollection.Find(ctx, bson.M{"user_id": userID}, findOptions)
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		for cur.Next(ctx) {
 			var elem models.CartItem
 			err := cur.Decode(&elem)
 			if err != nil {
-				fmt.Println(err)
+				logger.Log.Println(err)
 			}
 			results = append(results, elem)
 		}
 		if err := cur.Err(); err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		totalCartValue := float64(0)
 		var productItem models.Product
@@ -61,7 +62,7 @@ func CreateOrder() gin.HandlerFunc {
 			productId := elem.Product_id
 			err := productCollection.FindOne(ctx, bson.M{"product_id": productId}).Decode(&productItem)
 			if err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured finding product items"})
+				c.JSON(http.StatusInternalServerError, gin.H{"error": "Error occured while finding product items"})
 			}
 			totalCartValue += float64(*elem.Quantity) * float64(*productItem.Price)
 			finalResults = append(finalResults, gin.H{"Name": productItem.Name, "Price": productItem.Price, "Quantity": elem.Quantity})
@@ -69,7 +70,7 @@ func CreateOrder() gin.HandlerFunc {
 
 		_, errDel := cartItemCollection.DeleteMany(ctx, bson.M{"user_id": userID})
 		if errDel != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		order.Items = finalResults
 		order.ID = primitive.NewObjectID()
@@ -79,11 +80,11 @@ func CreateOrder() gin.HandlerFunc {
 		_, insertErr := orderCollection.InsertOne(ctx, order)
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order item was not created")
+			msg := fmt.Sprintf("Order was not placed")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
-
+		logger.Log.Println("Order created")
 		defer cancel()
 		c.JSON(http.StatusOK, gin.H{"Your order ID is ": order.ID, "Order Total": totalCartValue, "Payment": order.Payment_status, "Items Ordered": finalResults})
 	}
@@ -97,11 +98,11 @@ func CancelOrder() gin.HandlerFunc {
 		result, insertErr := orderCollection.DeleteOne(ctx, bson.M{"user_id": cartId, "order_id": orderId})
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order was not canceled")
+			msg := fmt.Sprintf("Order was not canceled")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
-
+		logger.Log.Println("Order canceled")
 		defer cancel()
 		c.JSON(http.StatusOK, result)
 	}
@@ -124,11 +125,11 @@ func PaidOrder() gin.HandlerFunc {
 			}})
 
 			if insertErr != nil {
-				msg := fmt.Sprintf("order item was not updated")
+				msg := fmt.Sprintf("Order was not updated")
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}
-
+			logger.Log.Println("Order Payment status updated")
 			defer cancel()
 			c.JSON(http.StatusOK, result)
 		} else {

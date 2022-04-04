@@ -3,6 +3,7 @@ package controllers
 import (
 	"aman-swiggy-mini-project/database"
 	"aman-swiggy-mini-project/helpers"
+	"aman-swiggy-mini-project/logger"
 	"aman-swiggy-mini-project/models"
 	"context"
 	"fmt"
@@ -30,6 +31,7 @@ func GetSeller() gin.HandlerFunc {
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while listing user items"})
 		}
+		logger.Log.Println("Seller info Requested")
 		c.JSON(http.StatusOK, user)
 	}
 }
@@ -51,7 +53,7 @@ func SellerSignUp() gin.HandlerFunc {
 		count, err := sellerCollection.CountDocuments(ctx, bson.M{"email": user.Email})
 		defer cancel()
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the email"})
 			return
 		}
@@ -61,7 +63,7 @@ func SellerSignUp() gin.HandlerFunc {
 		count, err = sellerCollection.CountDocuments(ctx, bson.M{"phone": user.Phone})
 		defer cancel()
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while checking for the phone number"})
 			return
 		}
@@ -84,6 +86,7 @@ func SellerSignUp() gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
+		logger.Log.Println("Seller created")
 		defer cancel()
 
 		c.JSON(http.StatusOK, resultInsertionNumber)
@@ -116,6 +119,7 @@ func SellerLogin() gin.HandlerFunc {
 
 		token, refreshToken, _ := helpers.GenerateAllTokens(*foundUser.Email, *foundUser.FirstName, *foundUser.LastName, foundUser.User_id)
 		helpers.UpdateAllTokens(token, refreshToken, foundUser.User_id)
+		logger.Log.Println("Seller login successful")
 		c.JSON(http.StatusOK, foundUser)
 	}
 }

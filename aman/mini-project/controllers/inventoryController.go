@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"aman-swiggy-mini-project/logger"
 	"aman-swiggy-mini-project/models"
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -21,22 +21,22 @@ func GetInventory() gin.HandlerFunc {
 		var results []interface{}
 		cur, err := productCollection.Find(ctx, bson.M{"seller_id": inventoryId}, findOptions)
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		for cur.Next(ctx) {
 			var elem models.Product
 			err := cur.Decode(&elem)
 			if err != nil {
-				fmt.Println(err)
+				logger.Log.Println(err)
 			}
 			results = append(results, gin.H{"Product ID": elem.Product_id, "Name": elem.Name, "Price": elem.Price, "Units in Stock": elem.Stock_units})
 		}
 		if err := cur.Err(); err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 
 		cur.Close(ctx)
-
+		logger.Log.Println("Inventory accessed")
 		defer cancel()
 		c.JSON(http.StatusOK, gin.H{"Inventory": results})
 	}

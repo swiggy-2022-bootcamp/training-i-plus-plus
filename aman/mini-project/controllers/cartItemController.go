@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"aman-swiggy-mini-project/database"
+	"aman-swiggy-mini-project/logger"
 	"aman-swiggy-mini-project/models"
 	"context"
 	"encoding/json"
@@ -25,6 +26,7 @@ func AddCartItem() gin.HandlerFunc {
 		var item models.CartItem
 
 		if err := c.BindJSON(&item); err != nil {
+			logger.Log.Println("Bad Request")
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
@@ -33,11 +35,12 @@ func AddCartItem() gin.HandlerFunc {
 		result, insertErr := cartItemCollection.InsertOne(ctx, item)
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("item was not added to the cart")
+			msg := fmt.Sprintf("Item was not added to the cart")
+			logger.Log.Println(msg)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
-
+		logger.Log.Println("Item added to cart")
 		defer cancel()
 		c.JSON(http.StatusOK, result)
 	}
@@ -51,11 +54,13 @@ func RemoveCartItem() gin.HandlerFunc {
 		result, insertErr := cartItemCollection.DeleteMany(ctx, bson.M{"user_id": cartId, "product_id": productId})
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order item was not deleted")
+			msg := fmt.Sprintf("Item wasn't removed from the cart")
+			logger.Log.Println(msg)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
 
+		logger.Log.Println("Item removed from the cart")
 		defer cancel()
 		c.JSON(http.StatusOK, result)
 	}
@@ -82,11 +87,12 @@ func UpdateCartItem() gin.HandlerFunc {
 		}})
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order item was not updated")
+			msg := fmt.Sprintf("Item wasn't updated")
+			logger.Log.Println(msg)
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
-
+		logger.Log.Println("Item was updated")
 		defer cancel()
 		c.JSON(http.StatusOK, result)
 	}

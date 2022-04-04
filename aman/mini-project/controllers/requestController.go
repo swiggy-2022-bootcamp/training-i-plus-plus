@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"aman-swiggy-mini-project/kafka"
+	"aman-swiggy-mini-project/logger"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -15,6 +16,7 @@ func GetRequest() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := context.Background()
 		consumedRequests := kafka.Consume(ctx)
+		logger.Log.Println("Request requested")
 		c.JSON(http.StatusOK, gin.H{"Requests": consumedRequests})
 	}
 }
@@ -33,6 +35,7 @@ func PostRequest() gin.HandlerFunc {
 		requestString := bMap["request"]
 		fmt.Println(requestString)
 		kafka.Produce(ctx, requestString)
+		logger.Log.Println("Requested accepted")
 		c.JSON(http.StatusOK, gin.H{"Request Submitted": requestString})
 	}
 }

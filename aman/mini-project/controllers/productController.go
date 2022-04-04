@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"aman-swiggy-mini-project/database"
+	"aman-swiggy-mini-project/logger"
 	"aman-swiggy-mini-project/models"
 	"context"
 	"encoding/json"
@@ -40,13 +41,13 @@ func GetProducts() gin.HandlerFunc {
 		var results []models.Product
 		cur, err := productCollection.Find(ctx, bson.M{}, findOptions)
 		if err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		for cur.Next(ctx) {
 			var elem models.Product
 			err := cur.Decode(&elem)
 			if err != nil {
-				fmt.Println(err)
+				logger.Log.Println(err)
 			}
 			results = append(results, elem)
 		}
@@ -57,10 +58,10 @@ func GetProducts() gin.HandlerFunc {
 		}
 
 		if err := cur.Err(); err != nil {
-			fmt.Println(err)
+			logger.Log.Println(err)
 		}
 		cur.Close(ctx)
-
+		logger.Log.Println("All Products Requested")
 		defer cancel()
 		c.JSON(http.StatusOK, aList)
 	}
@@ -75,8 +76,9 @@ func GetProduct() gin.HandlerFunc {
 		err := productCollection.FindOne(ctx, bson.M{"product_id": productId}).Decode(&product)
 		defer cancel()
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "error occured while fetching the product item"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Error occured while fetching the product item"})
 		}
+		logger.Log.Println("Product Requested")
 		c.JSON(http.StatusOK, gin.H{"Name": product.Name, "Price": product.Price, "Stocks Remaining": product.Stock_units})
 	}
 }
@@ -117,6 +119,7 @@ func CreateProduct() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}
+			logger.Log.Println("Product created")
 			defer cancel()
 			c.JSON(http.StatusOK, result)
 		} else {
@@ -157,7 +160,7 @@ func UpdateProduct() gin.HandlerFunc {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 				return
 			}
-
+			logger.Log.Println("Product updated")
 			defer cancel()
 			c.JSON(http.StatusOK, result)
 		} else {
