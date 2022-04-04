@@ -5,11 +5,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const baseURL string = "/bookkeeping";
+const BaseURL string = "/bookkeeping";
 
 func GenerateBookKeepingServiceRoutes(router *gin.Engine) {
-	bookKeepingRouter := router.Group(baseURL)
+	bookKeepingRouter := router.Group(BaseURL)
+	// Create
+	bookKeepingRouter.POST("medicines", controllers.CreateMedicine)
+	// Read
 	bookKeepingRouter.GET("medicines", controllers.FindAllMedicines)
 	bookKeepingRouter.GET("medicines/:id", controllers.FindMedicineByName)
 	bookKeepingRouter.GET("medicines/disease/:diseaseName", controllers.FindMedicinesByDiseaseName)
+	// Update
+	bookKeepingRouter.PUT("medicines/:id", controllers.UpdateMedicines)
+	// Delete
+	bookKeepingRouter.DELETE("medicines/:id", controllers.DeleteMedicines)
 }

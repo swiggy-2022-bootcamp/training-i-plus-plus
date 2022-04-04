@@ -9,9 +9,11 @@ import (
 	log "github.com/sirupsen/logrus"
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
     swaggerFiles "github.com/swaggo/files" // swagger embed files
+	docs "github.com/dhi13man/healthcare-app/docs"
 )
 
 func main() {
+	docs.SwaggerInfo.BasePath = "/"
 	// Set up routes for both microsevices
 	// General
 	router := gin.Default()
@@ -19,9 +21,11 @@ func main() {
 	// Users Microservice
 	usersRouter := gin.Default()
 	user_routes.GenerateUsersServiceRoutes(usersRouter)
+	usersRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// Bookkeeping Microservice
 	bookkeepingRouter := gin.Default()
 	bookkeeping_routes.GenerateBookKeepingServiceRoutes(bookkeepingRouter)
+	bookkeepingRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Make channels to get error
 	errChanUsers := make(chan error)
@@ -46,7 +50,7 @@ func main() {
 			log.Fatal("bookkeeping Microservice failed", err)
 		default:
 			// Block main thread for this time so goroutines can run with their seperate microservices.
-			time.Sleep(100 * time.Second)
+			select {}
 
 	}
 }

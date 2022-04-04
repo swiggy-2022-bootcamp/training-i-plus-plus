@@ -122,3 +122,38 @@ func UpdateClients(c *gin.Context) {
 		}
 	}
 }
+
+ // @Summary      Deletes Clients in the Database.
+ // @Description  Deletes the Clients in the Database using their email.
+ // @Tags         accounts
+ // @Accept       json
+ // @Produce      json
+ // @Param        email     body      string  true  "User Email"
+ // @Param        name      body      string  true  "User Name"
+ // @Param        password  body      string  true  "User Password"
+ // @Success      200       {object}  models.Client
+ // @Failure      400       {object}  dtos.HTTPError
+ // @Failure      404       {object}  dtos.HTTPError
+ // @Failure      500       {object}  dtos.HTTPError
+ // @Router       /users/clients/{email} [delete]
+ func DeleteClients(c *gin.Context) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	email := c.Param("email")
+	if email == "" {
+		const errMsg string = "Client email is required."
+		log.Error(errMsg)
+		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, nil, errMsg))
+		return
+	}
+	 
+	out, err := repositories.DeleteClient(models.Client{User: models.User{Email: email}}, ctx)
+	if err != nil {
+		const errMsg string = "Error deleting user."
+		log.Error(errMsg, err)
+		c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
+	} else {
+		c.JSON(http.StatusOK, out)
+	}
+}

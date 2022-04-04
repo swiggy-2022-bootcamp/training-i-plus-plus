@@ -62,7 +62,7 @@ const docTemplate = `{
         },
         "/bookkeeping/medicines/disease/{diseaseName}": {
             "get": {
-                "description": "Find all medicines for a Disease identified by the disease name from the two databases..",
+                "description": "Find all medicines for a Disease identified by the disease name from the two databases.",
                 "consumes": [
                     "application/json"
                 ],
