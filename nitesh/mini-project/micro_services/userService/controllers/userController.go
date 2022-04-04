@@ -2,7 +2,9 @@ package controllers
 
 import (
 	"context"
+	"os"
 
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 
 	"net/http"
@@ -21,12 +23,20 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var log logrus.Logger = *logger.GetLogger()
+func getUserCollection() *mongo.Collection {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
+	}
 
-var userCollection *mongo.Collection = database.OpenCollection(
-	database.MongoClient,
-	"user",
-)
+	COLLECTION := os.Getenv("COLLECTION")
+	userCollection := database.OpenCollection(database.MongoClient, COLLECTION)
+
+	return userCollection
+}
+
+var log logrus.Logger = *logger.GetLogger()
+var userCollection *mongo.Collection = getUserCollection()
 var validate *validator.Validate
 
 func HashPassword() {

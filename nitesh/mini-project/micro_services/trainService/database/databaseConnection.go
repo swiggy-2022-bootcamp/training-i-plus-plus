@@ -45,6 +45,12 @@ func DBintance() *mongo.Client {
 var MongoClient *mongo.Client = DBintance()
 
 func OpenCollection(client *mongo.Client, colletionName string) *mongo.Collection {
-	var collection *mongo.Collection = client.Database("trainTicket").Collection(colletionName)
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
+	}
+
+	DATABASE := os.Getenv("DATABASE")
+	var collection *mongo.Collection = client.Database(DATABASE).Collection(colletionName)
 	return collection
 }

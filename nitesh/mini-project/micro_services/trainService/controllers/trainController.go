@@ -3,6 +3,7 @@ package controllers
 import (
 	"context"
 	"net/http"
+	"os"
 	"time"
 	"trainService/database"
 	helper "trainService/helpers"
@@ -10,6 +11,7 @@ import (
 	models "trainService/models"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -17,7 +19,19 @@ import (
 
 var log logrus.Logger = *logger.GetLogger()
 
-var trainCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "train")
+func getTrainCollection() *mongo.Collection {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
+	}
+
+	COLLECTION := os.Getenv("COLLECTION")
+	trainCollection := database.OpenCollection(database.MongoClient, COLLECTION)
+
+	return trainCollection
+}
+
+var trainCollection *mongo.Collection = getTrainCollection()
 
 // ShowAccount godoc
 // @Summary      Check Availability

@@ -6,15 +6,29 @@ import (
 	"invoiceService/logger"
 	"invoiceService/models"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var invoiceCollection *mongo.Collection = database.OpenCollection(database.MongoClient, "invoiceDetails")
+func getInvoiceCollection() *mongo.Collection {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.WithFields(logrus.Fields{"err": err.Error()}).Error("Failed to load .env file")
+	}
+
+	COLLECTION := os.Getenv("COLLECTION")
+	invoiceCollection := database.OpenCollection(database.MongoClient, COLLECTION)
+
+	return invoiceCollection
+}
+
+var invoiceCollection *mongo.Collection = getInvoiceCollection()
 var log logrus.Logger = *logger.GetLogger()
 
 var request struct {

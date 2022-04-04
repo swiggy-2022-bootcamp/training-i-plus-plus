@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/joho/godotenv"
 	"github.com/sirupsen/logrus"
 )
 
@@ -20,7 +21,12 @@ func GetLogger() *logrus.Logger {
 			func() {
 				logger = logrus.New()
 
-				src, err := os.OpenFile("train.log", os.O_APPEND|os.O_WRONLY, os.ModeAppend)
+				err := godotenv.Load(".env")
+				if err != nil {
+					return
+				}
+				LOG_FILE := os.Getenv("LOG_FILE")
+				src, err := os.OpenFile(LOG_FILE, os.O_APPEND|os.O_WRONLY, os.ModeAppend)
 
 				if err != nil {
 					fmt.Print(err.Error())
