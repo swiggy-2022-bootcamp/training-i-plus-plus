@@ -5,10 +5,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const baseURL string = "/users/";
+const baseURL string = "/users";
 
 func GenerateUsersServiceRoutes(router *gin.Engine) {
-	router.POST(baseURL + "clients/", controllers.CreateClient)
-	router.GET(baseURL + "clients/:email/", controllers.GetClient)
-	router.PUT(baseURL + "clients/:email/", controllers.UpdateClients)
+	userRouter := router.Group(baseURL)
+	userRouter.POST("clients", controllers.CreateClient)
+	userRouter.GET("clients/:email", controllers.GetClient)
+	userRouter.PUT("clients/:email", controllers.UpdateClients)
 }
