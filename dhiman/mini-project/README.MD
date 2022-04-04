@@ -14,27 +14,32 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 
 ## Screenshots
 
-### Gin and Logs
+### Gin and Logging
 
-| ![Gin Logs of different Levels](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/logs.png) |
+| Gin and Logging in different Levels using [logrus](https://github.com/sirupsen/logrus) |
 | --- |
+| ![Gin Logs of different Levels](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/logs.png) |
 
 ### Mongo DB
 
-| ![Mongo DB Collection](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/mongo_collection.png) |
+| Mongo DB Collections |
 | --- |
+| ![Mongo DB Collection](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/mongo_collection.png) |
 
 ### Kafka
 
-| [![Users Microservice Kafka Producer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png) | [![Bookkeeping Microservice Kafka Consumer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png) |
+| Users Microservice (Kafka Producer) | Bookkeeping Microservice (Kafka Consumer) |
 | --- | --- |
+| [![Users Microservice Kafka Producer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_producer.png) | [![Bookkeeping Microservice Kafka Consumer](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/kafka_consumer.png) |
 
 ### Swagger UI
 
-| [![Bookkeeping Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Users Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png) |
+| Bookkeeping Microservice Swagger | Users Microservice Swagger |
 | --- | --- |
+| [![Bookkeeping Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Users Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png) |
 
 ### Sonarqube and Unit Tests
 
-| [![Sonarqube Projects Dashboard](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png) | [![Unit Testing Examples](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png) |
+| Sonarqube Projects Dashboard  | Unit Testing in Golang |
 | --- | --- |
+| [![Sonarqube Projects Dashboard](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/sonarqube.png) | [![Unit Testing Golang Examples](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/tests.png) |
