@@ -33,7 +33,7 @@ func AddCartItem() gin.HandlerFunc {
 		result, insertErr := cartItemCollection.InsertOne(ctx, item)
 
 		if insertErr != nil {
-			msg := fmt.Sprintf("order item was not created")
+			msg := fmt.Sprintf("item was not added to the cart")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": msg})
 			return
 		}
