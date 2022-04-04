@@ -84,3 +84,8 @@
 ![Optional Text](diagram4.png)
 
 
+## Setup
+
+1. zookeper - `bin/zookeeper-server-start.sh config/zookeeper.properties`
+2. kafka - `bin/kafka-server-start.sh config/server.properties`
+3. Run `go run main.go` in each microservice
