@@ -1,6 +1,6 @@
-### Train Reservation System
+# Train Reservation System
 
-# Features
+### Features
 
 - Register new User
 - Login User
@@ -26,7 +26,7 @@
 - Unit Testing and Mocks for all the modules
 
 
-# Microservices
+### Microservices
 1. UserService (:8000)
 1. TrainService (:8001)
 2. TicketService (:8002)
