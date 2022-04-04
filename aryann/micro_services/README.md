@@ -2,15 +2,18 @@
 
 ## Implemented
 - [x] GoLang
-- [x] Gin Gonic
-- [x] MongoDB
-- [x] Kafka
+- [x] Gin Gonic as HTTP Web Framework
+- [x] MongoDB as Persistent Database
+- [x] Kafka for communication between microservices
 - [x] Swagger UI
-- [x] SonarQube
-- [x] Logging
+- [x] REST API with Json Response 
+- [x] SonarQube with Unit Testing
+- [x] Logging in a separate file
 - [x] Session Key Management / JWT Tokens
 - [x] Error Handling
-- [x] Password Encryption
+- [x] Password Encryption using Bcrypt Hashing
+- [x] User Registration for 2 roles: User and Admin
+- [x] MVC Architecture for each microservice  
 
 ## Microservices
 1. UserService (:3000)
@@ -39,7 +42,7 @@ TrainService is repsonsible to do CRUD operations related to train journeys
 - DELETE /train/:trainid
 
 ### TicketService
-TicketService is repsonsible to do CRUD operations related to tickets
+TicketService is repsonsible to do CRUD operations related to tickets. It also keeps a check on the `purchased` topic to consume purchased tickets. 
 
 **Routes**
 - POST /ticket
@@ -48,7 +51,8 @@ TicketService is repsonsible to do CRUD operations related to tickets
 - DELETE /ticket/:ticketid
 
 ### PurchaseService
-PurchaseService is repsonsible to do CRUD operations related to purchasing tickets
+PurchaseService is repsonsible to do CRUD operations related to purchasing tickets. It also publishes/produces all the purchased tickets to `purchased` kafka topic
+to list/consume them in the Ticket Service.
 
 **Routes**
 - POST /purchase  
