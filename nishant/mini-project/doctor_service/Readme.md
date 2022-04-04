@@ -23,9 +23,12 @@
 
 
 ### Swagger
-![user_swagger_ui](docs/doctor_service_swagger.png)
+![doctor_swagger_ui](docs/doctor_service_swagger.png)
 
 ### Generate Swagger Docs
 ```
 /home/neo/go/bin/swag init
 ```
+
+### Sonar 
+![doctor_sonar](docs/doctor_service_sonar.png)

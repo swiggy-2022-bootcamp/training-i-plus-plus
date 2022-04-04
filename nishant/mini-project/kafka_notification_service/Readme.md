@@ -23,3 +23,6 @@ to run :-
 ```bash
 docker-compose up
 ```
+
+### Sonar 
+![notfication_service_sonar](noti_service_sonar.png)

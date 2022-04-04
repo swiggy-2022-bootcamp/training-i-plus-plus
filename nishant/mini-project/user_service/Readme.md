@@ -27,3 +27,6 @@
 
 ### Swagger
 ![user_swagger_ui](docs/user_service_swagger.png)
+
+### Sonar
+![user_sonar](docs/user_service_sonar.png)

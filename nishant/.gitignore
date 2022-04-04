@@ -17,5 +17,4 @@
 
 go.mod
 go.sum
-.scannerwork/
 *.log
