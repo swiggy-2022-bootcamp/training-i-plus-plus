@@ -88,7 +88,7 @@ func (uc *UserController) LoginUser(ctx *gin.Context)  {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	ctx.JSON(http.StatusOK, gin.H{"message": token})
+	ctx.JSON(http.StatusOK, gin.H{"token": token})
 }
 
 
