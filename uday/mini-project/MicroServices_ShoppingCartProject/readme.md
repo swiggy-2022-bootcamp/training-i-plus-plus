@@ -8,7 +8,7 @@ But, In this project User buys services provided by employees like Plumber, Pain
 
 -------------------------------------------------------
 </br>
- <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/uday/mini-project/MicroServices_ShoppingCartProject/ServiceProvider/diagram.PNG" width="500" height="500">
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/uday/mini-project/MicroServices_ShoppingCartProject/ServiceProvider/diagram.PNG" width="1000" height="1000">
  </br>
 
 Definitions:
