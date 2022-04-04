@@ -25,6 +25,10 @@
 - Get a Ticket
 - Push To Kafka when ticket is booked, for sending notification
 
+# Notification Service
+
+- Send notification over email
+
 ### Tasks
 
 - [x] APIs
@@ -38,10 +42,6 @@
 - [x] Mongodb usage
 - [x] Swagger UI
 - [ ] Sonarcube
-
-# Notification Service
-
-- Send notification over email
 
 ### Swagger
 
