@@ -1,7 +1,7 @@
 # Train Reservation System
 
 ### Features
-
+```
 - Register new User
 - Login User
 - Modify User
@@ -24,7 +24,7 @@
 
 - Swagger UI for all the modules
 - Unit Testing and Mocks for all the modules
-
+```
 
 ### Microservices
 1. UserService (:8000)
