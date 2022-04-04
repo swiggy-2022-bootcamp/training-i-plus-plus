@@ -8,7 +8,7 @@ import (
 	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	helper "bhatiachahat/product-service/helper"
+//	helper "bhatiachahat/product-service/helper"
 	"bhatiachahat/product-service/responses"
 	model "bhatiachahat/product-service/model"
 	database "bhatiachahat/product-service/db"
@@ -37,12 +37,12 @@ var validate = validator.New()
 func AddProduct()gin.HandlerFunc{
 
 	return func(c *gin.Context){
-		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusOK,
-				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
-			)
-		return
-	}
+		// if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+		// 	c.JSON(http.StatusOK,
+		// 		responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+		// 	)
+		// return
+//	}
 		
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var product model.Product
@@ -139,12 +139,12 @@ func GetProduct() gin.HandlerFunc{
 func DeleteProduct()gin.HandlerFunc{
 
 	return func(c *gin.Context){
-		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusOK,
-				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
-			)
-		return
-	}
+	// 	if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+	// 		c.JSON(http.StatusOK,
+	// 			responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+	// 		)
+	// 	return
+	// }
 		productId := c.Param("product_id")
 		
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
@@ -180,15 +180,15 @@ func DeleteProduct()gin.HandlerFunc{
 func UpdateProduct() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusOK,
-				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
-			)
-				// c.JSON(http.StatusOK,
-				// 	responses.ProductResponse{http.StatusBadRequest, responses.ProductResponse{Status: http.StatusBadRequest, Message: "Unauthorized to perform this action", Data: map[string]interface{}{"data":err.Error()}}},
-				// )
-			return
-		}
+		// if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+		// 	c.JSON(http.StatusOK,
+		// 		responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+		// 	)
+		// 		// c.JSON(http.StatusOK,
+		// 		// 	responses.ProductResponse{http.StatusBadRequest, responses.ProductResponse{Status: http.StatusBadRequest, Message: "Unauthorized to perform this action", Data: map[string]interface{}{"data":err.Error()}}},
+		// 		// )
+		// 	return
+		// }
         productId := c.Param("product_id")
         var product model.Product
         defer cancel()

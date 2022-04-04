@@ -21,9 +21,9 @@ func UserRoutes(router *gin.Engine){
 	 private.GET("/users/getcart/:user_id", controller.GetCart())
 
 
-	 private.GET("/users/:id",controller.GetUser())
-	 private.PUT("/users/:id", controller.EditUser())
-	 private.DELETE("/users/:id", controller.DeleteUser())
+	 private.GET("/users/:user_id",controller.GetUser())
+	 private.PUT("/users/:user_id", controller.EditUser())
+	 private.DELETE("/users/:user_id", controller.DeleteUser())
 	 private.GET("/users", controller.GetAllUsers())
 	
 

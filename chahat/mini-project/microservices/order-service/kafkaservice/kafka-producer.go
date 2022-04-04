@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"fmt"
+	"time"
 )
 
 func CreateProducer() (*kafka.Producer, error) {
@@ -23,7 +24,8 @@ func ProduceOrder(producer *kafka.Producer, topic string, msg interface{}) (bool
 	}
 
 	orderString := string(order)
-	fmt.Print("Order produced in kafka",orderString)
+	fmt.Printf("\n%s\n",  time.Now())
+	fmt.Print("\nOrder produced in kafka\n",orderString)
 
 
 	for _, word := range []string{orderString}{

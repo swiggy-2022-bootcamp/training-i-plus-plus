@@ -83,9 +83,18 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "GeneralUser"
+                    "User"
                 ],
                 "summary": "Get all Users list.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -94,6 +103,118 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/model.User"
                             }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/addtocart/:userid": {
+            "post": {
+                "description": "This request will add a product in user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User can add products in cart.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Product to add",
+                        "name": "req",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.ProductUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "number"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/getcart/:userid": {
+            "get": {
+                "description": "This request will add a product in user's cart.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "User can view products in cart.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/model.ProductUser"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "number"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "type": "number"
                         }
                     },
                     "500": {
@@ -187,6 +308,13 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
                         "description": "User id",
                         "name": "id",
                         "in": "path",
@@ -222,7 +350,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "GeneralUser"
+                    "User"
                 ],
                 "summary": "Edit User by ID.",
                 "parameters": [
@@ -231,6 +359,13 @@ const docTemplate = `{
                         "description": "User id",
                         "name": "id",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
                         "required": true
                     },
                     {
@@ -282,6 +417,13 @@ const docTemplate = `{
                 ],
                 "summary": "Delete User by ID.",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "user token",
+                        "name": "Token",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "type": "string",
                         "description": "User id",
@@ -358,6 +500,7 @@ const docTemplate = `{
         "model.User": {
             "type": "object",
             "required": [
+                "email",
                 "first_name",
                 "last_name",
                 "password",

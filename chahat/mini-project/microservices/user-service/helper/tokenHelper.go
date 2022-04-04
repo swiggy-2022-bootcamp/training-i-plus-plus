@@ -24,7 +24,7 @@ type SignedDetails struct{
 }
 
 
-var userCollection *mongo.Collection = database.OpenCollection(database.Client, "user")
+var userCollection *mongo.Collection = database.OpenCollection(database.Client, "users")
 
 var SECRET_KEY string = os.Getenv("SECRET_KEY")
 

@@ -65,11 +65,11 @@ func Signup()gin.HandlerFunc{
 			return
 		}
 
-		// validationErr := validate.Struct(user)
-		// if validationErr != nil {
-		// 	c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
-		// 	return
-		// }
+		validationErr := validate.Struct(user)
+		if validationErr != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error":validationErr.Error()})
+			return
+		}
 
 		count, err := userCollection.CountDocuments(ctx, bson.M{"email":user.Email})
 		defer cancel()
@@ -81,17 +81,18 @@ func Signup()gin.HandlerFunc{
 		password := HashPassword(*user.Password)
 		user.Password = &password
 
-		count, err = userCollection.CountDocuments(ctx, bson.M{"phone":user.Phone})
-		defer cancel()
-		if err!= nil {
-			log.Panic(err)
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while checking for the phone number"})
-		}
+		// count, err = userCollection.CountDocuments(ctx, bson.M{"phone":user.Phone})
+		// defer cancel()
+		// if err!= nil {
+		// 	log.Panic(err)
+		// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while checking for the phone number"})
+		// }
 
 		if count >0{
-			c.JSON(http.StatusInternalServerError, gin.H{"error":"this email or phone number already exists"})
+			c.JSON(http.StatusInternalServerError, gin.H{"error":"this email  already exists"})
 			return
 		}else{
+		//	fmt.Println(user)
 			user.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 			user.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 			user.ID = primitive.NewObjectID()
@@ -185,6 +186,20 @@ func Login() gin.HandlerFunc{
 	}
 }
 
+// AddToCart godoc
+// @Summary User can add products in cart.
+// @Description This request will add a product in user's cart.
+// @Tags User
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param        Token  	header	string  true  "user token"
+// @Param req body model.ProductUser true "Product to add"
+// @Success	201  {object} 	model.User
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /users/addtocart/:userid [POST]
 func AddToCart() gin.HandlerFunc{
 	return func(c *gin.Context) {
 		userId := c.Param("user_id")
@@ -210,14 +225,14 @@ func AddToCart() gin.HandlerFunc{
 				var user model.User
 			///	err = userCollection.FindOne(ctx, bson.M{"user_id":foundUser.User_id}).Decode(&foundUser)
 				 userCollection.FindOne(ctx, bson.M{"user_id":userId}).Decode(&user)
-	fmt.Println(user,"\n")
-	fmt.Println("----------------");
+	//fmt.Println(user,"\n")
+//	fmt.Println("----------------");
 			//	fmt.Println(product)
 			//	filterInventory := bson.D{bson.E{Key: "user_id", Value: userId}}
 			//	fmt.Println(filterInventory)
 	pushProuductID := bson.D{bson.E{Key: "$push", Value: bson.D{bson.E{Key: "user_cart", Value: product}}}}
 	defer cancel()
-	fmt.Print("push",pushProuductID)
+///	fmt.Print("push",pushProuductID)
 
 	// Push ProuductID to inventory
 	
@@ -258,6 +273,20 @@ func AddToCart() gin.HandlerFunc{
 
 	}
 }
+
+// GetCart godoc
+// @Summary User can view products in cart.
+// @Description This request will add a product in user's cart.
+// @Tags User
+// @Schemes
+// @Accept json
+// @Produce json
+// @Param        Token  	header	string  true  "user token"
+// @Success	200  {array} 	model.ProductUser
+// @Failure	400  {number} 	http.http.StatusBadRequest
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Router /users/getcart/:userid [GET]
 func GetCart() gin.HandlerFunc{
 	return func(c *gin.Context){
 		userId := c.Param("user_id")
@@ -281,10 +310,11 @@ func GetCart() gin.HandlerFunc{
 // GetAllUsers godoc
 // @Summary Get all Users list.
 // @Description Get details of all Users.
-// @Tags GeneralUser
+// @Tags User
 // @Schemes
 // @Accept json
 // @Produce json
+// @Param        Token  	header	string  true  "user token"
 // @Success	200  {array} 	model.User
 // @Failure	500  {number} 	http.StatusInternalServerError
 // @Security Bearer Token
@@ -324,6 +354,7 @@ func GetAllUsers() gin.HandlerFunc {
 // @Description View individual user details.
 // @Tags User
 // @Schemes
+// @Param        Token  	header	string  true  "user token"
 // @Param id path string true "User id"
 // @Accept json
 // @Produce json
@@ -334,6 +365,7 @@ func GetAllUsers() gin.HandlerFunc {
 func GetUser() gin.HandlerFunc{
 	return func(c *gin.Context){
 		userId := c.Param("user_id")
+		//fmt.Println(userId)
 
 		// if err := helper.MatchUserTypeToUid(c, userId); err != nil {
 		// 	c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
@@ -358,6 +390,7 @@ func GetUser() gin.HandlerFunc{
 // @Description User can delete his account.
 // @Tags User
 // @Schemes
+// @Param        Token  	header	string  true  "user token"
 // @Param id path string true "User id"
 // @Accept json
 // @Produce json
@@ -397,11 +430,12 @@ func DeleteUser()gin.HandlerFunc{
 // EditUserByID godoc
 // @Summary Edit User by ID.
 // @Description Edit details of a User.
-// @Tags GeneralUser
+// @Tags User
 // @Schemes
 // @Param id path string true "User id"
 // @Accept json
 // @Produce json
+// @Param        Token  	header	string  true  "user token"
 // @Param req body model.User true  "User details"
 // @Success	200  {object} 	model.User
 // @Failure	400  {number} 	http.StatusBadRequest

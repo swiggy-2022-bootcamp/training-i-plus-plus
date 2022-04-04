@@ -69,7 +69,8 @@ func consumeProduct(consumer *kafka.Consumer, topic string){
 	for {
 		msg, err := consumer.ReadMessage(-1)
 		if err == nil {
-			fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+			fmt.Printf("\n%s",  time.Now())
+			fmt.Printf("\n\nMessage on %s: %s\n", msg.TopicPartition, string(msg.Value))
 			var product model.Product
 			data := []byte(msg.Value)
 			err = json.Unmarshal(data, &product)

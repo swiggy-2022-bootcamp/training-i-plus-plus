@@ -22,14 +22,18 @@ type User struct{
 	ID       primitive.ObjectID `json:"_id"           bson:"_id"`
 	Firstname *string             `json:"first_name"      bson:"first_name"      validate:"required"`
 	Lastname *string             `json:"last_name"      bson:"last_name"      validate:"required"`
-	Email    *string             `json:"email"         bson:"email"         validate:" required"`
+	Email    *string             `json:"email"         bson:"email"         validate:"required"`
 	Phone    *string             `json:"phone"         bson:"phone"         validate:"required"`
 	Password *string             `json:"password"      bson:"password"      validate:"required"`
 	Token    *string              `json:"token"        bson:"token"`
 	Refresh_token *string           `json:"refresh_token"  bson:"refresh_token"`
 	Created_at		time.Time				`json:"created_at"`
 	Updated_at		time.Time				`json:"updated_at"`
-	User_id       string             `json:"user_id"`
+	User_id       string             `json:"user_id" bson:"user_id"`
 	Usertype *string				`json:"usertype"      bson:"usertype"      validate:"required,eq=ADMIN|eq=USER"`
     UserCart  []ProductUser      `json:"user_cart"    bson:"user_cart"`
+}
+type SignupUser struct{
+	Email    *string             `json:"email"         bson:"email"         validate:"required"`
+	Password *string             `json:"password"      bson:"password"      validate:"required"`
 }

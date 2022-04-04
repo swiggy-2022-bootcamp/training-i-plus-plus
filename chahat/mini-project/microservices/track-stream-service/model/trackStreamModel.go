@@ -7,7 +7,7 @@ import(
 type TrackStream struct {
 	ID				primitive.ObjectID		    `bson:"_id"`
 
-	PaymentType         string                       `json:"payment_type"`
+	PaymentType         string                       `json:"payment_type" bson:"payment_type"`
 }
 
 // type Order struct{

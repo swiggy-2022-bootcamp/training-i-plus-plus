@@ -61,17 +61,17 @@ func PlaceOrder()gin.HandlerFunc{
 			//	fmt.Println(user)
 	//	fmt.Println(user.UserCart)
 	newusercart := []model.ProductUser{}
-	fmt.Println(newusercart)
+	// fmt.Println(newusercart)
 		//	var usercart = model.ProductUser
 			//user.UserCart= newusercart
 			update := bson.M{"user_cart": newusercart}
 
-			result, err :=userCollection.UpdateOne(ctx,bson.M{"user_id":userId},bson.M{"$set": update})
+	_, err :=userCollection.UpdateOne(ctx,bson.M{"user_id":userId},bson.M{"$set": update})
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
             }
-			fmt.Println(result)
+		//	fmt.Println(result)
 			order.Payment_Method="DIGITAL"
 			num:=rand.Intn(200)
 			if num%2==0{ order.Payment_Method="COD"}
@@ -114,7 +114,7 @@ func PlaceOrder()gin.HandlerFunc{
 		)
 	}else{
 		{c.JSON(http.StatusOK,
-			responses.OrderResponse{Status: http.StatusOK, Message: "Add products to cart", Data: map[string]interface{}{"data":err.Error()}},
+			responses.OrderResponse{Status: http.StatusOK, Message: "Add products to cart", Data: map[string]interface{}{}},
 		)}
 	}
 	}

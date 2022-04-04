@@ -1,7 +1,7 @@
 package controller
 import (
 "context"
-	 "fmt"
+	// "fmt"
 //	"log"
 	//"strconv"
 	"net/http"
@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"bhatiachahat/track-stream-service/responses"
-	helper "bhatiachahat/track-stream-service/helper"
+	// helper "bhatiachahat/track-stream-service/helper"
 //	 model "bhatiachahat/track-stream-service/model"
 	 database "bhatiachahat/track-stream-service/db"
 	// kafkaservice "bhatiachahat/product-service/kafkaservice"
@@ -40,25 +40,27 @@ var validate = validator.New()
 func GetTrackingData()gin.HandlerFunc{
 
 	return func(c *gin.Context){
-		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
-			c.JSON(http.StatusOK,
-				responses.TrackStreamResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
-			)
-		return
-	}
+	// 	if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+	// 		c.JSON(http.StatusOK,
+	// 			responses.TrackStreamResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+	// 		)
+	// 	return
+	// }
 	
 		 var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		 defer cancel()
 		 //var trackstreamobj= model.TrackStream
 		 count1, err1 := trackstreamCollection.CountDocuments(ctx,  bson.M{"payment_type":"DIGITAL"})
 		 count2, err2 := trackstreamCollection.CountDocuments(ctx,  bson.M{"payment_type":"COD"})
+		// fmt.Println("DIGITAL",count1);
+		 //fmt.Println("COD",count2);
 		 if err1 != nil || err2 !=nil{
 			
 			c.JSON(http.StatusBadRequest, gin.H{"error": err1.Error()})
 			return
 		}
-		 fmt.Println(count1)
-		 fmt.Println(count2)
+		// fmt.Println(count1)
+		 //fmt.Println(count2)
 
 	//	if count1>count2 {c.JSON(http.StatusOK,"DIGITAL")}else{c.JSON(http.StatusOK,"COD")}
 		c.JSON(http.StatusOK,

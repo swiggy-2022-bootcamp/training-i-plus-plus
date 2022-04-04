@@ -3,6 +3,7 @@ package kafkaservice
 import (
 	"encoding/json"
 	"fmt"
+"time"
 	 //model "bhatiachahat/payment-service/model"
 	// usermodel "bhatiachahat/user-service/model"
 	 model "bhatiachahat/payment-service/model"
@@ -74,6 +75,7 @@ func consumeOrder(consumer *kafka.Consumer, topic string){
 		msg, err := consumer.ReadMessage(-1)
 		if err == nil {
 			fmt.Println("\n")
+			fmt.Printf("\n%s",  time.Now())
 			fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
 			var order model.Order
 			data := []byte(msg.Value)
@@ -83,7 +85,12 @@ func consumeOrder(consumer *kafka.Consumer, topic string){
 				return
 			}
 			fmt.Println("\n")
+			fmt.Printf("\n%s",  time.Now())
 			fmt.Println("Order consumed in payment service",order)
+			fmt.Println("\n\n");
+			fmt.Printf("\n%s",  time.Now())
+			fmt.Println("Payment successfull and Email sent to the user with order details.")
+
 			// fmt.Println("\n",order.Payment_Method)
 			// AddDatainDB(order)
 		

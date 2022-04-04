@@ -17,7 +17,7 @@ import (
 )
 
 const consumerTopic = "Orders"
- var trackstreamCollection *mongo.Collection = database.OpenCollection(database.Client, "orders")
+ var trackstreamCollection *mongo.Collection = database.OpenCollection(database.Client, "trackstream")
 
 func StartKafkaConsumer(){
 	consumer, err := createConsumer()
@@ -74,17 +74,19 @@ func consumeOrder(consumer *kafka.Consumer, topic string){
 		msg, err := consumer.ReadMessage(-1)
 		if err == nil {
 			fmt.Println("\n")
-			fmt.Printf("Message on %s: %s\n", msg.TopicPartition, string(msg.Value))
+			fmt.Printf("\n%s\n",  time.Now())
+			fmt.Printf("\nMessage on %s: %s\n", msg.TopicPartition, string(msg.Value))
 			var order model.Order
 			data := []byte(msg.Value)
 			err = json.Unmarshal(data, &order)
 			if err != nil {
-				fmt.Println("Error in unmarshalling kafka message into appointment struct")
+				fmt.Println("Error in unmarshalling kafka message ")
 				return
 			}
 			fmt.Println("\n")
-			fmt.Println("Order consumed in track stream service",order)
-			fmt.Println("\n",order.Payment_Method)
+			fmt.Printf("\n%s\n",  time.Now())
+			fmt.Println("\nOrder consumed in track stream service",order)
+			//fmt.Println("\n",order.Payment_Method)
 			AddDatainDB(order)
 		
 			// AddOrderToDB(user)
