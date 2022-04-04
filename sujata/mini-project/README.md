@@ -109,6 +109,8 @@ This service allows user of type `BUYER` to add a product to his/her cart, delet
   > ORDER_MONGO_URL = <br>
   > ORDER_PRODUCT_BASE_URL = <br>
 
+3. Run the following command to bring up the service `cd cmd/server` and `go run main.go`
+
 ## References
 
 - Requirement Document - [Online Shopping Store](https://docs.google.com/document/d/1cnCHEVkOgFDYSmZmSbxcDlZiLjCZXr1W9jHf62id7T8/edit?usp=sharing)
