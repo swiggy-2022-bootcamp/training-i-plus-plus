@@ -1,0 +1,6 @@
+projectKey=Microservies
+serverUrl=http://localhost:8094
+serverVersion=9.3.0.51899
+dashboardUrl=http://localhost:8094/dashboard?id=Microservies
+ceTaskId=AX_1IDmUd84TibtlrKr5
+ceTaskUrl=http://localhost:8094/api/ce/task?id=AX_1IDmUd84TibtlrKr5
