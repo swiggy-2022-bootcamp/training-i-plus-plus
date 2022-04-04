@@ -1,4 +1,4 @@
-package helpers
+package controllers
 
 import (
 	"UserService/models"
