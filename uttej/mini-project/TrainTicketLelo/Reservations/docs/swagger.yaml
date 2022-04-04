@@ -63,7 +63,8 @@ paths:
       - application/json
       description: Buy a Ticket by providing the details
       parameters:
-      - description: user unique id
+      - description: id, Departure Date, Purchase Date & Status Will Be Populated
+          Automatically
         in: body
         name: Ticket
         required: true

@@ -78,7 +78,7 @@ const docTemplate = `{
                 "summary": "Buy a Ticket",
                 "parameters": [
                     {
-                        "description": "user unique id",
+                        "description": "id, Departure Date, Purchase Date \u0026 Status Will Be Populated Automatically",
                         "name": "Ticket",
                         "in": "body",
                         "required": true,

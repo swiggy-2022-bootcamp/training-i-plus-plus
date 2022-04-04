@@ -17,7 +17,7 @@ import (
 // @Tags         Reservation
 // @Accept       json
 // @Produce      json
-// @Param		Ticket	body	models.Reservation	true	"user unique id"
+// @Param		Ticket	body	models.Reservation	true	"id, Departure Date, Purchase Date & Status Will Be Populated Automatically"
 // @Success      200  {string}  responseBody
 // @Failure      400  {number} 	http.StatusBadRequest
 // @Failure      500  {number} 	http.StatusInternalServerError
