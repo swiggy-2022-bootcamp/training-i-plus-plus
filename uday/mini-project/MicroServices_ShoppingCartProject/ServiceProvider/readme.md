@@ -67,4 +67,4 @@ API Requests:
 13) GET   /expert/rejectreq/{expertid}        => Service provider rejects the waiting requests of an user</br>
 14) GET   /expert/complete/{cost}/{expertid}  => Completes a waiting request and adds the cost to the service </br>
 15) POST  /user/loginuser                     =>  Login with username and password => returns JWT</br>
-16) POST  /user/signuser                      =>  Sign Up User
+16) POST  /user/signuser                      =>  Sign Up User.
