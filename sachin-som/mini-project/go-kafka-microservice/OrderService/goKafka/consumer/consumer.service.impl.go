@@ -3,6 +3,8 @@ package goKafka
 import (
 	"context"
 	"encoding/json"
+	"errors"
+	"fmt"
 	"strconv"
 	"time"
 
@@ -80,14 +82,16 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 		}
 		res, err := ks.WalletProtoClient.CheckAmount(ks.Ctx, userInfo)
 		if err != nil {
-			return err
+			fmt.Println(err.Error())
+			continue
 		}
 		amount := res.Amount
 		bill, _ := strconv.Atoi(_order.Bill)
 		if amount < int64(bill) {
 			filter := bson.D{bson.E{Key: "_id", Value: _order.OrderID}}
-			update := bson.D{bson.E{Key: "status", Value: "failed"}}
+			update := bson.D{bson.E{Key: "$set", Value: bson.D{bson.E{Key: "status", Value: "failed"}}}}
 			ks.OrderCollection.UpdateOne(ks.Ctx, filter, update)
+			return errors.New("Not Sufficient Amount.")
 			// TODO: Need to notify client (buyer) through Email service for order failure.
 		}
 
@@ -98,11 +102,11 @@ func (ks *GoKafkaServicesImpl) StoreOrders(topic string) error {
 		}
 		_, err = ks.WalletProtoClient.DeductAmount(ks.Ctx, deductReq)
 		if err != nil {
-			return err
+			fmt.Println(err.Error())
 		}
 		// Change order status
 		filter := bson.D{bson.E{Key: "_id", Value: _order.OrderID}}
-		update := bson.D{bson.E{Key: "status", Value: "paid"}}
+		update := bson.D{bson.E{Key: "$set", Value: bson.D{bson.E{Key: "status", Value: "paid"}}}}
 		ks.OrderCollection.UpdateOne(ks.Ctx, filter, update)
 		// TODO: Need to notify client (buyer) for successfull order
 	}

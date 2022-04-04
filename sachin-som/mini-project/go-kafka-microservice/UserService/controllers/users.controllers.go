@@ -130,6 +130,7 @@ func (uc *UserControllers) UpdateUser(g *gin.Context) {
 	}
 	if err = uc.UserService.UpdateUser(userId, &updatedUser); err != nil {
 		g.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
 	}
 	g.JSON(http.StatusOK, gin.H{"message": "User Updated Succesfully."})
 }
@@ -155,6 +156,7 @@ func (uc *UserControllers) DeleteUser(g *gin.Context) {
 	}
 	if err = uc.UserService.DeleteUser(userId); err != nil {
 		g.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
 	}
 	g.JSON(http.StatusOK, gin.H{"message": "User Deleted Succesfully."})
 }

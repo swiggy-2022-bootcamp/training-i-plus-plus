@@ -9,5 +9,6 @@ type WalletServices interface {
 	CreateWallet(*models.Wallet) (string, error)
 	AddMoney(primitive.ObjectID, int) error
 	GetStatus(primitive.ObjectID) (*models.Wallet, error)
+	GetStatusByUserId(primitive.ObjectID) (*models.Wallet, error)
 	DeductAmount(primitive.ObjectID, int) error
 }

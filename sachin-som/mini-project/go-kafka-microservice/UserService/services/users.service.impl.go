@@ -58,10 +58,13 @@ func (us *UserServiceImpl) GetUser(userId primitive.ObjectID) (*models.User, err
 func (us *UserServiceImpl) UpdateUser(userId primitive.ObjectID, updatedUser *models.User) error {
 	filterQ := bson.D{bson.E{Key: "_id", Value: userId}}
 	updateQ := bson.D{
-		bson.E{Key: "full_name", Value: updatedUser.Fullname},
-		bson.E{Key: "email", Value: updatedUser.Email},
-		bson.E{Key: "password", Value: updatedUser.Password},
-		bson.E{Key: "phone", Value: updatedUser.Phone},
+		bson.E{Key: "$set", Value: bson.D{
+			bson.E{Key: "fullname", Value: updatedUser.Fullname},
+			bson.E{Key: "email", Value: updatedUser.Email},
+			bson.E{Key: "password", Value: updatedUser.Password},
+			bson.E{Key: "phone", Value: updatedUser.Phone},
+		},
+		},
 	}
 	res, err := us.UserCollection.UpdateOne(us.Ctx, filterQ, updateQ)
 	if err != nil {
@@ -71,13 +74,13 @@ func (us *UserServiceImpl) UpdateUser(userId primitive.ObjectID, updatedUser *mo
 		return errors.New("No User Found.")
 	}
 	if res.ModifiedCount != 1 {
-		return errors.New("User Not Found.")
+		return errors.New("User didn't update.")
 	}
 	return nil
 }
 
 func (us *UserServiceImpl) DeleteUser(userId primitive.ObjectID) error {
-	filterQ := bson.D{bson.E{Key: "_Id", Value: userId}}
+	filterQ := bson.D{bson.E{Key: "_id", Value: userId}}
 	res, err := us.UserCollection.DeleteOne(us.Ctx, filterQ)
 	if err != nil {
 		return err

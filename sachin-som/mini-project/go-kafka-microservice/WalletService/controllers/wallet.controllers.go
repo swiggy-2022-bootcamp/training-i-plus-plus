@@ -83,7 +83,7 @@ func (wc *WalletControllers) CheckAmount(ctx context.Context, in *pb.UserInfo) (
 	if err != nil {
 		return nil, err
 	}
-	wallet, err := wc.WalletServices.GetStatus(userObjId)
+	wallet, err := wc.WalletServices.GetStatusByUserId(userObjId)
 	if err != nil {
 		return nil, err
 	}

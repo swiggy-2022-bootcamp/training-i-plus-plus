@@ -58,6 +58,15 @@ func (ws *WalletServicesImpl) GetStatus(walletID primitive.ObjectID) (*models.Wa
 	return &_wallet, nil
 }
 
+func (ws *WalletServicesImpl) GetStatusByUserId(userID primitive.ObjectID) (*models.Wallet, error) {
+	filter := bson.D{bson.E{Key: "user_id", Value: userID}}
+	var _wallet models.Wallet
+	if err := ws.WalletCollection.FindOne(ws.Ctx, filter).Decode(&_wallet); err != nil {
+		return nil, err
+	}
+	return &_wallet, nil
+}
+
 func (ws *WalletServicesImpl) DeductAmount(userId primitive.ObjectID, bill int) error {
 	filter := bson.D{bson.E{Key: "user_id", Value: userId}}
 	update := bson.D{

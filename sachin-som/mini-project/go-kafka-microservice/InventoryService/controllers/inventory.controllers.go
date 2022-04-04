@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -93,8 +92,6 @@ func (ic *InventoryControllers) GetProduct(gctx *gin.Context) {
 	inventoryId, _ := primitive.ObjectIDFromHex(gctx.Param("inventoryId"))
 	productId, _ := primitive.ObjectIDFromHex(gctx.Param("productId"))
 
-	fmt.Println(inventoryId)
-	fmt.Println(productId)
 	product, err := ic.InventoryService.GetProduct(inventoryId, productId)
 	if err != nil {
 		gctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
