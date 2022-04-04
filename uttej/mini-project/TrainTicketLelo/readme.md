@@ -30,7 +30,7 @@
 ## Project Setup
 
 - Place the project folder in src folder of the GOPATH
-- Have Kafka producer & consumer running with topic TrainTicketLelo
+- Have Kafka producer & consumer running with topic TrainTicketLelo. Refer the [KafkaNotes](./kafkaNotes.md) file For Proper Execution Flow.
 - In each of the microserivce folder, run `go run main.go`
 
 ## Testing
