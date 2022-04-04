@@ -24,7 +24,7 @@ const docTemplate = `{
     "paths": {
         "/orders/place_order/:user_id": {
             "post": {
-                "description": "This request will adds a new product.",
+                "description": "This request will allow user to place order.",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,9 +32,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "Order"
                 ],
-                "summary": "To add a new product in the application",
+                "summary": "To place order in the application",
                 "responses": {
                     "201": {
                         "description": "Created",

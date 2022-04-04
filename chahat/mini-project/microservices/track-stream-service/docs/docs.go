@@ -24,7 +24,7 @@ const docTemplate = `{
     "paths": {
         "/getTrackingData": {
             "get": {
-                "description": "This request will adds a new product.",
+                "description": "This request will give analytics data of different types of payment.",
                 "consumes": [
                     "application/json"
                 ],
@@ -32,9 +32,9 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Product"
+                    "TrackStream"
                 ],
-                "summary": "To add a new product in the application",
+                "summary": "Get the analytics of application(This usecase tracks the count of different modes of payments)",
                 "responses": {
                     "200": {
                         "description": "OK",

@@ -13,7 +13,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: This request will adds a new product.
+      description: This request will allow customer to make payment.
       produces:
       - application/json
       responses:
@@ -29,9 +29,9 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: To add a new product in the application
+      summary: To make payment for the order in the application
       tags:
-      - Product
+      - Payment
 securityDefinitions:
   Bearer Token:
     in: header

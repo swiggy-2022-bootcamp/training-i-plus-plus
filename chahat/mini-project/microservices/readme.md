@@ -20,13 +20,41 @@
 
 ### Features Implemented
 
-<!-- <li>User registration for 2 roles - Admin, User Registration
-<li>REST APIs to perform CRUD operations on all two roles
+<li>Role-Right Management-registration for 2 roles - Admin, User Registration
+<li>REST APIs to perform CRUD operations 
 <li>Mongodb to persist data
 <li>Authorisation using JWT and password hashing
 <li>Using kafka to communicate between different microservices
-<li>Using Grpc to communicate between different microservices
-<li>Integration with Stripe Payment Gateway -->
+<li>Swagger implementation of all the microservices
+<li>Postman testing for all the API's
+
+### API's
+   #### Product Module (8080)
+   <li> GET("/products", controller.GetAllProducts())
+   <li> POST("/products", controller.AddProduct())
+   <li> DELETE("/products/:product_id", controller.DeleteProduct())
+    <li> GET("/products/:product_id", controller.GetProduct())
+	<li> PUT("/products/:product_id", controller.UpdateProduct())
+	
+
+   #### User Module (8081)
+   <li> POST("/users/signup")
+   <li>	POST("/users/login")
+   <li> POST("/users/addtocart/:user_id")
+   <li> GET("/users/getcart/:user_id")
+   <li> GET("/users/:id")
+   <li> PUT("/users/:id")
+   <li> DELETE("/users/:id")
+   <li> GET("/users")
+
+   #### Order Module (8082)
+   <li> POST("/orders/place_order/:user_id")
+
+   #### Payment Module (8083)
+   <li>  POST("/payment/:order_id")
+
+   #### Track-stream Module (8084)
+   <li>	GET ("/getAnalytics")
 
 ### Modules in the application
 

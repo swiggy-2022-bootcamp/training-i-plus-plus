@@ -14,7 +14,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: This request will adds a new product.
+      description: This request will give analytics data of different types of payment.
       produces:
       - application/json
       responses:
@@ -30,9 +30,10 @@ paths:
           description: Internal Server Error
           schema:
             type: number
-      summary: To add a new product in the application
+      summary: Get the analytics of application(This usecase tracks the count of different
+        modes of payments)
       tags:
-      - Product
+      - TrackStream
 securityDefinitions:
   Bearer Token:
     in: header

@@ -8,7 +8,8 @@ import (
 	"time"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	//helper "github.com/bhatiachahat/mongoapi/helper"
+	helper "bhatiachahat/product-service/helper"
+	"bhatiachahat/product-service/responses"
 	model "bhatiachahat/product-service/model"
 	database "bhatiachahat/product-service/db"
 	kafkaservice "bhatiachahat/product-service/kafkaservice"
@@ -36,7 +37,12 @@ var validate = validator.New()
 func AddProduct()gin.HandlerFunc{
 
 	return func(c *gin.Context){
-	
+		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+			c.JSON(http.StatusOK,
+				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+			)
+		return
+	}
 		
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 		var product model.Product
@@ -75,20 +81,14 @@ fmt.Println(product)
 			}
 		v,err:= kafkaservice.ProduceProduct(p,topic,product)
 
-		// product.Created_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		// product.Updated_at, _ = time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
-		// product.ID = primitive.NewObjectID()
-		// product.Product_id = product.ID.Hex()
-	
-
-		// _, insertErr := productCollection.InsertOne(ctx, product)
+		
 		if err !=nil {
 		//	msg := fmt.Sprintf(product, "Product was not created")
 			c.JSON(http.StatusInternalServerError, gin.H{"error":err})
 			return
 		}
 		// defer cancel()
-		if v {c.JSON(http.StatusOK, product)}
+		if v {	c.JSON(http.StatusCreated, responses.ProductResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": product}})}
 	}
 
 }
@@ -119,7 +119,7 @@ func GetProduct() gin.HandlerFunc{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, product)
+		c.JSON(http.StatusOK, responses.ProductResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": product}})
 	}
 }
 
@@ -139,18 +139,26 @@ func GetProduct() gin.HandlerFunc{
 func DeleteProduct()gin.HandlerFunc{
 
 	return func(c *gin.Context){
+		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+			c.JSON(http.StatusOK,
+				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+			)
+		return
+	}
 		productId := c.Param("product_id")
 		
 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
 		
-		res,err := productCollection.DeleteOne(ctx, bson.M{"product_id":productId})
+		_,err := productCollection.DeleteOne(ctx, bson.M{"product_id":productId})
 		defer cancel()
 		if err != nil{
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK,res)
+		c.JSON(http.StatusOK,
+			responses.ProductResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "Product successfully deleted!"}},
+		)
 
 	}
 
@@ -172,6 +180,15 @@ func DeleteProduct()gin.HandlerFunc{
 func UpdateProduct() gin.HandlerFunc {
     return func(c *gin.Context) {
         ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
+			c.JSON(http.StatusOK,
+				responses.ProductResponse{Status: http.StatusBadRequest,  Message: "Unauthorized to perform this action"},
+			)
+				// c.JSON(http.StatusOK,
+				// 	responses.ProductResponse{http.StatusBadRequest, responses.ProductResponse{Status: http.StatusBadRequest, Message: "Unauthorized to perform this action", Data: map[string]interface{}{"data":err.Error()}}},
+				// )
+			return
+		}
         productId := c.Param("product_id")
         var product model.Product
         defer cancel()
@@ -203,7 +220,7 @@ func UpdateProduct() gin.HandlerFunc {
             }
         }
 
-		c.JSON(http.StatusOK, updatedproduct)    }}
+		c.JSON(http.StatusOK, responses.ProductResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedproduct}})  }}
 
 // GetAllProducts godoc
 // @Summary Get all products.
@@ -241,7 +258,9 @@ func GetAllProducts() gin.HandlerFunc {
 				  
 					products = append(products, singleProduct)
 				}
-				c.JSON(http.StatusOK, products)
+				c.JSON(http.StatusOK,
+					responses.ProductResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": products}},
+				)
 				// c.JSON(http.StatusOK,
 				// 	//responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": products}},
 				// )

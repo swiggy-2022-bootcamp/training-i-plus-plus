@@ -1,4 +1,4 @@
-package productcontroller
+package controller
 import (
 	"context"
 	"fmt"
@@ -14,6 +14,7 @@ import (
 //	productmodel "bhatiachahat/product-service/model"
 	database "bhatiachahat/user-service/db"
 //	productusermodels "bhatiachahat/user-service/model"
+"bhatiachahat/user-service/responses"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -48,6 +49,7 @@ func VerifyPassword(userPassword string, providedPassword string)(bool, string){
 // @Schemes
 // @Accept json
 // @Produce json
+// @Param req body model.User true "User details"
 // @Success	201  {object} 	model.User
 // @Failure	400  {number} 	http.http.StatusBadRequest
 // @Failure	500  {number} 	http.StatusInternalServerError
@@ -102,14 +104,15 @@ func Signup()gin.HandlerFunc{
 		//	var usercart = model.ProductUser
 			user.UserCart= usercart
 	
-			resultInsertionNumber, insertErr := userCollection.InsertOne(ctx, user)
+			result, insertErr := userCollection.InsertOne(ctx, user)
 			if insertErr !=nil {
-				msg := fmt.Sprintf("User item was not created")
-				c.JSON(http.StatusInternalServerError, gin.H{"error":msg})
+				
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
 				return
 			}
 			defer cancel()
-			c.JSON(http.StatusOK, resultInsertionNumber)
+			//c.JSON(http.StatusOK, resultInsertionNumber)
+			c.JSON(http.StatusCreated, responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 		}
 
 	
@@ -124,6 +127,8 @@ func Signup()gin.HandlerFunc{
 // @Schemes
 // @Accept json
 // @Produce json
+// @Param        Password 	body	string  true  "password"
+// @Param        Email 		body	string  true  "email id"
 // @Success	200  {string} 	token
 // @Failure	400  {number} 	http.http.StatusBadRequest
 // @Failure	404  {number} 	http.http.StatusNotFound
@@ -273,152 +278,168 @@ func GetCart() gin.HandlerFunc{
 	}
 }
 
-// // GetAllUsers godoc
-// // @Summary Get all users.
-// // @Description Get all users.
-// // @Tags User
-// // @Schemes
-// // @Accept json
-// // @Produce json
-// // @Success	200  {array} 	model.User
-// // @Failure	500  {number} 	http.StatusInternalServerError
-// // @Security Bearer Token
-// // @Router /users [GET]
-// func GetUsers() gin.HandlerFunc{
-// 	return func(c *gin.Context){
-// 		if err := helper.CheckUserType(c, "ADMIN"); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
-// 			return
-// 		}
-// 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+// GetAllUsers godoc
+// @Summary Get all Users list.
+// @Description Get details of all Users.
+// @Tags GeneralUser
+// @Schemes
+// @Accept json
+// @Produce json
+// @Success	200  {array} 	model.User
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /users [GET]
+func GetAllUsers() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		var users []model.User
+		defer cancel()
+
+		results, err :=userCollection.Find(ctx, bson.M{})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+
+		//reading from the db in an optimal way
+		defer results.Close(ctx)
+		for results.Next(ctx) {
+			var singleUser model.User
+			if err = results.Decode(&singleUser); err != nil {
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			}
+
+		users = append(users, singleUser)
+		}
+
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": users}},
+		)
+	}
+}
+
+// GetUser godoc
+// @Summary Get User by ID.
+// @Description View individual user details.
+// @Tags User
+// @Schemes
+// @Param id path string true "User id"
+// @Accept json
+// @Produce json
+// @Success	200  {object} 	model.User
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /users/{id} [GET]
+func GetUser() gin.HandlerFunc{
+	return func(c *gin.Context){
+		userId := c.Param("user_id")
+
+		// if err := helper.MatchUserTypeToUid(c, userId); err != nil {
+		// 	c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
+		// 	return
+		// }
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+
+		var user model.User
+		err := userCollection.FindOne(ctx, bson.M{"user_id":userId}).Decode(&user)
+		defer cancel()
+		if err != nil{
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data":user}})
+	}
+}
+
+
+// DeleteUserByID godoc
+// @Summary Delete User by ID.
+// @Description User can delete his account.
+// @Tags User
+// @Schemes
+// @Param id path string true "User id"
+// @Accept json
+// @Produce json
+// @Success	200  {string} 	User successfully deleted!
+// @Failure	404  {number} 	http.http.StatusNotFound
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /users/{id} [DELETE]
+func DeleteUser()gin.HandlerFunc{
+
+	return func(c *gin.Context){
+		userId := c.Param("user_id")
 		
-// 		recordPerPage, err := strconv.Atoi(c.Query("recordPerPage"))
-// 		if err != nil || recordPerPage <1{
-// 			recordPerPage = 10
-// 		}
-// 		page, err1 := strconv.Atoi(c.Query("page"))
-// 		if err1 !=nil || page<1{
-// 			page = 1
-// 		}
-
-// 		startIndex := (page - 1) * recordPerPage
-// 		startIndex, err = strconv.Atoi(c.Query("startIndex"))
-
-// 		matchStage := bson.D{{"$match", bson.D{{}}}}
-// 		groupStage := bson.D{{"$group", bson.D{
-// 			{"_id", bson.D{{"_id", "null"}}}, 
-// 			{"total_count", bson.D{{"$sum", 1}}}, 
-// 			{"data", bson.D{{"$push", "$$ROOT"}}}}}}
-// 		projectStage := bson.D{
-// 			{"$project", bson.D{
-// 				{"_id", 0},
-// 				{"total_count", 1},
-// 				{"user_items", bson.D{{"$slice", []interface{}{"$data", startIndex, recordPerPage}}}},}}}
-// result,err := userCollection.Aggregate(ctx, mongo.Pipeline{
-// 	matchStage, groupStage, projectStage})
-// defer cancel()
-// if err!=nil{
-// 	c.JSON(http.StatusInternalServerError, gin.H{"error":"error occured while listing user items"})
-// }
-// var allusers []bson.M
-// if err = result.All(ctx, &allusers); err!=nil{
-// 	log.Fatal(err)
-// }
-// c.JSON(http.StatusOK, allusers[0])}}
-
-// // GetUserByID godoc
-// // @Summary Get User by ID.
-// // @Description View individual user details.
-// // @Tags User
-// // @Schemes
-// // @Param id path string true "User id"
-// // @Accept json
-// // @Produce json
-// // @Success	200  {object} 	model.User
-// // @Failure	500  {number} 	http.StatusInternalServerError
-// // @Security Bearer Token
-// // @Router /users/{id} [GET]
-// func GetUser() gin.HandlerFunc{
-// 	return func(c *gin.Context){
-// 		userId := c.Param("user_id")
-
-// 		if err := helper.MatchUserTypeToUid(c, userId); err != nil {
-// 			c.JSON(http.StatusBadRequest, gin.H{"error":err.Error()})
-// 			return
-// 		}
-// 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
-
-// 		var user model.User
-// 		err := userCollection.FindOne(ctx, bson.M{"user_id":userId}).Decode(&user)
-// 		defer cancel()
-// 		if err != nil{
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 			return
-// 		}
-// 		c.JSON(http.StatusOK, user)
-// 	}
-// }
-
-
-// // DeleteUserByID godoc
-// // @Summary Delete User by ID.
-// // @Description User can delete his account.
-// // @Tags User
-// // @Schemes
-// // @Param id path string true "User id"
-// // @Accept json
-// // @Produce json
-// // @Success	200  {string} 	User successfully deleted!
-// // @Failure	404  {number} 	http.http.StatusNotFound
-// // @Failure	500  {number} 	http.StatusInternalServerError
-// // @Security Bearer Token
-// // @Router /users/{id} [DELETE]
-// func DeleteProduct()gin.HandlerFunc{
-
-// 	return func(c *gin.Context){
-// 		productId := c.Param("product_id")
-		
-// 		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
+		var ctx, cancel = context.WithTimeout(context.Background(), 100*time.Second)
 
 		
-// 		res,err := productCollection.DeleteOne(ctx, bson.M{"product_id":productId})
-// 		defer cancel()
-// 		if err != nil{
-// 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-// 			return
-// 		}
-// 		c.JSON(http.StatusOK,res)
+		res,err := userCollection.DeleteOne(ctx, bson.M{"user_id":userId})
+		defer cancel()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+		if res.DeletedCount < 1 {
+			c.JSON(http.StatusNotFound,
+				responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
+			)
+			return
+		}
+		c.JSON(http.StatusOK,
+			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
+		)
 
-// 	}
+	}
 
-// }
+}
 
-// func DeleteGeneralUserByID() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 		id := c.Param("id")
-// 		defer cancel()
+// EditUserByID godoc
+// @Summary Edit User by ID.
+// @Description Edit details of a User.
+// @Tags GeneralUser
+// @Schemes
+// @Param id path string true "User id"
+// @Accept json
+// @Produce json
+// @Param req body model.User true  "User details"
+// @Success	200  {object} 	model.User
+// @Failure	400  {number} 	http.StatusBadRequest
+// @Failure	500  {number} 	http.StatusInternalServerError
+// @Security Bearer Token
+// @Router /users/{id} [PUT]
+func EditUser() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+        userId := c.Param("user_id")
+        var user model.User
+        defer cancel()
+	    // validate the request body
+        if err := c.BindJSON(&user); err != nil {
+			c.JSON(http.StatusBadRequest, responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: map[string]interface{}{"data":err.Error()}})
+            return
+        }
 
-// 		objId, _ := primitive.ObjectIDFromHex(id)
+        update := bson.M{"first_name": user.Firstname, "last_name": user.Lastname, "phone":user.Phone}
+		
+	
+        result, err := userCollection.UpdateOne(ctx,bson.M{"user_id":userId}, bson.M{"$set": update})
+	
+        if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+        }
 
-// 		result, err := generalUserCollection.DeleteOne(ctx, bson.M{"_id": objId})
+        //get updated user details
+        var updateduser model.User
+        if result.MatchedCount == 1 {
+            err := userCollection.FindOne(ctx, bson.M{"user_id":userId}).Decode(&updateduser)
+            if err != nil {
+				c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+				return
+            }
+        }
 
-// 		if err != nil {
-// 			c.JSON(http.StatusInternalServerError, responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
-// 			return
-// 		}
-
-// 		if result.DeletedCount < 1 {
-// 			c.JSON(http.StatusNotFound,
-// 				responses.UserResponse{Status: http.StatusNotFound, Message: "error", Data: map[string]interface{}{"data": "User with specified ID not found!"}},
-// 			)
-// 			return
-// 		}
-
-// 		c.JSON(http.StatusOK,
-// 			responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": "User successfully deleted!"}},
-// 		)
-// 	}
-// }
+		c.JSON(http.StatusOK, responses.UserResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updateduser}})   }}
 
 
