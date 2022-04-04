@@ -2,7 +2,8 @@
 Online Shopping Cart
 
 ### Microservice Strucutures (WIP)
-![microservices drawio](https://user-images.githubusercontent.com/64790109/160327506-786fbe7a-7cf9-4666-9d35-98b517d49ae9.png)
+![architecture](https://user-images.githubusercontent.com/64790109/161521331-df5b53c3-4313-4360-ac8e-f2c0c482b5dc.png)
+
 
 ### Tech Stack
 - GoLang
@@ -11,20 +12,30 @@ Online Shopping Cart
 - Kafka
 - confluentinc/confluent-kafka-go
 - segmentio/kafka-go
+- gRPC
+- SwaggerUI Docs
+- MockGen
 
 ### Microservices
-1. UserMicroService (:8001)
+1. AuthService (:8000)
+1. UserService (:8001)
 2. InventoryService (:8002)
 3. ListingService (:8003)
 4. OrderService (:8004)
+5. WalletProtoService(:8005)
+6. WalletService (:8006)
 
 #### UserMicroService
 UserMicroService is responsible to do CRUD operations
 related to user entiry.
+Currently, This service is Mock tested with 85.6%
+code coverage.
 
 **Routes**
 - POST /v1/users/create
 - GET /v1/users/get/:userId
+- PATCH /v1/users/update/:userId
+- DELETE /v1/users/delete/:userId
 
 #### InventoryMicroService
 InvetoryMicroService let the users to create their inventory.
@@ -52,12 +63,22 @@ topic.
 - POST v1/listing/place_order/:userId/:productId
 
 
-#### Order MicroService (* Working)
+#### Order MicroService
 Order Microservice consumes the products from `ordered_products`
 kafka topic and store them to **OrderDB** with `order initiated` status.
-This microservie is supposed to communiate with **Billing and Payment
-MicroService** to complete the product ordering process.
-User can check all the intiated/pending/completed orders using this Service.
+This microservice communicates to Wallet Microservice and deducts amount from
+user wallet as per product's bill, through gRPCs.
+User can check all the intiated/pending/paid/completed orders using this Service.
 
 **Routes**
 - GET /v1/orders/get/:userId
+
+#### Wallet Microservice
+Wallet Microservice consists APIs related to wallet management for user.
+This microservice also implements the interface generate by `wallet proto` file.
+
+**Routes**
+- POST /v1/wallet/create
+- GET /v1/wallet/get/:walletId
+- PATCH /v1/wallet/:walletId/add
+
