@@ -16,5 +16,5 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 
 ### Swagger
 
-| [![Swagger](/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Swagger](/dhiman/mini-project/screenshots/users_swagger.png)](/dhiman/mini-project/screenshots/users_swagger.png) |
+| [![Bookkeeping Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/bookkeeping_swagger.png) | [![Users Microservice Swagger](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/users_swagger.png) |
 | --- | --- |
