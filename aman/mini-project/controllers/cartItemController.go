@@ -79,7 +79,7 @@ func UpdateCartItem() gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, err)
 		}
 		json.Unmarshal([]byte(b), &bMap)
-		updatedQuantity := bMap["HI"]
+		updatedQuantity := bMap["quantity"]
 		result, insertErr := cartItemCollection.UpdateOne(ctx, bson.M{"user_id": cartId, "product_id": productId}, bson.D{{"$set",
 			bson.D{
 				{"quantity", updatedQuantity},
