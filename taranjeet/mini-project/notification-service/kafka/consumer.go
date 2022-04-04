@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/segmentio/kafka-go"
+	"github.com/taran1515/crud/models"
 )
 
 const (
@@ -17,12 +18,17 @@ func Consume() {
 		Topic:   topic,
 	})
 
-	fmt.Println("--------------------------------")
-
 	// the `ReadMessage` method blocks until we receive the next event
 	msg, err := r.ReadMessage(context.Background())
+
+	email := models.Email{
+		To:      "test@gmail.com",
+		Subject: "Ticket Booking",
+		Message: string(msg.Value),
+	}
+
 	if err != nil {
 		panic("could not read message " + err.Error())
 	}
-	fmt.Println("Sending message !!", msg.Value)
+	fmt.Println("Sending message !!", email)
 }

@@ -10,8 +10,8 @@ import (
 	"github.com/taran1515/crud/responses"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"net/http"
+	"strconv"
 	"time"
 )
 
@@ -206,5 +206,49 @@ func SearchTrain() gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, responses.TrainResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": train}})
+	}
+}
+
+func UpdateSeats() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+
+		reqMap := c.Request.URL.Query()
+		trainNumber := reqMap["trainNumber"][0]
+		numberOfSeats, _ := strconv.Atoi(reqMap["numberOfSeats"][0])
+
+		var train models.Train
+		err := trainCollection.FindOne(ctx, bson.M{"trainnumber": trainNumber}).Decode(&train)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+		if len(train.ReservedSeats) < numberOfSeats {
+			c.JSON(http.StatusInternalServerError, responses.TrainResponse{Status: http.StatusInternalServerError, Message: "error", Data: map[string]interface{}{"data": err.Error()}})
+			return
+		}
+		var reservedSeatMap map[int]bool
+
+		for i := 1; i <= len(train.ReservedSeats); i++ {
+			reservedSeatMap[train.ReservedSeats[i]] = true
+		}
+
+		for i := 1; i <= len(train.ReservedSeats); i++ {
+			_, exist := reservedSeatMap[i]
+			if exist == false {
+				train.ReservedSeats = append(train.ReservedSeats, i)
+			}
+		}
+
+		update := bson.M{"reservedseats": train.ReservedSeats}
+		_, err = trainCollection.UpdateOne(ctx, bson.M{"trainnumber": trainNumber}, bson.M{"$set": update})
+
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "error": err.Error()})
+			return
+		}
+		fmt.Println("success true!!!")
+		c.JSON(http.StatusOK, gin.H{"error": nil, "status": http.StatusOK})
 	}
 }

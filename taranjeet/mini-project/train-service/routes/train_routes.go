@@ -12,5 +12,6 @@ func TrainRoutes(router *gin.Engine) {
 	router.DELETE("/train/:trainId", controllers.DeleteATrain())
 	router.GET("/train", controllers.GetAllTrains())
 	router.POST("/train/search", controllers.SearchTrain())
+	router.GET("/train/update-seat", controllers.UpdateSeats())
 
 }

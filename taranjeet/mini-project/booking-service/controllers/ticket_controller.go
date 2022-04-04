@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	"github.com/taran1515/crud/configs"
@@ -10,7 +11,6 @@ import (
 	"github.com/taran1515/crud/responses"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"net/http"
 	"time"
 )
@@ -57,7 +57,10 @@ func BookTicket() gin.HandlerFunc {
 			return
 		}
 
-		go kafka.Produce("test")
+		// update the seat and add it to list of reserved seats
+		go UpdateSeats(ticket.TrainNumber, len(ticket.PassengerName))
+
+		go kafka.Produce("Ticket Booked")
 
 		c.JSON(http.StatusCreated, responses.TicketResponse{Status: http.StatusCreated, Message: "success", Data: map[string]interface{}{"data": result}})
 	}
@@ -125,4 +128,27 @@ func CancelBooking() gin.HandlerFunc {
 		c.JSON(http.StatusOK, responses.TicketResponse{Status: http.StatusOK, Message: "success", Data: map[string]interface{}{"data": updatedTrain}})
 	}
 
+}
+
+func UpdateSeats(trainNumber int, numberOfSeats int) (sucess bool) {
+
+	url := "http://localhost:8001/train/update-seats"
+	// Create a new request using http
+	req, _ := http.NewRequest("GET", url, nil)
+	q := req.URL.Query()
+	q.Add("trainNumber", string(trainNumber))
+	q.Add("numberOfSeats", string(numberOfSeats))
+	req.URL.RawQuery = q.Encode()
+	fmt.Print(req.URL.String())
+	req.Close = true
+
+	client := &http.Client{}
+	resp, _ := client.Do(req)
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return false
+	}
+
+	return true
 }
