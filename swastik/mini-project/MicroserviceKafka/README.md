@@ -24,6 +24,7 @@
 
 - Swagger UI for all the modules
 - Unit Testing and Mocks for all the modules
+- Sonarqube for code coverage
 ```
 
 ### Microservices
