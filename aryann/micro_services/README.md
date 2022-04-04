@@ -1,15 +1,15 @@
 # Train Reservation System
 
 ### Implemented
-- GoLang
-- Gin Gonic
-- MongoDB
-- Kafka
-- Swagger UI
-- SonarQube
-- Logging
-- Session Key Management / JWT Tokens
-- Encrypting Passwords
+- [x] GoLang
+- [x] Gin Gonic
+- [x] MongoDB
+- [x] Kafka
+- [x] Swagger UI
+- [x] SonarQube
+- [x] Logging
+- [x] Session Key Management / JWT Tokens
+- [x] Encrypting Passwords
 
 ### Microservices
 1. UserService (:3000)
