@@ -11,9 +11,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @title           Swagger TrainTicketLelo Trains API
+// @title           Swagger TrainTicketLelo Trains Service
 // @version         1.0
-// @description     Swagger TrainTicketLelo Trains API
+// @description     Swagger TrainTicketLelo Trains Service
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   Uttej Immadi
@@ -40,7 +40,7 @@ func main() {
 	r.PUT("/trains/:trainId", middleware.IfAuthorized(controllers.UpdateTrainById))
 	r.DELETE("/trains/:trainId", middleware.IfAuthorized(controllers.DeleteTrainbyId))
 	r.POST("/trains/:trainId/:updateCount", middleware.IfAuthorized(controllers.UpdateTicketCount))
-	docs.SwaggerInfo.Title = "Swagger TrainTicketLelo Trains API"
+	docs.SwaggerInfo.Title = "Swagger TrainTicketLelo Trains Service"
 
 	portAddress := ":" + config.TrainServicePort
 	r.Run(portAddress)

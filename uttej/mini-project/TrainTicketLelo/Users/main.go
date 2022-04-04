@@ -23,15 +23,15 @@ func main() {
 	r.GET("/users/:userId", middleware.IfAuthorized(controller.GetUserById))
 	r.PUT("/users/:userId", middleware.IfAuthorized(controller.UpdateUserById))
 	r.DELETE("/users/:userId", middleware.IfAuthorized(controller.DeleteUserbyId))
-	docs.SwaggerInfo.Title = "Swagger TrainTicketLelo Users API"
+	docs.SwaggerInfo.Title = "Swagger TrainTicketLelo Users Service"
 
 	portAddress := ":" + config.UserServicePort
 	r.Run(portAddress)
 }
 
-// @title           Swagger TrainTicketLelo Users API
+// @title           Swagger TrainTicketLelo Users Service
 // @version         1.0
-// @description     Swagger TrainTicketLelo Users API
+// @description     Swagger TrainTicketLelo Users Service
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   Uttej Immadi
