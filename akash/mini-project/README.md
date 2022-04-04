@@ -8,6 +8,11 @@ Design and develop an online shopping cart web application that enables a buyer 
 
 ---
 
+## Architecture
+
+![Architecture](https://user-images.githubusercontent.com/26066500/161584203-9644d3ab-9c36-459a-bb2b-b0ec21e1153a.png)
+
+
 ## Features
 
 #### Customer/Buyer
@@ -38,7 +43,7 @@ Design and develop an online shopping cart web application that enables a buyer 
 
 ---
   
-## Sub Modules:
+## Microservices:
 
 - Customer
 - Product
