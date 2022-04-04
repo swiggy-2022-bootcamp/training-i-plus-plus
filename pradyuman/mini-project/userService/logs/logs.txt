@@ -1,0 +1,30 @@
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /user/:userId             --> userService/controllers.GetAUser.func1 (4 handlers)
+[GIN-debug] PUT    /user/:userId             --> userService/controllers.EditAUser.func1 (4 handlers)
+[GIN-debug] DELETE /user/:userId             --> userService/controllers.DeleteAUser.func1 (4 handlers)
+[GIN-debug] GET    /users                    --> userService/controllers.GetAllUsers.func1 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3000
+[GIN] 2022/04/04 - 15:54:24 | 501 |            0s |             ::1 | GET      "/user/6246e80452b5a9b3b6a486fe"
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /user/:userId             --> userService/controllers.GetAUser.func1 (4 handlers)
+[GIN-debug] PUT    /user/:userId             --> userService/controllers.EditAUser.func1 (4 handlers)
+[GIN-debug] DELETE /user/:userId             --> userService/controllers.DeleteAUser.func1 (4 handlers)
+[GIN-debug] GET    /users                    --> userService/controllers.GetAllUsers.func1 (4 handlers)
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :3000
+[GIN] 2022/04/04 - 16:55:36 | 400 |     74.5501ms |             ::1 | GET      "/user/6246e80452b5a9b3b6a486fe"
+[GIN] 2022/04/04 - 16:56:01 | 200 |     73.0137ms |             ::1 | GET      "/users"
+[GIN] 2022/04/04 - 16:56:25 | 404 |     75.1719ms |             ::1 | DELETE   "/user/6241a04313f320b1ecc10444"
