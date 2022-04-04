@@ -1,9 +1,5 @@
-# User Management Service
-
-> Panem: named after a democratic constitutional republic capital city in the Hunger Games
+# Inventory Management Service
 
 ### Responsibilities
 
-1. User Authentication
-2. User Authorization
-3. User Profile management
+1. Items CRUD
