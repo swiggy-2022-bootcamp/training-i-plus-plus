@@ -1,11 +1,14 @@
 package main
 
 import (
-	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
-	"github.com/gin-gonic/gin"
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
-    swaggerFiles "github.com/swaggo/files" // swagger embed files
+	"context"
+
 	docs "github.com/dhi13man/healthcare-app/users_service/docs"
+	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
+	"github.com/dhi13man/healthcare-app/users_service/services"
+	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 func main() {
@@ -15,7 +18,7 @@ func main() {
 	usersRouter := gin.Default()
 	user_routes.GenerateUsersServiceRoutes(usersRouter)
 	usersRouter.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	
+
 	// Run Microservice
 	usersRouter.Run("localhost:8081")
 }
