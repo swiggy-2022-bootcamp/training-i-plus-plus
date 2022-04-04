@@ -1,7 +1,7 @@
 package main
 
 import (
-	"inventory/app"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/app"
 )
 
 // @title [Pandora] Product Management Service API

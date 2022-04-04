@@ -1,6 +1,6 @@
 package domain
 
-import "inventory/utils/errs"
+import "github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/errs"
 
 type ItemService interface {
 	CreateItem(string, string, int) (Item, *errs.AppError)

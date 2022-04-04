@@ -1,6 +1,6 @@
 package domain
 
-import "inventory/utils/errs"
+import "github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/errs"
 
 type Item struct {
 	Id          int    `json:"id"`

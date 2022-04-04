@@ -4,10 +4,10 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"inventory/docs"
-	"inventory/domain"
-	"inventory/infra"
-	"inventory/utils/logger"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/docs"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/domain"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/infra"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/logger"
 )
 
 type Routes struct {

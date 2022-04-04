@@ -1,7 +1,7 @@
 package infra
 
 import (
-	"inventory/domain"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/domain"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"

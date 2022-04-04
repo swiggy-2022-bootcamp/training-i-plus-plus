@@ -1,4 +1,4 @@
-module inventory
+module github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory
 
 go 1.17
 

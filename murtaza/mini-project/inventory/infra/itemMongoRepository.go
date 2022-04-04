@@ -3,11 +3,11 @@ package infra
 import (
 	"errors"
 	"fmt"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/domain"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/errs"
+	"github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory/utils/logger"
 	"go.uber.org/zap"
 	"gopkg.in/mgo.v2"
-	"inventory/domain"
-	"inventory/utils/errs"
-	"inventory/utils/logger"
 	"time"
 
 	"gopkg.in/mgo.v2/bson"
