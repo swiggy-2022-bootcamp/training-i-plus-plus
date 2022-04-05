@@ -1,0 +1,6 @@
+projectKey=shopping-app-product
+serverUrl=http://localhost:9000
+serverVersion=9.3.0.51899
+dashboardUrl=http://localhost:9000/dashboard?id=shopping-app-product
+ceTaskId=AX_487IvTfTTi_x5kgQh
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AX_487IvTfTTi_x5kgQh

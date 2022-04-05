@@ -1,7 +1,11 @@
 package app
 
-import "notification/kafka"
+import (
+	"context"
+	"notification/kafka"
+)
 
 func Start() {
-	kafka.ConsumeOrders()
+
+	kafka.ConsumeOrders(context.Background())
 }

@@ -1,45 +1,45 @@
 package kafka
 
 import (
-	"fmt"
+	"context"
+	"log"
 	"order/utils/logger"
+	"os"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/segmentio/kafka-go"
 )
 
-func KafkaProducer() *kafka.Producer {
+const (
+	topic         = "orders"
+	brokerAddress = "localhost:9092"
+)
+
+func KafkaWriter() *kafka.Writer {
+
 	logger.Info("Starting producer...")
-	p, err := kafka.NewProducer(&kafka.ConfigMap{"bootstrap.servers": "localhost:9092"})
-	if err != nil {
-		logger.Fatal(err.Error())
-		panic(err)
-	}
 
-	// Delivery report handler for produced messages
-	go func() {
-		for e := range p.Events() {
-			switch ev := e.(type) {
-			case *kafka.Message:
-				if ev.TopicPartition.Error != nil {
-					logger.Error(fmt.Sprintf("Delivery failed: %v\n", ev.TopicPartition))
-				} else {
-					logger.Info(fmt.Sprintf("Delivered message to %v\n", ev.TopicPartition))
-				}
-			}
-		}
-	}()
+	l := log.New(os.Stdout, "kafka writer: ", 0)
+	w := kafka.NewWriter(kafka.WriterConfig{
+		Brokers: []string{brokerAddress},
+		Topic:   topic,
+		// assign the logger to the writer
+		Logger: l,
+	})
 
-	return p
+	return w
 }
 
-func Produce(p *kafka.Producer, messages string, topicName string) {
+func Produce(ctx context.Context, w *kafka.Writer, key string, message string) {
 
 	// Produce messages to topic (asynchronously)
-	topic := topicName
-	data := []byte(messages)
-	p.Produce(&kafka.Message{
-		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: int32(kafka.PartitionAny)},
-		Value:          data,
-	}, nil)
+	err := w.WriteMessages(ctx, kafka.Message{
+		Key: []byte(key),
+		// create an arbitrary message payload for the value
+		Value: []byte(message),
+	})
+	if err != nil {
+		logger.Fatal(err.Error())
+		panic("could not write message " + err.Error())
+	}
 
 }

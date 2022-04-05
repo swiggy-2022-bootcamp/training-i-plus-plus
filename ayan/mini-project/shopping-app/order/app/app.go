@@ -16,18 +16,13 @@ import (
 
 func Start() {
 
-	kafkaProducer := kafka.KafkaProducer()
-
-	defer func() {
-		kafkaProducer.Flush(15 * 1000)
-		kafkaProducer.Close()
-	}()
+	kafkaWriter := kafka.KafkaWriter()
 
 	dbClient := db.NewDbClient()
 
 	orderRepo := db.NewOrderRepositoryDB(dbClient)
 	orderService := domain.NewOrderService(orderRepo)
-	orderHandlers := OrderHandlers{Service: orderService, KafkaProducer: kafkaProducer}
+	orderHandlers := OrderHandlers{Service: orderService, KafkaWriter: kafkaWriter}
 
 	orderRouter := gin.Default()
 

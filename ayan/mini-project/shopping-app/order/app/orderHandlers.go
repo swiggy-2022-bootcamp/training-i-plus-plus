@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -10,13 +11,13 @@ import (
 	"order/utils/errs"
 	"order/utils/logger"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/kafka-go"
 )
 
 type OrderHandlers struct {
-	Service       domain.OrderService
-	KafkaProducer *kafka.Producer
+	Service     domain.OrderService
+	KafkaWriter *kafka.Writer
 }
 
 type OrderItemDTO struct {
@@ -98,7 +99,7 @@ func (uh *OrderHandlers) PlaceOrder(c *gin.Context) {
 				err1 := errs.NewUnexpectedError("Unexpected error")
 				c.JSON(err1.Code, err1.AsMessage())
 			}
-			go kfka.Produce(uh.KafkaProducer, string(data), "orders")
+			go kfka.Produce(context.Background(), uh.KafkaWriter, regOrder.Id, string(data))
 			c.Data(http.StatusCreated, "application/json", data)
 		}
 	}
