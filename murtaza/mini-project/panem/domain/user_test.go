@@ -202,7 +202,7 @@ func TestShouldMarshallJson(t *testing.T) {
 
 	user := NewUser(firstName, lastName, username, phone, email, password, role)
 
-	expectedJson := "{\"email\":\"murtaza896@gmail.com\",\"firstName\":\"Murtaza\",\"id\":0,\"lastName\":\"Sadriwala\",\"password\":\"Pass!23\",\"phone\":\"9900887766\",\"purchase_history\":[],\"role\":0,\"username\":\"murtaza896\"}"
+	expectedJson := "{\"email\":\"murtaza896@gmail.com\",\"firstName\":\"Murtaza\",\"id\":0,\"lastName\":\"Sadriwala\",\"password\":\"Pass!23\",\"phone\":\"9900887766\",\"purchase_history\":{},\"role\":0,\"username\":\"murtaza896\"}"
 
 	actualJson, _ := user.MarshalJSON()
 
