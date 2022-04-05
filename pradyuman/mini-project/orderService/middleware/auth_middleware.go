@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"net/http"
-	"cartService/configs"
+	"userService/configs"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
@@ -34,16 +34,14 @@ func IsUserAuthorized(roles []string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Invalid auth token"})
 			return
 		}
-		flag:=0
 		for _ , role:= range roles {
 			if token.Claims.(jwt.MapClaims)["role"] == role {
-					flag=1;
+					c.Next()
+					return;
 				}	
 		}
-		if flag==0{
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Inavalid user token"})
-		}
-		c.Next()
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Inavalid user token"})
+		return
 
 	}
 }
