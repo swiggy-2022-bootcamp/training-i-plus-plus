@@ -1,72 +1,39 @@
 package infra
 
-//
-//import (
-//	"inventory/domain"
-//	"testing"
-//	"time"
-//
-//	"github.com/stretchr/testify/assert"
-//)
-//
-//func TestShouldUpdateUpdatedAt(t *testing.T) {
-//	firstName := "Murtaza"
-//	lastName := "Sadriwala"
-//	phone := "9900887766"
-//	email := "murtaza896@gmail.com"
-//	username := "murtaza896"
-//	password := "Pass!23"
-//	role := domain.Admin
-//
-//	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-//	userPersistedEntity := NewUserPersistedEntity(*user)
-//
-//	newUpdatedAt := time.Now().Add(2)
-//	userPersistedEntity.SetUpdatedAt(newUpdatedAt)
-//	assert.Equal(t, newUpdatedAt, userPersistedEntity.UpdatedAt())
-//}
-//
-//func TestShouldCreateNewUserPersistedEntity(t *testing.T) {
-//	firstName := "Murtaza"
-//	lastName := "Sadriwala"
-//	phone := "9900887766"
-//	email := "murtaza896@gmail.com"
-//	username := "murtaza896"
-//	password := "Pass!23"
-//	role := domain.Admin
-//
-//	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-//	userPersistedEntity := NewUserPersistedEntity(*user)
-//
-//	assert.Equal(t, user.FirstName(), userPersistedEntity.FirstName())
-//	assert.Equal(t, user.LastName(), userPersistedEntity.LastName())
-//	assert.Equal(t, user.Username(), userPersistedEntity.Username())
-//	assert.Equal(t, user.Email(), userPersistedEntity.Email())
-//	assert.Equal(t, user.Password(), userPersistedEntity.Password())
-//	assert.Equal(t, user.Phone(), userPersistedEntity.Phone())
-//	assert.NotNil(t, userPersistedEntity.CreatedAt())
-//	assert.NotNil(t, userPersistedEntity.CreatedAt())
-//	assert.Equal(t, userPersistedEntity.CreatedAt(), userPersistedEntity.UpdatedAt())
-//}
-//
-//func TestShouldConvertUserPersistedEntityToDomainEntity(t *testing.T) {
-//	firstName := "Murtaza"
-//	lastName := "Sadriwala"
-//	phone := "9900887766"
-//	email := "murtaza896@gmail.com"
-//	username := "murtaza896"
-//	password := "Pass!23"
-//	role := domain.Admin
-//
-//	user := domain.NewUser(firstName, lastName, username, phone, email, password, role)
-//	userPersistedEntity := NewUserPersistedEntity(*user)
-//
-//	domainUser := userPersistedEntity.toDomainEntity()
-//
-//	assert.Equal(t, user.FirstName(), domainUser.FirstName())
-//	assert.Equal(t, user.LastName(), domainUser.LastName())
-//	assert.Equal(t, user.Username(), domainUser.Username())
-//	assert.Equal(t, user.Email(), domainUser.Email())
-//	assert.Equal(t, user.Password(), domainUser.Password())
-//	assert.Equal(t, user.Phone(), domainUser.Phone())
-//}
+import (
+	"github.com/stretchr/testify/assert"
+	"testing"
+)
+
+func TestShouldCreateNewUserPersistedEntity(t *testing.T) {
+
+	name := "item-name"
+	description := "item-description"
+	quantity := 200
+	price := 90.99
+
+	persistedItem := NewItemModel(name, description, quantity, price)
+
+	assert.Equal(t, name, persistedItem.Name)
+	assert.Equal(t, description, persistedItem.Description)
+	assert.Equal(t, quantity, persistedItem.Quantity)
+	assert.Equal(t, price, persistedItem.Price)
+	assert.NotNil(t, persistedItem.CreatedAt)
+	assert.NotNil(t, persistedItem.UpdatedAt)
+}
+
+func TestShouldConvertUserPersistedEntityToDomainEntity(t *testing.T) {
+	name := "item-name"
+	description := "item-description"
+	quantity := 200
+	price := 90.99
+
+	persistedItem := NewItemModel(name, description, quantity, price)
+
+	domainItem := persistedItem.toDomainEntity()
+
+	assert.Equal(t, persistedItem.Name, domainItem.Name)
+	assert.Equal(t, persistedItem.Description, domainItem.Description)
+	assert.Equal(t, persistedItem.Quantity, domainItem.Quantity)
+	assert.Equal(t, persistedItem.Price, domainItem.Price)
+}

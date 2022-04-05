@@ -48,7 +48,7 @@ func (imr itemMongoRepository) FindItemByName(name string) (*domain.Item, *errs.
 	var result ItemModel
 	err := items.Find(bson.M{"name": name}).One(&result)
 	if err != nil {
-		errMessage := fmt.Sprintf("No item found with name: %d", name)
+		errMessage := fmt.Sprintf("No item found with name: %s", name)
 		logger.Error(errMessage, zap.String("name", name), zap.Error(err))
 		return nil, errs.NewNotFoundError(err.Error())
 	}

@@ -28,3 +28,14 @@ func (u ItemModel) toDomainEntity() *domain.Item {
 	domainItem.Id = u.Id
 	return domainItem
 }
+
+func NewItemModel(name, description string, quantity int, price float64) *ItemModel {
+	return &ItemModel{
+		Name:        name,
+		Description: description,
+		Quantity:    quantity,
+		Price:       price,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+}

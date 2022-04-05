@@ -70,7 +70,7 @@ func (s service) IsItemOutOfStock(itemId int) bool {
 	if err != nil {
 		return true
 	}
-	return item.Quantity > 0
+	return 0 == item.Quantity
 }
 
 func NewItemService(itemRepository ItemRepository) ItemService {
