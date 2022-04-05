@@ -6,7 +6,6 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/pkg/errors v0.9.1
 	github.com/segmentio/kafka-go v0.4.31
-	github.com/swiggy-2022-bootcamp/training-i-plus-plus v0.0.0-20220404150618-cc01b9ae12de
 	github.com/swiggy-2022-bootcamp/training-i-plus-plus/murtaza/mini-project/inventory v0.0.0-20220404143238-b6237f42faef
 	go.uber.org/zap v1.21.0
 	gopkg.in/mgo.v2 v2.0.0-20190816093944-a6b53ec6cb22
