@@ -19,3 +19,7 @@ Thumbs.db
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# Environment Variables
+# ashwingopalsamy
+ashwin/mini-project/medo-healthcare-app/.env
