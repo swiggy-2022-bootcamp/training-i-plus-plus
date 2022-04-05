@@ -51,8 +51,6 @@ func (s service) CheckoutCart(userId int) ([]string, *errs.AppError) {
 	}
 
 	if flag == 0 {
-		//TODO kafka call to update the total amount spent
-
 		for k := range newItemQuantities {
 			newQuantity := newItemQuantities[k]
 			external.UpdateQuantity(k, newQuantity)

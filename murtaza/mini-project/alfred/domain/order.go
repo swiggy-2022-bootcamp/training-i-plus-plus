@@ -13,6 +13,10 @@ type OrderRepository interface {
 	InsertOrder(Order) (*Order, *errs.AppError)
 }
 
+type OrderProducer interface {
+	SendOrderAmount(int, int, float64)
+}
+
 func NewOrder(userId int, orderAmount float64, items map[string]int) *Order {
 	return &Order{
 		UserId:      userId,

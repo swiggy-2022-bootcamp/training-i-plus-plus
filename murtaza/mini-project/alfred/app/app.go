@@ -16,7 +16,9 @@ func Start() {
 	cartRespository := infra.NewCartRepository()
 	orderRepository := infra.NewOrderRepository()
 
-	orderService := domain.NewOrderService(orderRepository)
+	orderAmountProducer := infra.NewProducer("test_topic")
+
+	orderService := domain.NewOrderService(orderRepository, orderAmountProducer)
 
 	cartHandler := CartHandler{
 		cartService: domain.NewCartService(cartRespository, orderService),
