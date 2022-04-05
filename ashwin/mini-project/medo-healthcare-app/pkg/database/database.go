@@ -63,3 +63,41 @@ func FindOne(emailAddress string) model.CoreUserData {
 	bson.Unmarshal(bsonBytes, &userStruct)
 	return userStruct
 }
+
+//UpdateOne - UPDATE
+func UpdateOne(username string, valueType string, newValue string) model.CoreUserData {
+	filter := bson.M{"username": username}
+	update := bson.M{"$set": bson.M{valueType: newValue}}
+	result, cancel := collection.UpdateOne(context.Background(), filter, update)
+	err.CheckNilErr(cancel)
+	fmt.Println("Modified Count :", result.ModifiedCount)
+	newFilter := bson.M{valueType: newValue}
+	var user model.CoreUserData
+	cancel1 := collection.FindOne(context.Background(), newFilter).Decode(&user)
+	err.CheckNilErr(cancel1)
+	if valueType == "email" {
+		if newValue != username {
+			return UpdateOne(username, "username", newValue)
+		}
+	}
+	return user
+	//return FindOne(username)
+}
+
+//DeleteOne - DELETE
+func DeleteOne(emailAddress string) primitive.M {
+	filter := bson.M{"email": emailAddress}
+	var user primitive.M
+	cancel := collection.FindOneAndDelete(context.Background(), filter).Decode(&user)
+	err.CheckNilErr(cancel)
+	fmt.Println("DELETION SUCCESSFUL")
+	return user
+}
+
+//DeleteMany - DELETE ALL
+func DeleteMany() int64 {
+	deletedResult, cancel := collection.DeleteMany(context.Background(), bson.D{{}}, nil)
+	err.CheckNilErr(cancel)
+	fmt.Println("Users Deleted :", deletedResult.DeletedCount)
+	return deletedResult.DeletedCount
+}

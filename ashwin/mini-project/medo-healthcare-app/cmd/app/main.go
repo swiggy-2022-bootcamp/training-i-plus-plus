@@ -12,4 +12,5 @@ func main() {
 	fmt.Println("Medo - The Onestop Healthcare Point !")
 	route := router.Router()
 	log.Fatal(http.ListenAndServe(":9001", route))
+	//authentication.GetUsernameFromToken(w http.ResponseWriter, r http.Request)
 }

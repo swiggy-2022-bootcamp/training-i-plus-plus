@@ -58,5 +58,26 @@
         "phone": "8883386673",
         "location": "pollachi",
         "age": "22"
+    }, {
+        "username": "masteradmin@medo.com",
+        "password": "masteradmin",
+        "userType": "masteradmin",
+        "verifiedUser": true,
+        "premiumUser": true,
+        "email": "masteradmin@medo.com",
+        "phone": "1234567890",
+        "location": "pollachi",
+        "age": "44"
+    },
+    {
+        "username": "admin@medo.com",
+        "password": "admin",
+        "userType": "admin",
+        "verifiedUser": true,
+        "premiumUser": true,
+        "email": "admin@medo.com",
+        "phone": "1234567890",
+        "location": "pollachi",
+        "age": "44"
     }
 ]
