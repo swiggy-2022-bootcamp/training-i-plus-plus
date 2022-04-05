@@ -1,15 +1,13 @@
 package main
 
 import (
-	"time"
-
 	bookkeeping_routes "github.com/dhi13man/healthcare-app/bookkeeping_service/routes"
+	docs "github.com/dhi13man/healthcare-app/docs"
 	user_routes "github.com/dhi13man/healthcare-app/users_service/routes"
 	"github.com/gin-gonic/gin"
 	log "github.com/sirupsen/logrus"
+	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
-    swaggerFiles "github.com/swaggo/files" // swagger embed files
-	docs "github.com/dhi13man/healthcare-app/docs"
 )
 
 func main() {

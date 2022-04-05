@@ -16,6 +16,58 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/bookkeeping/medicines": {
+            "post": {
+                "description": "Create a Medicine in the Database using the data sent by them (REGISTER)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/bookkeeping/medicines"
+                ],
+                "summary": "Create a Medicine",
+                "parameters": [
+                    {
+                        "description": "Medicine details to be created",
+                        "name": "medicineDTO",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Medicine"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
         "/bookkeeping/medicines/": {
             "get": {
                 "description": "Fetches all Medicines in database from repository and return an unfiltered JSON array of them.",
@@ -26,7 +78,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Return all Medicines in database from repository.",
                 "responses": {
@@ -42,19 +94,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -70,7 +122,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Find all medicines for a Disease identified by its name.",
                 "parameters": [
@@ -92,19 +144,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -120,7 +172,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/bookkeeping/medicines"
                 ],
                 "summary": "Get a Medicine by its name.",
                 "parameters": [
@@ -142,19 +194,119 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/bookkeeping/medicines/{name}": {
+            "put": {
+                "description": "Updates the Medicine in the Database using their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/bookkeeping/medicines"
+                ],
+                "summary": "Updates Medicines in the Database.",
+                "parameters": [
+                    {
+                        "description": "Medicine details to be created",
+                        "name": "medicineDTO",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Medicine"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Medicine"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the Medicine in the Database using their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/bookkeeping/medicines"
+                ],
+                "summary": "Deletes Medicines in the Database.",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the Disease (currently its name)",
+                        "name": "diseaseName",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Medicine"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -170,35 +322,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Create a Client",
                 "parameters": [
                     {
-                        "description": "User Email",
-                        "name": "email",
+                        "description": "User DTO",
+                        "name": "clientDTO",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "User Password",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Client"
                         }
                     }
                 ],
@@ -212,19 +346,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -240,7 +374,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Get a Client from Database.",
                 "parameters": [
@@ -262,19 +396,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -288,35 +422,117 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "accounts"
+                    "/users/clients"
                 ],
                 "summary": "Updates Clients in the Database.",
                 "parameters": [
                     {
+                        "description": "User DTO",
+                        "name": "clientDTO",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Client"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the Clients in the Database using their email.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/users/clients"
+                ],
+                "summary": "Deletes Clients in the Database.",
+                "parameters": [
+                    {
+                        "type": "string",
                         "description": "User Email",
                         "name": "email",
-                        "in": "body",
-                        "required": true,
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
                         "schema": {
-                            "type": "string"
+                            "type": "integer"
                         }
                     },
-                    {
-                        "description": "User Name",
-                        "name": "name",
-                        "in": "body",
-                        "required": true,
+                    "400": {
+                        "description": "Bad Request",
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/experts/diagnose": {
+            "post": {
+                "description": "Sends a Disease Diagnosis using Kafka to the bookkeeping_service",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/users/experts/diagnose"
+                ],
+                "summary": "Make Disease Diagnosis by expert to the bookkeeping_service.",
+                "parameters": [
                     {
-                        "description": "User Password",
-                        "name": "password",
+                        "description": "The Diagnosed Disease",
+                        "name": "disease",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.Disease"
                         }
                     }
                 ],
@@ -330,19 +546,19 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/dtos.HTTPError"
+                            "$ref": "#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError"
                         }
                     }
                 }
@@ -350,7 +566,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "dtos.HTTPError": {
+        "github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer",
+                    "example": 400
+                },
+                "details": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    },
+                    "example": [
+                        "invalid email"
+                    ]
+                },
+                "message": {
+                    "type": "string",
+                    "example": "status bad request"
+                }
+            }
+        },
+        "github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError": {
             "type": "object",
             "properties": {
                 "code": {
@@ -383,6 +621,10 @@ const docTemplate = `{
                     "description": "Name of this client",
                     "type": "string"
                 },
+                "password": {
+                    "description": "Password of this client",
+                    "type": "string"
+                },
                 "subscriptions": {
                     "description": "Subscriptions that this client has",
                     "type": "array",
@@ -403,6 +645,29 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "models.Disease": {
+            "type": "object",
+            "properties": {
+                "medicines": {
+                    "description": "Medicines that can cure this disease",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "name": {
+                    "description": "Name of this disease",
+                    "type": "string"
+                },
+                "symptoms": {
+                    "description": "Symptoms of this disease",
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             }
         },

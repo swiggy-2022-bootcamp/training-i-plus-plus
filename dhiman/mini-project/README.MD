@@ -12,6 +12,23 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 6. [X] Swagger UI: Implemented using gin-swagger and swag. Config stored in ./docs/swagger.json and ./docs/swagger.yaml
 7. [X] Sonarqube: For Code coverage and code quality.
 
+## Usage
+
+1. Set the environment variables in a .env file:
+   1. **MongoDB:** `MONGOURI`, `DISEASES_COLLECTION`, `EXPERTS_COLLECTION`, `MEDICINES_COLLECTION`, `CLIENTS_COLLECTION`
+   2. **Kafka:** `KAFKA_BROKER_ADDRESS`, `KAFKA_DIAGNOSIS_TOPIC`
+   3. **Microservice Addresses:** `USERS_SERVICE_ADDRESS`, `BOOKKEEPING_SERVICE_ADDRESS`
+
+### Starting as Microservices
+
+1. **Run Users Microservice:** `go run "./users_service/main.go"`
+2. **Run Bookkeeping Microservice:** `go run "./bookkeeping_service/main.go"`
+
+### Starting as a Monolith using Coroutines
+
+1. Delete `go.mod` in `./bookkeeping_service` and `./users_service` so golang can function without the nested modules.
+2. **Run base Monolith code:** `go run "./main.go"`
+
 ## Screenshots
 
 ### Gin and Logging

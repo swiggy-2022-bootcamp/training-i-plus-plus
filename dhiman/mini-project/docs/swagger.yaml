@@ -1,5 +1,20 @@
 definitions:
-  dtos.HTTPError:
+  github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      details:
+        example:
+        - invalid email
+        items:
+          type: string
+        type: array
+      message:
+        example: status bad request
+        type: string
+    type: object
+  github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError:
     properties:
       code:
         example: 400
@@ -22,6 +37,9 @@ definitions:
       name:
         description: Name of this client
         type: string
+      password:
+        description: Password of this client
+        type: string
       subscriptions:
         description: Subscriptions that this client has
         items:
@@ -37,6 +55,22 @@ definitions:
       title:
         type: string
     type: object
+  models.Disease:
+    properties:
+      medicines:
+        description: Medicines that can cure this disease
+        items:
+          type: string
+        type: array
+      name:
+        description: Name of this disease
+        type: string
+      symptoms:
+        description: Symptoms of this disease
+        items:
+          type: string
+        type: array
+    type: object
   models.Medicine:
     properties:
       diseases:
@@ -51,6 +85,40 @@ definitions:
 info:
   contact: {}
 paths:
+  /bookkeeping/medicines:
+    post:
+      consumes:
+      - application/json
+      description: Create a Medicine in the Database using the data sent by them (REGISTER)
+      parameters:
+      - description: Medicine details to be created
+        in: body
+        name: medicineDTO
+        required: true
+        schema:
+          $ref: '#/definitions/models.Medicine'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+      summary: Create a Medicine
+      tags:
+      - /bookkeeping/medicines
   /bookkeeping/medicines/:
     get:
       consumes:
@@ -69,18 +137,18 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
       summary: Return all Medicines in database from repository.
       tags:
-      - accounts
+      - /bookkeeping/medicines
   /bookkeeping/medicines/{id}:
     get:
       consumes:
@@ -102,18 +170,84 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
       summary: Get a Medicine by its name.
       tags:
-      - accounts
+      - /bookkeeping/medicines
+  /bookkeeping/medicines/{name}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the Medicine in the Database using their email.
+      parameters:
+      - description: ID of the Disease (currently its name)
+        in: path
+        name: diseaseName
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Medicine'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+      summary: Deletes Medicines in the Database.
+      tags:
+      - /bookkeeping/medicines
+    put:
+      consumes:
+      - application/json
+      description: Updates the Medicine in the Database using their email.
+      parameters:
+      - description: Medicine details to be created
+        in: body
+        name: medicineDTO
+        required: true
+        schema:
+          $ref: '#/definitions/models.Medicine'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Medicine'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
+      summary: Updates Medicines in the Database.
+      tags:
+      - /bookkeeping/medicines
   /bookkeeping/medicines/disease/{diseaseName}:
     get:
       consumes:
@@ -136,42 +270,30 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_bookkeeping_service_models_dtos.HTTPError'
       summary: Find all medicines for a Disease identified by its name.
       tags:
-      - accounts
+      - /bookkeeping/medicines
   /users/clients:
     post:
       consumes:
       - application/json
       description: Create a Client in the Database using the data sent by them (REGISTER)
       parameters:
-      - description: User Email
+      - description: User DTO
         in: body
-        name: email
+        name: clientDTO
         required: true
         schema:
-          type: string
-      - description: User Name
-        in: body
-        name: name
-        required: true
-        schema:
-          type: string
-      - description: User Password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Client'
       produces:
       - application/json
       responses:
@@ -182,19 +304,51 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
       summary: Create a Client
       tags:
-      - accounts
+      - /users/clients
   /users/clients/{email}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the Clients in the Database using their email.
+      parameters:
+      - description: User Email
+        in: path
+        name: email
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: integer
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+      summary: Deletes Clients in the Database.
+      tags:
+      - /users/clients
     get:
       consumes:
       - application/json
@@ -215,41 +369,63 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
       summary: Get a Client from Database.
       tags:
-      - accounts
+      - /users/clients
     put:
       consumes:
       - application/json
       description: Updates the Client in the Database using their email.
       parameters:
-      - description: User Email
+      - description: User DTO
         in: body
-        name: email
+        name: clientDTO
         required: true
         schema:
-          type: string
-      - description: User Name
+          $ref: '#/definitions/models.Client'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+      summary: Updates Clients in the Database.
+      tags:
+      - /users/clients
+  /users/experts/diagnose:
+    post:
+      consumes:
+      - application/json
+      description: Sends a Disease Diagnosis using Kafka to the bookkeeping_service
+      parameters:
+      - description: The Diagnosed Disease
         in: body
-        name: name
+        name: disease
         required: true
         schema:
-          type: string
-      - description: User Password
-        in: body
-        name: password
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.Disease'
       produces:
       - application/json
       responses:
@@ -260,16 +436,16 @@ paths:
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "404":
           description: Not Found
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/dtos.HTTPError'
-      summary: Updates Clients in the Database.
+            $ref: '#/definitions/github.com_dhi13man_healthcare-app_users_service_models_dtos.HTTPError'
+      summary: Make Disease Diagnosis by expert to the bookkeeping_service.
       tags:
-      - accounts
+      - /users/experts/diagnose
 swagger: "2.0"
