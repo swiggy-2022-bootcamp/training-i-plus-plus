@@ -7,13 +7,12 @@ For BDD & other details please refer to [Swiggy IPP Use Case Proposal](https://d
 ## Implemented Features
 
 1. BDD for the app
-2. User module (Service & in-memory DB layer)
-3. Tests for implemented features
-4. Data Models (User, Product)
-5. Custom logging module
-
-## To Be Implemented Features
-1. Integration of MongoDB / DynamoDB
-2. Mocks for testing
-3. Addition of web layer
-4. Data Models (Order, Cart etc)
+2. Microservices - User, Product, Order, Notification (RESTful APIs with JSON responses)
+3. MongoDB in all microservices (credentials encrypted before storing)
+4. SonarQube
+5. Swagger UI for all APIs
+6. Kafka for Order notifications
+7. Unit Tests
+8. Data Models
+9. Generic Logging
+10. Generic Error Handling 
