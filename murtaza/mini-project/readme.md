@@ -3,9 +3,9 @@
 > A microservice based application, aimed replicating standard functionalities of shopping cart application
 
 ### Microservices
-* Panem - User Management Service
-* Alfred - Order Management Service
-* Inventory Management Service
+* [Panem - User Management Service](https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/murtaza/mini-project/panem)
+* [Alfred - Order Management Service](https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/murtaza/mini-project/alfred)
+* [Inventory Management Service](https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/tree/main/murtaza/mini-project/inventory)
 
 
 ### Topics Implemented
