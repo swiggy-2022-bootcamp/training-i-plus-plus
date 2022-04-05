@@ -88,6 +88,13 @@ const docTemplate = `{
                         "name": "email",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User Password",
+                        "name": "X-USER-PASSWORD",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -138,6 +145,13 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Client"
                         }
+                    },
+                    {
+                        "type": "string",
+                        "description": "User Password",
+                        "name": "X-USER-PASSWORD",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -185,6 +199,13 @@ const docTemplate = `{
                         "description": "User Email",
                         "name": "email",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User Password",
+                        "name": "X-USER-PASSWORD",
+                        "in": "header",
                         "required": true
                     }
                 ],

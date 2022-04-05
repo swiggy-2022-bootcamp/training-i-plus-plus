@@ -2,10 +2,14 @@ package dtos
 
 
 // Create a new Error.
-func NewError(statusCode int, err error, details ...string) *HTTPError {
-	return &HTTPError{
+func NewError(statusCode int, err error, details ...string) HTTPError {
+	var errMessage string = "none"
+	if err != nil {
+		errMessage = err.Error()
+	}
+	return HTTPError{
 		Code:    statusCode,
-		Message: err.Error(),
+		Message: errMessage,
 		Details: details,
 	}
 }

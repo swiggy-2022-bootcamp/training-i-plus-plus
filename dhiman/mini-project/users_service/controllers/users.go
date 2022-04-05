@@ -30,17 +30,17 @@ const validatingRequestBodyFailedMessage string = "Validating Request Body Faile
 // @Tags         /users/clients
 // @Accept       json
 // @Produce      json
-// @Param        clientDTO  body      models.Client  true  "User DTO"
-// @Success      200        {object}  interface{}
-// @Failure      400        {object}  dtos.HTTPError
-// @Failure      404        {object}  dtos.HTTPError
-// @Failure      500        {object}  dtos.HTTPError
+// @Param        clientDTO        body      models.Client  true  "User DTO"
+// @Success      200              {object}  interface{}
+// @Failure      400              {object}  dtos.HTTPError
+// @Failure      404              {object}  dtos.HTTPError
+// @Failure      500              {object}  dtos.HTTPError
 // @Router       /users/clients [post]
 func CreateClient(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	var requestBody models.User
+	var requestBody models.Client
 	err := c.BindJSON(&requestBody)
 	if err != nil {
 		log.Error(bindingRequestBodyFailedMessage, err)
@@ -49,8 +49,15 @@ func CreateClient(c *gin.Context) {
 		log.Error(validatingRequestBodyFailedMessage, validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
-		newUser := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
-		out, err := repositories.CreateClient( newUser, ctx)
+		// Hash Client Password
+		hashedPass, err := services.HashPassword(requestBody.Password)
+		if err != nil {
+			const errMsg string = "Error hashing password."
+			log.Error(errMsg, err)
+		}
+		// Set Client data
+		newUser := models.NewClient(requestBody.Name, requestBody.Email, hashedPass, []models.ClientSubscription{})
+		out, err := repositories.CreateClient(newUser, ctx)
 		if err != nil {
 			const errMsg string = "Error inserting user."
 			log.Error(errMsg, err)
@@ -66,11 +73,12 @@ func CreateClient(c *gin.Context) {
 // @Tags         /users/clients
 // @Accept       json
 // @Produce      json
-// @Param        email  path      string  true  "User Email"
-// @Success      200      {object}  models.Client
-// @Failure      400      {object}  dtos.HTTPError
-// @Failure      404      {object}  dtos.HTTPError
-// @Failure      500      {object}  dtos.HTTPError
+// @Param        email            path      string  true  "User Email"
+// @Param        X-USER-PASSWORD  header    string         true  "User Password"
+// @Success      200              {object}  models.Client
+// @Failure      400              {object}  dtos.HTTPError
+// @Failure      404              {object}  dtos.HTTPError
+// @Failure      500              {object}  dtos.HTTPError
 // @Router       /users/clients/{email} [get]
 func GetClient(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -82,11 +90,15 @@ func GetClient(c *gin.Context) {
 		log.Error(errMsg)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, nil, errMsg))
 	} else {
-		user, err := repositories.GetClient(models.Client{User: models.User{Email: email}}, ctx)
+		user, err := repositories.GetClient(models.Client{Email: email}, ctx)
 		if err != nil {
-			const errMsg string = "Error finding user."
+			const errMsg string = "Error finding user: "
 			log.Error(errMsg, err)
 			c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
+		} else if !services.ComparePassword(user.Password, c.GetHeader("X-USER-PASSWORD")) {
+			const errMsg string = "Invalid password sent in Header."
+			log.Error(errMsg)
+			c.JSON(http.StatusUnauthorized, dtos.NewError(http.StatusUnauthorized, nil, errMsg))
 		} else {
 			c.JSON(http.StatusOK, user)
 		}
@@ -99,6 +111,7 @@ func GetClient(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        clientDTO  body      models.Client  true  "User DTO"
+// @Param        X-USER-PASSWORD  header    string  true  "User Password"
 // @Success      200        {object}  interface{}
 // @Failure      400        {object}  dtos.HTTPError
 // @Failure      404        {object}  dtos.HTTPError
@@ -117,14 +130,32 @@ func UpdateClients(c *gin.Context) {
 		log.Error(validatingRequestBodyFailedMessage, validationErr)
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, validationErr))
 	} else {
-		user := models.NewClient(requestBody.Email, requestBody.Name, requestBody.Password)
-		out, err := repositories.UpdateClient(user, ctx)
+		// Load current user data
+		user, err := repositories.GetClient(models.Client{Email: requestBody.Email}, ctx)
 		if err != nil {
-			const errMsg string = "Error updating user."
+			const errMsg string = "Error finding Client."
 			log.Error(errMsg, err)
-			c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
-		} else {
-			c.JSON(http.StatusOK, out)
+			c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err, errMsg))
+		} else if !services.ComparePassword(user.Password, c.GetHeader("X-USER-PASSWORD")) {
+			const errMsg string = "Invalid password sent in Header."
+			log.Error(errMsg)
+			c.JSON(http.StatusUnauthorized, dtos.NewError(http.StatusUnauthorized, nil, errMsg))
+		}  else {
+			// Hash Client Password
+			hashedPass, err := services.HashPassword(requestBody.Password)
+			if err != nil {
+				const errMsg string = "Error hashing password: "
+				log.Error(errMsg, err)
+			}
+			user := models.NewClient(requestBody.Name, requestBody.Email, hashedPass, requestBody.Subscriptions)
+			out, err := repositories.UpdateClient(user, ctx)
+			if err != nil {
+				const errMsg string = "Error updating user: "
+				log.Error(errMsg, err)
+				c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
+			} else {
+				c.JSON(http.StatusOK, out)
+			}
 		}
 	}
 }
@@ -134,11 +165,12 @@ func UpdateClients(c *gin.Context) {
 // @Tags         /users/clients
 // @Accept       json
 // @Produce      json
-// @Param        email  path      string  true  "User Email"
-// @Success      200    {object}  int64
-// @Failure      400    {object}  dtos.HTTPError
-// @Failure      404    {object}  dtos.HTTPError
-// @Failure      500    {object}  dtos.HTTPError
+// @Param        email            path      string  true  "User Email"
+// @Param        X-USER-PASSWORD  header    string  true  "User Password"
+// @Success      200              {object}  int64
+// @Failure      400              {object}  dtos.HTTPError
+// @Failure      404              {object}  dtos.HTTPError
+// @Failure      500              {object}  dtos.HTTPError
 // @Router       /users/clients/{email} [delete]
 func DeleteClients(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -151,14 +183,26 @@ func DeleteClients(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, nil, errMsg))
 		return
 	}
-	 
-	out, err := repositories.DeleteClient(models.Client{User: models.User{Email: email}}, ctx)
+
+	// Load current user data
+	user, err := repositories.GetClient(models.Client{Email: email}, ctx)
 	if err != nil {
-		const errMsg string = "Error deleting user."
+		const errMsg string = "Error finding Client."
 		log.Error(errMsg, err)
-		c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
-	} else {
-		c.JSON(http.StatusOK, out)
+		c.JSON(http.StatusBadRequest, dtos.NewError(http.StatusBadRequest, err, errMsg))
+	} else if !services.ComparePassword(user.Password, c.GetHeader("X-USER-PASSWORD")) {
+		const errMsg string = "Invalid password sent in Header."
+		log.Error(errMsg)
+		c.JSON(http.StatusUnauthorized, dtos.NewError(http.StatusUnauthorized, nil, errMsg))
+	}  else {
+		out, err := repositories.DeleteClient(models.Client{Email: email}, ctx)
+		if err != nil {
+			const errMsg string = "Error deleting user."
+			log.Error(errMsg, err)
+			c.JSON(http.StatusInternalServerError, dtos.NewError(http.StatusInternalServerError, err, errMsg))
+		} else {
+			c.JSON(http.StatusOK, out)
+		}
 	}
 }
 
@@ -168,10 +212,10 @@ func DeleteClients(c *gin.Context) {
 // @Accept       json
 // @Produce      json
 // @Param        disease  body      models.Disease  true  "The Diagnosed Disease"
-// @Success      200    {object}  models.Client
-// @Failure      400    {object}  dtos.HTTPError
-// @Failure      404    {object}  dtos.HTTPError
-// @Failure      500    {object}  dtos.HTTPError
+// @Success      200      {object}  models.Client
+// @Failure      400      {object}  dtos.HTTPError
+// @Failure      404      {object}  dtos.HTTPError
+// @Failure      500      {object}  dtos.HTTPError
 // @Router       /users/experts/diagnose [post]
 func DiagnoseDisease(c *gin.Context) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

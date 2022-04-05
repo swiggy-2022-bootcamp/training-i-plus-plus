@@ -5,6 +5,7 @@ import (
 
 	"github.com/dhi13man/healthcare-app/users_service/configs"
 	"github.com/dhi13man/healthcare-app/users_service/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Create a Client in database.
@@ -27,13 +28,13 @@ func CreateClient(newClient models.Client, ctx context.Context) (interface{}, er
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  ([]models.Client, error) Clients if found, and Error if any.
-func GetClients(medicineTemplate models.Client, ctx context.Context) ([]models.Client, error) {
-	var medicines []models.Client
-	cursor, err := configs.ClientsCollection.Find(ctx, medicineTemplate)
+func GetClients(userTemplate models.Client, ctx context.Context) ([]models.Client, error) {
+	var users []models.Client
+	cursor, err := configs.ClientsCollection.Find(ctx, userTemplate)
 	if cursor != nil {
-		cursor.Decode(&medicines)
+		cursor.Decode(&users)
 	}
-	return medicines, err
+	return users, err
 }
 
 
@@ -43,20 +44,24 @@ func GetClients(medicineTemplate models.Client, ctx context.Context) ([]models.C
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  (models.Client, error) Client if found, and Error if any.
-func GetClient(medicineTemplate models.Client, ctx context.Context) (models.Client, error) {
-	var medicine models.Client
-	err := configs.ClientsCollection.FindOne(ctx, medicineTemplate).Decode(&medicine)
-	return medicine, err
+func GetClient(userTemplate models.Client, ctx context.Context) (models.Client, error) {
+	var client models.Client
+	err := configs.ClientsCollection.FindOne(ctx, bson.M{
+		"email": userTemplate.Email,
+	}).Decode(&client)
+	return client, err
 }
 
-// Updates Clients in database by updatedClient's ID (name).
+// Updates Clients in database by updatedClient's ID (email).
 //
 // updatedClient models.Client Client to update in database
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateClient(updatedClient models.Client, ctx context.Context) (interface{}, error) {
-	res, err := configs.ClientsCollection.UpdateOne(ctx, models.Client{User: models.User{Name: updatedClient.Name}}, updatedClient)
+	res, err := configs.ClientsCollection.UpdateOne(ctx, bson.M{
+		"email": updatedClient.Email,
+	}, updatedClient)
 	if res == nil {
 		return nil, err
 	} else {
@@ -71,7 +76,9 @@ func UpdateClient(updatedClient models.Client, ctx context.Context) (interface{}
 //
 // @return  (int64, err) The numer of deleted entries, and Error if any occurs.
 func DeleteClient(medicineTemplate models.Client, ctx context.Context) (int64, error) {
-	res, err := configs.ClientsCollection.DeleteOne(ctx, medicineTemplate)
+	res, err := configs.ClientsCollection.DeleteOne(ctx,  bson.M{
+		"email": medicineTemplate.Email,
+	})
 	if res == nil {
 		return 0, err
 	} else {

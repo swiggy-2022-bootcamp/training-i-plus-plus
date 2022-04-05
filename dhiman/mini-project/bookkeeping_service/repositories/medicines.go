@@ -5,6 +5,7 @@ import (
 
 	"github.com/dhi13man/healthcare-app/bookkeeping_service/configs"
 	"github.com/dhi13man/healthcare-app/bookkeeping_service/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Create a Medicine in database.
@@ -30,7 +31,7 @@ func CreateMedicine(newMedicine models.Medicine, ctx context.Context) (interface
 // @return  ([]models.Medicine, error) Medicines if found, and Error if any.
 func GetMedicines(medicineTemplate models.Medicine, ctx context.Context) ([]models.Medicine, error) {
 	var medicines []models.Medicine
-	cursor, err := configs.MedicinesCollection.Find(ctx, medicineTemplate)
+	cursor, err := configs.MedicinesCollection.Find(ctx, bson.M{"name": medicineTemplate.Name})
 	if cursor != nil {
 		cursor.Decode(&medicines)
 	}
@@ -45,7 +46,7 @@ func GetMedicines(medicineTemplate models.Medicine, ctx context.Context) ([]mode
 // @return  (models.Medicine, error) The Medicine if found, and Error if any occurs.
 func GetMedicine(medicineTemplate models.Medicine, ctx context.Context) (models.Medicine, error) {
 	var medicine models.Medicine
-	err := configs.MedicinesCollection.FindOne(ctx, medicineTemplate).Decode(&medicine)
+	err := configs.MedicinesCollection.FindOne(ctx, bson.M{"name": medicineTemplate.Name}).Decode(&medicine)
 	return medicine, err
 }
 
@@ -56,7 +57,7 @@ func GetMedicine(medicineTemplate models.Medicine, ctx context.Context) (models.
 //
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateMedicine(updatedMedicine models.Medicine, ctx context.Context) (interface{}, error) {
-	res, err := configs.MedicinesCollection.UpdateOne(ctx, models.Medicine{Name: updatedMedicine.Name}, updatedMedicine)
+	res, err := configs.MedicinesCollection.UpdateOne(ctx, bson.M{"name": updatedMedicine.Name}, updatedMedicine)
 	if res == nil {
 		return nil, err
 	} else {
@@ -71,7 +72,7 @@ func UpdateMedicine(updatedMedicine models.Medicine, ctx context.Context) (inter
 //
 // @return  (int64, err) The numer of deleted entries, and Error if any occurs.
 func DeleteMedicine(medicineTemplate models.Medicine, ctx context.Context) (int64, error) {
-	res, err := configs.MedicinesCollection.DeleteOne(ctx, medicineTemplate)
+	res, err := configs.MedicinesCollection.DeleteOne(ctx, bson.M{"name": medicineTemplate.Name})
 	if res == nil {
 		return 0, err
 	} else {

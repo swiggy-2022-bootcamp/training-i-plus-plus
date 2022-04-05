@@ -327,6 +327,11 @@ paths:
         name: email
         required: true
         type: string
+      - description: User Password
+        in: header
+        name: X-USER-PASSWORD
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -357,6 +362,11 @@ paths:
       - description: User Email
         in: path
         name: email
+        required: true
+        type: string
+      - description: User Password
+        in: header
+        name: X-USER-PASSWORD
         required: true
         type: string
       produces:
@@ -392,6 +402,11 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.Client'
+      - description: User Password
+        in: header
+        name: X-USER-PASSWORD
+        required: true
+        type: string
       produces:
       - application/json
       responses:

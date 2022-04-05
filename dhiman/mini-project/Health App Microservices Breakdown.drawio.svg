@@ -1,13 +1,12 @@
-<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="512px" height="521px" viewBox="-0.5 -0.5 512 521" content="&lt;mxfile&gt;&lt;diagram id=&quot;f_Cxhoo4PRnuRPUvZAkU&quot; name=&quot;Page-1&quot;&gt;3Vldk5owFP01PLoDAREfXbXtTN3ptrbT9jFChHSRMCH40V/fiyRCBHS3u7XuPpmc3Hzdc25uDIY9Xm3fc5xGdywgsYHMYGvYEwMhCzk2/BTIrkRcxyqBkNNAGlXAnP4mEjQlmtOAZJqhYCwWNNVBnyUJ8YWGYc7ZRjdbslifNcUhaQBzH8dN9DsNRFSiHhpU+AdCw0jNbLnDsmWFlbHcSRbhgG1qkD017DFnTJSl1XZM4sJ5yi9lv3cdrYeFcZKIx3S4+/h59i36dL+cfxgvk2HQ28Tfe8iRixM7tWMSgANklXERsZAlOJ5W6C1neRKQYlgTapXNjLEUQAvAX0SInWQT54IBFIlVLFthxXz3Q/bfV34WlZu+qk629cbJTtYCnEX7eYtBMoG5GBUUA+DHOMuor+B3NI4PIwRNIwBrJk1PSudmLOe+dAuS4sM8JNJKSrtwWK2b9P57wlYEFg8GnMRY0LWuKCyFGR7sZFdYLd7VDFJGE5HVRr4vADBQMeZKDmWEDfpHOjhjb5m21gEK5RJUrbaXCtqL6ylC65eTrnGcS0d8xMsH3Cq/GV7AMaJJBsc0TAoOgSPCAVgTLijE6Ug2rGgQlOokGf2NF/vxCnal/2Dw/q3Rn7TyfTI2ipnI1mg5beQsWkBrzMte5o2lu7ysPU0XFZHKhC2XGWhR5+6pbKEGLwZyY/DLbQ6FsCh8ywgHAZp31OesB5U1haiAPdsjz/QsZb/gqoNCYO7DID3oMMpFBD4H2gRlSbOfsmEcGOw2mSY+36Xd7XO8pkkIhWLh8DPBoqkz/RDbRFSQeYr30b6BVKarr/OEaGijUwPIPApTleE2VVpBpsSiWkrxzG5haLyfINk+T/ItYw8PhKSl59qpRo+nei6AxP1QM5oJKGXtXN3hVE65IGJDSFJgJKA+TSDto3FBH80IzlRtuk3B59nV8TkcXpDP9vPK/r+5vErfP7Xs3Z7LH5V0W/dpuZdKxY3caaMj0o/JLNckez3rXD659Vog14LliHy4cKZF0d/FFDjm9vm4WJRqmC0OAPYfwr1GPuUChiHq8lXKweq/TDA5zpFfWw5H76KxhK4plqx/F0uDC8TSs5hQK6xJvkoIb0fxljn435I3G/58m5L3mpJH1yV5ryF5eQV/O3oftFyXLit3q+HOt3lbGl693IcNuY9jSpKWS/4rFrxrX07wg5PSTlix51ZVWsbfv8e1auqsZp0OdV76Fc1VD9Xtr2jPfhRTF9qayL9M519bibrI89ejX7V0CgcnRW/emC7S/Chrz/zfpYJCDup4+gAv8hA2fNVBY19D0Lz4U7Kljt1XHjXDM1FjOUevST3nZeLG00e13X8QOE6DozJ9d2bvfBWPfMHqhOzJu2cZ3b/q2pMFE4KtWhgT7Ci/szKJjw/f/8xTZDUCq5MUF6GbvuY9r9/M4E5LBh88PYNDtfoQWFJQfU61p38A&lt;/diagram&gt;&lt;/mxfile&gt;">
+<svg host="65bd71144e" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="512px" height="521px" viewBox="-0.5 -0.5 512 521" content="&lt;mxfile&gt;&lt;diagram id=&quot;f_Cxhoo4PRnuRPUvZAkU&quot; name=&quot;Page-1&quot;&gt;3Vlbc9o8EP01PJLxFcwjAdrOlEzT0k6/Pgpb2PoiLI8sbv31XSMJW7YhpKGU5qWVjnd12XNWq4iOO1pu33OUJQ8swrTjWNG24447jjMYePBvAewk0O8NJBBzEknILoEZ+YkVaCl0RSKcG4aCMSpIZoIhS1McCgNDnLONabZg1Jw1QzFuALMQ0Sb6nUQikWjg9Ev8AyZxome29f6WSBurneQJitimArmTjjvijAnZWm5HmBax03GRfu+OfD0sjONUnOPw8PHz9Fvy6XEx+zBapIOou6Hfu46iJxc7vWMcQQBUl3GRsJiliE5K9J6zVRrhYlgLeqXNlLEMQBvA/7EQO8UmWgkGUCKWVH2FFfPdf8p/3/lRdO583R1vqx/HO9WLUJ7s5y0GyQXiYlhQDEDKUqyxd4TSg3ukLUKK8pyEEqyYNMOoIpuzFQ9VTBylPMRjrKxcCRXRqrip0L/HbIlh5WDAMUWCrE05IaXK+GCnXGG1aFcxyBhJRV4Z+bEAwEDll91TBOr08msieMbetlzDARpyCbpX2UsJ7ZX1EpX5ctI1oisViI9o8YRatTdFczhCDL0gSuK04BA4whyANeaCQJIO1YcliSIpTZyTn2i+H69gV8UPBvfvO/64le+TiVHMhLedlqNGzWJks8G88rLubDPksvcyXZREahO2WOSgRZO7l7LlNHjpOD0KcblfQSMuGt9yzEGA1gMJOetCZ00gK2DP7jCwAlvbz7l20AjMfRikCw7DlUgg5kCbICxt+mkbxoHB4yaTNOS77Pj3GVqTNIZGsXD4b4xEU2fmCbZJiMCzDO2zfQNlzFTf0ROioY2jGnCsWprq8rYpa4pjKSyp1JPAOi4Mg/cTJLvPk3zP2NMTxpmMXDvVzvlUzwSQuB9qSnIBrbydqweUqSnnWGwwTgsMRyQkKdR8Z1TQR3KMct2bbDOIeX5zfA4GV+Sz/bxy/24hL2v3D6N0txfys4pu6z7t3rVKcaN2uk6N9DqZck3K61Xn8smtVxK5kiw18uG2mRXNcEcJcMzd5/NiLtUwnR8AFD7Fe418WgkYBuubl5SD7V8mmTyvFteWwzG4ai45t5RL9p/Lpf4VculVTOgVViRfFoS3o3jb6v9tyVuNeL5NyQdNyTu3JfmgIXl1BX87eu+3XJeuK3e7Ec63eVsa3LzcBw25jyjBacsl/x8WfM+9nuD7J6WtHsraVGl3fv8x7iyJelcQ42+9ovU81zyf/Ms+iukLbUXkXyazr61EXf35S1+xLvDQZfUcI46q98q/u3RSqEG9wBzgIg9hg38paW7j6bmeNBd/Srb1sXuLWaPL1iWeh73aa1LXu0zeBOaobu8PJI7X4EiW76PVe7Wkw1CwKiF78h5ZTvavuu54zoRgyxbGBKvVdyaL+Ojw49/J69L59bvnOHe+Eb3Ab1Zwr6WC919ewaFb/gooKSh/SnUnvwA=&lt;/diagram&gt;&lt;/mxfile&gt;">
     <defs/>
     <g>
-        <path d="M 45.63 120 L 12 120 L 12 400 L 45.63 400" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="stroke"/>
-        <path d="M 50.88 120 L 43.88 123.5 L 45.63 120 L 43.88 116.5 Z" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 52 120 L 12 120 L 12 400 L 45.63 400" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" stroke-dasharray="3 3" pointer-events="stroke"/>
         <path d="M 50.88 400 L 43.88 403.5 L 45.63 400 L 43.88 396.5 Z" fill="none" stroke="rgb(0, 0, 0)" stroke-miterlimit="10" pointer-events="all"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 278px; margin-left: 14px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 279px; margin-left: 14px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); background-color: rgb(255, 255, 255); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 11px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; background-color: rgb(255, 255, 255); white-space: nowrap;">
                                 Kafka
@@ -15,7 +14,7 @@
                         </div>
                     </div>
                 </foreignObject>
-                <text x="14" y="281" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
+                <text x="14" y="282" fill="rgb(0, 0, 0)" font-family="Helvetica" font-size="11px" text-anchor="middle">
                     Kafka
                 </text>
             </switch>
@@ -117,7 +116,7 @@
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" style="overflow: visible; text-align: left;">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 78px; height: 1px; padding-top: 212px; margin-left: 293px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 78px; height: 1px; padding-top: 213px; margin-left: 293px;">
                         <div data-drawio-colors="color: rgb(0, 0, 0); " style="box-sizing: border-box; font-size: 0px; text-align: center;">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: rgb(0, 0, 0); line-height: 1.2; pointer-events: all; white-space: normal; overflow-wrap: normal;">
                                 Users

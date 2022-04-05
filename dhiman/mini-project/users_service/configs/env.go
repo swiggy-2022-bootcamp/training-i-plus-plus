@@ -2,6 +2,7 @@ package configs
 
 import (
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
@@ -70,4 +71,19 @@ func KafkaDiagnosisTopic() string {
     }
   
     return os.Getenv("KAFKA_DIAGNOSIS_TOPIC")
+}
+
+// Get the name of the Kafka Diagnosis Topic
+func BCryptHashRounds() int {
+    err := godotenv.Load(envPath)
+    if err != nil {
+        log.Fatal(errLoadingEnv)
+    }
+  
+    rounds, err := strconv.Atoi(os.Getenv("BCRYPT_HASH_ROUNDS"))
+    if err != nil {
+        return 10
+    } else {
+        return rounds
+    }
 }

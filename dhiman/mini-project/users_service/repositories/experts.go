@@ -5,6 +5,7 @@ import (
 
 	"github.com/dhi13man/healthcare-app/users_service/configs"
 	"github.com/dhi13man/healthcare-app/users_service/models"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Create a Expert in database.
@@ -22,15 +23,15 @@ func CreateExpert(newExpert models.Expert, ctx context.Context) (interface{}, er
 	}
 }
 
-// Get all Experts in database where fields match medicineTemplate filter.
+// Get all Experts in database where fields match expertTemplate filter.
 //
-// medicineTemplate models.Expert Expert Template to filter data by.
+// expertTemplate models.Expert Expert Template to filter data by.
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  ([]models.Expert, error) Experts if found, and Error if any.
-func GetExperts(medicineTemplate models.Expert, ctx context.Context) ([]models.Expert, error) {
+func GetExperts(expertTemplate models.Expert, ctx context.Context) ([]models.Expert, error) {
 	var medicines []models.Expert
-	cursor, err := configs.ExpertsCollection.Find(ctx, medicineTemplate)
+	cursor, err := configs.ExpertsCollection.Find(ctx, bson.M{"email": expertTemplate.Email})
 	if cursor != nil {
 		cursor.Decode(&medicines)
 	}
@@ -38,15 +39,15 @@ func GetExperts(medicineTemplate models.Expert, ctx context.Context) ([]models.E
 }
 
 
-// Get a single Expert in database where fields match medicineTemplate filter.
+// Get a single Expert in database where fields match expertTemplate filter.
 //
-// medicineTemplate models.Expert Expert Template to filter data by.
+// expertTemplate models.Expert Expert Template to filter data by.
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  (models.Expert, error) Expert if found, and Error if any.
-func GetExpert(medicineTemplate models.Expert, ctx context.Context) (models.Expert, error) {
+func GetExpert(expertTemplate models.Expert, ctx context.Context) (models.Expert, error) {
 	var medicine models.Expert
-	err := configs.ExpertsCollection.FindOne(ctx, medicineTemplate).Decode(&medicine)
+	err := configs.ExpertsCollection.FindOne(ctx, bson.M{"email": expertTemplate.Email}).Decode(&medicine)
 	return medicine, err
 }
 
@@ -57,7 +58,7 @@ func GetExpert(medicineTemplate models.Expert, ctx context.Context) (models.Expe
 //
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateExpert(updatedExpert models.Expert, ctx context.Context) (interface{}, error) {
-	res, err := configs.ExpertsCollection.UpdateOne(ctx, models.Expert{User: models.User{Name: updatedExpert.Name}}, updatedExpert)
+	res, err := configs.ExpertsCollection.UpdateOne(ctx, bson.M{"email": updatedExpert.Email}, updatedExpert)
 	if res == nil {
 		return nil, err
 	} else {
@@ -65,14 +66,14 @@ func UpdateExpert(updatedExpert models.Expert, ctx context.Context) (interface{}
 	}
 }
 
-// Delete Experts in database where fields match medicineTemplate filter.
+// Delete Experts in database where fields match expertTemplate filter.
 //
-// medicineTemplate models.Expert Expert Template to filter data by.
+// expertTemplate models.Expert Expert Template to filter data by.
 // c *context.Context Context to control deadline, cancellation signal, etc.
 //
 // @return  (int64, err) The numer of deleted entries, and Error if any occurs.
-func DeleteExpert(medicineTemplate models.Expert, ctx context.Context) (int64, error) {
-	res, err := configs.ExpertsCollection.DeleteOne(ctx, medicineTemplate)
+func DeleteExpert(expertTemplate models.Expert, ctx context.Context) (int64, error) {
+	res, err := configs.ExpertsCollection.DeleteOne(ctx, bson.M{"email": expertTemplate.Email})
 	if res == nil {
 		return 0, err
 	} else {
