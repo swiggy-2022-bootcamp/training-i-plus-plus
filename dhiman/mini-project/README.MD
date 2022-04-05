@@ -43,6 +43,12 @@ A mini project build to showcase the skills and technologies learnt across Swigg
 | --- |
 | ![Mongo DB Collection](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/mongo_collection.png) |
 
+### Authentication and Bcrypt Encryption
+
+| Authentication Failure when Wrong Password | Bcrypt Encrypted Password Saving |
+| --- | --- |
+| [![Authentication Failure](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/authentication_working_wrong_password.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/authentication_working_wrong_password.png) | [![Bcrypt Encrypted Password Saving](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/password_bcrypt_encryption.png)](https://raw.githubusercontent.com/swiggy-2022-bootcamp/training-i-plus-plus/main/dhiman/mini-project/screenshots/password_bcrypt_encryption.png) |
+
 ### Kafka
 
 | Users Microservice (Kafka Producer) | Bookkeeping Microservice (Kafka Consumer) |

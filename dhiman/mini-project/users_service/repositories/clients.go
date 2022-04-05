@@ -59,9 +59,15 @@ func GetClient(userTemplate models.Client, ctx context.Context) (models.Client, 
 //
 // @return  (interface{}, error) UpsertedID if successful update, and Error if any occurs.
 func UpdateClient(updatedClient models.Client, ctx context.Context) (interface{}, error) {
-	res, err := configs.ClientsCollection.UpdateOne(ctx, bson.M{
-		"email": updatedClient.Email,
-	}, updatedClient)
+	res, err := configs.ClientsCollection.UpdateOne(
+		ctx, 
+		bson.M{
+			"email": updatedClient.Email,
+		}, 
+		bson.M{
+			"$set": updatedClient,
+		},
+	)
 	if res == nil {
 		return nil, err
 	} else {
