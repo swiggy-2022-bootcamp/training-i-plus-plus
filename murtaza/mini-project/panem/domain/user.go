@@ -35,15 +35,15 @@ func GetEnumByIndex(idx int) (Role, *errs.AppError) {
 }
 
 type User struct {
-	Id              int    `json:"id"`
-	FirstName       string `json:"first_name"`
-	LastName        string `json:"last_name"`
-	Username        string `json:"username"`
-	Password        string `json:"password"`
-	Phone           string `json:"phone"`
-	Email           string `json:"email"`
-	Role            Role   `json:"role"`
-	PurchaseHistory []int  `json:"purchase_history"`
+	Id              int                `json:"id"`
+	FirstName       string             `json:"first_name"`
+	LastName        string             `json:"last_name"`
+	Username        string             `json:"username"`
+	Password        string             `json:"password"`
+	Phone           string             `json:"phone"`
+	Email           string             `json:"email"`
+	Role            Role               `json:"role"`
+	PurchaseHistory map[string]float64 `json:"purchase_history"`
 }
 
 func (u User) MarshalJSON() ([]byte, error) {
@@ -69,7 +69,7 @@ func NewUser(firstName, lastName, username, phone, email, password string, role 
 		Email:           email,
 		Password:        password,
 		Role:            role,
-		PurchaseHistory: make([]int, 0),
+		PurchaseHistory: make(map[string]float64),
 	}
 }
 
@@ -79,4 +79,10 @@ type UserMongoRepository interface {
 	FindUserByUsername(string) (*User, *errs.AppError)
 	DeleteUserByUserId(int) *errs.AppError
 	UpdateUser(User) (*User, *errs.AppError)
+	UpdatePurchaseHistory(int, int, float64) *errs.AppError
+}
+
+type UserConsumer interface {
+	Start()
+	Stop()
 }

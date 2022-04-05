@@ -17,6 +17,7 @@ type Routes struct {
 func Start() {
 
 	userMongoRepository := infra.NewUserMongoRepository()
+	userConsumer := infra.NewConsumer("test_topic")
 
 	userHandler := UserHandler{
 		userService: domain.NewUserService(userMongoRepository),
@@ -53,8 +54,19 @@ func Start() {
 	auth := v1.Group("/auth")
 	auth.GET("/", authHandler.isTokenValid)
 
+	userConsumer.Start()
+	go updatePurchaseHistory(*userConsumer, userMongoRepository)
+
 	err := r.router.Run(":8089")
 	if err != nil {
 		logger.Fatal("Unable to start user service")
+	}
+}
+
+func updatePurchaseHistory(userConsumer infra.Consumer, umr domain.UserMongoRepository) {
+	for {
+		oi := <-userConsumer.Output
+		umr.UpdatePurchaseHistory(oi.UserId, oi.OrderId, oi.OrderAmount)
+		logger.Info("Updated purchase history")
 	}
 }

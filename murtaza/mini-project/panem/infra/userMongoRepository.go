@@ -8,6 +8,7 @@ import (
 	"panem/domain"
 	"panem/utils/errs"
 	"panem/utils/logger"
+	"strconv"
 	"time"
 )
 
@@ -70,14 +71,14 @@ func (umr UserMongoRepository) UpdateUser(user domain.User) (*domain.User, *errs
 	change := mgo.Change{
 		Update: bson.M{
 			"$set": bson.M{
-				"firstname": user.FirstName,
-				"lastname":  user.LastName,
-				"username":  user.Username,
-				"password":  user.Password,
-				"phone":     user.Phone,
-				"email":     user.Email,
-				"role":      0,
-				"updatedat": time.Now(),
+				"firstname":  user.FirstName,
+				"lastname":   user.LastName,
+				"username":   user.Username,
+				"password":   user.Password,
+				"phone":      user.Phone,
+				"email":      user.Email,
+				"role":       0,
+				"updated_at": time.Now(),
 			},
 		},
 	}
@@ -91,6 +92,37 @@ func (umr UserMongoRepository) UpdateUser(user domain.User) (*domain.User, *errs
 		return nil, errs.NewUnexpectedError(err.Error())
 	}
 	return &updatedUser, nil
+}
+
+func (umr UserMongoRepository) UpdatePurchaseHistory(userId, orderId int, orderAmount float64) *errs.AppError {
+	users := umr.Session.DB(umr.Mongo.Database).C(UserCollectionName)
+	var persistedUser UserModel
+	err := users.Find(bson.M{"id": userId}).One(&persistedUser)
+	if err != nil {
+		return errs.NewNotFoundError(fmt.Sprintf("No user found with user Id: %d", userId))
+	}
+
+	persistedUser.PurchaseHistory[strconv.Itoa(orderId)] = orderAmount
+
+	change := mgo.Change{
+		Update: bson.M{
+			"$set": bson.M{
+				"purchase_history": persistedUser.PurchaseHistory,
+				"updated_at":       time.Now(),
+			},
+		},
+	}
+
+	var updatedUser UserModel
+	_, err = users.Find(bson.M{"id": userId}).Apply(change, &updatedUser)
+
+	if err != nil {
+		errMessage := fmt.Sprintf("Cannot update user with UserId: %d", userId)
+		logger.Error(errMessage, zap.Int("userId", userId), zap.Error(err))
+		return errs.NewUnexpectedError(err.Error())
+	}
+
+	return nil
 }
 
 func NewUserMongoRepository() UserMongoRepository {
@@ -114,16 +146,17 @@ func NewUserMongoRepository() UserMongoRepository {
 func (umr UserMongoRepository) toPersistedMongoEntity(u domain.User) *UserModel {
 	var nextId = umr.getNextSequence("userId")
 	return &UserModel{
-		Id:        nextId,
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Phone:     u.Phone,
-		Email:     u.Email,
-		Username:  u.Username,
-		Password:  u.Password,
-		Role:      u.Role,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
+		Id:              nextId,
+		FirstName:       u.FirstName,
+		LastName:        u.LastName,
+		Phone:           u.Phone,
+		Email:           u.Email,
+		Username:        u.Username,
+		Password:        u.Password,
+		Role:            u.Role,
+		PurchaseHistory: u.PurchaseHistory,
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}
 }
 
