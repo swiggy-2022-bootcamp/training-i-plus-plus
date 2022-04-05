@@ -1,0 +1,72 @@
+{
+	"info": {
+		"_postman_id": "42bc218c-8307-4838-9c47-2d1ae0331288",
+		"name": "Alfred - Order Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Add to Cart",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"6\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{alfred-url}}/api/v1/carts/add",
+					"protocol": "http",
+					"host": [
+						"{{alfred-url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Cart Checkout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "userId",
+						"value": "1",
+						"type": "default"
+					}
+				],
+				"url": {
+					"raw": "http://{{alfred-url}}/api/v1/carts/checkout",
+					"protocol": "http",
+					"host": [
+						"{{alfred-url}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"carts",
+						"checkout"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
