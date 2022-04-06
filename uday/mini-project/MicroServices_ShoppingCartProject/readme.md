@@ -10,7 +10,7 @@ Architecture Diagram
 ====================
 </br>
 
- <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aServiceProvider/diagram.PNG" width="800" height="500">
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aserviceProvider/diagram.PNG" width="800" height="500">
 </br>
 
 Definitions:
