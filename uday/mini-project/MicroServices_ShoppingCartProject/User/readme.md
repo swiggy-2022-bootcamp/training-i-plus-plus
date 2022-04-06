@@ -10,7 +10,7 @@ Architecture Diagram
 ====================
 </br>
 
- <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aServiceProvider/diagram.PNG" width="800" height="500">
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aserviceProvider/diagram.PNG" width="800" height="500">
 </br>
 
 Definitions:
@@ -73,8 +73,10 @@ API Requests:
 
 
 ==============================================================================
-Starting Go User server:
-              go run main.go
-Starting go ServiceProvider server
-              go run main.go
+Starting Go User server:</br>
+-----------------------------
+              go run main.go</br>
+Starting go ServiceProvider server</br>
+---------------------------------
+              go run main.go</br>
               ( I have configured kafka on my system using docker, It might throw an error when you run this server because it tries to find the kafka server and topic in your system )

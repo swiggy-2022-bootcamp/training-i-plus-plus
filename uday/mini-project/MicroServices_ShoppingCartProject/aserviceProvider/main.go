@@ -5,7 +5,7 @@ import ( pb "expertserver/gRPC"
 		"fmt"
 		grpc "google.golang.org/grpc"
         "expertserver/database"
-        "expertserver/entity"
+        entity "expertserver/model"
         "expertserver/config"
         "go.mongodb.org/mongo-driver/bson"
         "go.mongodb.org/mongo-driver/mongo"
@@ -38,7 +38,6 @@ func(*server) ExpertService(ctx context.Context,req *pb.ExpertRequest )(*pb.Expe
     for _,val:=range result.Reviews{
         reactStruct=append(reactStruct,&pb.Ratingstruct{Rating:int32(val.Rating),Review:val.Review,})
     }
-    fmt.Println(result)
     result1:=pb.Expert{
         Id:result.Id.Hex(),
         Username:result.Username,
