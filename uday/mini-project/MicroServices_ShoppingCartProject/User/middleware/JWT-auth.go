@@ -3,7 +3,7 @@ import (
 	 "github.com/dgrijalva/jwt-go"
 	 "github.com/gin-gonic/gin" 
 	 "github.com/Udaysonu/SwiggyGoLangProject/service"
-	 "github.com/Udaysonu/SwiggyGoLangProject/entity"
+	 entity "github.com/Udaysonu/SwiggyGoLangProject/model"
 	 log "github.com/Udaysonu/SwiggyGoLangProject/config"
 	 "time"
  )

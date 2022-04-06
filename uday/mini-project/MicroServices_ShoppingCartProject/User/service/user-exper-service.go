@@ -1,7 +1,7 @@
 package service;
 import (
 	log	"github.com/Udaysonu/SwiggyGoLangProject/config"
-	"github.com/Udaysonu/SwiggyGoLangProject/entity"
+	entity "github.com/Udaysonu/SwiggyGoLangProject/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"github.com/Udaysonu/SwiggyGoLangProject/database"
@@ -97,9 +97,4 @@ func RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) (int,
 	ueCollection.UpdateOne(ctx2,bson.M{"userid":userid,"expertid":expertid},result)
 
  }
-
- func  MakePayment(userid primitive.ObjectID, expertid primitive.ObjectID){
-	 
- }
-
  

@@ -1,6 +1,6 @@
 syntax = "proto3";
-package p2;
-option go_package="/pb";
+package gRPC;
+option go_package="/gRPC";
 message Ratingstruct{
     int32 rating=1;
     string review=2;

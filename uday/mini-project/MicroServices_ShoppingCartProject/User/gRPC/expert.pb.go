@@ -4,7 +4,7 @@
 // 	protoc        v3.20.0
 // source: pb/expert.proto
 
-package pb
+package gRPC
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"

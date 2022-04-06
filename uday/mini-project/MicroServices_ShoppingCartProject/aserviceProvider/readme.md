@@ -9,8 +9,9 @@ But, In this project User buys services provided by employees like Plumber, Pain
 Architecture Diagram
 ====================
 </br>
- <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aserviceProvider/diagram.PNG" width="800" height="500">
- </br>
+
+ <img src="https://github.com/swiggy-2022-bootcamp/training-i-plus-plus/blob/main/uday/mini-project/MicroServices_ShoppingCartProject/aServiceProvider/diagram.PNG" width="800" height="500">
+</br>
 
 Definitions:
 
@@ -67,4 +68,13 @@ API Requests:
 13) GET   /expert/rejectreq/{expertid}        => Service provider rejects the waiting requests of an user</br>
 14) GET   /expert/complete/{cost}/{expertid}  => Completes a waiting request and adds the cost to the service </br>
 15) POST  /user/loginuser                     =>  Login with username and password => returns JWT</br>
-16) POST  /user/signuser                      =>  Sign Up User.
+16) POST  /user/signuser                      =>  Sign Up User
+
+
+
+==============================================================================
+Starting Go User server:
+              go run main.go
+Starting go ServiceProvider server
+              go run main.go
+              ( I have configured kafka on my system using docker, It might throw an error when you run this server because it tries to find the kafka server and topic in your system )

@@ -38,6 +38,4 @@ func  RemoveRelation(userid primitive.ObjectID,expertid primitive.ObjectID) (int
 	service.AddCost(userid,expertid,cost)
  }
 
- func MakePayment(userid primitive.ObjectID, expertid primitive.ObjectID){
-	 service.MakePayment(expertid,userid)
- }
+ 

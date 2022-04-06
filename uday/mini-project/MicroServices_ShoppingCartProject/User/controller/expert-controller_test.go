@@ -12,8 +12,8 @@ func equal(actual []string,expected []string)bool{
 	return false
 }
 func TestGetSkills(t *testing.T) {
-    actual := GetSkills()
-    expected := []string{"painter","plumber","carpenter"}
+    _,actual := GetSkills()
+    expected := []string{"carpenter","plumber","painter","beautician","labour","barber"}
 	if equal(actual,expected){
 		t.Errorf("Expected String(%s) is not same as"+
          " actual string (%s)", expected,actual)

@@ -6,7 +6,7 @@ import (
 	"time"
 	log "github.com/Udaysonu/SwiggyGoLangProject/config"
 	"github.com/Udaysonu/SwiggyGoLangProject/database"
-	"github.com/Udaysonu/SwiggyGoLangProject/entity"
+	entity "github.com/Udaysonu/SwiggyGoLangProject/model"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"

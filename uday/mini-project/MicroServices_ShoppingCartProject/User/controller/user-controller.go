@@ -4,7 +4,7 @@ import (
 	 
 	log "github.com/Udaysonu/SwiggyGoLangProject/config"
 
-	"github.com/Udaysonu/SwiggyGoLangProject/entity"
+	entity "github.com/Udaysonu/SwiggyGoLangProject/model"
 	"github.com/Udaysonu/SwiggyGoLangProject/service"
 	"github.com/gin-gonic/gin"
 )
