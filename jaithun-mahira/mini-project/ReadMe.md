@@ -10,9 +10,10 @@ Train reservation application where users can book tickets and admins can add tr
 - Scheduling Trains
 - Reserving/Booking Tickets
 - Canceling Tickets
-- Logging
+- Logging & Error Handling
 - Kafka Producer/Consumer
 - Swagger Documentation
+- Unit Test
 
 ### Microservices
 
