@@ -72,9 +72,11 @@ API Requests:
 
 
 
-==============================================================================
-Starting Go User server:
-              go run main.go
-Starting go ServiceProvider server
-              go run main.go
+==================================
+Starting Go User server:</br>
+-----------------------------
+              go run main.go</br>
+Starting go ServiceProvider server</br>
+---------------------------------
+              go run main.go</br>
               ( I have configured kafka on my system using docker, It might throw an error when you run this server because it tries to find the kafka server and topic in your system )
