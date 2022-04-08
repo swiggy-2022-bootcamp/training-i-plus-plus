@@ -65,7 +65,7 @@ func GetAllUsers(w http.ResponseWriter, r *http.Request) {
 func GetOneUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if authentication.AuthenticateLogin(w, r) {
-		if (GetUserType(w, r)) == "admin" {
+		if (GetUserType(w, r)) == "admin" || (GetUserType(w, r) == "masteradmin") {
 			var user model.CoreUserData
 			_ = json.NewDecoder(r.Body).Decode(&user)
 			result := database.FindOne(user.Email)
@@ -84,7 +84,7 @@ func GetOneUser(w http.ResponseWriter, r *http.Request) {
 func UpdateOneUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if authentication.AuthenticateLogin(w, r) {
-		if (GetUserType(w, r)) == "admin" {
+		if (GetUserType(w, r)) == "admin" || (GetUserType(w, r) == "masteradmin") {
 			var userToBeUpdated model.CoreUserData
 			_ = json.NewDecoder(r.Body).Decode(&userToBeUpdated)
 			result := database.UpdateOne(userToBeUpdated.Username, "email", "dkrv6666@gmail.com")
@@ -101,7 +101,7 @@ func DeleteOneUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 	if authentication.AuthenticateLogin(w, r) {
-		if (GetUserType(w, r)) == "admin" {
+		if (GetUserType(w, r)) == "admin" || (GetUserType(w, r) == "masteradmin") {
 			var user model.CoreUserData
 			_ = json.NewDecoder(r.Body).Decode(&user)
 			resultUser := database.DeleteOne(user.Email)
@@ -122,7 +122,7 @@ func DeleteAllUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Allow-Control-Allow-Methods", "DELETE")
 	if authentication.AuthenticateLogin(w, r) {
-		if (GetUserType(w, r)) == "massteradmin" {
+		if (GetUserType(w, r)) == "masteradmin" {
 			w.Write([]byte(GetUserType(w, r)))
 			count := database.DeleteMany()
 			json.NewEncoder(w).Encode(count)

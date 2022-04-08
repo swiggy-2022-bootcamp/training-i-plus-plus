@@ -42,7 +42,8 @@ func ValidateLogin(w http.ResponseWriter, r *http.Request) {
 		Value:   tokenString,
 		Expires: tokenExpirationTime,
 	})
-	w.Write([]byte("Login Successful ! 😍"))
+	w.Write([]byte("Login Successful ! 😍\n"))
+	w.Write([]byte("Welcome " + currentUser.Email))
 }
 
 //AuthenticateLogin ..
@@ -99,6 +100,16 @@ func GetUsernameFromToken(w http.ResponseWriter, r *http.Request) string {
 	}
 	result = (fmt.Sprint(claims.Username))
 	return result
+}
+
+//LogoutHandler ...
+func LogoutHandler(w http.ResponseWriter, r *http.Request) {
+	c := http.Cookie{
+		Name:   "token",
+		MaxAge: -1,
+	}
+	http.SetCookie(w, &c)
+	w.Write([]byte("Logout Successful !\nWe are sorry to see you go 🙁"))
 }
 
 // //IsLoginSuccessful ...
