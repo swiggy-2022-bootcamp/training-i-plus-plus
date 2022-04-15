@@ -109,17 +109,10 @@ Auth service is responsible fo login, registration and jwt authenticaton(grpc)
 
 ### Routes
 | Method | Route                           |   Description                                |
-|  ---   | ---                             | ---                                          |
-| POST   |   /user                         |   Create a new user                          |
-| GET    |   /user/:userid                 |   Read user info given userid                |
-| PUT    |   /user/:userid                 |   Update user info given userid              |
-| DELETE |   /user/:userid                 |   Delete user info given userid              |  
-| GET    |   /users                        |   Get All Users                              |
-| GET    |   /user/viewtrains              |   Get info about trains                      |
-| GET    |   /user/checktrain              |   Check availibility of train given train id |
-| POST   |   /bookedticket                 |   Book Ticket                                |
-| GET    |   /bookedticket/:bookedticketid |   Get Booked Ticket                          |
-| DELETE |   /bookedticket/:bookedticketid |   Cancel Booked Ticket                       |
+|  ---   | ---                             |   ---                                        |
+| POST   | /register                       |   Register as a User or Admin                |
+| POST   | /login                          |   Login as a User or Admin                   |
+
 
 
 ### Grpc
