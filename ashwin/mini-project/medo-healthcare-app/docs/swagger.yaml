@@ -1,0 +1,13 @@
+basePath: /
+host: localhost:9001
+info:
+  contact:
+    email: ashwinyaal@gmail.com
+    name: Ashwin Gopalsamy
+  description: Onestop Healthcare Application
+  license:
+    name: Apache 2.0
+  title: Medo - The Healthcare Application
+  version: "1.0"
+paths: {}
+swagger: "2.0"

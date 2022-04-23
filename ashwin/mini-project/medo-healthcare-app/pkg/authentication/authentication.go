@@ -6,6 +6,7 @@ import (
 	"medo-healthcare-app/cmd/model"
 	"medo-healthcare-app/pkg/database"
 	"medo-healthcare-app/pkg/err"
+	"medo-healthcare-app/pkg/logger"
 	"net/http"
 	"time"
 
@@ -19,7 +20,7 @@ func ValidateLogin(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	var credentials model.Credentials
 	cancel := json.NewDecoder(r.Body).Decode(&credentials)
-	err.CheckNilErr(cancel)
+	logger.Error("Error : ", cancel)
 	currentUser := database.FindOne(credentials.Email)
 	expectedPassword := currentUser.Password
 	if expectedPassword != credentials.Password {
@@ -42,8 +43,7 @@ func ValidateLogin(w http.ResponseWriter, r *http.Request) {
 		Value:   tokenString,
 		Expires: tokenExpirationTime,
 	})
-	w.Write([]byte("Login Successful ! 😍\n"))
-	w.Write([]byte("Welcome " + currentUser.Email))
+	w.Write([]byte("Login Successful ! 😍"))
 }
 
 //AuthenticateLogin ..
@@ -61,9 +61,9 @@ func AuthenticateLogin(w http.ResponseWriter, r *http.Request) bool {
 	tokenStr := cookie.Value
 	claims := &model.Claims{}
 	tkn, cancel := jwt.ParseWithClaims(tokenStr, claims,
-		(func(t *jwt.Token) (interface{}, error) {
+		func(t *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
-		}))
+		})
 	err.HandleJWTSignatureErr(cancel, w)
 	if !tkn.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -89,9 +89,9 @@ func GetUsernameFromToken(w http.ResponseWriter, r *http.Request) string {
 	tokenStr := cookie.Value
 	claims := &model.Claims{}
 	tkn, cancel := jwt.ParseWithClaims(tokenStr, claims,
-		(func(t *jwt.Token) (interface{}, error) {
+		func(t *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
-		}))
+		})
 	err.HandleJWTSignatureErr(cancel, w)
 	if !tkn.Valid {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -100,16 +100,6 @@ func GetUsernameFromToken(w http.ResponseWriter, r *http.Request) string {
 	}
 	result = (fmt.Sprint(claims.Username))
 	return result
-}
-
-//LogoutHandler ...
-func LogoutHandler(w http.ResponseWriter, r *http.Request) {
-	c := http.Cookie{
-		Name:   "token",
-		MaxAge: -1,
-	}
-	http.SetCookie(w, &c)
-	w.Write([]byte("Logout Successful !\nWe are sorry to see you go 🙁"))
 }
 
 // //IsLoginSuccessful ...

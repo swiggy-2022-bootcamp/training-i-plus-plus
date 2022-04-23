@@ -13,6 +13,15 @@ We've learned to seek engaging in-hand comfy experiences from every service prov
 * Possibility of **uploading** any existing health-related documents prior to a consultation / **downloading** Prescriptions digitally.
 * Payments & Billing
 
+## Topics Implemented:
+1. Design : **Domain Driven Design**
+2. Database : **MongoDB**
+3. APIs :     **REST API**
+4. Documentation : **Swagger**
+6. Logging : **Custom Logger**
+7. Error Handling : **Custom Error Handling**
+8. Containerization : **Docker**
+
 ## Functional Requirements : 
 1. **Patient Profile (Registration & Login )**
     * Check if the Patient has Basic/Pro Subscription.
@@ -31,7 +40,25 @@ We've learned to seek engaging in-hand comfy experiences from every service prov
 
 ## Modules:
 1. Login/Register Module
-2. Appointment Module
-3. Health Record Module
-4. Special Access Module (Pro)
-5. Payments Module
+2. Search Available Doctors Module
+3. Appointment Module
+4. Health Record Module
+5. Special Access Module (Pro)
+6. Payments Module
+
+## Few Screenshots:
+
+
+### Login
+![img.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723322587/SsIyO1Yaq.png)
+### JWT Token  
+![02-login-token.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723369633/Qd5koTG65.png)
+### Home
+![login-03-200OK-admin.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723513319/t2QjIBfW_.png)
+### If no token present?
+![login-04-nocookie.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723433813/oyL1rE2z-.png)
+#### then, Login will not be authorized.
+![login-05-nocookie-notauthorized.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723474176/E_dFlyvIR.png)
+### Available List of Doctors
+
+![doctors-list.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1650723565781/J7-OggQt_.png)

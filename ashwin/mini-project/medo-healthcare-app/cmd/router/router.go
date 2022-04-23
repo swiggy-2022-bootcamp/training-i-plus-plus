@@ -17,6 +17,7 @@ func Router() *mux.Router {
 	router.HandleFunc("/getUser", controller.GetOneUser).Methods("GET")
 	router.HandleFunc("/updateUser", controller.UpdateOneUser).Methods("PUT")
 	router.HandleFunc("/wipeAllUsersData", controller.DeleteAllUsers).Methods("DELETE")
-	//router.HandleFunc("/getUsername", controller.GetUsernameFromTokenController).Methods("GET")
+	//DOCTORS LIST
+	router.HandleFunc("/availableDoctors", controller.GetAllDoctors).Methods("GET")
 	return router
 }

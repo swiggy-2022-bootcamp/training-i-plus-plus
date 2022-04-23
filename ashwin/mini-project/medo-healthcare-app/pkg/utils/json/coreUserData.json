@@ -1,37 +1,37 @@
 [
     {
-        "username": "ashwin2125@gmail.com",
+        "username": "ashwin@gmail.com",
         "password": "ashwin",
         "userType": "patient",
         "verifiedUser": true,
         "premiumUser": true,
-        "email": "ashwin2125@gmail.com",
-        "phone": "8637498921",
+        "email": "ashwin@gmail.com",
+        "phone": "9356127116",
         "location": "pollachi",
         "age": "22",
         "name": "ashwin gopalsamy"
     },
     {
-        "username": "yalini2125@gmail.com",
+        "username": "yalini@gmail.com",
         "password": "yalini",
         "userType": "doctor",
         "verifiedUser": true,
         "premiumUser": true,
-        "email": "yalini2125@gmail.com",
+        "email": "yalini@gmail.com",
         "name": "keerthana yalini",
-        "phone": "7806969764",
+        "phone": "9356127117",
         "location": "pollachi",
         "age": "22"
     },
     {
-        "username": "vpgopalsamy@gmail.com",
+        "username": "gopalsamy@gmail.com",
         "password": "gopal",
         "userType": "doctor",
         "verifiedUser": true,
         "premiumUser": true,
-        "email": "vpgopalsamy@gmail.com",
+        "email": "gopalsamy@gmail.com",
         "name": "p gopalsamy",
-        "phone": "9965119936",
+        "phone": "9356127118",
         "location": "pollachi",
         "age": "63"
     },
@@ -43,7 +43,7 @@
         "premiumUser": true,
         "email": "malathigopalsamy@gmail.com",
         "name": "malathi gopalsamy",
-        "phone": "8610794214",
+        "phone": "9356127119",
         "location": "pollachi",
         "age": "52"
     },
@@ -55,7 +55,7 @@
         "premiumUser": true,
         "email": "rajavinith@gmail.com",
         "name": "raja vinith",
-        "phone": "8883386673",
+        "phone": "9356127120",
         "location": "pollachi",
         "age": "22"
     }, {
