@@ -1,6 +1,5 @@
-**What is Jenkins?**
+# What is Jenkins?
 
-====================
 
 [Jenkins](https://www.jenkins.io/) is a continuous open-source integration written in Java. It was forked from Hudson Project after a dispute with Oracle. Since the fork, Jenkins has grown to be much more than a continuous integration solution.
 
@@ -8,9 +7,8 @@ Jenkins is not just a [Continuous Integration](https://devopscube.com/continuous
 
 Jenkins also supports GitOps workflows with [Jenkins X](https://jenkins-x.io/). It helps you accelerate the continuous delivery pipeline on Kubernetes.
 
-**Jenkins Use Cases**
+## **Jenkins Use Cases**
 
-=====================
 
 The following are the main Jenkins use cases from my experience extensively working on Jenkins.
 
@@ -20,9 +18,9 @@ The following are the main Jenkins use cases from my experience extensively work
 
 3\.  **Automation & Ad-Hoc Tasks**: With Jenkins jobs and pipelines, you can automate infrastructure components and perform ad-hoc infrastructure tasks (Backups, remote executions, etc.).
 
-**Jenkins Tutorials For Beginners**
+## **Jenkins Tutorials For Beginners**
 
-===================================
+
 
 In this collection of Jenkins tutorial posts, I will cover various Jenkins tutorials, which will help beginners get started with many of the Jenkins core functionalities.
 
@@ -86,9 +84,8 @@ In this section, you will learn the very basics of Jenkins that every beginner s
 
 6\.  How to Build Docker Image using Jenkins [Upcomming]
 
-**Jenkins Core Features**
+## **Jenkins Core Features**
 
-=========================
 
 Let's have look at the overview of key Jenkins 2.x features that you should know.
 
@@ -100,9 +97,8 @@ Let's have look at the overview of key Jenkins 2.x features that you should know
 
 4\.  Improvements in security and plugins
 
-**Pipeline as Code**
+## **Pipeline as Code**
 
-====================
 
 Jenkins introduced a DSL by which you can version your build, test, deploy pipelines as a code. Pipeline code is wrapped around a groovy script that is easy to write and manage. An example pipeline code is shown below.
 
@@ -138,9 +134,8 @@ Also, [Jenkins Blueocean](https://jenkins.io/projects/blueocean/) is a great plu
 
 ![https://devopscube.com/wp-content/uploads/2017/04/pipeline-run.png](https://devopscube.com/wp-content/uploads/2017/04/pipeline-run.png)
 
-**Jenkins Shared Libraries**
+## **Jenkins Shared Libraries**
 
-============================
 
 [Jenkins shared library](https://jenkins.io/doc/book/pipeline/shared-libraries/) is a great way to reuse the pipeline code. You can create your CI/CD code libraries, which can be referenced in your pipeline script. In addition, the extended shared libraries will allow you to write custom groovy code for more flexibility.
 
@@ -152,9 +147,7 @@ Here is how shared libraries work.
 
 3\.  You have to add an import statement to import the shared libraries and use it in the pipeline code in individual jobs. During job builds, first, the shared library files get checked out.
 
-**GitOps With Jenkins X**
-
-=========================
+## **GitOps With Jenkins X**
 
 [Jenkins X](https://jenkins.io/projects/jenkins-x/) is a project from Jenkins for CI/CD on Kubernetes. This project is entirely different from normal Jenkins.
 
